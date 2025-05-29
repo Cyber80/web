@@ -1,1 +1,544 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Google Sheets & Python Learning Platform</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            display: flex;
+            min-height: 100vh;
+            max-width: 1400px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Sidebar Styles */
+        .sidebar {
+            width: 350px;
+            background: linear-gradient(180deg, #2c3e50 0%, #3498db 100%);
+            color: white;
+            transition: all 0.3s ease;
+            overflow-y: auto;
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .sidebar.collapsed {
+            width: 60px;
+        }
+
+        .sidebar-header {
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.2);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .toggle-btn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+            padding: 5px;
+            border-radius: 5px;
+            transition: background 0.3s ease;
+        }
+
+        .toggle-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .sidebar-title {
+            font-size: 18px;
+            font-weight: bold;
+            white-space: nowrap;
+            opacity: 1;
+            transition: opacity 0.3s ease;
+        }
+
+        .sidebar.collapsed .sidebar-title {
+            opacity: 0;
+        }
+
+        .menu-section {
+            margin: 10px 0;
+        }
+
+        .section-header {
+            padding: 15px 20px;
+            background: rgba(255, 255, 255, 0.1);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: all 0.3s ease;
+            border-left: 4px solid transparent;
+        }
+
+        .section-header:hover {
+            background: rgba(255, 255, 255, 0.2);
+            border-left: 4px solid #f39c12;
+        }
+
+        .section-header.active {
+            background: rgba(255, 255, 255, 0.2);
+            border-left: 4px solid #e74c3c;
+        }
+
+        .section-icon {
+            font-size: 20px;
+            min-width: 20px;
+        }
+
+        .section-title {
+            font-weight: 600;
+            font-size: 16px;
+            white-space: nowrap;
+            opacity: 1;
+            transition: opacity 0.3s ease;
+        }
+
+        .sidebar.collapsed .section-title {
+            opacity: 0;
+        }
+
+        .chevron {
+            margin-left: auto;
+            font-size: 12px;
+            transition: transform 0.3s ease;
+        }
+
+        .section-header.active .chevron {
+            transform: rotate(90deg);
+        }
+
+        .sidebar.collapsed .chevron {
+            opacity: 0;
+        }
+
+        .menu-items {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+            background: rgba(0, 0, 0, 0.1);
+        }
+
+        .menu-items.open {
+            max-height: 500px;
+        }
+
+        .menu-item {
+            padding: 12px 20px 12px 60px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-left: 4px solid transparent;
+            font-size: 14px;
+            line-height: 1.4;
+        }
+
+        .menu-item:hover {
+            background: rgba(255, 255, 255, 0.15);
+            border-left: 4px solid #f39c12;
+            padding-left: 65px;
+        }
+
+        .menu-item.active {
+            background: rgba(255, 255, 255, 0.2);
+            border-left: 4px solid #e74c3c;
+            font-weight: 600;
+        }
+
+        .sidebar.collapsed .menu-items {
+            display: none;
+        }
+
+        /* Main Content Styles */
+        .main-content {
+            flex: 1;
+            padding: 40px;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            overflow-y: auto;
+        }
+
+        .content-header {
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .content-title {
+            font-size: 2.5rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+        }
+
+        .content-subtitle {
+            font-size: 1.2rem;
+            color: #666;
+            font-weight: 300;
+        }
+
+        .content-card {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .content-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .welcome-content {
+            text-align: center;
+            padding: 40px 20px;
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .feature-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 12px;
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: scale(1.05);
+        }
+
+        .feature-icon {
+            font-size: 3rem;
+            margin-bottom: 15px;
+        }
+
+        .feature-title {
+            font-size: 1.3rem;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .lesson-content {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .lesson-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .lesson-header {
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 15px;
+            margin-bottom: 25px;
+        }
+
+        .lesson-title {
+            font-size: 2rem;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+
+        .lesson-description {
+            color: #666;
+            font-size: 1.1rem;
+            line-height: 1.6;
+        }
+
+        .lesson-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .lesson-list li {
+            padding: 12px 0;
+            border-bottom: 1px solid #eee;
+            transition: all 0.3s ease;
+        }
+
+        .lesson-list li:hover {
+            padding-left: 15px;
+            color: #667eea;
+        }
+
+        .lesson-list li:before {
+            content: "▶";
+            color: #667eea;
+            margin-right: 10px;
+            font-size: 12px;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 100%;
+                position: absolute;
+                z-index: 1000;
+                transform: translateX(-100%);
+            }
+
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                padding: 20px;
+            }
+
+            .content-title {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar -->
+        <div class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <button class="toggle-btn" onclick="toggleSidebar()">☰</button>
+                <div class="sidebar-title">เมนูหลักสูตร</div>
+            </div>
+
+            <div class="menu-section">
+                <div class="section-header" onclick="toggleSection('sheets')">
+                    <span class="section-icon">📊</span>
+                    <span class="section-title">Google Sheets เบื้องต้น</span>
+                    <span class="chevron">▶</span>
+                </div>
+                <div class="menu-items" id="sheets-menu">
+                    <div class="menu-item" onclick="showContent('sheets-create')">การสร้างและเปิดไฟล์ Google Sheets</div>
+                    <div class="menu-item" onclick="showContent('sheets-format')">การพิมพ์และจัดรูปแบบข้อมูลในตาราง</div>
+                    <div class="menu-item" onclick="showContent('sheets-functions')">ฟังก์ชันพื้นฐาน (SUM, AVERAGE, MAX, MIN)</div>
+                    <div class="menu-item" onclick="showContent('sheets-filter')">การกรองและเรียงลำดับข้อมูล</div>
+                    <div class="menu-item" onclick="showContent('sheets-link')">การเชื่อมโยงและรวมข้อมูลหลายไฟล์</div>
+                    <div class="menu-item" onclick="showContent('sheets-chart')">การสร้างแผนภูมิ (Bar Chart, Line Chart)</div>
+                    <div class="menu-item" onclick="showContent('sheets-pivot')">การใช้ Pivot Table เบื้องต้น</div>
+                </div>
+            </div>
+
+            <div class="menu-section">
+                <div class="section-header" onclick="toggleSection('python')">
+                    <span class="section-icon">🐍</span>
+                    <span class="section-title">Python (ดึงข้อมูล API)</span>
+                    <span class="chevron">▶</span>
+                </div>
+                <div class="menu-items" id="python-menu">
+                    <div class="menu-item" onclick="showContent('python-basic')">โครงสร้างพื้นฐานของ Python</div>
+                    <div class="menu-item" onclick="showContent('python-requests')">การใช้ requests เพื่อเรียกข้อมูลจาก API</div>
+                    <div class="menu-item" onclick="showContent('python-json')">การจัดการข้อมูล JSON</div>
+                    <div class="menu-item" onclick="showContent('python-csv')">การแปลงข้อมูลเป็น CSV ด้วย csv หรือ pandas</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <div class="content-header">
+                <h1 class="content-title">Google Sheets & Python</h1>
+                <p class="content-subtitle">แพลตฟอร์มการเรียนรู้สำหรับการจัดการและวิเคราะห์ข้อมูล</p>
+            </div>
+
+            <!-- Welcome Content -->
+            <div class="content-card welcome-content" id="welcome-content">
+                <h2 style="margin-bottom: 20px; color: #2c3e50;">ยินดีต้อนรับสู่หลักสูตรการเรียนรู้</h2>
+                <p style="font-size: 1.1rem; line-height: 1.6; color: #666; margin-bottom: 30px;">
+                    เรียนรู้การใช้งาน Google Sheets และ Python เพื่อการจัดการข้อมูลและการดึงข้อมูลจาก API อย่างมีประสิทธิภาพ
+                </p>
+                <div class="feature-grid">
+                    <div class="feature-card">
+                        <div class="feature-icon">📊</div>
+                        <div class="feature-title">Google Sheets</div>
+                        <p>เรียนรู้การสร้างตาราง การคำนวณ และการสร้างแผนภูมิ</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">🐍</div>
+                        <div class="feature-title">Python API</div>
+                        <p>เรียนรู้การดึงข้อมูลจาก API และการจัดการข้อมูล JSON</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Lesson Contents -->
+            <div class="lesson-content" id="sheets-create">
+                <div class="content-card">
+                    <div class="lesson-header">
+                        <h2 class="lesson-title">การสร้างและเปิดไฟล์ Google Sheets</h2>
+                        <p class="lesson-description">เรียนรู้วิธีการสร้างไฟล์ Google Sheets ใหม่และการเปิดไฟล์ที่มีอยู่แล้ว</p>
+                    </div>
+                    <ul class="lesson-list">
+                        <li>วิธีการเข้าใช้งาน Google Sheets ผ่าน Google Drive</li>
+                        <li>การสร้างไฟล์ Spreadsheet ใหม่</li>
+                        <li>การเปิดไฟล์ที่มีอยู่แล้ว</li>
+                        <li>การแชร์และจัดการสิทธิ์การเข้าถึง</li>
+                        <li>การตั้งชื่อและจัดการไฟล์</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="lesson-content" id="sheets-format">
+                <div class="content-card">
+                    <div class="lesson-header">
+                        <h2 class="lesson-title">การพิมพ์และจัดรูปแบบข้อมูลในตาราง</h2>
+                        <p class="lesson-description">เรียนรู้การใส่ข้อมูลและจัดรูปแบบให้สวยงามและอ่านง่าย</p>
+                    </div>
+                    <ul class="lesson-list">
+                        <li>การใส่ข้อมูลตัวเลข ข้อความ และวันที่</li>
+                        <li>การจัดรูปแบบตัวอักษร (ตัวหนา ตัวเอียง สี)</li>
+                        <li>การจัดแนวข้อมูล (ซ้าย กลาง ขวา)</li>
+                        <li>การปรับขนาดคอลัมน์และแถว</li>
+                        <li>การใส่เส้นขอบและสีพื้นหลัง</li>
+                        <li>การจัดรูปแบบตัวเลข (เปอร์เซ็นต์ เงิน ทศนิยม)</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="lesson-content" id="sheets-functions">
+                <div class="content-card">
+                    <div class="lesson-header">
+                        <h2 class="lesson-title">ฟังก์ชันพื้นฐาน (SUM, AVERAGE, MAX, MIN)</h2>
+                        <p class="lesson-description">เรียนรู้การใช้ฟังก์ชันพื้นฐานสำหรับการคำนวณข้อมูล</p>
+                    </div>
+                    <ul class="lesson-list">
+                        <li>ฟังก์ชัน SUM() - การหาผลรวม</li>
+                        <li>ฟังก์ชัน AVERAGE() - การหาค่าเฉลี่ย</li>
+                        <li>ฟังก์ชัน MAX() - การหาค่าสูงสุด</li>
+                        <li>ฟังก์ชัน MIN() - การหาค่าต่ำสุด</li>
+                        <li>ฟังก์ชัน COUNT() และ COUNTA() - การนับจำนวน</li>
+                        <li>การใช้ Cell Reference และ Range</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="lesson-content" id="python-basic">
+                <div class="content-card">
+                    <div class="lesson-header">
+                        <h2 class="lesson-title">โครงสร้างพื้นฐานของ Python</h2>
+                        <p class="lesson-description">เรียนรู้พื้นฐาน Python ที่จำเป็นสำหรับการดึงข้อมูลจาก API</p>
+                    </div>
+                    <ul class="lesson-list">
+                        <li>การติดตั้ง Python และการใช้งาน Jupyter Notebook</li>
+                        <li>ตัวแปร (Variables) และประเภทข้อมูล (Data Types)</li>
+                        <li>List, Dictionary และการจัดการข้อมูล</li>
+                        <li>การใช้ For Loop และ If Statement</li>
+                        <li>การ Import Library และ Module</li>
+                        <li>การจัดการ Error และ Exception</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="lesson-content" id="python-requests">
+                <div class="content-card">
+                    <div class="lesson-header">
+                        <h2 class="lesson-title">การใช้ requests เพื่อเรียกข้อมูลจาก API</h2>
+                        <p class="lesson-description">เรียนรู้การใช้ library requests เพื่อดึงข้อมูลจาก API ต่างๆ</p>
+                    </div>
+                    <ul class="lesson-list">
+                        <li>การติดตั้ง requests library</li>
+                        <li>HTTP Methods (GET, POST, PUT, DELETE)</li>
+                        <li>การส่ง Request และรับ Response</li>
+                        <li>การจัดการ Headers และ Parameters</li>
+                        <li>การใช้ API Key และ Authentication</li>
+                        <li>การจัดการ Error และ Status Code</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentContent = 'welcome-content';
+
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('collapsed');
+        }
+
+        function toggleSection(sectionId) {
+            const menu = document.getElementById(sectionId + '-menu');
+            const header = event.target.closest('.section-header');
+            
+            // Close other sections
+            document.querySelectorAll('.section-header').forEach(h => {
+                if (h !== header) {
+                    h.classList.remove('active');
+                    const menuId = h.onclick.toString().match(/toggleSection\('(.+?)'\)/)[1];
+                    document.getElementById(menuId + '-menu').classList.remove('open');
+                }
+            });
+            
+            // Toggle current section
+            header.classList.toggle('active');
+            menu.classList.toggle('open');
+        }
+
+        function showContent(contentId) {
+            // Hide current content
+            document.getElementById(currentContent).classList.remove('active');
+            
+            // Show new content
+            document.getElementById(contentId).classList.add('active');
+            currentContent = contentId;
+            
+            // Update active menu item
+            document.querySelectorAll('.menu-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            // Auto-collapse sidebar on mobile
+            if (window.innerWidth <= 768) {
+                document.getElementById('sidebar').classList.add('collapsed');
+            }
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            // Show welcome content by default
+            document.getElementById('welcome-content').classList.add('active');
+        });
+
+        // Handle responsive behavior
+        window.addEventListener('resize', function() {
+            const sidebar = document.getElementById('sidebar');
+            if (window.innerWidth > 768) {
+                sidebar.classList.remove('collapsed');
+            }
+        });
+    </script>
+</body>
+</html>
