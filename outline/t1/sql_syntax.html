@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SQL Tutorial - SQL Syntax</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+    <header class="main-header">
+        <div class="logo">
+            <h1><a href="#">ชื่อเว็บไซต์</a></h1>
+        </div>
+        <nav class="top-nav">
+            <ul>
+                <li><a href="index.html">หน้าหลัก</a></li>
+                <li><a href="sql_home.html">SQL Tutorial</a></li>
+                <li><a href="python_home.html">Python Tutorial</a></li>
+                <li><a href="html_home.html">HTML Tutorial</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <div class="container-full-width"> <main class="content-area">
+            <p><a href="sql_home.html" class="back-to-index">&laquo; กลับสู่สารบัญ SQL Tutorial</a></p>
+            <h1>SQL Syntax</h1>
+            <p>ไวยากรณ์ SQL คือชุดของกฎและคำสั่งที่ใช้ในการสื่อสารกับฐานข้อมูล...</p>
+            <p>คำสั่ง SQL ส่วนใหญ่จะเริ่มต้นด้วยคำกริยา เช่น SELECT, UPDATE, DELETE, INSERT INTO, CREATE DATABASE, ALTER DATABASE, CREATE TABLE, ALTER TABLE, DROP TABLE, CREATE INDEX, DROP INDEX.</p>
+
+            <h3>คำสั่ง SELECT:</h3>
+            <p>ใช้สำหรับเลือกข้อมูลจากฐานข้อมูล</p>
+            <pre>
+                <code>
+                    SELECT column1, column2, ...
+                    FROM table_name;
+                </code>
+            </pre>
+            <p>หรือเลือกข้อมูลทั้งหมด:</p>
+            <pre>
+                <code>
+                    SELECT *
+                    FROM table_name;
+                </code>
+            </pre>
+
+            <h3>คำสั่ง UPDATE:</h3>
+            <p>ใช้สำหรับแก้ไขข้อมูลที่มีอยู่ในตาราง</p>
+            <pre>
+                <code>
+                    UPDATE table_name
+                    SET column1 = value1, column2 = value2, ...
+                    WHERE condition;
+                </code>
+            </pre>
+            <a href="sql_intro.html" class="next-prev-button">&laquo; ก่อนหน้า</a>
+            <a href="sql_select.html" class="next-prev-button">ถัดไป &raquo;</a>
+        </main>
+    </div>
+
+    <footer class="main-footer">
+        <p>&copy; 2025 ชื่อเว็บไซต์ของคุณ. สงวนลิขสิทธิ์.</p>
+    </footer>
+
+</body>
+</html>
