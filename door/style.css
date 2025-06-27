@@ -1,0 +1,114 @@
+body {
+    font-family: 'Inter', sans-serif; /* ใช้ Font Inter */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-color: #f0f0f0;
+    margin: 0;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+.container {
+    background-color: #fff;
+    padding: 30px;
+    border-radius: 15px; /* มุมโค้งมน */
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* เงาเข้มขึ้น */
+    text-align: center;
+    width: 100%;
+    max-width: 450px; /* จำกัดความกว้างบนหน้าจอใหญ่ */
+    box-sizing: border-box;
+}
+
+h1 {
+    color: #333;
+    margin-bottom: 30px;
+    font-size: 1.8em;
+}
+
+.button-group {
+    display: flex;
+    flex-direction: column; /* วางปุ่มเป็นคอลัมน์บนมือถือ */
+    gap: 20px; /* ช่องว่างระหว่างปุ่ม */
+    margin-bottom: 25px;
+}
+
+.button-group button {
+    color: white;
+    padding: 18px 35px;
+    border: none;
+    border-radius: 10px; /* มุมโค้งมนปุ่ม */
+    cursor: pointer;
+    font-size: 1.2em;
+    font-weight: bold;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* เงาปุ่ม */
+    position: relative;
+    overflow: hidden; /* สำหรับเอฟเฟกต์ */
+}
+
+/* Ripple effect */
+.button-group button::after {
+    content: '';
+    position: absolute;
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, 0.3);
+    width: 100px;
+    height: 100px;
+    margin-top: -50px;
+    margin-left: -50px;
+    opacity: 0;
+    transform: scale(0);
+    transition: transform 0.5s, opacity 0.5s;
+    pointer-events: none;
+}
+
+.button-group button:active::after {
+    transform: scale(2);
+    opacity: 1;
+    transition: 0s;
+}
+
+.button-group button.open {
+    background: linear-gradient(145deg, #28a745, #218838); /* เขียวไล่เฉด */
+}
+
+.button-group button.open:hover {
+    background: linear-gradient(145deg, #218838, #1e7e34);
+    transform: translateY(-2px); /* ยกขึ้นเล็กน้อย */
+}
+
+.button-group button.close {
+    background: linear-gradient(145deg, #dc3545, #c82333); /* แดงไล่เฉด */
+}
+
+.button-group button.close:hover {
+    background: linear-gradient(145deg, #c82333, #bd2130);
+    transform: translateY(-2px);
+}
+
+.button-group button.stop {
+    background: linear-gradient(145deg, #ffc107, #e0a800); /* เหลืองไล่เฉด */
+    color: #333;
+}
+
+.button-group button.stop:hover {
+    background: linear-gradient(145deg, #e0a800, #d39e00);
+    transform: translateY(-2px);
+}
+
+#status-message {
+    margin-top: 20px;
+    font-size: 1.1em;
+    color: #555;
+    min-height: 1.5em; /* กันไม่ให้ layout เลื่อน */
+}
+
+/* Responsive adjustments */
+@media (min-width: 600px) {
+    .button-group {
+        flex-direction: row; /* วางปุ่มเป็นแถวบนจอใหญ่ */
+        justify-content: center;
+    }
+}
