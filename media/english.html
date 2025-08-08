@@ -1,16 +1,34 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-    <meta charset="UTF-8">
-    <title>Easy English Vocabulary</title>
     <link rel="stylesheet" href="style.css">
-        <style>
-        body { font-family: Arial, sans-serif; line-height: 1.6; padding: 20px; }
-        h1 { color: #2a8; }
-        .word { font-size: 1.2em; margin-top: 20px; }
-        .sentence { margin-left: 20px; color: #555; }
-        button { margin-left: 10px; }
-    </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>English Practice • Single File</title>
+<style>
+:root{--bg:#f6fbff;--card:#fff;--primary:#2a7ade;--accent:#ffb703;--text:#123;--muted:#667}
+*{box-sizing:border-box}html,body{margin:0;padding:0;font-family:ui-sans-serif,system-ui,"Noto Sans Thai",Arial;color:var(--text);background:var(--bg)}
+.header{background:linear-gradient(135deg,var(--primary),#5aa0ff);color:#fff;padding:18px 20px}
+.header h1{margin:0;font-size:1.4rem}
+.container{max-width:980px;margin:16px auto;padding:0 16px}
+.card{background:var(--card);border-radius:12px;padding:16px;box-shadow:0 6px 16px rgba(0,0,0,.06);margin-bottom:12px}
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0 16px}
+.tab{border:none;background:#eaf1ff;color:#124;padding:8px 12px;border-radius:10px;cursor:pointer;font-weight:700}
+.tab.active{background:var(--primary);color:#fff}
+.grid{display:grid;gap:12px}
+@media(min-width:720px){.grid.cols-2{grid-template-columns:1fr 1fr}.grid.cols-3{grid-template-columns:repeat(3,1fr)}}
+.btn{border:none;background:var(--primary);color:#fff;padding:10px 14px;border-radius:10px;cursor:pointer;font-weight:700}
+.btn.secondary{background:var(--accent);color:#123}
+.btn.ghost{background:transparent;border:2px solid var(--primary);color:var(--primary)}
+.input,textarea{width:100%;padding:10px 12px;border:1px solid #dde3f0;border-radius:10px;font-size:1rem}
+.flashcard{display:flex;align-items:center;justify-content:center;height:160px;border:2px dashed #dbe7ff;border-radius:12px;font-size:2rem;font-weight:800;background:#fff}
+.small{font-size:.9rem;color:var(--muted)}
+.progress{height:10px;background:#e8efff;border-radius:999px;overflow:hidden}.progress>div{height:100%;background:var(--primary);width:0%;transition:width .3s}
+footer{font-size:.9rem;color:var(--muted);padding:18px;text-align:center}
+.kbd{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;background:#eef;padding:2px 6px;border-radius:6px}
+.cardPill{display:inline-block;padding:6px 10px;background:#eef;border-radius:999px;margin:0 6px 6px 0}
+.hidden{display:none}
+</style>
 </head>
 <body>
     <nav>
@@ -20,32 +38,300 @@
         <a href="math.html">คณิตศาสตร์</a>
     </nav>
 
-    <h1>Easy Vocabulary and Sentences</h1>
+   <main>
+<header class="header"><h1>English Practice • Primary (Single File)</h1></header>
+<div class="container">
+  <div class="tabs">
+    <button class="tab active" data-tab="read">Read</button>
+    <button class="tab" data-tab="speak">Speak</button>
+    <button class="tab" data-tab="write">Write</button>
+  </div>
 
-    <div class="word">1. Cat
-        <button onclick="speak('Cat')">🔊</button>
-        <div class="sentence">This is a cat. <button onclick="speak('This is a cat')">🔊</button></div>
+  <!-- READ -->
+  <section id="tab-read" class="card">
+    <h3>แฟลชการ์ดคำศัพท์</h3>
+    <div class="grid cols-2">
+      <div>
+        <label>ระดับชั้น:</label>
+        <select id="rLevel" class="input"><option>P1-3</option><option>P4-6</option></select>
+      </div>
+      <div>
+        <label>หมวด:</label>
+        <select id="rCat" class="input"></select>
+      </div>
     </div>
+    <div class="flashcard" id="rFlash">Tap ▶ Speak เพื่อฟัง</div>
+    <div style="margin-top:10px;display:flex;gap:10px;flex-wrap:wrap">
+      <button class="btn" id="rPrev">← Prev</button>
+      <button class="btn secondary" id="rSpeak">▶ Speak</button>
+      <button class="btn" id="rNext">Next →</button>
+      <span class="cardPill" id="rCount">0 / 0</span>
+    </div>
+    <hr>
+    <h3>ประโยคสั้น ๆ</h3>
+    <div class="grid cols-2">
+      <div>
+        <p id="rSentence" style="font-size:1.4rem;font-weight:800">—</p>
+        <button class="btn secondary" id="rSentenceSpeak">▶ ฟังประโยค</button>
+        <button class="btn" id="rSentenceNew">สุ่มประโยค</button>
+      </div>
+      <div>
+        <p class="small">Tip: แตะปุ่มสุ่มเพื่อเปลี่ยนประโยค</p>
+        <div class="progress"><div id="rProg"></div></div>
+      </div>
+    </div>
+  </section>
 
-    <div class="word">2. Dog
-        <button onclick="speak('Dog')">🔊</button>
-        <div class="sentence">The dog is big. <button onclick="speak('The dog is big')">🔊</button></div>
+  <!-- SPEAK -->
+  <section id="tab-speak" class="card hidden">
+    <h3>Listen & Repeat</h3>
+    <p class="small">iPad ส่วนมากใช้ TTS ได้ แต่การให้คะแนนพูดอาจไม่รองรับ</p>
+    <div class="grid cols-2">
+      <div>
+        <label>ระดับชั้น:</label>
+        <select id="sLevel" class="input"><option>P1-3</option><option>P4-6</option></select>
+        <p id="sTarget" style="font-size:1.6rem;font-weight:800;min-height:2.2em">—</p>
+        <button class="btn secondary" id="sListen">▶ ฟัง</button>
+        <button class="btn" id="sNext">สุ่มประโยคใหม่</button>
+        <button class="btn" id="sRecord">🎤 พูด</button>
+      </div>
+      <div>
+        <p><strong>ผลลัพธ์:</strong> <span id="sResult">—</span></p>
+        <div class="progress"><div id="sScore"></div></div>
+        <p class="small">ถ้าอุปกรณ์ไม่รองรับ จะเตือนเมื่อกดปุ่ม 🎤</p>
+      </div>
     </div>
+    <hr>
+    <h3>Question & Answer (P4–P6)</h3>
+    <div class="grid cols-2">
+      <div>
+        <p id="qaQ" style="font-size:1.2rem;font-weight:700">—</p>
+        <button class="btn secondary" id="qaListen">▶ ฟังคำถาม</button>
+      </div>
+      <div>
+        <p><strong>คำตอบตัวอย่าง:</strong> <span id="qaA">—</span></p>
+      </div>
+    </div>
+  </section>
 
-    <div class="word">3. Apple
-        <button onclick="speak('Apple')">🔊</button>
-        <div class="sentence">I eat an apple. <button onclick="speak('I eat an apple')">🔊</button></div>
+  <!-- WRITE -->
+  <section id="tab-write" class="card hidden">
+    <h3>Dictation (ฟังแล้วพิมพ์)</h3>
+    <div class="grid cols-2">
+      <div>
+        <label>ระดับชั้น:</label>
+        <select id="wLevel" class="input"><option>P1-3</option><option>P4-6</option></select>
+        <p id="wText" class="small">—</p>
+        <button class="btn secondary" id="wPlay">▶ ฟังอีกครั้ง</button>
+        <button class="btn" id="wNew">สุ่มประโยค</button>
+      </div>
+      <div>
+        <textarea id="wAns" rows="3" class="input" placeholder="พิมพ์ที่นี่..."></textarea>
+        <div style="margin-top:10px;display:flex;gap:10px">
+          <button class="btn" id="wCheck">ตรวจคำตอบ</button>
+          <button class="btn ghost" id="wShow">เฉลย</button>
+        </div>
+        <p id="wFb" class="small">—</p>
+      </div>
     </div>
+    <hr>
+    <h3>เรียงคำให้เป็นประโยค (Jumble)</h3>
+    <p class="small">แตะการ์ดสองใบเพื่อสลับตำแหน่ง</p>
+    <div id="jCards" class="grid cols-3"></div>
+    <div style="margin-top:10px;display:flex;gap:10px">
+      <button class="btn" id="jNew">สุ่มใหม่</button>
+      <button class="btn secondary" id="jCheck">ตรวจ</button>
+    </div>
+    <p id="jFb" class="small">—</p>
+  </section>
+</div>
+<footer>© 2025 Learning Kit • Single File</footer>
 
-    <div class="word">4. Book
-        <button onclick="speak('Book')">🔊</button>
-        <div class="sentence">This is my book. <button onclick="speak('This is my book')">🔊</button></div>
-    </div>
+<script>
+// ---- Data ----
+const WORD_BANK = {
+  "P1-3": {
+    "sightWords": ["I","you","we","he","she","it","my","your","a","an","the","is","am","are","in","on","at","to","go","like","see","can","do","have","and"],
+    "phonicsCVC": ["cat","dog","sun","pen","bag","cup","bed","pig","fox","hat","jam","web","rug","bus","ten"],
+    "animals": ["cat","dog","bird","fish","cow","duck","ant","bee","frog","lion","hen","goat"],
+    "colors": ["red","blue","green","yellow","black","white","pink","purple","brown","orange"],
+    "verbs": ["run","jump","walk","eat","sleep","read","write","sing","play","draw"],
+    "sentences": [
+      "I can run.",
+      "You can jump.",
+      "We like cats.",
+      "She has a red bag.",
+      "The dog is big.",
+      "It is a blue pen.",
+      "I see a bird.",
+      "We are in the room.",
+      "He can read and write."
+    ]
+  },
+  "P4-6": {
+    "vocab": ["classroom","teacher","student","notebook","pencil","library","breakfast","lunch","dinner","soccer","music","drawing","rainy","sunny","cloudy","windy","always","usually","sometimes","never"],
+    "sentences": [
+      "I usually eat breakfast at seven o'clock.",
+      "My sister sometimes plays soccer after school.",
+      "It is windy and cloudy today.",
+      "We have English on Monday and Wednesday.",
+      "I like drawing and listening to music.",
+      "He never watches TV before homework.",
+      "Our classroom is next to the library."
+    ],
+    "questionPatterns": [
+      {"q":"What time do you wake up?", "a":"I wake up at six o'clock."},
+      {"q":"How often do you read books?", "a":"I usually read books on the weekend."},
+      {"q":"What is your favorite subject?", "a":"My favorite subject is English."},
+      {"q":"Where is the library?", "a":"It is next to the office."}
+    ]
+  }
+};
 
-    <div class="word">5. Chair
-        <button onclick="speak('Chair')">🔊</button>
-        <div class="sentence">I sit on a chair. <button onclick="speak('I sit on a chair')">🔊</button></div>
-    </div>
+// ---- Utils ----
+function speak(text, lang='en-US', rate=0.95, pitch=1.0){
+  if(!('speechSynthesis' in window)){ alert('Text-to-Speech not supported'); return; }
+  const u = new SpeechSynthesisUtterance(text); u.lang=lang; u.rate=rate; u.pitch=pitch;
+  window.speechSynthesis.cancel(); window.speechSynthesis.speak(u);
+}
+function hasSR(){ return 'webkitSpeechRecognition' in window || 'SpeechRecognition' in window; }
+function startSR({lang='en-US', onResult, onEnd}={}){
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if(!SR){ alert('อุปกรณ์นี้ยังไม่รองรับการรู้จำเสียง'); return null; }
+  const r = new SR(); r.lang=lang; r.interimResults=false; r.maxAlternatives=1;
+  r.onresult=e=>{ const t=e.results[0][0].transcript; onResult && onResult(t); };
+  r.onend=()=>{ onEnd && onEnd(); };
+  r.start(); return r;
+}
+function norm(s){ return s.toLowerCase().replace(/[^a-z0-9\s']/g,'').replace(/\s+/g,' ').trim(); }
+function WER(ref, hyp){
+  const r=norm(ref).split(' '), h=norm(hyp).split(' ');
+  const R=r.length,H=h.length; const dp=Array.from({length:R+1},()=>Array(H+1).fill(0));
+  for(let i=0;i<=R;i++) dp[i][0]=i; for(let j=0;j<=H;j++) dp[0][j]=j;
+  for(let i=1;i<=R;i++) for(let j=1;j<=H;j++){
+    const cost=r[i-1]===h[j-1]?0:1;
+    dp[i][j]=Math.min(dp[i-1][j]+1, dp[i][j-1]+1, dp[i-1][j-1]+cost);
+  }
+  return dp[R][H]/Math.max(R,1);
+}
+function shuffle(a){ return a.map(v=>[v,Math.random()]).sort((x,y)=>x[1]-y[1]).map(v=>v[0]); }
+
+// ---- Tabs ----
+const tabBtns=[...document.querySelectorAll('.tab')];
+const sections={read:document.getElementById('tab-read'), speak:document.getElementById('tab-speak'), write:document.getElementById('tab-write')};
+function showTab(name){
+  tabBtns.forEach(b=>b.classList.toggle('active', b.dataset.tab===name));
+  Object.entries(sections).forEach(([k,el])=> el.classList.toggle('hidden', k!==name));
+}
+tabBtns.forEach(b=> b.addEventListener('click', ()=> showTab(b.dataset.tab)));
+
+// ---- READ logic ----
+const rLevel=document.getElementById('rLevel');
+const rCat=document.getElementById('rCat');
+const rFlash=document.getElementById('rFlash');
+const rPrev=document.getElementById('rPrev');
+const rNext=document.getElementById('rNext');
+const rSpeak=document.getElementById('rSpeak');
+const rCount=document.getElementById('rCount');
+const rSentence=document.getElementById('rSentence');
+const rSentenceSpeak=document.getElementById('rSentenceSpeak');
+const rSentenceNew=document.getElementById('rSentenceNew');
+const rProg=document.getElementById('rProg');
+
+function loadCats(){
+  const lv=rLevel.value; rCat.innerHTML='';
+  const cats = lv==='P1-3' ? ['sightWords','phonicsCVC','animals','colors','verbs'] : ['vocab'];
+  cats.forEach(c=>{ const o=document.createElement('option'); o.value=c; o.textContent=c; rCat.appendChild(o); });
+}
+loadCats();
+let list=[], idx=0;
+function refreshList(){
+  const lv=rLevel.value;
+  const raw = lv==='P1-3' ? WORD_BANK[lv][rCat.value] : WORD_BANK[lv]['vocab'];
+  list = shuffle(raw.slice()); idx=0; renderCard();
+}
+function renderCard(){ if(!list.length){ rFlash.textContent='—'; rCount.textContent='0 / 0'; return; }
+  rFlash.textContent=list[idx]; rCount.textContent=(idx+1)+' / '+list.length; }
+rLevel.addEventListener('change', ()=>{ loadCats(); refreshList(); });
+rCat.addEventListener('change', refreshList);
+rPrev.addEventListener('click', ()=>{ idx=(idx-1+list.length)%list.length; renderCard(); });
+rNext.addEventListener('click', ()=>{ idx=(idx+1)%list.length; renderCard(); });
+rSpeak.addEventListener('click', ()=> speak(list[idx]||''));
+refreshList();
+let sentCnt=0;
+function newSent(){ const lv=rLevel.value; const s = WORD_BANK[lv].sentences[Math.floor(Math.random()*WORD_BANK[lv].sentences.length)]; rSentence.textContent=s; sentCnt++; rProg.style.width=Math.min(100, sentCnt*10)+'%';}
+newSent();
+rSentenceSpeak.addEventListener('click', ()=> speak(rSentence.textContent));
+rSentenceNew.addEventListener('click', newSent);
+
+// ---- SPEAK logic ----
+const sLevel=document.getElementById('sLevel');
+const sTarget=document.getElementById('sTarget');
+const sListen=document.getElementById('sListen');
+const sNext=document.getElementById('sNext');
+const sRecord=document.getElementById('sRecord');
+const sResult=document.getElementById('sResult');
+const sScore=document.getElementById('sScore');
+
+function pickSpeak(){ const lv=sLevel.value; const s = WORD_BANK[lv].sentences[Math.floor(Math.random()*WORD_BANK[lv].sentences.length)]; sTarget.textContent=s; }
+pickSpeak();
+sListen.onclick=()=> speak(sTarget.textContent);
+sNext.onclick=pickSpeak;
+sRecord.onclick=()=>{
+  if(!hasSR()){ alert('อุปกรณ์นี้ยังไม่รองรับการรู้จำเสียง (ให้คะแนนพูด) แต่ยังใช้ฝึกฟัง–พูดตามได้'); return; }
+  sResult.textContent='Listening...';
+  startSR({ lang:'en-US', onResult:(text)=>{
+    const wer=WER(sTarget.textContent, text); const score=Math.max(0, Math.round((1-wer)*100));
+    sScore.style.width=score+'%'; sResult.textContent=`You said: "${text}" → Score: ${score}%`;
+  }});
+};
+
+// QA
+const qaQ=document.getElementById('qaQ');
+const qaA=document.getElementById('qaA');
+const qaListen=document.getElementById('qaListen');
+function newQA(){ const item = WORD_BANK['P4-6'].questionPatterns[Math.floor(Math.random()*WORD_BANK['P4-6'].questionPatterns.length)]; qaQ.textContent=item.q; qaA.textContent=item.a; }
+newQA(); qaListen.onclick=()=> speak(qaQ.textContent);
+
+// ---- WRITE logic ----
+const wLevel=document.getElementById('wLevel');
+const wText=document.getElementById('wText');
+const wPlay=document.getElementById('wPlay');
+const wNew=document.getElementById('wNew');
+const wAns=document.getElementById('wAns');
+const wCheck=document.getElementById('wCheck');
+const wShow=document.getElementById('wShow');
+function pickW(){ const lv=wLevel.value; const s=WORD_BANK[lv].sentences[Math.floor(Math.random()*WORD_BANK[lv].sentences.length)]; wText.textContent=s; }
+pickW();
+wPlay.onclick=()=> speak(wText.textContent);
+wNew.onclick=pickW;
+wCheck.onclick=()=>{ const ok = norm(wAns.value)===norm(wText.textContent); document.getElementById('wFb').textContent = ok?'ถูกต้อง! Great job.':'ยังไม่ถูก ลองฟังอีกครั้ง'; };
+wShow.onclick=()=>{ wAns.value=wText.textContent; document.getElementById('wFb').textContent='นี่คือเฉลย ลองฟังแล้วพิมพ์ตามอีกครั้ง'; };
+
+// Jumble
+const jCards=document.getElementById('jCards');
+const jNew=document.getElementById('jNew');
+const jCheck=document.getElementById('jCheck');
+const jFb=document.getElementById('jFb');
+let jTarget='';
+function buildJ(){ const lv=wLevel.value; const s=WORD_BANK[lv].sentences[Math.floor(Math.random()*WORD_BANK[lv].sentences.length)]; jTarget=s; const words=shuffle(s.replace(/[.?!]/g,'').split(' '));
+  jCards.innerHTML=''; words.forEach(w=>{ const el=document.createElement('div'); el.className='card'; el.textContent=w; el.style.textAlign='center'; el.style.cursor='pointer';
+    el.onclick=()=>{ const active=jCards.querySelector('.card.active');
+      if(!active){ el.classList.add('active'); el.style.outline='2px solid var(--accent)'; }
+      else{ const tmp=active.textContent; active.textContent=el.textContent; el.textContent=tmp; active.classList.remove('active'); active.style.outline='none'; }
+    };
+    jCards.appendChild(el);
+  });
+}
+buildJ();
+jNew.onclick=buildJ;
+jCheck.onclick=()=>{
+  const your=[...jCards.children].map(c=>c.textContent).join(' ')+ (jTarget.match(/[.?!]$/)?.[0]||'');
+  jFb.textContent = norm(your)===norm(jTarget) ? 'เรียงถูกต้อง! Excellent.' : 'ยังสลับคำอยู่ ลองใหม่ครับ';
+};
+</script>
+       
+   </main>
 
     <script>
         function speak(text) {
