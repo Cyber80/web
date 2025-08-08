@@ -1,0 +1,661 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>สื่อฝึกคิดเลขคล่อง (ป.3 / ป.6) – ตัวอย่างสำหรับครู</title>
+<style>
+  :root{
+    --bg:#f7f9fc;
+    --card:#ffffff;
+    --ink:#0f172a;
+    --muted:#6b7280;
+    --accent:#2563eb;
+    --good:#16a34a;
+    --bad:#dc2626;
+    --warn:#d97706;
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    margin:0;
+    font-family:system-ui,-apple-system,Segoe UI,Roboto,Prompt,TH Sarabun New,Noto Sans Thai,sans-serif;
+    color:var(--ink);
+    background:var(--bg);
+    line-height:1.45;
+  }
+  header{
+    background:linear-gradient(135deg,#dbeafe,#f1f5f9);
+    padding:1.2rem;
+    border-bottom:1px solid #e5e7eb;
+  }
+  header h1{margin:.2rem 0 .5rem;font-size:1.4rem}
+  header p{margin:0;color:var(--muted);font-size:.95rem}
+  .wrap{max-width:1100px;margin:0 auto;padding:1rem}
+  .bar{
+    display:flex;gap:.5rem;flex-wrap:wrap;align-items:center;justify-content:space-between
+  }
+  .tabs{display:flex;gap:.5rem;flex-wrap:wrap}
+  .tab{
+    padding:.5rem .9rem;border:1px solid #cbd5e1;background:#fff;border-radius:999px;
+    cursor:pointer;font-weight:600
+  }
+  .tab.active{background:var(--accent);border-color:var(--accent);color:#fff}
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1rem;margin-top:1rem}
+  .card{
+    background:var(--card);border:1px solid #e5e7eb;border-radius:.8rem;padding:1rem;
+    box-shadow:0 1px 0 rgba(0,0,0,.04);
+  }
+  h2{font-size:1.1rem;margin:.2rem 0 .6rem}
+  h3{font-size:1rem;margin:.2rem 0 .6rem}
+  .muted{color:var(--muted);font-size:.95rem}
+  .controls{display:flex;gap:.5rem;flex-wrap:wrap;margin:.5rem 0}
+  select,input[type="number"]{padding:.4rem .6rem;border:1px solid #cbd5e1;border-radius:.5rem;background:#fff}
+  button{
+    padding:.55rem .8rem;border:1px solid #cbd5e1;border-radius:.6rem;background:#fff;cursor:pointer;font-weight:600
+  }
+  button.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+  button.good{background:var(--good);border-color:var(--good);color:#fff}
+  button.bad{background:var(--bad);border-color:var(--bad);color:#fff}
+  .pill{display:inline-block;padding:.2rem .5rem;border-radius:999px;background:#e2e8f0;color:#0f172a;font-size:.8rem}
+  .problem{font-size:1.4rem;font-weight:700;letter-spacing:.5px}
+  .answer{font-size:1.2rem}
+  .row{display:flex;gap:.5rem;align-items:center;flex-wrap:wrap}
+  .stat{font-weight:700}
+  .kpi{display:flex;gap:1rem;flex-wrap:wrap;margin-top:.5rem}
+  .kpi div{background:#f8fafc;border:1px dashed #e2e8f0;border-radius:.6rem;padding:.4rem .6rem}
+  .right{text-align:right}
+  .flex{display:flex;gap:.8rem;align-items:center}
+  .info{background:#fef9c3;border:1px solid #fde047;border-radius:.6rem;padding:.6rem}
+  .ok{color:var(--good)} .ng{color:var(--bad)} .warn{color:var(--warn)}
+  footer{padding:1rem;color:var(--muted);font-size:.9rem}
+  .hide{display:none}
+  .mono{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:.9rem;white-space:pre-wrap;background:#0b1020;color:#e5e7eb;padding:.75rem;border-radius:.6rem}
+  .badge{font-size:.8rem;background:#e0f2fe;color:#075985;padding:.2rem .4rem;border-radius:.4rem}
+  .hr{height:1px;background:#e5e7eb;margin:.8rem 0}
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <h1>สื่อฝึกคิดเลขคล่อง (Math Fluency) – ตัวอย่างสำหรับครู ประถม</h1>
+    <p>จุดประสงค์: เสริม <b>คิดเลขคล่อง</b> เพื่อยกระดับคะแนน NT / O-NET ด้วยกิจกรรมสั้น ๆ แบบ <i>ทุกวันนิดเดียว แต่สม่ำเสมอ</i> + บันทึกผลอัตโนมัติในอุปกรณ์ของผู้เรียน</p>
+    <div class="bar">
+      <div class="tabs">
+        <button class="tab active" data-tab="g3">ระดับชั้น ป.3</button>
+        <button class="tab" data-tab="g6">ระดับชั้น ป.6</button>
+      </div>
+      <div>
+        <span class="pill">โหมด: ① วอร์มอัพ ② เร่งความเร็ว ③ แบบปรับระดับ ④ โจทย์ภาษา ⑤ หลังเรียน</span>
+      </div>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <!-- KPI overview -->
+  <div class="card">
+    <h2>ภาพรวมชั้นเรียน (เฉพาะเครื่องนี้)</h2>
+    <div class="kpi" id="kpi"></div>
+    <p class="muted">* คะแนนถูกเก็บใน <b>localStorage</b> ของอุปกรณ์นี้เท่านั้น (ไม่ส่งออกอินเทอร์เน็ต) ครูสามารถให้เด็กถ่ายภาพหน้าจอ/สแกน QR เพื่อส่งผล</p>
+  </div>
+
+  <!-- Grade 3 -->
+  <section id="g3" class="grid">
+    <!-- Warm-up -->
+    <div class="card">
+      <h2>ป.3 – วอร์มอัพ 1 นาที</h2>
+      <p class="muted">เป้าหมาย: บวก/ลบใน 1000, แม่สูตรคูณ (2–9) – เก็บ <b>จำนวนข้อต่อวินาที</b> และความแม่นยำ</p>
+      <div class="controls">
+        <label>เนื้อหา:
+          <select id="g3_warm_topic">
+            <option value="addsub">บวก/ลบ (ใน 1000)</option>
+            <option value="mult">สูตรคูณ (2–9)</option>
+            <option value="mix">ผสม</option>
+          </select>
+        </label>
+        <label>เวลา (วินาที):
+          <input type="number" id="g3_warm_time" value="60" min="15" max="180">
+        </label>
+        <button class="primary" onclick="startWarm('g3')">เริ่ม</button>
+        <button onclick="resetWarm('g3')">รีเซ็ต</button>
+      </div>
+      <div id="g3_warm_panel">
+        <div class="problem" id="g3_warm_q">กดเริ่มเพื่อสุ่มข้อ</div>
+        <div class="row">
+          <input class="answer" id="g3_warm_a" type="number" placeholder="พิมพ์คำตอบแล้วกด Enter">
+          <button onclick="submitWarm('g3')">ตอบ</button>
+        </div>
+        <div class="kpi">
+          <div>เวลา: <span class="stat" id="g3_warm_t">—</span>s</div>
+          <div>ถูก: <span class="ok stat" id="g3_warm_c">0</span></div>
+          <div>ผิด: <span class="ng stat" id="g3_warm_w">0</span></div>
+          <div>อัตรา: <span class="stat" id="g3_warm_r">0</span> ข้อต่อนาที</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Adaptive drill -->
+    <div class="card">
+      <h2>ป.3 – แบบฝึกปรับระดับ</h2>
+      <p class="muted">ระบบจะเพิ่ม/ลดความยากตามความแม่นยำล่าสุด</p>
+      <div class="controls">
+        <label>เริ่มที่ระดับ:
+          <select id="g3_lvl">
+            <option value="1">Lv.1 (บวก/ลบเลขสองหลัก)</option>
+            <option value="2">Lv.2 (บวก/ลบสามหลัก)</option>
+            <option value="3">Lv.3 (คูณเลขหนึ่งหลัก)</option>
+            <option value="4">Lv.4 (คูณสองหลักง่าย)</option>
+          </select>
+        </label>
+        <button class="primary" onclick="startAdaptive('g3')">เริ่ม</button>
+      </div>
+      <div id="g3_adapt_panel">
+        <div class="problem" id="g3_adapt_q">—</div>
+        <div class="row">
+          <input class="answer" id="g3_adapt_a" type="number" placeholder="Enter">
+          <button onclick="submitAdaptive('g3')">ตอบ</button>
+        </div>
+        <div class="kpi">
+          <div>ระดับ: <span class="badge" id="g3_adapt_level">—</span></div>
+          <div>ต่อเนื่องถูก: <span class="ok" id="g3_streak">0</span></div>
+          <div>ความแม่นยำล่าสุด: <span id="g3_acc">—</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Word problems -->
+    <div class="card">
+      <h2>ป.3 – โจทย์ภาษา (หน่วย: เงิน/เวลา/ความยาว เบื้องต้น)</h2>
+      <div class="controls">
+        <label>รูปแบบ:
+          <select id="g3_word_type">
+            <option value="money">การใช้เงิน</option>
+            <option value="time">เวลา</option>
+            <option value="length">ความยาว</option>
+          </select>
+        </label>
+        <button class="primary" onclick="newWord('g3')">สุ่มโจทย์</button>
+      </div>
+      <div id="g3_word_q" class="problem">—</div>
+      <div class="row">
+        <input class="answer" id="g3_word_a" type="text" placeholder="คำตอบเป็นตัวเลข (เช่น 45)">
+        <button onclick="submitWord('g3')">ตรวจ</button>
+      </div>
+      <div id="g3_word_feedback" class="muted"></div>
+    </div>
+
+    <!-- Post-lesson quick check -->
+    <div class="card">
+      <h2>ป.3 – แบบทดสอบสั้นหลังเรียน (10 ข้อ)</h2>
+      <div class="controls">
+        <button class="primary" onclick="startQuiz('g3',10)">เริ่มแบบทดสอบ</button>
+        <button onclick="print()">พิมพ์/บันทึกเป็น PDF</button>
+      </div>
+      <div id="g3_quiz_area"></div>
+    </div>
+  </section>
+
+  <!-- Grade 6 -->
+  <section id="g6" class="grid hide">
+    <!-- Warm-up -->
+    <div class="card">
+      <h2>ป.6 – วอร์มอัพ 1 นาที</h2>
+      <p class="muted">เป้าหมาย: คูณ/หารหลายหลัก, ทศนิยม, เศษส่วนพื้นฐาน + การประมาณค่า</p>
+      <div class="controls">
+        <label>เนื้อหา:
+          <select id="g6_warm_topic">
+            <option value="multid">คูณ/หาร หลายหลัก</option>
+            <option value="dec">ทศนิยม (บวก/ลบ/คูณ)</option>
+            <option value="frac">เศษส่วนร่วมตัวส่วน</option>
+            <option value="est">ประมาณค่า/ปัดเศษ</option>
+            <option value="mix">ผสม</option>
+          </select>
+        </label>
+        <label>เวลา (วินาที):
+          <input type="number" id="g6_warm_time" value="60" min="15" max="180">
+        </label>
+        <button class="primary" onclick="startWarm('g6')">เริ่ม</button>
+        <button onclick="resetWarm('g6')">รีเซ็ต</button>
+      </div>
+      <div id="g6_warm_panel">
+        <div class="problem" id="g6_warm_q">กดเริ่มเพื่อสุ่มข้อ</div>
+        <div class="row">
+          <input class="answer" id="g6_warm_a" type="text" placeholder="พิมพ์คำตอบแล้วกด Enter">
+          <button onclick="submitWarm('g6')">ตอบ</button>
+        </div>
+        <div class="kpi">
+          <div>เวลา: <span class="stat" id="g6_warm_t">—</span>s</div>
+          <div>ถูก: <span class="ok stat" id="g6_warm_c">0</span></div>
+          <div>ผิด: <span class="ng stat" id="g6_warm_w">0</span></div>
+          <div>อัตรา: <span class="stat" id="g6_warm_r">0</span> ข้อต่อนาที</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Adaptive drill -->
+    <div class="card">
+      <h2>ป.6 – แบบฝึกปรับระดับ</h2>
+      <p class="muted">เน้นหลายหลัก/เศษส่วน/ทศนิยม – เพิ่มระดับเมื่อถูกต่อเนื่อง 3 ครั้ง, ลดระดับเมื่อผิด 2 จาก 3 ครั้งหลังสุด</p>
+      <div class="controls">
+        <label>เริ่มที่ระดับ:
+          <select id="g6_lvl">
+            <option value="2">Lv.2 (คูณสองหลัก)</option>
+            <option value="3">Lv.3 (หารหลายหลักง่าย)</option>
+            <option value="4">Lv.4 (ทศนิยม ±× ง่าย)</option>
+            <option value="5">Lv.5 (เศษส่วนตัวส่วนเท่ากัน)</option>
+            <option value="6">Lv.6 (ประมาณค่า/โจทย์ผสม)</option>
+          </select>
+        </label>
+        <button class="primary" onclick="startAdaptive('g6')">เริ่ม</button>
+      </div>
+      <div id="g6_adapt_panel">
+        <div class="problem" id="g6_adapt_q">—</div>
+        <div class="row">
+          <input class="answer" id="g6_adapt_a" type="text" placeholder="Enter">
+          <button onclick="submitAdaptive('g6')">ตอบ</button>
+        </div>
+        <div class="kpi">
+          <div>ระดับ: <span class="badge" id="g6_adapt_level">—</span></div>
+          <div>ต่อเนื่องถูก: <span class="ok" id="g6_streak">0</span></div>
+          <div>ความแม่นยำล่าสุด: <span id="g6_acc">—</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Word problems -->
+    <div class="card">
+      <h2>ป.6 – โจทย์ภาษา (อัตราส่วน/ร้อยละ/เวลาเดินทาง)</h2>
+      <div class="controls">
+        <label>รูปแบบ:
+          <select id="g6_word_type">
+            <option value="ratio">อัตราส่วน</option>
+            <option value="percent">ร้อยละ</option>
+            <option value="speed">เวลา/อัตราเร็ว</option>
+          </select>
+        </label>
+        <button class="primary" onclick="newWord('g6')">สุ่มโจทย์</button>
+      </div>
+      <div id="g6_word_q" class="problem">—</div>
+      <div class="row">
+        <input class="answer" id="g6_word_a" type="text" placeholder="คำตอบเป็นตัวเลข">
+        <button onclick="submitWord('g6')">ตรวจ</button>
+      </div>
+      <div id="g6_word_feedback" class="muted"></div>
+    </div>
+
+    <!-- Post-lesson quick check -->
+    <div class="card">
+      <h2>ป.6 – แบบทดสอบสั้นหลังเรียน (10 ข้อ)</h2>
+      <div class="controls">
+        <button class="primary" onclick="startQuiz('g6',10)">เริ่มแบบทดสอบ</button>
+        <button onclick="print()">พิมพ์/บันทึกเป็น PDF</button>
+      </div>
+      <div id="g6_quiz_area"></div>
+    </div>
+  </section>
+
+  <!-- Teacher guide -->
+  <div class="card">
+    <h2>แนวทางใช้สื่อเพื่อยกระดับผลสัมฤทธิ์ (สำหรับครู)</h2>
+    <ul>
+      <li><b>ก่อนเรียน 3–5 นาที:</b> โหมดวอร์มอัพ 1 นาที × 2 รอบ จับเวลาและบันทึกอัตราข้อต่อนาที</li>
+      <li><b>ระหว่างเรียน:</b> ใช้แบบฝึกปรับระดับให้ถึง Lv.3 สำหรับ ป.3 และ Lv.5 สำหรับ ป.6</li>
+      <li><b>หลังเรียน:</b> ทำแบบทดสอบสั้น 10 ข้อ เก็บผลครั้งที่ดีที่สุดของวัน</li>
+      <li><b>สัปดาห์ละครั้ง:</b> ใช้ “โจทย์ภาษา” ให้เด็กอธิบายวิธีคิดปากเปล่า 1 ข้อ/คน (เน้นทักษะอธิบาย)</li>
+    </ul>
+    <div class="info">
+      <b>ไอเดียใช้ AI สร้างสื่อเพิ่ม:</b>
+      <div class="mono">“ช่วยสร้างโจทย์ภาษา ป.3 เรื่องเงิน 10 ข้อ แบบค่าตัวเลขสุ่ม ชี้วัด ท 1.1 ข ระบุเฉลยและวิธีคิดสั้น ๆ ให้ด้วย”
+“สร้างแฟลชการ์ดสูตรคูณ 7 แบบสลับลำดับ พร้อมคำใบ้ทางลัด”
+“ออกข้อสอบ ป.6 เรื่องร้อยละ 15 ข้อ ระดับง่าย-กลาง-ยาก (5-5-5) พร้อมเฉลยละเอียดและวิเคราะห์ตัวลวง”</div>
+    </div>
+  </div>
+
+</div>
+
+<footer class="wrap">เวอร์ชันตัวอย่างสำหรับครู • เก็บข้อมูลในเครื่อง • ปรับแก้/คัดลอกได้อิสระ</footer>
+
+<script>
+// ------- Utilities -------
+const $ = (id)=>document.getElementById(id);
+const store = {
+  get(k, d){ try{ return JSON.parse(localStorage.getItem(k)) ?? d; }catch(e){return d;} },
+  set(k, v){ localStorage.setItem(k, JSON.stringify(v)); }
+};
+const fmt = (n)=>Number(n).toLocaleString('th-TH');
+
+function updateKPI(){
+  const g3 = store.get('g3_warm_best', {rate:0,acc:0});
+  const g6 = store.get('g6_warm_best', {rate:0,acc:0});
+  const g3q = store.get('g3_quiz_best', {score:0});
+  const g6q = store.get('g6_quiz_best', {score:0});
+  $('kpi').innerHTML = `
+    <div>ป.3 อัตราสูงสุด: <b>${fmt(g3.rate||0)}</b> ข้อต่อนาที (<span class="ok">${Math.round((g3.acc||0)*100)}%</span>)</div>
+    <div>ป.6 อัตราสูงสุด: <b>${fmt(g6.rate||0)}</b> ข้อต่อนาที (<span class="ok">${Math.round((g6.acc||0)*100)}%</span>)</div>
+    <div>ป.3 แบบทดสอบดีที่สุด: <b>${fmt(g3q.score||0)}</b>/10</div>
+    <div>ป.6 แบบทดสอบดีที่สุด: <b>${fmt(g6q.score||0)}</b>/10</div>
+  `;
+}
+updateKPI();
+
+// ------- Tabs -------
+document.querySelectorAll('.tab').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    document.querySelectorAll('.tab').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    const t = btn.dataset.tab;
+    document.querySelectorAll('section').forEach(s=>s.classList.add('hide'));
+    $(t).classList.remove('hide');
+  });
+});
+
+// ------- Random helpers -------
+const rand=(a,b)=>Math.floor(Math.random()*(b-a+1))+a;
+function pick(arr){ return arr[rand(0,arr.length-1)]; }
+
+// ------- Warm-up generator -------
+const warmState = {
+  g3:{timer:null,time:60,left:60,correct:0,wrong:0,ans:0,topic:'addsub'},
+  g6:{timer:null,time:60,left:60,correct:0,wrong:0,ans:'',topic:'multid'}
+};
+
+function genWarmQ(grade){
+  let q='', ans;
+  if(grade==='g3'){
+    const tp = $('g3_warm_topic').value;
+    if(tp==='addsub'){
+      const a=rand(10,999), b=rand(1,999);
+      const op = Math.random()<0.5?'+':'-';
+      ans = op==='+'? a+b : a-b;
+      q = `${a} ${op} ${b} = ?`;
+    }else if(tp==='mult'){
+      const a=rand(2,9), b=rand(2,9);
+      ans = a*b; q = `${a} × ${b} = ?`;
+    }else{ // mix
+      const modes=['addsub','mult']; 
+      $('g3_warm_topic').value = pick(modes);
+      return genWarmQ('g3');
+    }
+    $('g3_warm_q').textContent = q;
+    warmState.g3.ans = ans;
+  }else{
+    const tp = $('g6_warm_topic').value;
+    if(tp==='multid'){
+      const a=rand(12,999), b=rand(12,99);
+      ans = a*b; q = `${a} × ${b} = ?`;
+    }else if(tp==='dec'){
+      const a=(rand(10,999)/10).toFixed(1)*1;
+      const b=(rand(10,999)/10).toFixed(1)*1;
+      const ops=['+','-','×']; const op = pick(ops);
+      if(op==='+') ans = +(a+b).toFixed(1);
+      else if(op==='-') ans = +(a-b).toFixed(1);
+      else ans = +(a*b).toFixed(1);
+      q = `${a} ${op} ${b} = ?`;
+    }else if(tp==='frac'){
+      const d = pick([4,5,6,8,10,12]);
+      const a = rand(1,d-1), b = rand(1,d-1);
+      ans = a+b; q = `${a}/${d} + ${b}/${d} = ? (ตอบเป็นเศษส่วน: เช่น ${a+b}/${d})`;
+      warmState.g6.ans = `${ans}/${d}`;
+      $('g6_warm_q').textContent = q;
+      return;
+    }else if(tp==='est'){
+      const a=rand(100,999), b=rand(100,999);
+      ans = Math.round((a+b)/100)*100;
+      q = `ประมาณค่าใกล้เคียงร้อย: ${a} + ${b} ≈ ?`;
+    }else{ // mix
+      const modes=['multid','dec','frac','est'];
+      $('g6_warm_topic').value = pick(modes);
+      return genWarmQ('g6');
+    }
+    $('g6_warm_q').textContent = q;
+    warmState.g6.ans = ans;
+  }
+}
+
+function startWarm(grade){
+  const st = warmState[grade];
+  st.time = +$(grade+'_warm_time').value || 60;
+  st.left = st.time; st.correct=0; st.wrong=0;
+  $(grade+'_warm_c').textContent = 0;
+  $(grade+'_warm_w').textContent = 0;
+  $(grade+'_warm_t').textContent = st.left;
+  $(grade+'_warm_r').textContent = 0;
+  genWarmQ(grade);
+  clearInterval(st.timer);
+  st.timer = setInterval(()=>{
+    st.left--; $(grade+'_warm_t').textContent = st.left;
+    if(st.left<=0){ clearInterval(st.timer); finishWarm(grade); }
+  },1000);
+  $(grade+'_warm_a').focus();
+}
+
+function finishWarm(grade){
+  const st = warmState[grade];
+  const rate = Math.round((st.correct+st.wrong)/(st.time/60));
+  const acc = (st.correct>0)? st.correct/(st.correct+st.wrong) : 0;
+  $(grade+'_warm_r').textContent = rate;
+  // save best
+  const best = store.get(grade+'_warm_best', {rate:0,acc:0});
+  if(rate>best.rate){ store.set(grade+'_warm_best',{rate,acc}); }
+  updateKPI();
+}
+
+function submitWarm(grade){
+  const st = warmState[grade];
+  if(st.left<=0) return;
+  const inp = $(grade+'_warm_a').value.trim();
+  const ok = (''+inp) === (''+st.ans);
+  if(ok){ st.correct++; $(grade+'_warm_c').textContent = st.correct; }
+  else{ st.wrong++; $(grade+'_warm_w').textContent = st.wrong; }
+  $(grade+'_warm_a').value='';
+  genWarmQ(grade);
+}
+
+function resetWarm(grade){
+  const st = warmState[grade];
+  clearInterval(st.timer);
+  $(grade+'_warm_t').textContent = '—';
+  $(grade+'_warm_q').textContent = 'กดเริ่มเพื่อสุ่มข้อ';
+  $(grade+'_warm_c').textContent = 0;
+  $(grade+'_warm_w').textContent = 0;
+  $(grade+'_warm_r').textContent = 0;
+}
+
+// ------- Adaptive drills -------
+const adaptState = {
+  g3:{level:1,streak:0,hist:[]},
+  g6:{level:2,streak:0,hist:[]}
+};
+function startAdaptive(grade){
+  const lv = +( $(grade+'_lvl').value );
+  adaptState[grade].level = lv;
+  adaptState[grade].streak = 0;
+  adaptState[grade].hist = [];
+  $(grade+'_adapt_level').textContent = 'Lv.'+lv;
+  genAdaptQ(grade);
+  $(grade+'_adapt_a').focus();
+}
+
+function genAdaptQ(grade){
+  let q='', ans;
+  const lv = adaptState[grade].level;
+  if(grade==='g3'){
+    if(lv===1){
+      const a=rand(10,99), b=rand(10,99), op = pick(['+','-']);
+      ans = op==='+'?a+b:a-b; q=`${a} ${op} ${b} = ?`;
+    }else if(lv===2){
+      const a=rand(100,999), b=rand(100,999), op = pick(['+','-']);
+      ans = op==='+'?a+b:a-b; q=`${a} ${op} ${b} = ?`;
+    }else if(lv===3){
+      const a=rand(2,9), b=rand(11,99); ans=a*b; q=`${a} × ${b} = ?`;
+    }else{
+      const a=rand(11,19), b=rand(11,19); ans=a*b; q=`${a} × ${b} = ?`;
+    }
+  }else{ // g6
+    if(lv===2){
+      const a=rand(12,99), b=rand(12,99); ans=a*b; q=`${a} × ${b} = ?`;
+    }else if(lv===3){
+      const a=rand(144,999), b=rand(12,36); ans=Math.floor(a/b); q=`${a} ÷ ${b} = ? (ปัดเศษทิ้ง)`;
+    }else if(lv===4){
+      const a=(rand(100,999)/10).toFixed(1)*1, b=(rand(10,99)/10).toFixed(1)*1;
+      const op=pick(['+','-','×']); 
+      if(op==='+') ans=+(a+b).toFixed(1); else if(op==='-') ans=+(a-b).toFixed(1); else ans=+(a*b).toFixed(1);
+      q=`${a} ${op} ${b} = ?`;
+    }else if(lv===5){
+      const d=pick([6,8,10,12]); const a=rand(1,d-1), b=rand(1,d-1);
+      ans=`${a+b}/${d}`; q=`${a}/${d} + ${b}/${d} = ?`;
+    }else{
+      const a=rand(180,980), b=rand(180,980);
+      const sum=a+b, est=Math.round(sum/100)*100;
+      ans=est; q=`ประมาณค่าใกล้ร้อย: ${a}+${b} ≈ ?`;
+    }
+  }
+  $(grade+'_adapt_q').textContent = q;
+  $(grade+'_adapt_q').dataset.ans = ans;
+}
+
+function submitAdaptive(grade){
+  const inp = $(grade+'_adapt_a').value.trim();
+  const ans = (''+$(grade+'_adapt_q').dataset.ans).trim();
+  const correct = (''+inp) === ans;
+  let st = adaptState[grade];
+  if(correct){ st.streak++; } else { st.streak=0; }
+  $(grade+'_streak').textContent = st.streak;
+  st.hist.push(correct);
+  if(st.hist.length>3) st.hist.shift();
+  const acc = st.hist.length? st.hist.filter(x=>x).length / st.hist.length : 0;
+  $(grade+'_acc').textContent = Math.round(acc*100)+'%';
+  // level up/down rule
+  if(correct && st.streak>=3){ st.level++; st.streak=0; }
+  if(!correct && st.hist.length===3 && st.hist.filter(x=>!x).length>=2){ st.level=Math.max(1,st.level-1); st.streak=0; }
+  $(grade+'_adapt_level').textContent='Lv.'+st.level;
+  $(grade+'_adapt_a').value='';
+  genAdaptQ(grade);
+}
+
+// ------- Word problems -------
+function newWord(grade){
+  let text='', ans=0, unit='';
+  if(grade==='g3'){
+    const tp=$('g3_word_type').value;
+    if(tp==='money'){
+      const price = rand(5,50)*2;
+      const qty = rand(2,9);
+      ans = price*qty; unit='บาท';
+      text = `ขนมราคาชิ้นละ ${price} บาท แพรวซื้อมาจำนวน ${qty} ชิ้น ต้องจ่ายเงินกี่${unit}?`;
+    }else if(tp==='time'){
+      const st=rand(7,10); const dur=rand(20,50);
+      ans = st*60+dur; unit='นาที';
+      text = `เริ่มทำการบ้านเวลา ${st}:00 น. ใช้เวลา ${dur} นาที จะเสร็จภายในกี่${unit}? (ตอบเป็นนาทีทั้งหมด)`;
+    }else{
+      const a=rand(25,80), b=rand(10,40); ans=a+b; unit='เซนติเมตร';
+      text = `เชือกเส้นหนึ่งยาว ${a} ซม. อีกเส้นยาว ${b} ซม. เมื่อนำมาต่อกัน จะยาวกี่${unit}?`;
+    }
+    $('g3_word_q').textContent=text;
+    $('g3_word_q').dataset.ans=''+ans;
+    $('g3_word_q').dataset.unit=unit;
+  }else{
+    const tp=$('g6_word_type').value;
+    if(tp==='ratio'){
+      const a=rand(2,6), b=rand(2,6);
+      const total=a+b; const part=a; ans = Math.round((part/total)*100);
+      unit='%';
+      text=`ในชั้นมีนักเรียนชายต่อหญิงเป็นอัตราส่วน ${a}:${b} นักเรียนชายคิดเป็นกี่เปอร์เซ็นต์ของทั้งชั้น? (ปัดเป็นจำนวนเต็ม)`;
+    }else if(tp==='percent'){
+      const base=rand(200,900); const p=pick([5,8,10,12,15,20,25]);
+      ans = Math.round(base*p/100); unit='บาท';
+      text=`ราคาสินค้า ${base} บาท ลด ${p}% จะลดไปกี่${unit}?`;
+    }else{
+      const speed=rand(30,60); const time=rand(2,5);
+      ans = speed*time; unit='กิโลเมตร';
+      text=`รถวิ่งด้วยความเร็วเฉลี่ย ${speed} กม./ชม. เป็นเวลา ${time} ชม. จะเดินทางได้กี่${unit}?`;
+    }
+    $('g6_word_q').textContent=text;
+    $('g6_word_q').dataset.ans=''+ans;
+    $('g6_word_q').dataset.unit=unit;
+  }
+}
+
+function submitWord(grade){
+  const q = $(grade+'_word_q');
+  const ans = q.dataset.ans;
+  const unit = q.dataset.unit || '';
+  const input = $(grade+'_word_a').value.trim();
+  const correct = (''+input) === (''+ans);
+  const fb = correct? `<span class="ok">ถูกต้อง!</span> ${ans} ${unit}` : `<span class="ng">ยังไม่ถูก</span> คำตอบคือ <b>${ans} ${unit}</b>`;
+  $(grade+'_word_feedback').innerHTML = fb;
+}
+
+// ------- Quick quiz -------
+function startQuiz(grade,n=10){
+  const area = $(grade+'_quiz_area');
+  const qs = [];
+  for(let i=0;i<n;i++){ qs.push(makeQuizItem(grade)); }
+  area.innerHTML = '';
+  qs.forEach((q,idx)=>{
+    const div=document.createElement('div'); div.className='card';
+    div.innerHTML = `<h3>ข้อ ${idx+1}</h3><div class="problem">${q.text}</div>
+      <div class="row"><input type="text" id="${grade}_q_${idx}" placeholder="คำตอบ">
+      <span class="muted">หน่วย: ${q.unit||'-'}</span></div>
+      <div id="${grade}_fb_${idx}" class="muted"></div>`;
+    area.appendChild(div);
+  });
+  const btn=document.createElement('button'); btn.className='good'; btn.textContent='ตรวจคำตอบ';
+  btn.onclick=()=>gradeQuiz(grade,qs);
+  area.appendChild(btn);
+}
+
+function makeQuizItem(grade){
+  // mix of warm/adapt/word styles
+  const types = ['arith','word'];
+  const type = pick(types);
+  if(grade==='g3'){
+    if(type==='arith'){
+      const a=rand(10,999), b=rand(10,999), op=pick(['+','-','×']);
+      let ans=0, text='';
+      if(op==='+'){ ans=a+b; text=`${a}+${b} = ?`; }
+      else if(op==='-'){ ans=a-b; text=`${a}-${b} = ?`; }
+      else { const x=rand(2,9); ans=x*rand(11,19); const b2=ans/x; text=`${x} × ${b2} = ?`; ans=x*b2; }
+      return {text, ans:''+ans};
+    }else{
+      const price=rand(5,30)*3, qty=rand(2,9), ans=price*qty;
+      return {text:`น้ำผลไม้ราคา ${price} บาท ซื้อ ${qty} ขวด ต้องจ่ายเท่าไร?`, ans:''+ans, unit:'บาท'};
+    }
+  }else{
+    if(type==='arith'){
+      const mode=pick(['mult','div','dec','frac']);
+      if(mode==='mult'){ const a=rand(12,199), b=rand(12,19); return {text:`${a} × ${b} = ?`, ans:''+(a*b)}; }
+      if(mode==='div'){ const b=rand(12,19); const a=b*rand(12,99); return {text:`${a} ÷ ${b} = ?`, ans:''+(a/b)}; }
+      if(mode==='dec'){ const a=(rand(100,999)/10).toFixed(1)*1, b=(rand(10,99)/10).toFixed(1)*1; const op=pick(['+','-']); const ans=op==='+'?+(a+b).toFixed(1):+(a-b).toFixed(1); return {text:`${a} ${op} ${b} = ?`, ans:''+ans}; }
+      if(mode==='frac'){ const d=pick([6,8,10,12]); const a=rand(1,d-1), b=rand(1,d-1); return {text:`${a}/${d} + ${b}/${d} = ?`, ans:`${a+b}/${d}`}; }
+    }else{
+      const p=pick([10,12,15,20,25]); const base=rand(300,900); const ans=Math.round(base*p/100);
+      return {text:`ลดราคา ${p}% จาก ${base} บาท ลดไปกี่บาท?`, ans:''+ans, unit:'บาท'};
+    }
+  }
+}
+
+function gradeQuiz(grade,qs){
+  let score=0;
+  qs.forEach((q,idx)=>{
+    const val = $(`${grade}_q_${idx}`).value.trim();
+    const ok = (''+val)===(''+q.ans);
+    if(ok) score++;
+    $(`${grade}_fb_${idx}`).innerHTML = ok? '<span class="ok">ถูกต้อง</span>' : `<span class="ng">ยังไม่ถูก</span> คำตอบ: <b>${q.ans}</b>`;
+  });
+  alert(`คุณได้ ${score}/${qs.length}`);
+  const best=store.get(grade+'_quiz_best',{score:0});
+  if(score>best.score){ store.set(grade+'_quiz_best',{score}); }
+  updateKPI();
+}
+
+// Enter key handler
+['g3_warm_a','g6_warm_a','g3_adapt_a','g6_adapt_a','g3_word_a','g6_word_a'].forEach(id=>{
+  const el=$(id);
+  el && el.addEventListener('keydown',(e)=>{ if(e.key==='Enter'){ el.nextElementSibling?.click(); } });
+});
+</script>
+</body>
+</html>
