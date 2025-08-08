@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>สรุปแนวทางการจัดการเรียนรู้ตามกลุ่มนักเรียน</title>
+  <style>
+    :root{--bg:#f6f7fb;--card:#ffffff;--accent:#2563eb;--muted:#6b7280}
+    body{font-family: "Segoe UI", Roboto, "Noto Sans Thai", sans-serif; background:var(--bg); color:#111; margin:0; padding:24px}
+    .wrap{max-width:980px;margin:0 auto}
+    header{display:flex;align-items:center;gap:16px;margin-bottom:18px}
+    header h1{font-size:20px;margin:0}
+    .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px}
+    .card{background:var(--card);padding:14px;border-radius:10px;box-shadow:0 1px 6px rgba(16,24,40,0.06)}
+    .card h3{margin:0 0 8px 0;font-size:16px}
+    .chip{display:inline-block;padding:6px 10px;border-radius:20px;background:#eef2ff;color:#1e3a8a;font-weight:600;font-size:13px}
+    ul{padding-left:18px;margin:8px 0}
+    li{margin:6px 0}
+    .section{margin-top:18px}
+    .table{width:100%;border-collapse:collapse;margin-top:8px}
+    .table th,.table td{border:1px solid #e6e7ee;padding:8px;text-align:left;font-size:14px}
+    .muted{color:var(--muted);font-size:13px}
+    footer{margin-top:18px;color:var(--muted);font-size:13px}
+    @media (max-width:520px){header{flex-direction:column;align-items:flex-start}}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="chip">สรุปแบบย่อ</div>
+      <h1>แนวทางการจัดการเรียนรู้ตามกลุ่ม: เก่ง — กลาง — อ่อน — เด็กพิเศษ</h1>
+    </header>
+
+    <div class="cards">
+      <div class="card">
+        <h3>กลุ่มนักเรียน: เก่ง</h3>
+        <p class="muted">ลักษณะ: เข้าใจเร็ว สนใจใฝ่รู้</p>
+        <ul>
+          <li>ขยายความรู้ (Enrichment): โครงงาน, งานวิจัยสั้น</li>
+          <li>บทบาทผู้นำ: เป็นหัวหน้ากลุ่ม, ติวเพื่อน</li>
+          <li>โจทย์ท้าทาย: เน้นการคิดระดับสูง (วิเคราะห์ สังเคราะห์)</li>
+          <li>ส่งเข้าร่วมการแข่งขัน/กิจกรรมสร้างสรรค์</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <h3>กลุ่มนักเรียน: ปานกลาง</h3>
+        <p class="muted">ลักษณะ: เข้าใจตามมาตรฐาน ต้องการฝึกฝน</p>
+        <ul>
+          <li>ฝึกปฏิบัติซ้ำ และสื่อหลากหลาย (คลิป เกม ใบงาน)</li>
+          <li>งานแบบมีโครง (Scaffolded) ค่อย ๆ ลดการช่วยเหลือ</li>
+          <li>จับกลุ่มผสมเพื่อเรียนรู้ร่วมกัน</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <h3>กลุ่มนักเรียน: อ่อน</h3>
+        <p class="muted">ลักษณะ: เข้าใจช้า ต้องการเวลาและกำลังใจ</p>
+        <ul>
+          <li>สอนซ้ำ/สอนเสริมแบบตัวต่อตัวหรือกลุ่มเล็ก</li>
+          <li>แบ่งเนื้อหาเป็นส่วนย่อย (Chunking)</li>
+          <li>กิจกรรมจับต้องได้ (Hands-on) และประเมินไม่กดดัน</li>
+          <li>ชมเชยทันทีเมื่อมีพัฒนาการ</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <h3>กลุ่ม: เด็กพิเศษ</h3>
+        <p class="muted">(ความต้องการจำเป็นพิเศษทางการเรียน/พฤติกรรม/ร่างกาย)</p>
+        <ul>
+          <li>จัดแผนการเรียนเฉพาะบุคคล (IEP)</li>
+          <li>สื่อและอุปกรณ์เฉพาะทาง, เวลายืดหยุ่น</li>
+          <li>ร่วมมือครูการศึกษาพิเศษและผู้ปกครอง</li>
+          <li>ให้มีส่วนร่วมในกิจกรรมปกติเพื่อไม่ให้แยกตัว</li>
+        </ul>
+      </div>
+    </div>
+
+    <section class="section card">
+      <h3>เทคนิคข้ามกลุ่ม (ใช้ได้กับทุกกลุ่ม)</h3>
+      <ul>
+        <li>การสอนแบบ Differentiated Instruction: ปรับเนื้อหา กระบวนการ ผลลัพธ์</li>
+        <li>Active Learning: นักเรียนมีส่วนร่วม ลงมือทำ</li>
+        <li>หมุนเวียนฐานกิจกรรม (Learning Stations) ตามความเร็วของแต่ละคน</li>
+        <li>Peer Learning: ให้นักเรียนสอน/ช่วยเหลือกัน</li>
+        <li>ประเมินหลากหลายวิธี ไม่พึ่งคะแนนเพียงอย่างเดียว</li>
+      </ul>
+    </section>
+
+    <section class="section card">
+      <h3>ตัวอย่างแผนการสอนย่อ (1 คาบ)</h3>
+      <table class="table">
+        <thead>
+          <tr><th>ช่วงเวลา</th><th>กิจกรรมสำหรับเก่ง</th><th>กิจกรรมสำหรับกลาง</th><th>กิจกรรมสำหรับอ่อน/พิเศษ</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>10 นาที (นำเข้าสู่บทเรียน)</td>
+            <td>ตั้งโจทย์ท้าทายสั้น ๆ</td>
+            <td>ยกตัวอย่างและวัตถุประสงค์ชัดเจน</td>
+            <td>ทบทวนพื้นฐานด้วยภาพ/ของจริง</td>
+          </tr>
+          <tr>
+            <td>25 นาที (ปฏิบัติ)</td>
+            <td>งานกลุ่มสำรวจ/ขยายความ</td>
+            <td>แบบฝึกทีละขั้นตอน</td>
+            <td>กิจกรรมจับต้องได้ และครูช่วยใกล้ชิด</td>
+          </tr>
+          <tr>
+            <td>10 นาที (สรุป)</td>
+            <td>ทำโพสเตอร์/สรุปเชิงวิเคราะห์</td>
+            <td>สรุปเป็นข้อสั้น ๆ</td>
+            <td>ชี้จุดก้าวหน้า และให้การบ้านที่ทำได้</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <footer>
+      หากต้องการให้ผมแปลงเป็นแผนการสอน 1 บทเป็นไฟล์ดาวน์โหลดหรือปรับให้ละเอียดขึ้น บอกหัวข้อ/ระดับชั้นมาได้เลย
+    </footer>
+  </div>
+</body>
+</html>
