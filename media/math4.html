@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <title>สอนบวก ลบ คูณ หาร — แสดงแบบ Markdown (จัดตรงหลัก)</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    body { font-family: "Noto Sans Thai", system-ui, -apple-system, Segoe UI, Roboto, sans-serif; background:#f7fbff; color:#222; margin:0; }
+    header { background:#77d0ff; padding:18px 20px; text-align:center; font-weight:700; font-size:22px; }
+    main { max-width:980px; margin: 20px auto 80px; padding: 0 16px; }
+    .card { background:#fff; border-radius:14px; box-shadow:0 6px 20px rgba(0,0,0,.07); padding:20px; margin-bottom:18px; }
+    .row { display:flex; gap:10px; flex-wrap:wrap; align-items:center; }
+    input[type="text"] { flex:1; min-width:260px; padding:12px 14px; font-size:18px; border-radius:10px; border:2px solid #e6f3ff; outline:none; }
+    input[type="text"]:focus { border-color:#77d0ff; }
+    button { padding:12px 16px; border:0; border-radius:10px; font-size:16px; cursor:pointer; }
+    .primary { background:#00b894; color:#fff; }
+    .ghost { background:#eef7ff; color:#055; }
+    .danger { background:#ff7675; color:#fff; }
+    .hint { color:#666; font-size:14px; margin-top:6px; }
+    .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Noto Sans Mono", monospace; }
+    pre { background:#0f172a; color:#e2e8f0; padding:16px; border-radius:12px; overflow:auto; }
+    .grid { display:grid; grid-template-columns: 1fr; gap:14px; }
+    @media (min-width:860px){ .grid { grid-template-columns: 1fr 1fr; } }
+    .error{ color:#d63031; font-weight:700; }
+  </style>
+</head>
+<body>
+  <header>สอนบวก · ลบ · คูณ · หาร — แสดงผลเป็น Markdown (จัดตรงหลักเหมือนในสมุด)</header>
+  <main>
+    <div class="card">
+      <div class="row">
+        <input id="expr" type="text" placeholder="เช่น 15*2, 38+47, 503-178, 84/3">
+        <button class="primary" onclick="render()">เฉลย (แสดงเป็น Markdown)</button>
+        <button class="ghost" onclick="example()">สุ่มตัวอย่าง</button>
+        <button class="ghost" onclick="copyMD()">คัดลอก Markdown</button>
+        <button class="ghost" onclick="downloadMD()">ดาวน์โหลด .md</button>
+      </div>
+      <div class="hint">รูปแบบ: <b>จำนวนเต็มบวก</b> <code>+ - * /</code> <b>จำนวนเต็มบวก</b></div>
+    </div>
+
+    <div class="grid">
+      <div class="card">
+        <h3>ตัวอย่าง Markdown</h3>
+        <pre class="mono"><code id="mdOut">พิมพ์โจทย์ แล้วกด “เฉลย” เพื่อดูรูปแบบ Markdown พร้อมการจัดวางตัวเลขตรงหลัก</code></pre>
+      </div>
+      <div class="card">
+        <h3>คำอธิบายทีละขั้น</h3>
+        <pre class="mono"><code id="stepOut">คำอธิบายจะปรากฏที่นี่</code></pre>
+      </div>
+    </div>
+  </main>
+
+<script>
+function example(){
+  const ex = ["15*2","38+47","503-178","84/3","126*4","90-57","72/8","999+1","345*23"];
+  document.getElementById('expr').value = ex[Math.floor(Math.random()*ex.length)];
+  render();
+}
+function copyMD(){
+  const text = document.getElementById('mdOut').textContent;
+  navigator.clipboard.writeText(text);
+  alert('คัดลอก Markdown แล้ว!');
+}
+function downloadMD(){
+  const text = document.getElementById('mdOut').textContent;
+  const blob = new Blob([text], {type: 'text/markdown'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'arithmetic_steps.md';
+  a.click();
+  URL.revokeObjectURL(a.href);
+}
+function render(){
+  const raw = (document.getElementById('expr').value||'').trim();
+  const m = raw.match(/^(\d+)\s*([+\-*/])\s*(\d+)$/);
+  if(!m){
+    setMD('❌ รูปแบบไม่ถูกต้อง\\n\\nตัวอย่าง: 15*2, 38+47, 503-178, 84/3');
+    setSteps('');
+    return;
+  }
+  const a=m[1], op=m[2], b=m[3];
+  let md='', steps='';
+  switch(op){
+    case '+': md = mdAdd(a,b); steps = stepsAdd(a,b); break;
+    case '-': md = mdSub(a,b); steps = stepsSub(a,b); break;
+    case '*': md = mdMul(a,b); steps = stepsMul(a,b); break;
+    case '/': md = mdDiv(a,b); steps = stepsDiv(a,b); break;
+  }
+  setMD(md); setSteps(steps);
+}
+function setMD(s){ document.getElementById('mdOut').textContent = s; }
+function setSteps(s){ document.getElementById('stepOut').textContent = s; }
+
+/* ---------- Utilities ---------- */
+function padLeft(s, n){ return ' '.repeat(Math.max(0, n - s.length)) + s; }
+function toDigitsRev(s){ return s.split('').reverse().map(x=>parseInt(x,10)); }
+function padZeros(arr,len){ while(arr.length<len) arr.push(0); return arr; }
+function placeName(i){ return ['หน่วย','สิบ','ร้อย','พัน','หมื่น','แสน'][i]||`หลักที่ ${i}`; }
+
+/* ---------- Markdown Layout Builders ---------- */
+function mdAdd(a,b){
+  const res = (BigInt(a)+BigInt(b)).toString();
+  const w = Math.max(a.length, b.length+2, res.length);
+  const l1 = padLeft(a, w);
+  const l2 = padLeft('+ '+b, w);
+  const sep = padLeft('-'.repeat(Math.max(b.length+2, a.length, res.length)), w);
+  const l3 = padLeft(res, w);
+  return ['### ✏️ บวกตั้งคอลัมน์','','```',l1,l2,sep,l3,'```',''].join('\n');
+}
+function mdSub(a,b){
+  if(BigInt(a)<BigInt(b)) return 'ตอนนี้รองรับตัวตั้งมากกว่าตัวลบเท่านั้น';
+  const res = (BigInt(a)-BigInt(b)).toString();
+  const w = Math.max(a.length, b.length+2, res.length);
+  const l1 = padLeft(a, w);
+  const l2 = padLeft('- '+b, w);
+  const sep = padLeft('-'.repeat(Math.max(b.length+2, a.length, res.length)), w);
+  const l3 = padLeft(res, w);
+  return ['### ✏️ ลบแบบยืม','','```',l1,l2,sep,l3,'```',''].join('\n');
+}
+function mdMul(a,b){
+  // choose longer as top
+  let top=a, bot=b; if(a.length<b.length){ top=b; bot=a; }
+  const parts = [];
+  const U = toDigitsRev(bot);
+  for(let i=0;i<U.length;i++){
+    const val = (BigInt(top)*BigInt(U[i])).toString() + '0'.repeat(i);
+    parts.push(val);
+  }
+  const res = (BigInt(a)*BigInt(b)).toString();
+  const w = Math.max(top.length, bot.length+2, res.length, ...parts.map(s=>s.length));
+  const l1 = padLeft(top, w);
+  const l2 = padLeft('x '+bot, w);
+  const sep1 = padLeft('-'.repeat(Math.max(bot.length+2, top.length)), w);
+  const lines = [ '### ✏️ คูณแตกหลัก','','```', l1, l2, sep1 ];
+  if(parts.length===1){
+    lines.push(padLeft(parts[0], w));
+  }else{
+    for(const p of parts){ lines.push(padLeft(p, w)); }
+    lines.push(padLeft('-'.repeat(Math.max(res.length, parts[parts.length-1].length)), w));
+  }
+  lines.push(padLeft(res, w),'```','');
+  return lines.join('\n');
+}
+function mdDiv(a,b){
+  const A = BigInt(a), B = BigInt(b);
+  if(B===0n) return 'หารด้วยศูนย์ไม่ได้';
+  let cur=0n, q='';
+  for(let i=0;i<a.length;i++){
+    cur=cur*10n+BigInt(a[i]);
+    if(cur<B){ if(q!=='') q+='0'; continue; }
+    const qd = cur / B;
+    q += qd.toString();
+    cur -= qd*B;
+  }
+  const rem = cur;
+  // ใช้รูปแบบย่อสำหรับ md
+  return [
+    '### ✏️ หารยาว (แบบย่อ)',
+    '',
+    '```',
+    `โจทย์: ${a} ÷ ${b}`,
+    `ผลลัพธ์: ${q}${rem>0n? ` ... เศษ ${rem}`:''}`,
+    '```',''
+  ].join('\n');
+}
+
+/* ---------- Step Explain (Thai) ---------- */
+function stepsAdd(sa,sb){
+  const A=toDigitsRev(sa),B=toDigitsRev(sb),n=Math.max(A.length,B.length);
+  padZeros(A,n); padZeros(B,n);
+  let c=0,res=['📌 อธิบายการบวก'];
+  for(let i=0;i<n;i++){
+    const sum=A[i]+B[i]+c;
+    res.push(`- หลัก${placeName(i)}: ${A[i]} + ${B[i]}${c?` + ทด ${c}`:''} = ${sum}${sum>=10?` → เขียน ${sum%10} ทด ${Math.floor(sum/10)}`:` → เขียน ${sum}`}`);
+    c=Math.floor(sum/10);
+  }
+  if(c>0) res.push(`- เหลือทด ${c} เขียนต่อหน้า`);
+  res.push(`✅ คำตอบ: ${BigInt(sa)+BigInt(sb)}`);
+  return res.join('\n');
+}
+function stepsSub(sa,sb){
+  if(BigInt(sa)<BigInt(sb)) return 'ตอนนี้สาธิตกรณีตัวตั้ง ≥ ตัวลบเท่านั้น';
+  const A=toDigitsRev(sa),B=toDigitsRev(sb),n=Math.max(A.length,B.length);
+  padZeros(A,n); padZeros(B,n);
+  let res=['📌 อธิบายการลบ (ยืม)'];
+  for(let i=0;i<n;i++){
+    if(A[i]<B[i]){
+      let j=i+1; while(j<n && A[j]===0){ j++; }
+      for(let k=j;k>i;k--){ if(A[k]===0) A[k]=9; else {A[k]--; break;} }
+      A[i]+=10;
+      res.push(`- ยืม: ทำให้หลัก${placeName(i)} กลายเป็น ${A[i]}`);
+    }
+    res.push(`- หลัก${placeName(i)}: ${A[i]} - ${B[i]} = ${A[i]-B[i]}`);
+  }
+  res.push(`✅ คำตอบ: ${BigInt(sa)-BigInt(sb)}`);
+  return res.join('\n');
+}
+function stepsMul(sa,sb){
+  let top=sa,bot=sb; if(sa.length<sb.length){ top=sb; bot=sa; }
+  const T=toDigitsRev(top),U=toDigitsRev(bot);
+  let res=['📌 อธิบายการคูณแตกหลัก'];
+  for(let i=0;i<U.length;i++){
+    let carry=0, explain=[];
+    for(let j=0;j<T.length;j++){
+      const prod=U[i]*T[j]+carry;
+      explain.push(`${U[i]}×${T[j]}${carry?` + ทด ${carry}`:''} = ${prod}${prod>=10?` → เขียน ${prod%10} ทด ${Math.floor(prod/10)}`:''}`);
+      carry=Math.floor(prod/10);
+    }
+    if(carry>0) explain.push(`ท้ายแถว ทดค้าง ${carry} → เขียนต่อท้าย`);
+    res.push(`- แถวคูณด้วย ${U[i]} (${placeName(i)}):\n  · `+explain.join('\n  · '));
+  }
+  res.push(`✅ คำตอบ: ${BigInt(sa)*BigInt(sb)}`);
+  return res.join('\n');
+}
+function stepsDiv(sa,sb){
+  const A=BigInt(sa),B=BigInt(sb);
+  if(B===0n) return 'หารด้วยศูนย์ไม่ได้';
+  let cur=0n, q=[], res=['📌 อธิบายการหารยาว'];
+  for(let i=0;i<sa.length;i++){
+    const digit = BigInt(sa[i]);
+    cur = cur*10n + digit;
+    if(cur < B){
+      if(q.length>0){ q.push(0); res.push(`- ดึง "${sa[i]}" ลงมา → ${cur} น้อยกว่า ${B} ⇒ ใส่ 0`); }
+      else { res.push(`- เริ่มด้วย "${sa[i]}" → ${cur} ยังน้อยกว่า ${B}`); }
+      continue;
+    }
+    const qd = cur / B;
+    const prod = qd * B;
+    const rem = cur - prod;
+    q.push(Number(qd));
+    res.push(`- ${cur} ÷ ${B} = ${qd} (เพราะ ${qd}×${B}=${prod}) เหลือเศษ ${rem}`);
+    cur = rem;
+  }
+  const qq = q.join('') || '0';
+  if(cur>0n) res.push(`✅ คำตอบ: ${qq} ... เศษ ${cur}`);
+  else res.push(`✅ คำตอบ: ${qq}`);
+  return res.join('\n');
+}
+</script>
+</body>
+</html>
