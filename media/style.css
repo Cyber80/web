@@ -1,0 +1,52 @@
+
+body {
+    font-family: 'Comic Sans MS', sans-serif;
+    background-color: #f0f8ff;
+    margin: 0;
+    padding: 0;
+}
+header {
+    background-color: #ffcc70;
+    padding: 20px;
+    text-align: center;
+}
+header h1 {
+    margin: 0;
+    color: #333;
+}
+nav {
+    background-color: #fdd87e;
+    display: flex;
+    justify-content: center;
+    padding: 10px 0;
+}
+nav a {
+    margin: 0 15px;
+    text-decoration: none;
+    font-weight: bold;
+    color: #444;
+    background: #fff0c1;
+    padding: 8px 15px;
+    border-radius: 8px;
+    transition: background 0.3s;
+}
+nav a:hover {
+    background: #fffacd;
+}
+main {
+    padding: 20px;
+    text-align: center;
+}
+footer {
+    background-color: #ffe4b5;
+    text-align: center;
+    padding: 10px;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+}
+img.hero {
+    max-width: 300px;
+    display: block;
+    margin: 0 auto;
+}

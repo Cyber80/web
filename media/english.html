@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <title>Easy English Vocabulary</title>
+    <link rel="stylesheet" href="style.css">
+        <style>
+        body { font-family: Arial, sans-serif; line-height: 1.6; padding: 20px; }
+        h1 { color: #2a8; }
+        .word { font-size: 1.2em; margin-top: 20px; }
+        .sentence { margin-left: 20px; color: #555; }
+        button { margin-left: 10px; }
+    </style>
+</head>
+<body>
+    <nav>
+        <a href="index.html">หน้าแรก</a>
+        <a href="thai.html">ภาษาไทย</a>
+        <a href="english.html">ภาษาอังกฤษ</a>
+        <a href="math.html">คณิตศาสตร์</a>
+    </nav>
+
+    <h1>Easy Vocabulary and Sentences</h1>
+
+    <div class="word">1. Cat
+        <button onclick="speak('Cat')">🔊</button>
+        <div class="sentence">This is a cat. <button onclick="speak('This is a cat')">🔊</button></div>
+    </div>
+
+    <div class="word">2. Dog
+        <button onclick="speak('Dog')">🔊</button>
+        <div class="sentence">The dog is big. <button onclick="speak('The dog is big')">🔊</button></div>
+    </div>
+
+    <div class="word">3. Apple
+        <button onclick="speak('Apple')">🔊</button>
+        <div class="sentence">I eat an apple. <button onclick="speak('I eat an apple')">🔊</button></div>
+    </div>
+
+    <div class="word">4. Book
+        <button onclick="speak('Book')">🔊</button>
+        <div class="sentence">This is my book. <button onclick="speak('This is my book')">🔊</button></div>
+    </div>
+
+    <div class="word">5. Chair
+        <button onclick="speak('Chair')">🔊</button>
+        <div class="sentence">I sit on a chair. <button onclick="speak('I sit on a chair')">🔊</button></div>
+    </div>
+
+    <script>
+        function speak(text) {
+            const msg = new SpeechSynthesisUtterance(text);
+            msg.lang = 'en-US';
+            window.speechSynthesis.speak(msg);
+        }
+    </script>
+
+    <footer>
+        <p>ตัวอย่าง : โครงการยกระดับผลสัมฤทธิ์ โรงเรียน A &copy; 2025</p>
+    </footer>
+</body>
+</html>
