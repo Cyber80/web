@@ -1,0 +1,168 @@
+
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Read • English Practice</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<header class="header">
+  <h1>อ่าน Read</h1>
+  <nav>
+    <a href="index.html">หน้าแรก</a>
+    <a href="speak.html">พูด Speak</a>
+    <a href="write.html">เขียน Write</a>
+  </nav>
+</header>
+
+<div class="container">
+  <div class="card">
+    <h3>แฟลชการ์ดคำศัพท์</h3>
+    <div class="grid cols-2">
+      <div>
+        <label>หมวด:</label>
+        <select id="category" class="input"></select>
+      </div>
+      <div>
+        <label>ระดับชั้น:</label>
+        <select id="level" class="input">
+          <option>P1-3</option>
+          <option>P4-6</option>
+        </select>
+      </div>
+    </div>
+    <div class="flashcard" id="flash">Click ▶ Speak เพื่อฟัง</div>
+    <div style="margin-top:10px; display:flex; gap:10px; flex-wrap:wrap;">
+      <button class="btn" id="prev">← Prev</button>
+      <button class="btn secondary" id="speak">▶ Speak</button>
+      <button class="btn" id="next">Next →</button>
+      <span class="badge" id="counter">0 / 0</span>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>ประโยคสั้น ๆ</h3>
+    <div class="grid cols-2">
+      <div>
+        <p id="sentence" style="font-size:1.4rem; font-weight:700;">—</p>
+        <div style="display:flex; gap:10px;">
+          <button class="btn secondary" id="speakSentence">▶ ฟังประโยค</button>
+          <button class="btn" id="newSentence">สุ่มประโยค</button>
+        </div>
+      </div>
+      <div>
+        <p class="small">Tip: ให้เด็กอ่านทีละคำ ใช้นิ้วไล่คำ <span class="kbd">Space</span> เพื่อสุ่มประโยคใหม่</p>
+        <div class="progress"><div id="readProg"></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>บทอ่านสั้น (Short Passage)</h3>
+    <div class="grid cols-2">
+      <select id="passLevel" class="input">
+        <option>P1-3</option>
+        <option>P4-6</option>
+      </select>
+      <button class="btn secondary" id="speakPass">▶ อ่านให้ฟังทั้งหมด</button>
+    </div>
+    <p id="passage" style="font-size:1.2rem; line-height:1.8;">—</p>
+  </div>
+</div>
+
+<footer>© 2025 Learning Kit</footer>
+
+<script src="js/data.js"></script>
+<script type="module">
+import { speak, shuffle, saveProgress, loadProgress } from './js/utils.js';
+
+const levelSel = document.getElementById('level');
+const catSel = document.getElementById('category');
+const flashEl = document.getElementById('flash');
+const counter = document.getElementById('counter');
+const btnPrev = document.getElementById('prev');
+const btnNext = document.getElementById('next');
+const btnSpeak = document.getElementById('speak');
+
+const sentenceEl = document.getElementById('sentence');
+const speakSentenceBtn = document.getElementById('speakSentence');
+const newSentenceBtn = document.getElementById('newSentence');
+const readProg = document.getElementById('readProg');
+
+const passLevelSel = document.getElementById('passLevel');
+const passageEl = document.getElementById('passage');
+const speakPassBtn = document.getElementById('speakPass');
+
+const savedLevel = loadProgress('eng_level','P1-3');
+levelSel.value = savedLevel;
+passLevelSel.value = savedLevel;
+
+function loadCategories(){
+  const lv = levelSel.value;
+  catSel.innerHTML = '';
+  let cats = [];
+  if (lv==='P1-3'){
+    cats = ['sightWords','phonicsCVC','animals','colors','verbs'];
+  } else {
+    cats = ['vocab'];
+  }
+  for (const c of cats){
+    const opt = document.createElement('option');
+    opt.value = c; opt.textContent = c;
+    catSel.appendChild(opt);
+  }
+}
+loadCategories();
+
+let list = [];
+let idx = 0;
+function refreshList(){
+  const lv = levelSel.value;
+  const cat = catSel.value;
+  const raw = lv==='P1-3' ? WORD_BANK[lv][cat] : WORD_BANK[lv]['vocab'];
+  list = shuffle(raw.slice());
+  idx = 0; renderCard();
+}
+function renderCard(){
+  if (list.length===0){ flashEl.textContent = '—'; counter.textContent='0 / 0'; return; }
+  flashEl.textContent = list[idx];
+  counter.textContent = (idx+1) + ' / ' + list.length;
+}
+levelSel.addEventListener('change', ()=>{ saveProgress('eng_level', levelSel.value); loadCategories(); refreshList(); });
+catSel.addEventListener('change', refreshList);
+btnPrev.addEventListener('click', ()=>{ idx = (idx-1+list.length)%list.length; renderCard(); });
+btnNext.addEventListener('click', ()=>{ idx = (idx+1)%list.length; renderCard(); });
+btnSpeak.addEventListener('click', ()=> speak(list[idx]));
+
+refreshList();
+
+// sentences
+let sentCount = 0;
+function newSentence(){
+  const lv = levelSel.value;
+  const arr = WORD_BANK[lv].sentences;
+  const s = arr[Math.floor(Math.random()*arr.length)];
+  sentenceEl.textContent = s;
+  sentCount++;
+  readProg.style.width = Math.min(100, sentCount*10) + '%';
+}
+newSentence();
+speakSentenceBtn.addEventListener('click', ()=> speak(sentenceEl.textContent));
+newSentenceBtn.addEventListener('click', newSentence);
+document.addEventListener('keydown', (e)=>{ if (e.code==='Space'){ e.preventDefault(); newSentence(); }});
+
+// passage
+function loadPassage(){
+  const lv = passLevelSel.value;
+  const arr = PASSAGES[lv];
+  const s = arr[Math.floor(Math.random()*arr.length)];
+  passageEl.textContent = s;
+}
+passLevelSel.addEventListener('change', loadPassage);
+speakPassBtn.addEventListener('click', ()=> speak(passageEl.textContent));
+loadPassage();
+</script>
+</body>
+</html>

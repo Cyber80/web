@@ -1,0 +1,57 @@
+
+:root{
+  --bg: #f6fbff;
+  --card: #ffffff;
+  --primary: #2a7ade;
+  --accent: #ffb703;
+  --text: #123;
+  --muted: #667;
+}
+
+* { box-sizing: border-box; }
+html, body {
+  margin:0; padding:0; font-family: ui-sans-serif, system-ui, "Noto Sans Thai", Arial;
+  color: var(--text); background: var(--bg);
+}
+.header {
+  background: linear-gradient(135deg, var(--primary), #5aa0ff);
+  color:#fff; padding: 18px 20px;
+}
+.header h1{ margin: 0; font-size: 1.6rem; }
+nav a{
+  color:#fff; margin-right: 14px; text-decoration:none; font-weight:600;
+}
+.container{ max-width: 980px; margin: 20px auto; padding: 0 16px; }
+.card{
+  background: var(--card); border-radius: 12px; padding: 16px; box-shadow: 0 6px 16px rgba(0,0,0,.06);
+  margin-bottom: 16px;
+}
+.grid{
+  display:grid; gap:12px;
+}
+@media(min-width:720px){ .grid.cols-2{ grid-template-columns: 1fr 1fr; } .grid.cols-3{ grid-template-columns: repeat(3, 1fr);} }
+
+.btn{
+  border:none; background: var(--primary); color:white; padding:10px 14px; border-radius: 10px;
+  cursor:pointer; font-weight:700;
+}
+.btn.secondary{ background: var(--accent); color:#123; }
+.btn.ghost{ background: transparent; border:2px solid var(--primary); color: var(--primary); }
+.badge{ display:inline-block; background:#eef3ff; color:#245; padding:2px 10px; border-radius:999px; font-size: .85rem; }
+
+.input, textarea{
+  width: 100%; padding:10px 12px; border:1px solid #dde3f0; border-radius:10px; font-size:1rem;
+}
+
+.flashcard{
+  display:flex; align-items:center; justify-content:center; height:160px; border:2px dashed #dbe7ff; border-radius:12px; font-size:2rem; font-weight:800; background:#fff;
+}
+.kbd{ font-family: ui-monospace, SFMono-Regular, Menlo, monospace; background:#eef; padding:2px 6px; border-radius:6px; }
+footer{ font-size:.9rem; color:var(--muted); padding: 18px; text-align:center;}
+.small{ font-size:.9rem; color:var(--muted); }
+hr{ border:none; height:1px; background:#eef; margin:14px 0; }
+
+.progress{
+  height:10px; background:#e8efff; border-radius:999px; overflow:hidden;
+}
+.progress > div{ height:100%; background: var(--primary); width: 0%; transition: width .3s; }

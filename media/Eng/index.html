@@ -1,0 +1,77 @@
+
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>English Practice • Primary</title>
+  <link rel="stylesheet" href="css/style.css">
+  <meta name="description" content="ชุดสื่อฝึกอ่าน-พูด-เขียนภาษาอังกฤษสำหรับประถม (P1-6).">
+</head>
+<body>
+<header class="header">
+  <h1>English Practice • Primary (P1–6)</h1>
+  <nav>
+    <a href="read.html">อ่าน Read</a>
+    <a href="speak.html">พูด Speak</a>
+    <a href="write.html">เขียน Write</a>
+  </nav>
+</header>
+
+<div class="container">
+  <div class="card">
+    <h2>สื่อฝึกภาษาอังกฤษสำหรับนักเรียนประถม</h2>
+    <p>เน้น <strong>อ่าน (Read)</strong>, <strong>พูด (Speak)</strong>, และ <strong>เขียน (Write)</strong> พร้อมเสียงอ่านอัตโนมัติ (TTS). ใช้ได้บนเบราว์เซอร์ทั่วไป ไม่ต้องต่ออินเทอร์เน็ตเพิ่ม.</p>
+    <div class="grid cols-3">
+      <div>
+        <h3>อ่าน Read</h3>
+        <p>แฟลชการ์ด คำศัพท์พื้นฐาน ประโยคง่าย และบทอ่านสั้น ๆ พร้อมปุ่มฟังเสียง.</p>
+        <a class="btn" href="read.html">เริ่มฝึก</a>
+      </div>
+      <div>
+        <h3>พูด Speak</h3>
+        <p>กดฟังประโยคและลองพูดตาม ถ้าเบราว์เซอร์รองรับจะตรวจจับคำพูดและให้คะแนนคร่าว ๆ</p>
+        <a class="btn secondary" href="speak.html">เริ่มพูด</a>
+      </div>
+      <div>
+        <h3>เขียน Write</h3>
+        <p>แบบฝึก <em>Dictation</em> ฟังแล้วพิมพ์ และเรียงประโยคให้ถูกต้อง มีเฉลยและคะแนน.</p>
+        <a class="btn ghost" href="write.html">เริ่มเขียน</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>เลือกระดับชั้น</h3>
+    <p>เลือกเนื้อหาให้เหมาะกับช่วงชั้น:</p>
+    <div>
+      <label><input type="radio" name="level" value="P1-3" checked> P1–P3 (พื้นฐาน/เริ่มต้น)</label>
+      <br>
+      <label><input type="radio" name="level" value="P4-6"> P4–P6 (เริ่มสร้างประโยค/สื่อสาร)</label>
+    </div>
+    <p class="small">ระบบจะจำการเลือกระดับชั้นไว้ในเบราว์เซอร์เครื่องนี้</p>
+  </div>
+
+  <div class="card">
+    <h3>วิธีใช้ในชั้นเรียน</h3>
+    <ul>
+      <li><strong>5 นาทีเปิดคลาส:</strong> แฟลชการ์ดคำศัพท์วันละ 10 คำ</li>
+      <li><strong>10 นาทีฝึกพูด:</strong> ฟัง–พูดตาม 5 ประโยค (ใช้ลำโพง/หูฟัง)</li>
+      <li><strong>10 นาทีฝึกเขียน:</strong> ทำ Dictation 3 ข้อ และเรียงประโยค 2 ข้อ</li>
+    </ul>
+  </div>
+</div>
+
+<footer>© 2025 Learning Kit • CC BY 4.0 • ใช้ได้อิสระ ปรับแก้ได้</footer>
+
+<script type="module">
+  import { saveProgress, loadProgress } from './js/utils.js';
+  const key = 'eng_level';
+  const saved = loadProgress(key, 'P1-3');
+  document.querySelectorAll('input[name=level]').forEach(el=>{
+    if (el.value===saved) el.checked = true;
+    el.addEventListener('change', ()=> saveProgress(key, el.value));
+  });
+</script>
+</body>
+</html>

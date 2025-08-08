@@ -1,0 +1,120 @@
+
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Speak • English Practice</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<header class="header">
+  <h1>พูด Speak</h1>
+  <nav>
+    <a href="index.html">หน้าแรก</a>
+    <a href="read.html">อ่าน Read</a>
+    <a href="write.html">เขียน Write</a>
+  </nav>
+</header>
+
+<div class="container">
+  <div class="card">
+    <h3>Listen & Repeat</h3>
+    <p class="small">กด ▶ เพื่อฟัง แล้วพูดตาม (ถ้ารองรับจะบันทึกเสียงและให้คะแนนคร่าว ๆ)</p>
+    <div class="grid cols-2">
+      <div>
+        <label>ระดับชั้น:</label>
+        <select id="level" class="input"><option>P1-3</option><option>P4-6</option></select>
+        <p id="target" style="font-size:1.6rem; font-weight:800; min-height:2.2em;">—</p>
+        <div style="display:flex; gap:10px; flex-wrap:wrap;">
+          <button class="btn secondary" id="listen">▶ ฟัง</button>
+          <button class="btn" id="next">สุ่มประโยคใหม่</button>
+          <button class="btn" id="record">🎤 พูด</button>
+        </div>
+      </div>
+      <div>
+        <p><strong>ผลลัพธ์:</strong> <span id="result">—</span></p>
+        <div class="progress"><div id="scoreBar"></div></div>
+        <p class="small">คะแนนคำนวณจาก <em>Word Error Rate</em> (WER) แบบง่าย ๆ ไว้เป็นแนวทาง</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Question & Answer (P4–P6)</h3>
+    <div class="grid cols-2">
+      <div>
+        <p id="qaQ" style="font-size:1.2rem; font-weight:700;">—</p>
+        <button class="btn secondary" id="qaListen">▶ ฟังคำถาม</button>
+      </div>
+      <div>
+        <p><strong>คำตอบตัวอย่าง:</strong> <span id="qaA">—</span></p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer>© 2025 Learning Kit</footer>
+
+<script src="js/data.js"></script>
+<script type="module">
+import { speak, startRecognition, hasSpeechRecognition, wordErrorRate, saveProgress, loadProgress } from './js/utils.js';
+
+const levelSel = document.getElementById('level');
+const targetEl = document.getElementById('target');
+const listenBtn = document.getElementById('listen');
+const nextBtn = document.getElementById('next');
+const recBtn = document.getElementById('record');
+const resultEl = document.getElementById('result');
+const scoreBar = document.getElementById('scoreBar');
+
+const savedLevel = loadProgress('eng_level','P1-3');
+levelSel.value = savedLevel;
+
+function pickSentence(){
+  const lv = levelSel.value;
+  const arr = WORD_BANK[lv].sentences;
+  const s = arr[Math.floor(Math.random()*arr.length)];
+  targetEl.textContent = s;
+}
+pickSentence();
+
+listenBtn.addEventListener('click', ()=> speak(targetEl.textContent));
+nextBtn.addEventListener('click', pickSentence);
+levelSel.addEventListener('change', ()=>{ saveProgress('eng_level', levelSel.value); pickSentence(); });
+
+recBtn.addEventListener('click', ()=>{
+  if (!hasSpeechRecognition()){
+    alert('เบราว์เซอร์นี้ยังไม่รองรับการรู้จำเสียง (Speech Recognition). ใช้โหมดฟังแล้วพูดตามได้');
+    return;
+  }
+  resultEl.textContent = 'Listening...';
+  startRecognition({
+    lang: 'en-US',
+    onResult: (text)=>{
+      const ref = targetEl.textContent;
+      const wer = wordErrorRate(ref, text);
+      const score = Math.max(0, Math.round((1-wer)*100));
+      scoreBar.style.width = score + '%';
+      resultEl.textContent = `You said: "${text}" → Score: ${score}%`;
+    },
+    onEnd: ()=>{}
+  });
+});
+
+// QA block (P4-6)
+const qaQ = document.getElementById('qaQ');
+const qaA = document.getElementById('qaA');
+const qaListen = document.getElementById('qaListen');
+
+function newQA(){
+  const qa = WORD_BANK['P4-6'].questionPatterns;
+  const item = qa[Math.floor(Math.random()*qa.length)];
+  qaQ.textContent = item.q;
+  qaA.textContent = item.a;
+}
+newQA();
+qaListen.addEventListener('click', ()=> speak(qaQ.textContent));
+</script>
+</body>
+</html>

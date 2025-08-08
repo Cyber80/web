@@ -1,0 +1,137 @@
+
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Write • English Practice</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<header class="header">
+  <h1>เขียน Write</h1>
+  <nav>
+    <a href="index.html">หน้าแรก</a>
+    <a href="read.html">อ่าน Read</a>
+    <a href="speak.html">พูด Speak</a>
+  </nav>
+</header>
+
+<div class="container">
+  <div class="card">
+    <h3>Dictation (ฟังแล้วพิมพ์)</h3>
+    <div class="grid cols-2">
+      <div>
+        <label>ระดับชั้น:</label>
+        <select id="level" class="input"><option>P1-3</option><option>P4-6</option></select>
+        <p id="dictText" class="small">—</p>
+        <div style="display:flex; gap:10px; flex-wrap:wrap;">
+          <button class="btn secondary" id="play">▶ ฟังอีกครั้ง</button>
+          <button class="btn" id="new">สุ่มประโยค</button>
+        </div>
+      </div>
+      <div>
+        <textarea id="answer" rows="3" class="input" placeholder="พิมพ์ที่นี่..."></textarea>
+        <div style="margin-top:10px; display:flex; gap:10px;">
+          <button class="btn" id="check">ตรวจคำตอบ</button>
+          <button class="btn ghost" id="show">เฉลย</button>
+        </div>
+        <p id="feedback" class="small">—</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>เรียงคำให้เป็นประโยค (Jumble)</h3>
+    <p class="small">ลากการ์ดให้ถูกลำดับ</p>
+    <div id="cards" class="grid cols-3"></div>
+    <div style="margin-top:10px; display:flex; gap:10px;">
+      <button class="btn" id="newJ">สุ่มใหม่</button>
+      <button class="btn secondary" id="checkJ">ตรวจ</button>
+    </div>
+    <p id="fbJ" class="small">—</p>
+  </div>
+</div>
+
+<footer>© 2025 Learning Kit</footer>
+
+<script src="js/data.js"></script>
+<script type="module">
+import { speak, shuffle, normalize } from './js/utils.js';
+
+const levelSel = document.getElementById('level');
+const dictText = document.getElementById('dictText');
+const playBtn = document.getElementById('play');
+const newBtn = document.getElementById('new');
+const answer = document.getElementById('answer');
+const checkBtn = document.getElementById('check');
+const showBtn = document.getElementById('show');
+const feedback = document.getElementById('feedback');
+
+const cards = document.getElementById('cards');
+const newJ = document.getElementById('newJ');
+const checkJ = document.getElementById('checkJ');
+const fbJ = document.getElementById('fbJ');
+
+function pickSentence(){
+  const lv = levelSel.value;
+  const arr = WORD_BANK[lv].sentences;
+  const s = arr[Math.floor(Math.random()*arr.length)];
+  dictText.textContent = s;
+}
+pickSentence();
+
+playBtn.addEventListener('click', ()=> speak(dictText.textContent));
+newBtn.addEventListener('click', pickSentence);
+checkBtn.addEventListener('click', ()=>{
+  const ok = normalize(answer.value) === normalize(dictText.textContent);
+  feedback.textContent = ok ? 'ถูกต้อง! Great job.' : 'ยังไม่ถูก ลองฟังและตรวจอีกครั้ง';
+});
+showBtn.addEventListener('click', ()=>{
+  answer.value = dictText.textContent;
+  feedback.textContent = 'นี่คือเฉลย ลองฟังแล้วพิมพ์ตามอีกครั้ง';
+});
+
+// Jumble
+let target = '';
+function buildJumble(){
+  const lv = levelSel.value;
+  const s = WORD_BANK[lv].sentences[Math.floor(Math.random()*WORD_BANK[lv].sentences.length)];
+  target = s;
+  const words = shuffle(s.replace(/[.?!]/g,'').split(' '));
+  cards.innerHTML = '';
+  words.forEach(w=>{
+    const el = document.createElement('div');
+    el.textContent = w;
+    el.className = 'card';
+    el.draggable = true;
+    el.addEventListener('dragstart', (e)=> e.dataTransfer.setData('text/plain', w));
+    el.addEventListener('dragover', (e)=> e.preventDefault());
+    el.addEventListener('drop', (e)=> {
+      e.preventDefault();
+      const dragged = e.dataTransfer.getData('text/plain');
+      if (!dragged) return;
+      // swap text
+      const from = dragged;
+      const to = e.currentTarget.textContent;
+      e.currentTarget.textContent = from;
+      const src = [...cards.children].find(c=>c!==e.currentTarget && c.textContent===from);
+      if (src) src.textContent = to;
+    });
+    cards.appendChild(el);
+  });
+}
+buildJumble();
+
+newJ.addEventListener('click', buildJumble);
+checkJ.addEventListener('click', ()=>{
+  const your = [...cards.children].map(c=>c.textContent).join(' ') + target.match(/[.?!]$/)?.[0] ?? '';
+  if (normalize(your) === normalize(target)){
+    fbJ.textContent = 'เรียงถูกต้อง! Excellent.';
+  } else {
+    fbJ.textContent = 'ยังสลับคำอยู่ ลองใหม่ครับ';
+  }
+});
+</script>
+</body>
+</html>
