@@ -1,8 +1,9 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-    <meta charset="UTF-8">
-    <title>ฝึกอ่าน เขียน พูด ภาษาไทย</title>
+  <meta charset="UTF-8">
+  <title>สื่อฝึกอ่านภาษาไทย (ประถม) — ครบชุด</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -15,13 +16,328 @@
         <a href="english.html">ภาษาอังกฤษ</a>
         <a href="math.html">คณิตศาสตร์</a>
     </nav>
-    <main>
-        <h2>ฝึกอ่าน เขียน พูด ภาษาไทย</h2>
-        <p>ฝึกอ่าน เขียน พูด ภาษาไทย</p>
-        <img src="https://cdn.pixabay.com/photo/2016/03/31/19/14/children-1299365_1280.png" class="hero" alt="เด็กนักเรียน" />
-    </main>
+
+  <style>
+    :root{
+      --bg:#f7fbff;
+      --primary:#ffaf45;
+      --accent:#63b3ed;
+      --good:#00c853;
+      --warn:#ff7043;
+      --ink:#1f2937;
+      --card:#ffffff;
+    }
+    *{box-sizing:border-box}
+    body{font-family:"Noto Sans Thai", system-ui, -apple-system, Segoe UI, Roboto, sans-serif; background:var(--bg); color:var(--ink); margin:0}
+    header{background:linear-gradient(90deg,#ffd36e,var(--primary)); padding:18px; text-align:center; font-weight:700; font-size:22px}
+    main{max-width:1100px; margin:18px auto 88px; padding:0 14px}
+    .grid{display:grid; grid-template-columns:1fr; gap:16px}
+    @media(min-width:1000px){ .grid{grid-template-columns:1fr 1fr} }
+    .card{background:var(--card); border-radius:16px; box-shadow:0 8px 24px rgba(0,0,0,.06); padding:16px}
+    h2{margin:6px 0 12px 0; font-size:20px}
+    .badge{display:inline-block; padding:4px 10px; border-radius:999px; background:#fff3; color:#222; margin-left:8px; font-size:12px}
+    button{border:0; border-radius:10px; padding:10px 14px; cursor:pointer; font-size:16px}
+    .btn{background:#fff; border:2px solid #eee}
+    .btn.primary{background:var(--accent); color:#fff; border:0}
+    .btn.success{background:var(--good); color:#fff}
+    .btn.warn{background:var(--warn); color:#fff}
+    .wrap{display:flex; gap:10px; flex-wrap:wrap; align-items:center}
+    .pill{padding:8px 12px; border-radius:999px; background:#f1f5f9; border:1px solid #e2e8f0; cursor:pointer}
+    .pill.active{background:#e0f2fe; border-color:#90cdf4}
+    .big{font-size:28px; font-weight:700}
+    .cards{display:grid; grid-template-columns:repeat(auto-fill,minmax(120px,1fr)); gap:10px}
+    .tile{background:#fff7ed; border:2px solid #ffd7ae; border-radius:14px; padding:16px; text-align:center; cursor:pointer; transition:.2s}
+    .tile:hover{transform:translateY(-2px)}
+    .tile .ch{font-size:40px; font-weight:900}
+    .tile small{display:block; color:#6b7280}
+    .row{display:flex; gap:10px; flex-wrap:wrap; align-items:center}
+    .input{padding:10px 12px; border-radius:10px; border:2px solid #e5e7eb; font-size:18px; min-width:220px}
+    .mono{font-family:ui-monospace,Menlo,Consolas,monospace}
+    .result{padding:10px 12px; border-radius:10px; background:#f1f5f9; border:1px dashed #cbd5e1}
+    .word{display:inline-flex; align-items:center; gap:8px; padding:10px 12px; border-radius:12px; background:#e0f2fe; margin:6px; font-weight:700; font-size:20px; cursor:pointer}
+    .syl{display:inline-block; padding:6px 8px; border-radius:8px; background:#fff; border:1px solid #bae6fd; margin:2px; min-width:28px; text-align:center}
+    .bar{height:8px; background:#e2e8f0; border-radius:999px; overflow:hidden}
+    .bar > i{display:block; height:100%; width:0; background:linear-gradient(90deg,#93c5fd,#60a5fa)}
+    .mt8{margin-top:8px}
+    .mt12{margin-top:12px}
+    .mt16{margin-top:16px}
+    footer{position:fixed; left:0; right:0; bottom:0; background:#eef2ff; padding:10px 16px; text-align:center; font-size:13px; color:#334155}
+  </style>
+</head>
+<body>
+  <header>สื่อฝึกอ่านภาษาไทย — ชั้นประถม (ครบชุด: ก-ฮ, ผสมสระ, คำพื้นฐาน, ประโยค, พูดตามครู)</header>
+  <main>
+    <div class="grid">
+      <!-- A. บัตรคำพยัญชนะไทย พร้อมเสียง -->
+      <section class="card">
+        <h2>ก ไก่ ถึง ฮ นกฮูก <span class="badge">ฝึกฟัง-อ่านพยัญชนะ</span></h2>
+        <div class="wrap mt8">
+          <button class="btn" onclick="prevSet()">⬅️ ชุดก่อนหน้า</button>
+          <div id="setName" class="pill active">ก-ง</div>
+          <button class="btn" onclick="nextSet()">ชุดถัดไป ➡️</button>
+          <button class="btn primary" onclick="speakSet()">🔊 อ่านทั้งชุด</button>
+        </div>
+        <div id="consonantGrid" class="cards mt12"></div>
+      </section>
+
+      <!-- B. ผสมสระ + พยัญชนะ เป็นพยางค์ -->
+      <section class="card">
+        <h2>ผสมสระกับพยัญชนะ <span class="badge">อ่านทีละพยางค์</span></h2>
+        <div class="row mt8">
+          <label>พยัญชนะ:</label>
+          <select id="cons" class="input">
+            <option>ก</option><option>ข</option><option>ค</option><option>ง</option><option>จ</option><option>ช</option><option>ต</option><option>น</option><option>บ</option><option>ป</option><option>ม</option><option>ร</option><option>ล</option><option>ส</option><option>ห</option>
+          </select>
+          <label>สระ:</label>
+          <select id="vowel" class="input">
+            <option value="◌ะ">ะ (เสียงสั้น)</option>
+            <option value="◌า">า</option>
+            <option value="◌ิ">ิ</option>
+            <option value="◌ี">ี</option>
+            <option value="◌ุ">ุ</option>
+            <option value="◌ู">ู</option>
+            <option value="เ◌ะ">เ◌ะ</option>
+            <option value="เ◌">เ◌</option>
+            <option value="แ◌ะ">แ◌ะ</option>
+            <option value="แ◌">แ◌</option>
+            <option value="โ◌ะ">โ◌ะ</option>
+            <option value="โ◌">โ◌</option>
+            <option value="เ◌า">เ◌า</option>
+            <option value="เ◌าะ">เ◌าะ</option>
+            <option value="◌อ">◌อ</option>
+          </select>
+          <button class="btn primary" onclick="makeSyllable()">ผสม</button>
+          <button class="btn" onclick="speakWord()">🔊 อ่าน</button>
+        </div>
+        <div id="syllableArea" class="mt12 big"></div>
+        <div class="mt8">แยกส่วน:</div>
+        <div id="syllableBreak" class="mt8"></div>
+      </section>
+
+      <!-- C. แบบฝึกอ่านคำพื้นฐาน -->
+      <section class="card">
+        <h2>อ่านคำพื้นฐาน (แม่ ก กา) <span class="badge">เลือกคำแล้วกด 🔊</span></h2>
+        <div id="basicWords" class="wrap"></div>
+        <div class="mt12">
+          <button class="btn primary" onclick="speakSelected()">🔊 อ่านคำที่เลือก</button>
+          <button class="btn" onclick="shuffleWords()">สลับลำดับ</button>
+        </div>
+      </section>
+
+      <!-- D. อ่านประโยคสั้น ๆ พร้อมไฮไลท์ -->
+      <section class="card">
+        <h2>อ่านประโยคสั้น ๆ <span class="badge">มีไฮไลท์ทีละคำ</span></h2>
+        <div class="row">
+          <button class="btn primary" onclick="playSentence()">▶️ เล่นเสียง</button>
+          <button class="btn" onclick="stopSpeech()">⏹ หยุด</button>
+        </div>
+        <div id="sentenceArea" class="mt12 big"></div>
+        <div class="bar mt12"><i id="progress"></i></div>
+      </section>
+
+      <!-- E. พูดตามครู (ทดลองการรู้จำเสียง) -->
+      <section class="card">
+        <h2>พูดตามครู (ทดลอง) <span class="badge">ต้องใช้ Chrome</span></h2>
+        <div class="row">
+          <button class="btn primary" onclick="startRec()">🎤 เริ่มฟัง</button>
+          <button class="btn warn" onclick="stopRec()">หยุดฟัง</button>
+          <div id="recStatus" class="pill">สถานะ: พร้อม</div>
+        </div>
+        <div class="mt12">คำที่ให้พูด: <span id="targetSay" class="word">กา</span>
+          <button class="btn" onclick="newTarget()">สุ่มคำ</button>
+          <button class="btn" onclick="tts(document.getElementById('targetSay').textContent)">🔊 สาธิต</button>
+        </div>
+        <div id="heard" class="result mt12 mono">ยังไม่ได้ยินคำพูด</div>
+      </section>
+    </div>
+  </main>
      <footer>
+        สื่อฝึกอ่านภาษาไทย · ใช้เสียงพูดในบราวเซอร์ (SpeechSynthesis) · รองรับ Chrome/iOS บางรุ่น
         <p>ตัวอย่าง : โครงการยกระดับผลสัมฤทธิ์ โรงเรียน A &copy; 2025</p>
     </footer>
+
+<script>
+/* ---------- A. พยัญชนะไทยพร้อมเสียง ---------- */
+const consonantSets = [
+  {name:"ก-ง", list:["ก ไก่","ข ไข่","ฃ ขวด","ค ควาย","ฅ คน","ฆ ระฆัง","ง งู"]},
+  {name:"จ-ด", list:["จ จาน","ฉ ฉิ่ง","ช ช้าง","ซ โซ่","ฌ เฌอ","ญ หญิง","ฎ ชฎา","ฏ ปฏัก","ฐ ฐาน","ฑ มณโฑ","ฒ ผู้เฒ่า","ณ เณร","ด เด็ก"]},
+  {name:"ต-ถ", list:["ต เต่า","ถ ถุง","ท ทหาร","ธ ธง"]},
+  {name:"น-ผ", list:["น หนู","บ ใบไม้","ป ปลา","ผ ผึ้ง"]},
+  {name:"ฝ-ศ", list:["ฝ ฝา","พ พาน","ฟ ฟัน","ภ สำเภา","ม ม้า","ย ยักษ์","ร เรือ","ล ลิง","ว แหวน","ศ ศาลา"]},
+  {name:"ษ-ฮ", list:["ษ ฤๅษี","ส เสือ","ห หีบ","ฬ จุฬา","อ อ่าง","ฮ นกฮูก"]},
+];
+let setIndex = 0;
+function renderConsonants(){
+  const grid = document.getElementById('consonantGrid');
+  grid.innerHTML = '';
+  document.getElementById('setName').textContent = consonantSets[setIndex].name;
+  consonantSets[setIndex].list.forEach(item=>{
+    const [ch, word] = item.split(' ');
+    const el = document.createElement('div');
+    el.className = 'tile';
+    el.innerHTML = `<div class="ch">${ch}</div><small>${item}</small><div class="mt8"><button class="btn primary" onclick="tts('${item}')">🔊 อ่าน</button></div>`;
+    grid.appendChild(el);
+  });
+}
+function prevSet(){ setIndex = (setIndex - 1 + consonantSets.length) % consonantSets.length; renderConsonants(); }
+function nextSet(){ setIndex = (setIndex + 1) % consonantSets.length; renderConsonants(); }
+function speakSet(){
+  const items = consonantSets[setIndex].list;
+  speakQueue(items.map(x=>x));
+}
+
+/* ---------- B. ผสมสระ ---------- */
+function makeSyllable(){
+  const c = document.getElementById('cons').value;
+  const v = document.getElementById('vowel').value;
+  const syl = v.replace('◌', c);
+  const area = document.getElementById('syllableArea');
+  area.textContent = syl;
+  // แยกเป็นส่วนๆ
+  document.getElementById('syllableBreak').innerHTML =
+    `<span class="syl">${v.includes('◌')?c:''}</span> <span class="syl">${v.replace('◌','◌')}</span>`;
+}
+function speakWord(){
+  const w = document.getElementById('syllableArea').textContent || '';
+  if(!w) return;
+  tts(w);
+}
+
+/* ---------- C. คำพื้นฐาน ---------- */
+const words = ["กา","โก","เก","เกา","แก","ไก่","ไก","กอ","กาแฟ","ปลา","ปู","ปา","มา","มือ","ไม้","มี","แมว","โต","โต๊ะ","เต่า","นก","มด","รถ","ลิง","ลม","รอ"];
+let selected = new Set();
+function renderWords(){
+  const area = document.getElementById('basicWords');
+  area.innerHTML='';
+  words.forEach(w=>{
+    const span = document.createElement('span');
+    span.className = 'word';
+    span.textContent = w;
+    span.onclick = ()=>{
+      if(selected.has(w)){ selected.delete(w); span.style.background=''; }
+      else { selected.add(w); span.style.background='#bbf7d0'; }
+    };
+    area.appendChild(span);
+  });
+}
+function speakSelected(){
+  if(selected.size===0){ speakQueue(["ลองเลือกคำ แล้วกด อ่านคำที่เลือก"]); return; }
+  speakQueue(Array.from(selected));
+}
+function shuffleWords(){
+  for(let i=words.length-1;i>0;i--){
+    const j = Math.floor(Math.random()* (i+1));
+    [words[i],words[j]]=[words[j],words[i]];
+  }
+  renderWords();
+}
+
+/* ---------- D. ประโยคสั้น พร้อมไฮไลท์ ---------- */
+const sentences = [
+  "แม่ไปตลาด",
+  "พ่อมีปลา",
+  "มดอยู่บนโต๊ะ",
+  "ลิงกินกล้วย",
+  "นกบินบนฟ้า"
+];
+let sIndex = 0, cancelHighlight=false;
+function playSentence(){
+  cancelHighlight=false;
+  const text = sentences[sIndex];
+  showSentence(text);
+  // อ่านทีละคำ
+  const parts = text.split(' ');
+  const bar = document.getElementById('progress');
+  let i=0;
+  function next(){
+    if(cancelHighlight || i>=parts.length){ bar.style.width='0'; return; }
+    highlightWord(i);
+    tts(parts[i], ()=>{
+      bar.style.width = ((i+1)/parts.length*100)+'%';
+      i++; next();
+    });
+  }
+  next();
+  sIndex = (sIndex+1)%sentences.length;
+}
+function showSentence(text){
+  const area = document.getElementById('sentenceArea');
+  area.innerHTML = '';
+  text.split(' ').forEach((w,idx)=>{
+    const span = document.createElement('span');
+    span.textContent = w;
+    span.className = 'syl';
+    span.id = 'w'+idx;
+    area.appendChild(span);
+  });
+}
+function highlightWord(i){
+  const area = document.getElementById('sentenceArea');
+  Array.from(area.children).forEach(el=>el.style.background='#fff');
+  const el = document.getElementById('w'+i);
+  if(el){ el.style.background='#fde68a'; }
+}
+function stopSpeech(){ cancelHighlight=true; speechSynthesis.cancel(); document.getElementById('progress').style.width='0'; }
+
+/* ---------- E. พูดตามครู (Speech Recognition – ทดลอง) ---------- */
+let rec, recActive=false;
+function startRec(){
+  const Ctor = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if(!Ctor){ document.getElementById('recStatus').textContent = 'สถานะ: อุปกรณ์นี้ยังไม่รองรับการฟังเสียง'; return; }
+  rec = new Ctor();
+  rec.lang = 'th-TH'; rec.continuous = false; rec.interimResults = false;
+  rec.onstart = ()=>{ recActive=true; setRecStatus('กำลังฟัง...'); };
+  rec.onerror = (e)=>{ setRecStatus('มีข้อผิดพลาด'); };
+  rec.onend = ()=>{ recActive=false; setRecStatus('หยุดแล้ว'); };
+  rec.onresult = (e)=>{
+    const txt = e.results[0][0].transcript.trim();
+    document.getElementById('heard').textContent = 'ได้ยินว่า: ' + txt;
+    const target = document.getElementById('targetSay').textContent.trim();
+    if(normalizeThai(txt) === normalizeThai(target)){
+      document.getElementById('heard').textContent += ' ✅ ตรงกัน เยี่ยม!';
+    }else{
+      document.getElementById('heard').textContent += ' ❌ ลองใหม่';
+    }
+  };
+  rec.start();
+}
+function stopRec(){ if(recActive){ rec.stop(); } }
+function setRecStatus(t){ document.getElementById('recStatus').textContent = 'สถานะ: ' + t; }
+function normalizeThai(s){ return s.replace(/\s+/g,'').replace(/[ัิีึุู่้๊๋์ฺ]/g,''); }
+function newTarget(){
+  const w = words[Math.floor(Math.random()*words.length)];
+  document.getElementById('targetSay').textContent = w;
+}
+
+/* ---------- Speech helpers ---------- */
+function tts(text, onend){
+  const u = new SpeechSynthesisUtterance(text);
+  u.lang = 'th-TH';
+  u.rate = 0.95; u.pitch = 1.0;
+  if(onend) u.onend = onend;
+  speechSynthesis.cancel(); // reset queue
+  speechSynthesis.speak(u);
+}
+function speakQueue(arr){
+  if(!arr || arr.length===0) return;
+  let i=0;
+  function speakNext(){
+    const u = new SpeechSynthesisUtterance(arr[i]);
+    u.lang='th-TH'; u.rate=0.95;
+    u.onend=()=>{ i++; if(i<arr.length) speakNext(); };
+    speechSynthesis.speak(u);
+  }
+  speechSynthesis.cancel();
+  speakNext();
+}
+
+/* init */
+renderConsonants();
+renderWords();
+showSentence(sentences[0]);
+</script>
+
+        
+
 </body>
 </html>
