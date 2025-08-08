@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <title>สอนขั้นตอน บวก ลบ คูณ หาร (แบบละเอียด)</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    body { font-family: "Noto Sans Thai", sans-serif; background:#f7fbff; color:#222; margin:0; }
+    header { background:#77d0ff; padding:18px 20px; text-align:center; font-weight:700; font-size:22px; }
+    main { max-width:900px; margin: 20px auto 80px; padding: 0 16px; }
+    .card { background:#fff; border-radius:14px; box-shadow:0 6px 20px rgba(0,0,0,.07); padding:20px; margin-bottom:18px; }
+    .row { display:flex; gap:10px; flex-wrap:wrap; align-items:center; }
+    input[type="text"] { flex:1; min-width:260px; padding:12px 14px; font-size:18px; border-radius:10px; border:2px solid #e6f3ff; outline:none; }
+    input[type="text"]:focus { border-color:#77d0ff; }
+    button { padding:12px 18px; border:0; border-radius:10px; font-size:18px; cursor:pointer; }
+    .primary { background:#00b894; color:#fff; }
+    .ghost { background:#eef7ff; color:#055; }
+    .steps { white-space:pre-wrap; font-size:18px; line-height:1.6; }
+    .mono { font-family: ui-monospace, monospace; }
+    .hint { color:#666; font-size:14px; }
+    .error{ color:#d63031; font-weight:700; }
+  </style>
+</head>
+<body>
+  <header>สอนขั้นตอน บวก · ลบ · คูณ · หาร — เห็นทุกขั้นตอนเหมือนทำในสมุด</header>
+  <main>
+    <div class="card">
+      <div class="row">
+        <input id="expr" type="text" placeholder="เช่น 15*2, 38+47, 503-178, 84/3">
+        <button class="primary" onclick="solve()">เฉลยทีละขั้น</button>
+      </div>
+      <div class="hint">พิมพ์รูปแบบ: <b>จำนวน</b> + - * / <b>จำนวน</b> (จำนวนเต็มบวก)</div>
+    </div>
+    <div class="card">
+      <div id="out" class="steps mono">กรอกโจทย์แล้วกด “เฉลยทีละขั้น” เพื่อดูวิธีทำ</div>
+    </div>
+  </main>
+<script>
+function solve(){
+  const out = document.getElementById('out');
+  const raw = (document.getElementById('expr').value||"").trim();
+  const m = raw.match(/^(\d+)\s*([+\-*/])\s*(\d+)$/);
+  if(!m){ out.innerHTML = '<span class="error">❌ รูปแบบไม่ถูกต้อง</span>'; return; }
+  const a = m[1], op = m[2], b = m[3];
+  let text = `โจทย์: ${a} ${op} ${b}\n\n`;
+  switch(op){
+    case '+': text += addSteps(a,b); break;
+    case '-': text += subSteps(a,b); break;
+    case '*': text += mulSteps(a,b); break;
+    case '/': text += divSteps(a,b); break;
+  }
+  out.textContent = text;
+}
+function placeName(i){ return ['หน่วย','สิบ','ร้อย','พัน','หมื่น','แสน'][i]||`หลักที่ ${i}`; }
+function toDigitsRev(s){ return s.split('').reverse().map(Number); }
+function padZeros(arr,len){ while(arr.length<len) arr.push(0); return arr; }
+function addSteps(sa,sb){
+  const A=toDigitsRev(sa),B=toDigitsRev(sb),n=Math.max(A.length,B.length);
+  padZeros(A,n); padZeros(B,n);
+  let c=0,res=[];
+  res.push('✏️ การบวกตั้งคอลัมน์');
+  for(let i=0;i<n;i++){
+    const sum=A[i]+B[i]+c;
+    res.push(`- หลัก${placeName(i)}: ${A[i]}+${B[i]}${c?`+ทด${c}`:''}=${sum}${sum>=10?` → เขียน${sum%10} ทด${Math.floor(sum/10)}`:` → เขียน${sum}`}`);
+    c=Math.floor(sum/10);
+  }
+  if(c>0) res.push(`- เหลือทด ${c} เขียนต่อหน้า`);
+  res.push(`\n✅ คำตอบ: ${BigInt(sa)+BigInt(sb)}`);
+  return res.join('\n');
+}
+function subSteps(sa,sb){
+  if(BigInt(sa)<BigInt(sb)) return 'ตัวตั้งต้องมากกว่าตัวลบ';
+  const A=toDigitsRev(sa),B=toDigitsRev(sb),n=Math.max(A.length,B.length);
+  padZeros(A,n); padZeros(B,n);
+  let res=[]; res.push('✏️ การลบแบบยืม');
+  for(let i=0;i<n;i++){
+    if(A[i]<B[i]){
+      let j=i+1; while(j<n && A[j]===0){ j++; }
+      for(let k=j;k>i;k--){ if(A[k]===0) A[k]=9; else {A[k]--; break;} }
+      A[i]+=10;
+    }
+    res.push(`- หลัก${placeName(i)}: ${A[i]}-${B[i]}=${A[i]-B[i]}`);
+  }
+  res.push(`\n✅ คำตอบ: ${BigInt(sa)-BigInt(sb)}`);
+  return res.join('\n');
+}
+function mulSteps(sa,sb){
+  let top=sa,bot=sb; if(sa.length<sb.length){ top=sb; bot=sa; }
+  const T=toDigitsRev(top),U=toDigitsRev(bot);
+  let res=[]; res.push('✏️ การคูณแตกหลัก');
+  let parts=[];
+  for(let i=0;i<U.length;i++){
+    let carry=0,line=[];
+    for(let j=0;j<T.length;j++){
+      const prod=U[i]*T[j]+carry;
+      line.push(prod%10); carry=Math.floor(prod/10);
+    }
+    if(carry>0) line.push(carry);
+    const val=line.reverse().join('')+'0'.repeat(i);
+    res.push(`- คูณด้วย ${U[i]} (${placeName(i)}) ได้ ${val}`);
+    parts.push(BigInt(val));
+  }
+  if(parts.length>1){ let sum=0n; parts.forEach(p=>sum+=p); res.push(`- บวกผลย่อย = ${sum}`); }
+  res.push(`\n✅ คำตอบ: ${BigInt(sa)*BigInt(sb)}`);
+  return res.join('\n');
+}
+function divSteps(sa,sb){
+  const A=BigInt(sa),B=BigInt(sb);
+  if(B===0n) return 'หารด้วยศูนย์ไม่ได้';
+  let cur=0n,q='',res=[];
+  for(let i=0;i<sa.length;i++){
+    cur=cur*10n+BigInt(sa[i]);
+    if(cur<B){ if(q!=='') q+='0'; continue; }
+    const qd=cur/B; q+=qd.toString(); cur-=qd*B;
+  }
+  res.push(`\n✅ คำตอบ: ${q}${cur>0n?` เศษ ${cur}`:''}`);
+  return res.join('\n');
+}
+</script>
+</body>
+</html>
