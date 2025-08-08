@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <title>แสดงวิธีคิดโจทย์เลข</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/11.11.0/math.min.js"></script>
+  <style>
+    body { font-family: sans-serif; padding: 30px; }
+    input, button { font-size: 16px; padding: 8px; }
+    input { width: 300px; }
+    #steps { margin-top: 20px; font-size: 18px; white-space: pre-wrap; }
+    .example { font-size: 14px; color: gray; margin-top: 5px; }
+  </style>
+</head>
+<body>
+
+  <h2>🔢 กรอกโจทย์เลข เช่น: (2 + 3) * 4</h2>
+  <input id="expression" placeholder="พิมพ์โจทย์ของคุณ...">
+  <button onclick="solve()">เฉลย</button>
+  <div class="example">ตัวอย่าง: 2 + 3 * (4 - 1)</div>
+
+  <div id="steps"></div>
+
+  <script>
+    function solve() {
+      const input = document.getElementById("expression").value;
+      const stepsDiv = document.getElementById("steps");
+
+      try {
+        // แปลงเป็นต้นไม้การคำนวณ
+        const node = math.parse(input);
+        const steps = [];
+
+        // ฟังก์ชันแสดงขั้นตอนจาก parse tree
+        function walk(node) {
+          if (node.type === 'OperatorNode') {
+            const left = walk(node.args[0]);
+            const right = walk(node.args[1]);
+            const result = math.evaluate(`${left} ${node.op} ${right}`);
+            steps.push(`✏️ คำนวณ: ${left} ${node.op} ${right} = ${result}`);
+            return result;
+          } else {
+            return node.toString();
+          }
+        }
+
+        // เริ่มการเดิน
+        const result = walk(node);
+        steps.push(`\n✅ คำตอบสุดท้าย: ${result}`);
+
+        stepsDiv.innerText = steps.join('\n');
+      } catch (err) {
+        stepsDiv.innerHTML = `<p style="color:red;">❌ รูปแบบโจทย์ไม่ถูกต้อง หรือมีข้อผิดพลาด</p>`;
+      }
+    }
+  </script>
+
+</body>
+</html>
