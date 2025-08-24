@@ -1,0 +1,1160 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ระบบฐานข้อมูล - หลักสูตรมัธยมปลาย</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap');
+        body { font-family: 'Sarabun', sans-serif; }
+        .chapter-card { transition: all 0.3s ease; }
+        .chapter-card:hover { transform: translateY(-5px); }
+        .progress-bar { transition: width 0.5s ease; }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-blue-50 to-indigo-100 min-h-screen">
+    <!-- Header -->
+    <header class="bg-white shadow-lg">
+        <div class="container mx-auto px-6 py-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-lg flex items-center justify-center">
+                        <span class="text-white font-bold text-lg">DB</span>
+                    </div>
+                    <h1 class="text-2xl font-bold text-gray-800">ระบบฐานข้อมูล</h1>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <div class="text-sm text-gray-600">
+                        <span class="font-medium">เวลาเรียน:</span> 40 ชั่วโมง
+                    </div>
+                    <div class="w-32 bg-gray-200 rounded-full h-2">
+                        <div id="overall-progress" class="progress-bar bg-gradient-to-r from-blue-500 to-indigo-600 h-2 rounded-full" style="width: 0%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="container mx-auto px-6 py-8">
+        <!-- Navigation -->
+        <nav class="mb-8">
+            <div class="flex space-x-2 bg-white rounded-lg p-2 shadow-md">
+                <button onclick="showSection('overview')" id="nav-overview" class="nav-btn px-4 py-2 rounded-md font-medium transition-colors bg-blue-500 text-white">ภาพรวม</button>
+                <button onclick="showSection('chapter1')" id="nav-chapter1" class="nav-btn px-4 py-2 rounded-md font-medium transition-colors text-gray-600 hover:bg-gray-100">บทที่ 1</button>
+                <button onclick="showSection('chapter2')" id="nav-chapter2" class="nav-btn px-4 py-2 rounded-md font-medium transition-colors text-gray-600 hover:bg-gray-100">บทที่ 2</button>
+                <button onclick="showSection('chapter3')" id="nav-chapter3" class="nav-btn px-4 py-2 rounded-md font-medium transition-colors text-gray-600 hover:bg-gray-100">บทที่ 3</button>
+                <button onclick="showSection('chapter4')" id="nav-chapter4" class="nav-btn px-4 py-2 rounded-md font-medium transition-colors text-gray-600 hover:bg-gray-100">บทที่ 4</button>
+            </div>
+        </nav>
+
+        <!-- Overview Section -->
+        <div id="overview" class="section">
+            <div class="bg-white rounded-xl shadow-lg p-8 mb-8">
+                <h2 class="text-3xl font-bold text-gray-800 mb-6">หลักสูตรระบบฐานข้อมูล</h2>
+                <p class="text-gray-600 text-lg mb-8">หลักสูตรนี้ออกแบบมาสำหรับนักเรียนมัธยมปลาย เพื่อให้เข้าใจพื้นฐานของระบบฐานข้อมูลและการประยุกต์ใช้ในชีวิตประจำวัน</p>
+                
+                <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <!-- Chapter 1 -->
+                    <div class="chapter-card bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl p-6 text-white cursor-pointer" onclick="showSection('chapter1')">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-xl font-bold">บทที่ 1</h3>
+                            <span class="text-2xl">📚</span>
+                        </div>
+                        <h4 class="font-semibold mb-2">ความรู้เบื้องต้น</h4>
+                        <p class="text-blue-100 text-sm mb-4">แนวคิดและความสำคัญของฐานข้อมูล</p>
+                        <div class="flex justify-between text-sm">
+                            <span>เวลา: 10 ชม.</span>
+                            <span id="progress-ch1">0%</span>
+                        </div>
+                        <div class="w-full bg-blue-400 rounded-full h-1 mt-2">
+                            <div id="bar-ch1" class="progress-bar bg-white h-1 rounded-full" style="width: 0%"></div>
+                        </div>
+                    </div>
+
+                    <!-- Chapter 2 -->
+                    <div class="chapter-card bg-gradient-to-br from-green-500 to-green-600 rounded-xl p-6 text-white cursor-pointer" onclick="showSection('chapter2')">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-xl font-bold">บทที่ 2</h3>
+                            <span class="text-2xl">🏗️</span>
+                        </div>
+                        <h4 class="font-semibold mb-2">การออกแบบฐานข้อมูล</h4>
+                        <p class="text-green-100 text-sm mb-4">ER Diagram และการปกติ</p>
+                        <div class="flex justify-between text-sm">
+                            <span>เวลา: 10 ชม.</span>
+                            <span id="progress-ch2">0%</span>
+                        </div>
+                        <div class="w-full bg-green-400 rounded-full h-1 mt-2">
+                            <div id="bar-ch2" class="progress-bar bg-white h-1 rounded-full" style="width: 0%"></div>
+                        </div>
+                    </div>
+
+                    <!-- Chapter 3 -->
+                    <div class="chapter-card bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl p-6 text-white cursor-pointer" onclick="showSection('chapter3')">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-xl font-bold">บทที่ 3</h3>
+                            <span class="text-2xl">💾</span>
+                        </div>
+                        <h4 class="font-semibold mb-2">SQL พื้นฐาน</h4>
+                        <p class="text-purple-100 text-sm mb-4">คำสั่ง SQL และการจัดการข้อมูล</p>
+                        <div class="flex justify-between text-sm">
+                            <span>เวลา: 12 ชม.</span>
+                            <span id="progress-ch3">0%</span>
+                        </div>
+                        <div class="w-full bg-purple-400 rounded-full h-1 mt-2">
+                            <div id="bar-ch3" class="progress-bar bg-white h-1 rounded-full" style="width: 0%"></div>
+                        </div>
+                    </div>
+
+                    <!-- Chapter 4 -->
+                    <div class="chapter-card bg-gradient-to-br from-orange-500 to-orange-600 rounded-xl p-6 text-white cursor-pointer" onclick="showSection('chapter4')">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-xl font-bold">บทที่ 4</h3>
+                            <span class="text-2xl">🚀</span>
+                        </div>
+                        <h4 class="font-semibold mb-2">การประยุกต์ใช้</h4>
+                        <p class="text-orange-100 text-sm mb-4">โปรเจคและการใช้งานจริง</p>
+                        <div class="flex justify-between text-sm">
+                            <span>เวลา: 8 ชม.</span>
+                            <span id="progress-ch4">0%</span>
+                        </div>
+                        <div class="w-full bg-orange-400 rounded-full h-1 mt-2">
+                            <div id="bar-ch4" class="progress-bar bg-white h-1 rounded-full" style="width: 0%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Chapter 1 -->
+        <div id="chapter1" class="section hidden">
+            <div class="bg-white rounded-xl shadow-lg p-8 mb-6">
+                <div class="flex items-center mb-6">
+                    <span class="text-4xl mr-4">📚</span>
+                    <div>
+                        <h2 class="text-3xl font-bold text-gray-800">บทที่ 1: ความรู้เบื้องต้นเกี่ยวกับฐานข้อมูล</h2>
+                        <p class="text-gray-600">เวลาเรียน: 10 ชั่วโมง</p>
+                    </div>
+                </div>
+
+                <div class="grid lg:grid-cols-3 gap-6">
+                    <div class="lg:col-span-2">
+                        <div class="space-y-6">
+                            <div class="bg-blue-50 rounded-lg p-6">
+                                <h3 class="text-xl font-bold text-blue-800 mb-4">🎯 จุดประสงค์การเรียนรู้</h3>
+                                <ul class="space-y-2 text-gray-700">
+                                    <li class="flex items-start"><span class="text-blue-500 mr-2">•</span>เข้าใจความหมายและความสำคัญของฐานข้อมูล</li>
+                                    <li class="flex items-start"><span class="text-blue-500 mr-2">•</span>แยกแยะประเภทของฐานข้อมูลได้</li>
+                                    <li class="flex items-start"><span class="text-blue-500 mr-2">•</span>เข้าใจองค์ประกอบของระบบฐานข้อมูล</li>
+                                    <li class="flex items-start"><span class="text-blue-500 mr-2">•</span>ยกตัวอย่างการใช้งานฐานข้อมูลในชีวิตประจำวัน</li>
+                                </ul>
+                            </div>
+
+                            <div class="bg-gray-50 rounded-lg p-6">
+                                <h3 class="text-xl font-bold text-gray-800 mb-4">📖 เนื้อหา</h3>
+                                
+                                <div class="space-y-4">
+                                    <div class="border-l-4 border-blue-500 pl-4">
+                                        <h4 class="font-semibold text-lg mb-2">1.1 ความหมายของฐานข้อมูล</h4>
+                                        <p class="text-gray-700 mb-3">ฐานข้อมูล (Database) คือ การจัดเก็บข้อมูลที่มีความสัมพันธ์กันอย่างเป็นระบบ เพื่อให้สามารถค้นหา เพิ่ม แก้ไข และลบข้อมูลได้อย่างมีประสิทธิภาพ</p>
+                                        
+                                        <div class="bg-white rounded-lg p-4 border">
+                                            <h5 class="font-medium mb-2">ตัวอย่างฐานข้อมูลในชีวิตประจำวัน:</h5>
+                                            <ul class="text-sm text-gray-600 space-y-1">
+                                                <li>• ระบบทะเบียนนักเรียนในโรงเรียน</li>
+                                                <li>• ระบบบัญชีธนาคาร</li>
+                                                <li>• ระบบห้องสมุด</li>
+                                                <li>• ระบบร้านค้าออนไลน์</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+
+                                    <div class="border-l-4 border-green-500 pl-4">
+                                        <h4 class="font-semibold text-lg mb-2">1.2 ประเภทของฐานข้อมูล</h4>
+                                        <div class="grid md:grid-cols-2 gap-4">
+                                            <div class="bg-white rounded-lg p-4 border">
+                                                <h5 class="font-medium text-green-700 mb-2">ฐานข้อมูลเชิงสัมพันธ์ (Relational)</h5>
+                                                <p class="text-sm text-gray-600">จัดเก็บข้อมูลในรูปแบบตาราง มีความสัมพันธ์ระหว่างตาราง</p>
+                                                <p class="text-xs text-gray-500 mt-1">เช่น MySQL, PostgreSQL</p>
+                                            </div>
+                                            <div class="bg-white rounded-lg p-4 border">
+                                                <h5 class="font-medium text-blue-700 mb-2">ฐานข้อมูล NoSQL</h5>
+                                                <p class="text-sm text-gray-600">จัดเก็บข้อมูลในรูปแบบที่ยืดหยุ่น ไม่จำเป็นต้องเป็นตาราง</p>
+                                                <p class="text-xs text-gray-500 mt-1">เช่น MongoDB, Firebase</p>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="border-l-4 border-purple-500 pl-4">
+                                        <h4 class="font-semibold text-lg mb-2">1.3 องค์ประกอบของระบบฐานข้อมูล</h4>
+                                        <div class="bg-white rounded-lg p-4 border">
+                                            <div class="grid md:grid-cols-3 gap-4 text-center">
+                                                <div class="p-3 bg-purple-50 rounded-lg">
+                                                    <div class="text-2xl mb-2">💾</div>
+                                                    <h6 class="font-medium">ข้อมูล (Data)</h6>
+                                                    <p class="text-xs text-gray-600">ข้อมูลดิบที่ต้องการจัดเก็บ</p>
+                                                </div>
+                                                <div class="p-3 bg-purple-50 rounded-lg">
+                                                    <div class="text-2xl mb-2">⚙️</div>
+                                                    <h6 class="font-medium">DBMS</h6>
+                                                    <p class="text-xs text-gray-600">ระบบจัดการฐานข้อมูล</p>
+                                                </div>
+                                                <div class="p-3 bg-purple-50 rounded-lg">
+                                                    <div class="text-2xl mb-2">👥</div>
+                                                    <h6 class="font-medium">ผู้ใช้งาน</h6>
+                                                    <p class="text-xs text-gray-600">คนที่เข้าถึงข้อมูล</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="space-y-6">
+                        <div class="bg-yellow-50 rounded-lg p-6">
+                            <h3 class="text-xl font-bold text-yellow-800 mb-4">📝 ใบกิจกรรมที่ 1</h3>
+                            <div class="space-y-4">
+                                <div>
+                                    <h4 class="font-medium mb-2">กิจกรรม: ค้นหาฐานข้อมูลรอบตัว</h4>
+                                    <p class="text-sm text-gray-700 mb-3">ให้นักเรียนระบุตัวอย่างฐานข้อมูลที่พบในชีวิตประจำวัน</p>
+                                    
+                                    <div class="space-y-2">
+                                        <div class="flex items-center space-x-2">
+                                            <input type="checkbox" id="activity1-1" class="activity-checkbox">
+                                            <label for="activity1-1" class="text-sm">ระบบห้องสมุดโรงเรียน</label>
+                                        </div>
+                                        <div class="flex items-center space-x-2">
+                                            <input type="checkbox" id="activity1-2" class="activity-checkbox">
+                                            <label for="activity1-2" class="text-sm">แอปพลิเคชันโซเชียลมีเดีย</label>
+                                        </div>
+                                        <div class="flex items-center space-x-2">
+                                            <input type="checkbox" id="activity1-3" class="activity-checkbox">
+                                            <label for="activity1-3" class="text-sm">ระบบจองตั๋วภาพยนตร์</label>
+                                        </div>
+                                        <div class="flex items-center space-x-2">
+                                            <input type="checkbox" id="activity1-4" class="activity-checkbox">
+                                            <label for="activity1-4" class="text-sm">ระบบคะแนนนักเรียน</label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="border-t pt-4">
+                                    <h4 class="font-medium mb-2">คำถามทบทวน:</h4>
+                                    <div class="space-y-3">
+                                        <div>
+                                            <p class="text-sm mb-1">1. ฐานข้อมูลคืออะไร?</p>
+                                            <textarea class="w-full p-2 border rounded text-sm" rows="2" placeholder="พิมพ์คำตอบที่นี่..."></textarea>
+                                        </div>
+                                        <div>
+                                            <p class="text-sm mb-1">2. ยกตัวอย่างฐานข้อมูลที่คุณใช้ในชีวิตประจำวัน</p>
+                                            <textarea class="w-full p-2 border rounded text-sm" rows="2" placeholder="พิมพ์คำตอบที่นี่..."></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <button onclick="completeActivity(1)" class="w-full bg-yellow-500 hover:bg-yellow-600 text-white font-medium py-2 px-4 rounded-lg transition-colors">
+                                    ส่งใบกิจกรรม
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="bg-green-50 rounded-lg p-6">
+                            <h3 class="text-xl font-bold text-green-800 mb-4">🎮 แบบทดสอบ</h3>
+                            <div id="quiz1" class="space-y-4">
+                                <div>
+                                    <p class="font-medium mb-2">ข้อใดไม่ใช่ประโยชน์ของฐานข้อมูล?</p>
+                                    <div class="space-y-2">
+                                        <label class="flex items-center space-x-2">
+                                            <input type="radio" name="q1" value="a">
+                                            <span class="text-sm">ลดการซ้ำซ้อนของข้อมูล</span>
+                                        </label>
+                                        <label class="flex items-center space-x-2">
+                                            <input type="radio" name="q1" value="b">
+                                            <span class="text-sm">เพิ่มความปลอดภัยของข้อมูล</span>
+                                        </label>
+                                        <label class="flex items-center space-x-2">
+                                            <input type="radio" name="q1" value="c">
+                                            <span class="text-sm">ทำให้ข้อมูลเข้าถึงได้ยาก</span>
+                                        </label>
+                                        <label class="flex items-center space-x-2">
+                                            <input type="radio" name="q1" value="d">
+                                            <span class="text-sm">ช่วยในการตัดสินใจ</span>
+                                        </label>
+                                    </div>
+                                </div>
+                                <button onclick="checkQuiz(1)" class="w-full bg-green-500 hover:bg-green-600 text-white font-medium py-2 px-4 rounded-lg transition-colors">
+                                    ตรวจคำตอบ
+                                </button>
+                                <div id="quiz1-result" class="hidden"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Chapter 2 -->
+        <div id="chapter2" class="section hidden">
+            <div class="bg-white rounded-xl shadow-lg p-8 mb-6">
+                <div class="flex items-center mb-6">
+                    <span class="text-4xl mr-4">🏗️</span>
+                    <div>
+                        <h2 class="text-3xl font-bold text-gray-800">บทที่ 2: การออกแบบฐานข้อมูล</h2>
+                        <p class="text-gray-600">เวลาเรียน: 10 ชั่วโมง</p>
+                    </div>
+                </div>
+
+                <div class="grid lg:grid-cols-3 gap-6">
+                    <div class="lg:col-span-2">
+                        <div class="space-y-6">
+                            <div class="bg-green-50 rounded-lg p-6">
+                                <h3 class="text-xl font-bold text-green-800 mb-4">🎯 จุดประสงค์การเรียนรู้</h3>
+                                <ul class="space-y-2 text-gray-700">
+                                    <li class="flex items-start"><span class="text-green-500 mr-2">•</span>เข้าใจหลักการออกแบบฐานข้อมูล</li>
+                                    <li class="flex items-start"><span class="text-green-500 mr-2">•</span>สร้าง ER Diagram ได้</li>
+                                    <li class="flex items-start"><span class="text-green-500 mr-2">•</span>เข้าใจการปกติของฐานข้อมูล</li>
+                                    <li class="flex items-start"><span class="text-green-500 mr-2">•</span>แปลง ER Diagram เป็นตารางได้</li>
+                                </ul>
+                            </div>
+
+                            <div class="bg-gray-50 rounded-lg p-6">
+                                <h3 class="text-xl font-bold text-gray-800 mb-4">📖 เนื้อหา</h3>
+                                
+                                <div class="space-y-4">
+                                    <div class="border-l-4 border-green-500 pl-4">
+                                        <h4 class="font-semibold text-lg mb-2">2.1 Entity-Relationship Diagram (ER Diagram)</h4>
+                                        <p class="text-gray-700 mb-3">ER Diagram เป็นเครื่องมือสำหรับออกแบบฐานข้อมูล แสดงความสัมพันธ์ระหว่าง Entity ต่างๆ</p>
+                                        
+                                        <div class="bg-white rounded-lg p-4 border">
+                                            <h5 class="font-medium mb-3">องค์ประกอบของ ER Diagram:</h5>
+                                            <div class="grid md:grid-cols-3 gap-4">
+                                                <div class="text-center p-3 bg-blue-50 rounded-lg">
+                                                    <div class="w-16 h-10 bg-blue-200 rounded mx-auto mb-2 flex items-center justify-center">
+                                                        <span class="text-xs font-medium">Entity</span>
+                                                    </div>
+                                                    <p class="text-sm font-medium">สิ่งของ/บุคคล</p>
+                                                    <p class="text-xs text-gray-600">เช่น นักเรียน, วิชา</p>
+                                                </div>
+                                                <div class="text-center p-3 bg-green-50 rounded-lg">
+                                                    <div class="w-16 h-10 bg-green-200 rounded-full mx-auto mb-2 flex items-center justify-center">
+                                                        <span class="text-xs font-medium">Attribute</span>
+                                                    </div>
+                                                    <p class="text-sm font-medium">คุณสมบัติ</p>
+                                                    <p class="text-xs text-gray-600">เช่น ชื่อ, อายุ</p>
+                                                </div>
+                                                <div class="text-center p-3 bg-purple-50 rounded-lg">
+                                                    <div class="w-16 h-10 bg-purple-200 mx-auto mb-2 flex items-center justify-center transform rotate-45">
+                                                        <span class="text-xs font-medium transform -rotate-45">Relation</span>
+                                                    </div>
+                                                    <p class="text-sm font-medium">ความสัมพันธ์</p>
+                                                    <p class="text-xs text-gray-600">เช่น เรียน, สอน</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="border-l-4 border-blue-500 pl-4">
+                                        <h4 class="font-semibold text-lg mb-2">2.2 ประเภทของความสัมพันธ์</h4>
+                                        <div class="space-y-3">
+                                            <div class="bg-white rounded-lg p-4 border">
+                                                <div class="grid md:grid-cols-3 gap-4">
+                                                    <div class="text-center">
+                                                        <h5 class="font-medium text-blue-700 mb-2">One-to-One (1:1)</h5>
+                                                        <p class="text-sm text-gray-600">หนึ่งต่อหนึ่ง</p>
+                                                        <p class="text-xs text-gray-500 mt-1">เช่น คน : บัตรประชาชน</p>
+                                                    </div>
+                                                    <div class="text-center">
+                                                        <h5 class="font-medium text-green-700 mb-2">One-to-Many (1:M)</h5>
+                                                        <p class="text-sm text-gray-600">หนึ่งต่อหลาย</p>
+                                                        <p class="text-xs text-gray-500 mt-1">เช่น ครู : นักเรียน</p>
+                                                    </div>
+                                                    <div class="text-center">
+                                                        <h5 class="font-medium text-purple-700 mb-2">Many-to-Many (M:N)</h5>
+                                                        <p class="text-sm text-gray-600">หลายต่อหลาย</p>
+                                                        <p class="text-xs text-gray-500 mt-1">เช่น นักเรียน : วิชา</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="border-l-4 border-purple-500 pl-4">
+                                        <h4 class="font-semibold text-lg mb-2">2.3 การปกติของฐานข้อมูล (Normalization)</h4>
+                                        <p class="text-gray-700 mb-3">กระบวนการจัดระเบียบข้อมูลเพื่อลดความซ้ำซ้อนและเพิ่มประสิทธิภาพ</p>
+                                        
+                                        <div class="bg-white rounded-lg p-4 border">
+                                            <div class="space-y-3">
+                                                <div class="flex items-center space-x-3 p-3 bg-red-50 rounded-lg">
+                                                    <span class="text-red-600 font-bold">1NF</span>
+                                                    <span class="text-sm">ข้อมูลในแต่ละช่องต้องเป็นค่าเดียว (Atomic)</span>
+                                                </div>
+                                                <div class="flex items-center space-x-3 p-3 bg-yellow-50 rounded-lg">
+                                                    <span class="text-yellow-600 font-bold">2NF</span>
+                                                    <span class="text-sm">ต้องผ่าน 1NF และไม่มี Partial Dependency</span>
+                                                </div>
+                                                <div class="flex items-center space-x-3 p-3 bg-green-50 rounded-lg">
+                                                    <span class="text-green-600 font-bold">3NF</span>
+                                                    <span class="text-sm">ต้องผ่าน 2NF และไม่มี Transitive Dependency</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="space-y-6">
+                        <div class="bg-yellow-50 rounded-lg p-6">
+                            <h3 class="text-xl font-bold text-yellow-800 mb-4">📝 ใบกิจกรรมที่ 2</h3>
+                            <div class="space-y-4">
+                                <div>
+                                    <h4 class="font-medium mb-2">กิจกรรม: ออกแบบ ER Diagram</h4>
+                                    <p class="text-sm text-gray-700 mb-3">ออกแบบ ER Diagram สำหรับระบบห้องสมุด</p>
+                                    
+                                    <div class="bg-white rounded-lg p-4 border">
+                                        <h5 class="font-medium mb-2">Entity ที่ต้องมี:</h5>
+                                        <div class="space-y-2">
+                                            <div class="flex items-center space-x-2">
+                                                <input type="checkbox" id="activity2-1" class="activity-checkbox">
+                                                <label for="activity2-1" class="text-sm">สมาชิก (Member)</label>
+                                            </div>
+                                            <div class="flex items-center space-x-2">
+                                                <input type="checkbox" id="activity2-2" class="activity-checkbox">
+                                                <label for="activity2-2" class="text-sm">หนังสือ (Book)</label>
+                                            </div>
+                                            <div class="flex items-center space-x-2">
+                                                <input type="checkbox" id="activity2-3" class="activity-checkbox">
+                                                <label for="activity2-3" class="text-sm">การยืม (Borrow)</label>
+                                            </div>
+                                            <div class="flex items-center space-x-2">
+                                                <input type="checkbox" id="activity2-4" class="activity-checkbox">
+                                                <label for="activity2-4" class="text-sm">ผู้แต่ง (Author)</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="border-t pt-4">
+                                    <h4 class="font-medium mb-2">แบบฝึกหัด:</h4>
+                                    <div class="space-y-3">
+                                        <div>
+                                            <p class="text-sm mb-1">1. ความสัมพันธ์ระหว่างสมาชิกกับหนังสือคือแบบใด?</p>
+                                            <select class="w-full p-2 border rounded text-sm">
+                                                <option>เลือกคำตอบ</option>
+                                                <option>1:1</option>
+                                                <option>1:M</option>
+                                                <option>M:N</option>
+                                            </select>
+                                        </div>
+                                        <div>
+                                            <p class="text-sm mb-1">2. Attribute ของ Entity หนังสือ ควรมีอะไรบ้าง?</p>
+                                            <textarea class="w-full p-2 border rounded text-sm" rows="2" placeholder="เช่น ISBN, ชื่อหนังสือ, ..."></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <button onclick="completeActivity(2)" class="w-full bg-yellow-500 hover:bg-yellow-600 text-white font-medium py-2 px-4 rounded-lg transition-colors">
+                                    ส่งใบกิจกรรม
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="bg-green-50 rounded-lg p-6">
+                            <h3 class="text-xl font-bold text-green-800 mb-4">🎮 แบบทดสอบ</h3>
+                            <div id="quiz2" class="space-y-4">
+                                <div>
+                                    <p class="font-medium mb-2">ข้อใดคือประโยชน์ของ Normalization?</p>
+                                    <div class="space-y-2">
+                                        <label class="flex items-center space-x-2">
+                                            <input type="radio" name="q2" value="a">
+                                            <span class="text-sm">ลดความซ้ำซ้อนของข้อมูล</span>
+                                        </label>
+                                        <label class="flex items-center space-x-2">
+                                            <input type="radio" name="q2" value="b">
+                                            <span class="text-sm">เพิ่มขนาดของฐานข้อมูล</span>
+                                        </label>
+                                        <label class="flex items-center space-x-2">
+                                            <input type="radio" name="q2" value="c">
+                                            <span class="text-sm">ทำให้ข้อมูลซับซ้อนขึ้น</span>
+                                        </label>
+                                        <label class="flex items-center space-x-2">
+                                            <input type="radio" name="q2" value="d">
+                                            <span class="text-sm">ลดความปลอดภัย</span>
+                                        </label>
+                                    </div>
+                                </div>
+                                <button onclick="checkQuiz(2)" class="w-full bg-green-500 hover:bg-green-600 text-white font-medium py-2 px-4 rounded-lg transition-colors">
+                                    ตรวจคำตอบ
+                                </button>
+                                <div id="quiz2-result" class="hidden"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Chapter 3 -->
+        <div id="chapter3" class="section hidden">
+            <div class="bg-white rounded-xl shadow-lg p-8 mb-6">
+                <div class="flex items-center mb-6">
+                    <span class="text-4xl mr-4">💾</span>
+                    <div>
+                        <h2 class="text-3xl font-bold text-gray-800">บทที่ 3: SQL พื้นฐาน</h2>
+                        <p class="text-gray-600">เวลาเรียน: 12 ชั่วโมง</p>
+                    </div>
+                </div>
+
+                <div class="grid lg:grid-cols-3 gap-6">
+                    <div class="lg:col-span-2">
+                        <div class="space-y-6">
+                            <div class="bg-purple-50 rounded-lg p-6">
+                                <h3 class="text-xl font-bold text-purple-800 mb-4">🎯 จุดประสงค์การเรียนรู้</h3>
+                                <ul class="space-y-2 text-gray-700">
+                                    <li class="flex items-start"><span class="text-purple-500 mr-2">•</span>เข้าใจภาษา SQL และการใช้งาน</li>
+                                    <li class="flex items-start"><span class="text-purple-500 mr-2">•</span>เขียนคำสั่ง SELECT, INSERT, UPDATE, DELETE</li>
+                                    <li class="flex items-start"><span class="text-purple-500 mr-2">•</span>ใช้ฟังก์ชันและการจัดกลุ่มข้อมูล</li>
+                                    <li class="flex items-start"><span class="text-purple-500 mr-2">•</span>เข้าใจการ JOIN ตาราง</li>
+                                </ul>
+                            </div>
+
+                            <div class="bg-gray-50 rounded-lg p-6">
+                                <h3 class="text-xl font-bold text-gray-800 mb-4">📖 เนื้อหา</h3>
+                                
+                                <div class="space-y-4">
+                                    <div class="border-l-4 border-purple-500 pl-4">
+                                        <h4 class="font-semibold text-lg mb-2">3.1 ความรู้เบื้องต้นเกี่ยวกับ SQL</h4>
+                                        <p class="text-gray-700 mb-3">SQL (Structured Query Language) เป็นภาษามาตรฐานสำหรับจัดการฐานข้อมูลเชิงสัมพันธ์</p>
+                                        
+                                        <div class="bg-white rounded-lg p-4 border">
+                                            <h5 class="font-medium mb-3">ประเภทของคำสั่ง SQL:</h5>
+                                            <div class="grid md:grid-cols-2 gap-4">
+                                                <div class="p-3 bg-blue-50 rounded-lg">
+                                                    <h6 class="font-medium text-blue-700 mb-2">DDL (Data Definition)</h6>
+                                                    <p class="text-sm text-gray-600 mb-2">สร้างและจัดการโครงสร้าง</p>
+                                                    <p class="text-xs text-gray-500">CREATE, ALTER, DROP</p>
+                                                </div>
+                                                <div class="p-3 bg-green-50 rounded-lg">
+                                                    <h6 class="font-medium text-green-700 mb-2">DML (Data Manipulation)</h6>
+                                                    <p class="text-sm text-gray-600 mb-2">จัดการข้อมูล</p>
+                                                    <p class="text-xs text-gray-500">SELECT, INSERT, UPDATE, DELETE</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="border-l-4 border-blue-500 pl-4">
+                                        <h4 class="font-semibold text-lg mb-2">3.2 คำสั่ง SELECT</h4>
+                                        <p class="text-gray-700 mb-3">คำสั่งสำหรับดึงข้อมูลจากตาราง</p>
+                                        
+                                        <div class="bg-gray-800 rounded-lg p-4 text-green-400 font-mono text-sm mb-3">
+                                            <div class="mb-2">-- ตัวอย่างคำสั่ง SELECT</div>
+                                            <div>SELECT ชื่อคอลัมน์ FROM ชื่อตาราง;</div>
+                                            <div>SELECT * FROM students;</div>
+                                            <div>SELECT name, age FROM students WHERE age > 18;</div>
+                                        </div>
+
+                                        <div class="bg-white rounded-lg p-4 border">
+                                            <h5 class="font-medium mb-2">คำสั่งที่สำคัญ:</h5>
+                                            <div class="grid md:grid-cols-2 gap-3 text-sm">
+                                                <div><strong>WHERE:</strong> กรองข้อมูล</div>
+                                                <div><strong>ORDER BY:</strong> เรียงลำดับ</div>
+                                                <div><strong>GROUP BY:</strong> จัดกลุ่ม</div>
+                                                <div><strong>HAVING:</strong> กรองกลุ่ม</div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="border-l-4 border-green-500 pl-4">
+                                        <h4 class="font-semibold text-lg mb-2">3.3 คำสั่งจัดการข้อมูล</h4>
+                                        
+                                        <div class="space-y-3">
+                                            <div class="bg-white rounded-lg p-4 border">
+                                                <h5 class="font-medium mb-2">INSERT - เพิ่มข้อมูล</h5>
+                                                <div class="bg-gray-800 rounded p-3 text-green-400 font-mono text-sm">
+                                                    INSERT INTO students (name, age) VALUES ('สมชาย', 18);
+                                                </div>
+                                            </div>
+                                            
+                                            <div class="bg-white rounded-lg p-4 border">
+                                                <h5 class="font-medium mb-2">UPDATE - แก้ไขข้อมูล</h5>
+                                                <div class="bg-gray-800 rounded p-3 text-green-400 font-mono text-sm">
+                                                    UPDATE students SET age = 19 WHERE name = 'สมชาย';
+                                                </div>
+                                            </div>
+                                            
+                                            <div class="bg-white rounded-lg p-4 border">
+                                                <h5 class="font-medium mb-2">DELETE - ลบข้อมูล</h5>
+                                                <div class="bg-gray-800 rounded p-3 text-green-400 font-mono text-sm">
+                                                    DELETE FROM students WHERE age < 15;
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="border-l-4 border-orange-500 pl-4">
+                                        <h4 class="font-semibold text-lg mb-2">3.4 การ JOIN ตาราง</h4>
+                                        <p class="text-gray-700 mb-3">การรวมข้อมูลจากหลายตาราง</p>
+                                        
+                                        <div class="bg-white rounded-lg p-4 border">
+                                            <div class="grid md:grid-cols-2 gap-4">
+                                                <div class="p-3 bg-orange-50 rounded-lg">
+                                                    <h6 class="font-medium text-orange-700 mb-2">INNER JOIN</h6>
+                                                    <p class="text-sm text-gray-600">แสดงข้อมูลที่ตรงกันทั้งสองตาราง</p>
+                                                </div>
+                                                <div class="p-3 bg-blue-50 rounded-lg">
+                                                    <h6 class="font-medium text-blue-700 mb-2">LEFT JOIN</h6>
+                                                    <p class="text-sm text-gray-600">แสดงข้อมูลทั้งหมดจากตารางซ้าย</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="space-y-6">
+                        <div class="bg-yellow-50 rounded-lg p-6">
+                            <h3 class="text-xl font-bold text-yellow-800 mb-4">📝 ใบกิจกรรมที่ 3</h3>
+                            <div class="space-y-4">
+                                <div>
+                                    <h4 class="font-medium mb-2">กิจกรรม: เขียนคำสั่ง SQL</h4>
+                                    <p class="text-sm text-gray-700 mb-3">ฝึกเขียนคำสั่ง SQL สำหรับตาราง students</p>
+                                    
+                                    <div class="bg-white rounded-lg p-4 border mb-3">
+                                        <h5 class="font-medium mb-2">โครงสร้างตาราง students:</h5>
+                                        <div class="text-sm text-gray-600">
+                                            <div>• id (INT, Primary Key)</div>
+                                            <div>• name (VARCHAR)</div>
+                                            <div>• age (INT)</div>
+                                            <div>• grade (VARCHAR)</div>
+                                        </div>
+                                    </div>
+
+                                    <div class="space-y-3">
+                                        <div>
+                                            <p class="text-sm mb-1">1. เขียนคำสั่งแสดงข้อมูลนักเรียนทั้งหมด:</p>
+                                            <textarea class="w-full p-2 border rounded text-sm font-mono" rows="2" placeholder="SELECT ..."></textarea>
+                                        </div>
+                                        <div>
+                                            <p class="text-sm mb-1">2. เขียนคำสั่งแสดงนักเรียนที่อายุมากกว่า 16 ปี:</p>
+                                            <textarea class="w-full p-2 border rounded text-sm font-mono" rows="2" placeholder="SELECT ..."></textarea>
+                                        </div>
+                                        <div>
+                                            <p class="text-sm mb-1">3. เขียนคำสั่งเพิ่มนักเรียนใหม่:</p>
+                                            <textarea class="w-full p-2 border rounded text-sm font-mono" rows="2" placeholder="INSERT INTO ..."></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <button onclick="completeActivity(3)" class="w-full bg-yellow-500 hover:bg-yellow-600 text-white font-medium py-2 px-4 rounded-lg transition-colors">
+                                    ส่งใบกิจกรรม
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="bg-green-50 rounded-lg p-6">
+                            <h3 class="text-xl font-bold text-green-800 mb-4">🎮 แบบทดสอบ</h3>
+                            <div id="quiz3" class="space-y-4">
+                                <div>
+                                    <p class="font-medium mb-2">คำสั่ง SQL ใดใช้สำหรับลบข้อมูล?</p>
+                                    <div class="space-y-2">
+                                        <label class="flex items-center space-x-2">
+                                            <input type="radio" name="q3" value="a">
+                                            <span class="text-sm">REMOVE</span>
+                                        </label>
+                                        <label class="flex items-center space-x-2">
+                                            <input type="radio" name="q3" value="b">
+                                            <span class="text-sm">DELETE</span>
+                                        </label>
+                                        <label class="flex items-center space-x-2">
+                                            <input type="radio" name="q3" value="c">
+                                            <span class="text-sm">DROP</span>
+                                        </label>
+                                        <label class="flex items-center space-x-2">
+                                            <input type="radio" name="q3" value="d">
+                                            <span class="text-sm">CLEAR</span>
+                                        </label>
+                                    </div>
+                                </div>
+                                <button onclick="checkQuiz(3)" class="w-full bg-green-500 hover:bg-green-600 text-white font-medium py-2 px-4 rounded-lg transition-colors">
+                                    ตรวจคำตอบ
+                                </button>
+                                <div id="quiz3-result" class="hidden"></div>
+                            </div>
+                        </div>
+
+                        <div class="bg-blue-50 rounded-lg p-6">
+                            <h3 class="text-xl font-bold text-blue-800 mb-4">💻 SQL Simulator</h3>
+                            <div class="space-y-3">
+                                <div>
+                                    <label class="block text-sm font-medium mb-1">ลองเขียนคำสั่ง SQL:</label>
+                                    <textarea id="sql-input" class="w-full p-3 border rounded font-mono text-sm" rows="3" placeholder="SELECT * FROM students;"></textarea>
+                                </div>
+                                <button onclick="runSQL()" class="w-full bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-lg transition-colors">
+                                    รันคำสั่ง
+                                </button>
+                                <div id="sql-result" class="bg-white rounded border p-3 text-sm hidden">
+                                    <div class="font-medium mb-2">ผลลัพธ์:</div>
+                                    <div id="sql-output"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Chapter 4 -->
+        <div id="chapter4" class="section hidden">
+            <div class="bg-white rounded-xl shadow-lg p-8 mb-6">
+                <div class="flex items-center mb-6">
+                    <span class="text-4xl mr-4">🚀</span>
+                    <div>
+                        <h2 class="text-3xl font-bold text-gray-800">บทที่ 4: การประยุกต์ใช้และโปรเจค</h2>
+                        <p class="text-gray-600">เวลาเรียน: 8 ชั่วโมง</p>
+                    </div>
+                </div>
+
+                <div class="grid lg:grid-cols-3 gap-6">
+                    <div class="lg:col-span-2">
+                        <div class="space-y-6">
+                            <div class="bg-orange-50 rounded-lg p-6">
+                                <h3 class="text-xl font-bold text-orange-800 mb-4">🎯 จุดประสงค์การเรียนรู้</h3>
+                                <ul class="space-y-2 text-gray-700">
+                                    <li class="flex items-start"><span class="text-orange-500 mr-2">•</span>ประยุกต์ใช้ความรู้ในโปรเจคจริง</li>
+                                    <li class="flex items-start"><span class="text-orange-500 mr-2">•</span>เข้าใจการใช้ฐานข้อมูลในเว็บแอปพลิเคชัน</li>
+                                    <li class="flex items-start"><span class="text-orange-500 mr-2">•</span>รู้จักเครื่องมือและเทคโนโลยีที่เกี่ยวข้อง</li>
+                                    <li class="flex items-start"><span class="text-orange-500 mr-2">•</span>วางแผนและพัฒนาระบบฐานข้อมูลเบื้องต้น</li>
+                                </ul>
+                            </div>
+
+                            <div class="bg-gray-50 rounded-lg p-6">
+                                <h3 class="text-xl font-bold text-gray-800 mb-4">📖 เนื้อหา</h3>
+                                
+                                <div class="space-y-4">
+                                    <div class="border-l-4 border-orange-500 pl-4">
+                                        <h4 class="font-semibold text-lg mb-2">4.1 ฐานข้อมูลในเว็บแอปพลิเคชัน</h4>
+                                        <p class="text-gray-700 mb-3">การเชื่อมต่อและใช้งานฐานข้อมูลในเว็บไซต์และแอปพลิเคชัน</p>
+                                        
+                                        <div class="bg-white rounded-lg p-4 border">
+                                            <h5 class="font-medium mb-3">สถาปัตยกรรมเว็บแอปพลิเคชัน:</h5>
+                                            <div class="grid md:grid-cols-3 gap-4 text-center">
+                                                <div class="p-3 bg-blue-50 rounded-lg">
+                                                    <div class="text-2xl mb-2">🌐</div>
+                                                    <h6 class="font-medium">Frontend</h6>
+                                                    <p class="text-xs text-gray-600">หน้าเว็บที่ผู้ใช้เห็น</p>
+                                                </div>
+                                                <div class="p-3 bg-green-50 rounded-lg">
+                                                    <div class="text-2xl mb-2">⚙️</div>
+                                                    <h6 class="font-medium">Backend</h6>
+                                                    <p class="text-xs text-gray-600">ระบบประมวลผลข้อมูล</p>
+                                                </div>
+                                                <div class="p-3 bg-purple-50 rounded-lg">
+                                                    <div class="text-2xl mb-2">💾</div>
+                                                    <h6 class="font-medium">Database</h6>
+                                                    <p class="text-xs text-gray-600">ที่เก็บข้อมูล</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="border-l-4 border-blue-500 pl-4">
+                                        <h4 class="font-semibold text-lg mb-2">4.2 เครื่องมือและเทคโนโลยี</h4>
+                                        
+                                        <div class="space-y-3">
+                                            <div class="bg-white rounded-lg p-4 border">
+                                                <h5 class="font-medium mb-3">ระบบจัดการฐานข้อมูลยอดนิยม:</h5>
+                                                <div class="grid md:grid-cols-2 gap-4">
+                                                    <div class="p-3 bg-blue-50 rounded-lg">
+                                                        <h6 class="font-medium text-blue-700 mb-1">MySQL</h6>
+                                                        <p class="text-sm text-gray-600">ฟรี, เหมาะสำหรับเว็บไซต์</p>
+                                                    </div>
+                                                    <div class="p-3 bg-green-50 rounded-lg">
+                                                        <h6 class="font-medium text-green-700 mb-1">PostgreSQL</h6>
+                                                        <p class="text-sm text-gray-600">ฟีเจอร์ครบ, ประสิทธิภาพสูง</p>
+                                                    </div>
+                                                    <div class="p-3 bg-purple-50 rounded-lg">
+                                                        <h6 class="font-medium text-purple-700 mb-1">SQLite</h6>
+                                                        <p class="text-sm text-gray-600">เบา, เหมาะสำหรับแอปมือถือ</p>
+                                                    </div>
+                                                    <div class="p-3 bg-orange-50 rounded-lg">
+                                                        <h6 class="font-medium text-orange-700 mb-1">MongoDB</h6>
+                                                        <p class="text-sm text-gray-600">NoSQL, ยืดหยุ่น</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="border-l-4 border-green-500 pl-4">
+                                        <h4 class="font-semibold text-lg mb-2">4.3 โปรเจคตัวอย่าง: ระบบจัดการห้องสมุด</h4>
+                                        <p class="text-gray-700 mb-3">ออกแบบและพัฒนาระบบห้องสมุดแบบง่าย</p>
+                                        
+                                        <div class="bg-white rounded-lg p-4 border">
+                                            <h5 class="font-medium mb-3">ฟีเจอร์ของระบบ:</h5>
+                                            <div class="space-y-2">
+                                                <div class="flex items-center space-x-2">
+                                                    <span class="w-2 h-2 bg-green-500 rounded-full"></span>
+                                                    <span class="text-sm">ลงทะเบียนสมาชิก</span>
+                                                </div>
+                                                <div class="flex items-center space-x-2">
+                                                    <span class="w-2 h-2 bg-green-500 rounded-full"></span>
+                                                    <span class="text-sm">ค้นหาหนังสือ</span>
+                                                </div>
+                                                <div class="flex items-center space-x-2">
+                                                    <span class="w-2 h-2 bg-green-500 rounded-full"></span>
+                                                    <span class="text-sm">ยืม-คืนหนังสือ</span>
+                                                </div>
+                                                <div class="flex items-center space-x-2">
+                                                    <span class="w-2 h-2 bg-green-500 rounded-full"></span>
+                                                    <span class="text-sm">รายงานสถิติ</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="border-l-4 border-purple-500 pl-4">
+                                        <h4 class="font-semibold text-lg mb-2">4.4 แนวทางการพัฒนาต่อ</h4>
+                                        
+                                        <div class="bg-white rounded-lg p-4 border">
+                                            <h5 class="font-medium mb-3">เส้นทางการเรียนรู้:</h5>
+                                            <div class="space-y-3">
+                                                <div class="flex items-start space-x-3">
+                                                    <span class="text-blue-500 font-bold">1.</span>
+                                                    <div>
+                                                        <h6 class="font-medium">เรียนรู้ภาษาโปรแกรม</h6>
+                                                        <p class="text-sm text-gray-600">Python, JavaScript, PHP</p>
+                                                    </div>
+                                                </div>
+                                                <div class="flex items-start space-x-3">
+                                                    <span class="text-green-500 font-bold">2.</span>
+                                                    <div>
+                                                        <h6 class="font-medium">ศึกษา Framework</h6>
+                                                        <p class="text-sm text-gray-600">Django, React, Laravel</p>
+                                                    </div>
+                                                </div>
+                                                <div class="flex items-start space-x-3">
+                                                    <span class="text-purple-500 font-bold">3.</span>
+                                                    <div>
+                                                        <h6 class="font-medium">ฝึกทำโปรเจค</h6>
+                                                        <p class="text-sm text-gray-600">สร้างแอปพลิเคชันจริง</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="space-y-6">
+                        <div class="bg-yellow-50 rounded-lg p-6">
+                            <h3 class="text-xl font-bold text-yellow-800 mb-4">📝 โปรเจคสุดท้าย</h3>
+                            <div class="space-y-4">
+                                <div>
+                                    <h4 class="font-medium mb-2">โปรเจค: ระบบจัดการนักเรียน</h4>
+                                    <p class="text-sm text-gray-700 mb-3">ออกแบบระบบฐานข้อมูลสำหรับจัดการข้อมูลนักเรียน</p>
+                                    
+                                    <div class="bg-white rounded-lg p-4 border mb-3">
+                                        <h5 class="font-medium mb-2">ขั้นตอนการทำโปรเจค:</h5>
+                                        <div class="space-y-2">
+                                            <div class="flex items-center space-x-2">
+                                                <input type="checkbox" id="project-1" class="activity-checkbox">
+                                                <label for="project-1" class="text-sm">วิเคราะห์ความต้องการ</label>
+                                            </div>
+                                            <div class="flex items-center space-x-2">
+                                                <input type="checkbox" id="project-2" class="activity-checkbox">
+                                                <label for="project-2" class="text-sm">ออกแบบ ER Diagram</label>
+                                            </div>
+                                            <div class="flex items-center space-x-2">
+                                                <input type="checkbox" id="project-3" class="activity-checkbox">
+                                                <label for="project-3" class="text-sm">สร้างตารางฐานข้อมูล</label>
+                                            </div>
+                                            <div class="flex items-center space-x-2">
+                                                <input type="checkbox" id="project-4" class="activity-checkbox">
+                                                <label for="project-4" class="text-sm">เขียนคำสั่ง SQL</label>
+                                            </div>
+                                            <div class="flex items-center space-x-2">
+                                                <input type="checkbox" id="project-5" class="activity-checkbox">
+                                                <label for="project-5" class="text-sm">ทดสอบระบบ</label>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="space-y-3">
+                                        <div>
+                                            <p class="text-sm mb-1">ตารางที่ต้องมีในระบบ:</p>
+                                            <textarea class="w-full p-2 border rounded text-sm" rows="3" placeholder="เช่น students, courses, enrollments, ..."></textarea>
+                                        </div>
+                                        <div>
+                                            <p class="text-sm mb-1">ฟีเจอร์หลักของระบบ:</p>
+                                            <textarea class="w-full p-2 border rounded text-sm" rows="3" placeholder="เช่น ลงทะเบียนเรียน, ดูคะแนน, ..."></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <button onclick="completeActivity(4)" class="w-full bg-yellow-500 hover:bg-yellow-600 text-white font-medium py-2 px-4 rounded-lg transition-colors">
+                                    ส่งโปรเจค
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="bg-green-50 rounded-lg p-6">
+                            <h3 class="text-xl font-bold text-green-800 mb-4">🎮 แบบทดสอบสรุป</h3>
+                            <div id="quiz4" class="space-y-4">
+                                <div>
+                                    <p class="font-medium mb-2">ข้อใดคือขั้นตอนแรกในการพัฒนาระบบฐานข้อมูล?</p>
+                                    <div class="space-y-2">
+                                        <label class="flex items-center space-x-2">
+                                            <input type="radio" name="q4" value="a">
+                                            <span class="text-sm">วิเคราะห์ความต้องการ</span>
+                                        </label>
+                                        <label class="flex items-center space-x-2">
+                                            <input type="radio" name="q4" value="b">
+                                            <span class="text-sm">เขียนโปรแกรม</span>
+                                        </label>
+                                        <label class="flex items-center space-x-2">
+                                            <input type="radio" name="q4" value="c">
+                                            <span class="text-sm">ทดสอบระบบ</span>
+                                        </label>
+                                        <label class="flex items-center space-x-2">
+                                            <input type="radio" name="q4" value="d">
+                                            <span class="text-sm">ติดตั้งฐานข้อมูล</span>
+                                        </label>
+                                    </div>
+                                </div>
+                                <button onclick="checkQuiz(4)" class="w-full bg-green-500 hover:bg-green-600 text-white font-medium py-2 px-4 rounded-lg transition-colors">
+                                    ตรวจคำตอบ
+                                </button>
+                                <div id="quiz4-result" class="hidden"></div>
+                            </div>
+                        </div>
+
+                        <div class="bg-blue-50 rounded-lg p-6">
+                            <h3 class="text-xl font-bold text-blue-800 mb-4">🏆 สรุปผลการเรียน</h3>
+                            <div class="space-y-3">
+                                <div class="flex justify-between items-center">
+                                    <span class="text-sm">บทที่ 1:</span>
+                                    <span id="final-ch1" class="font-medium">0%</span>
+                                </div>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-sm">บทที่ 2:</span>
+                                    <span id="final-ch2" class="font-medium">0%</span>
+                                </div>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-sm">บทที่ 3:</span>
+                                    <span id="final-ch3" class="font-medium">0%</span>
+                                </div>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-sm">บทที่ 4:</span>
+                                    <span id="final-ch4" class="font-medium">0%</span>
+                                </div>
+                                <hr class="my-3">
+                                <div class="flex justify-between items-center font-bold">
+                                    <span>คะแนนรวม:</span>
+                                    <span id="total-score" class="text-lg">0%</span>
+                                </div>
+                                <button onclick="generateCertificate()" class="w-full bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-lg transition-colors">
+                                    สร้างใบประกาศนียบัตร
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Certificate Modal -->
+    <div id="certificate-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+        <div class="bg-white rounded-xl p-8 max-w-2xl mx-4">
+            <div class="text-center">
+                <div class="text-6xl mb-4">🏆</div>
+                <h2 class="text-3xl font-bold text-gray-800 mb-2">ใบประกาศนียบัตร</h2>
+                <p class="text-lg text-gray-600 mb-6">หลักสูตรระบบฐานข้อมูล</p>
+                
+                <div class="border-2 border-gray-300 rounded-lg p-6 mb-6">
+                    <p class="text-lg mb-2">ขอแสดงความยินดีกับ</p>
+                    <h3 class="text-2xl font-bold text-blue-600 mb-4">นักเรียนผู้เรียบร้อย</h3>
+                    <p class="text-gray-600 mb-2">ที่ได้ผ่านการเรียนหลักสูตร</p>
+                    <p class="font-semibold text-lg mb-2">ระบบฐานข้อมูลสำหรับมัธยมปลาย</p>
+                    <p class="text-sm text-gray-500">เวลาเรียน 40 ชั่วโมง</p>
+                    
+                    <div class="mt-4 pt-4 border-t">
+                        <p class="text-sm text-gray-600">คะแนนรวม: <span id="cert-score" class="font-bold">0%</span></p>
+                        <p class="text-sm text-gray-600">วันที่: <span id="cert-date"></span></p>
+                    </div>
+                </div>
+                
+                <button onclick="closeCertificate()" class="bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-6 rounded-lg transition-colors">
+                    ปิด
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global variables
+        let currentSection = 'overview';
+        let chapterProgress = {1: 0, 2: 0, 3: 0, 4: 0};
+        let quizAnswers = {1: 'c', 2: 'a', 3: 'b', 4: 'a'};
+
+        // Sample data for SQL simulator
+        const sampleData = [
+            {id: 1, name: 'สมชาย', age: 18, grade: 'ม.6'},
+            {id: 2, name: 'สมหญิง', age: 17, grade: 'ม.5'},
+            {id: 3, name: 'สมศักดิ์', age: 16, grade: 'ม.4'}
+        ];
+
+        // Navigation functions
+        function showSection(section) {
+            // Hide all sections
+            document.querySelectorAll('.section').forEach(s => s.classList.add('hidden'));
+            
+            // Show selected section
+            document.getElementById(section).classList.remove('hidden');
+            
+            // Update navigation
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.classList.remove('bg-blue-500', 'text-white');
+                btn.classList.add('text-gray-600', 'hover:bg-gray-100');
+            });
+            
+            document.getElementById(`nav-${section}`).classList.add('bg-blue-500', 'text-white');
+            document.getElementById(`nav-${section}`).classList.remove('text-gray-600', 'hover:bg-gray-100');
+            
+            currentSection = section;
+        }
+
+        // Activity completion
+        function completeActivity(chapter) {
+            chapterProgress[chapter] = Math.min(chapterProgress[chapter] + 25, 100);
+            updateProgress();
+            
+            // Show completion message
+            alert(`เยี่ยมมาก! คุณได้ทำกิจกรรมบทที่ ${chapter} เสร็จแล้ว`);
+        }
+
+        // Quiz functions
+        function checkQuiz(chapter) {
+            const selectedAnswer = document.querySelector(`input[name="q${chapter}"]:checked`);
+            const resultDiv = document.getElementById(`quiz${chapter}-result`);
+            
+            if (!selectedAnswer) {
+                alert('กรุณาเลือกคำตอบ');
+                return;
+            }
+            
+            const isCorrect = selectedAnswer.value === quizAnswers[chapter];
+            
+            if (isCorrect) {
+                chapterProgress[chapter] = Math.min(chapterProgress[chapter] + 25, 100);
+                resultDiv.innerHTML = '<div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded">✅ ถูกต้อง! เก่งมาก</div>';
+            } else {
+                resultDiv.innerHTML = '<div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">❌ ไม่ถูกต้อง ลองใหม่อีกครั้ง</div>';
+            }
+            
+            resultDiv.classList.remove('hidden');
+            updateProgress();
+        }
+
+        // SQL Simulator
+        function runSQL() {
+            const sqlInput = document.getElementById('sql-input').value.toLowerCase().trim();
+            const resultDiv = document.getElementById('sql-result');
+            const outputDiv = document.getElementById('sql-output');
+            
+            let output = '';
+            
+            if (sqlInput.includes('select * from students')) {
+                output = '<table class="w-full border-collapse border border-gray-300"><tr class="bg-gray-100"><th class="border border-gray-300 p-2">ID</th><th class="border border-gray-300 p-2">Name</th><th class="border border-gray-300 p-2">Age</th><th class="border border-gray-300 p-2">Grade</th></tr>';
+                sampleData.forEach(row => {
+                    output += `<tr><td class="border border-gray-300 p-2">${row.id}</td><td class="border border-gray-300 p-2">${row.name}</td><td class="border border-gray-300 p-2">${row.age}</td><td class="border border-gray-300 p-2">${row.grade}</td></tr>`;
+                });
+                output += '</table>';
+            } else if (sqlInput.includes('select') && sqlInput.includes('where age > 16')) {
+                output = '<table class="w-full border-collapse border border-gray-300"><tr class="bg-gray-100"><th class="border border-gray-300 p-2">ID</th><th class="border border-gray-300 p-2">Name</th><th class="border border-gray-300 p-2">Age</th><th class="border border-gray-300 p-2">Grade</th></tr>';
+                sampleData.filter(row => row.age > 16).forEach(row => {
+                    output += `<tr><td class="border border-gray-300 p-2">${row.id}</td><td class="border border-gray-300 p-2">${row.name}</td><td class="border border-gray-300 p-2">${row.age}</td><td class="border border-gray-300 p-2">${row.grade}</td></tr>`;
+                });
+                output += '</table>';
+            } else if (sqlInput.includes('insert')) {
+                output = '<div class="text-green-600">✅ เพิ่มข้อมูลสำเร็จ! (1 row affected)</div>';
+                chapterProgress[3] = Math.min(chapterProgress[3] + 10, 100);
+                updateProgress();
+            } else if (sqlInput.includes('update')) {
+                output = '<div class="text-blue-600">✅ อัปเดตข้อมูลสำเร็จ! (1 row affected)</div>';
+            } else if (sqlInput.includes('delete')) {
+                output = '<div class="text-red-600">✅ ลบข้อมูลสำเร็จ! (1 row affected)</div>';
+            } else {
+                output = '<div class="text-red-600">❌ คำสั่ง SQL ไม่ถูกต้อง กรุณาตรวจสอบอีกครั้ง</div>';
+            }
+            
+            outputDiv.innerHTML = output;
+            resultDiv.classList.remove('hidden');
+        }
+
+        // Progress update
+        function updateProgress() {
+            // Update individual chapter progress
+            for (let i = 1; i <= 4; i++) {
+                const progress = chapterProgress[i];
+                document.getElementById(`progress-ch${i}`).textContent = `${progress}%`;
+                document.getElementById(`bar-ch${i}`).style.width = `${progress}%`;
+                document.getElementById(`final-ch${i}`).textContent = `${progress}%`;
+            }
+            
+            // Update overall progress
+            const totalProgress = Object.values(chapterProgress).reduce((a, b) => a + b, 0) / 4;
+            document.getElementById('overall-progress').style.width = `${totalProgress}%`;
+            document.getElementById('total-score').textContent = `${Math.round(totalProgress)}%`;
+        }
+
+        // Certificate generation
+        function generateCertificate() {
+            const totalScore = Object.values(chapterProgress).reduce((a, b) => a + b, 0) / 4;
+            
+            if (totalScore < 70) {
+                alert('คุณต้องได้คะแนนอย่างน้อย 70% เพื่อรับใบประกาศนียบัตร');
+                return;
+            }
+            
+            document.getElementById('cert-score').textContent = `${Math.round(totalScore)}%`;
+            document.getElementById('cert-date').textContent = new Date().toLocaleDateString('th-TH');
+            document.getElementById('certificate-modal').classList.remove('hidden');
+            document.getElementById('certificate-modal').classList.add('flex');
+        }
+
+        function closeCertificate() {
+            document.getElementById('certificate-modal').classList.add('hidden');
+            document.getElementById('certificate-modal').classList.remove('flex');
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            updateProgress();
+            
+            // Add event listeners for activity checkboxes
+            document.querySelectorAll('.activity-checkbox').forEach(checkbox => {
+                checkbox.addEventListener('change', function() {
+                    if (this.checked) {
+                        // Find which chapter this belongs to
+                        const chapterNum = this.id.includes('activity1') ? 1 : 
+                                         this.id.includes('activity2') ? 2 : 
+                                         this.id.includes('project') ? 4 : 3;
+                        
+                        chapterProgress[chapterNum] = Math.min(chapterProgress[chapterNum] + 5, 100);
+                        updateProgress();
+                    }
+                });
+            });
+        });
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'97445aa921c3732e',t:'MTc1NjA1NDI4NC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
