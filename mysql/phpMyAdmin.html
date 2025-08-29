@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>คู่มือใช้งาน phpMyAdmin (สำหรับนักเรียน ม.ปลาย)</title>
+  <style>
+    :root{
+      --bg:#0f172a;        /* slate-900 */
+      --panel:#111827;     /* gray-900 */
+      --muted:#94a3b8;     /* slate-400 */
+      --text:#e5e7eb;      /* gray-200 */
+      --brand:#22d3ee;     /* cyan-400 */
+      --brand-2:#a78bfa;   /* violet-400 */
+      --ok:#34d399;        /* emerald-400 */
+      --warn:#fbbf24;      /* amber-400 */
+      --err:#f87171;       /* red-400 */
+      --card:#0b1222;      /* custom */
+      --code:#0a0f1c;
+      --shadow: 0 10px 30px rgba(0,0,0,.35), inset 0 1px 0 rgba(255,255,255,.03);
+      --radius: 18px;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0; font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans Thai", "Noto Sans", "Helvetica Neue", Arial, "Apple Color Emoji", "Segoe UI Emoji";
+      background: radial-gradient(1200px 600px at 10% -10%, rgba(34,211,238,.12), transparent),
+                  radial-gradient(1200px 700px at 90% 10%, rgba(167,139,250,.12), transparent), var(--bg);
+      color:var(--text);
+      line-height:1.6;
+    }
+    header{
+      position:sticky; top:0; z-index:50; backdrop-filter: blur(10px); background: linear-gradient(180deg, rgba(15,23,42,.8), rgba(15,23,42,.4));
+      border-bottom:1px solid rgba(255,255,255,.06);
+    }
+    .wrap{max-width:1080px; margin:0 auto; padding:24px}
+    .hero{
+      display:grid; grid-template-columns: 1.2fr .8fr; gap:28px; align-items:center; padding:28px 0 8px;
+    }
+    h1{font-size: clamp(28px, 5vw, 48px); line-height:1.1; margin:0 0 12px}
+    .subtitle{color:var(--muted); font-size:clamp(14px, 1.6vw, 18px)}
+    .badge{display:inline-flex; gap:8px; align-items:center; font-weight:600; letter-spacing:.2px; color:#0b1222; background: linear-gradient(90deg, var(--brand), var(--brand-2)); padding:8px 12px; border-radius:999px; box-shadow: var(--shadow)}
+    .grid{display:grid; gap:18px}
+    .toc, .card{background:var(--card); border:1px solid rgba(255,255,255,.06); border-radius:var(--radius); box-shadow: var(--shadow)}
+    .toc{padding:18px}
+    .toc h3{margin:0 0 8px}
+    .toc a{display:flex; gap:8px; text-decoration:none; color:var(--text); padding:10px 12px; border-radius:12px}
+    .toc a:hover{background:rgba(255,255,255,.04)}
+    section{scroll-margin-top:90px}
+    h2{font-size: clamp(22px, 3.2vw, 34px); margin:28px 0 8px}
+    h3{font-size: clamp(18px, 2.2vw, 24px); margin:18px 0 8px}
+    p{margin:.4rem 0 .8rem}
+    .two{display:grid; grid-template-columns: 1fr 1fr; gap:16px}
+    .note{font-size:14px; color:var(--muted)}
+    pre{background:var(--code); padding:14px; border-radius:14px; overflow:auto; border:1px solid rgba(255,255,255,.06)}
+    code{font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace}
+    .kbd{border:1px solid rgba(255,255,255,.2); background:rgba(255,255,255,.06); padding:2px 6px; border-radius:8px; font-family:inherit}
+    .tag{display:inline-block; padding:2px 8px; border-radius:8px; font-size:12px; border:1px solid rgba(255,255,255,.14); color:var(--muted)}
+    .img{background:linear-gradient(120deg, rgba(34,211,238,.08), rgba(167,139,250,.08)); border:1px dashed rgba(255,255,255,.18); border-radius:14px; padding:14px; }
+    .img svg{width:100%; height:auto; display:block}
+    .callout{border-left:4px solid var(--brand); background:rgba(34,211,238,.08); padding:12px 14px; border-radius:12px}
+    .warn{border-left-color:var(--warn); background:rgba(251,191,36,.08)}
+    .ok{border-left-color:var(--ok); background:rgba(52,211,153,.08)}
+    .err{border-left-color:var(--err); background:rgba(248,113,113,.08)}
+    footer{opacity:.7; padding:40px 0}
+    .small{font-size:13px; color:var(--muted)}
+    @media (max-width: 900px){ .hero{grid-template-columns:1fr} .two{grid-template-columns:1fr} }
+  </style>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <div class="hero">
+      <div>
+        <div class="badge">📘 คู่มือใช้งาน phpMyAdmin — ฉบับสวย ๆ เข้าใจง่าย</div>
+        <h1>เริ่มต้นใช้งานฐานข้อมูลด้วย <span style="color:var(--brand)">phpMyAdmin</span> สำหรับนักเรียน ม.ปลาย</h1>
+        <p class="subtitle">เรียนรู้การสร้างฐานข้อมูล สร้างตาราง กำหนดแอตทริบิวต์ (Attribute) คีย์ (Primary/Foreign Key) ใส่ข้อมูล เชื่อมความสัมพันธ์ ตลอดจนการนำเข้า/ส่งออก (Import/Export) พร้อมภาพประกอบสไตล์มินิมอล</p>
+      </div>
+      <div class="toc">
+        <h3>สารบัญ</h3>
+        <div class="grid">
+          <a href="#intro">1) phpMyAdmin คืออะไร?</a>
+          <a href="#login">2) การเข้าใช้งานและส่วนประกอบหน้าจอ</a>
+          <a href="#create-db">3) สร้างฐานข้อมูล (Database)</a>
+          <a href="#create-table">4) สร้างตารางและแอตทริบิวต์ (Table & Attributes)</a>
+          <a href="#keys">5) คีย์: Primary / Foreign & Index</a>
+          <a href="#crud">6) เพิ่ม-แก้ไข-ลบข้อมูล (CRUD)</a>
+          <a href="#relation">7) ความสัมพันธ์และแบบจำลอง (Designer)</a>
+          <a href="#import">8) การนำเข้า (Import) CSV/SQL</a>
+          <a href="#export">9) การส่งออก (Export)</a>
+          <a href="#charset">10) ภาษาไทย & การตั้งค่า Collation</a>
+          <a href="#users">11) สิทธิ์ผู้ใช้ (Privileges)</a>
+          <a href="#sample">12) ตัวอย่างโปรเจกต์: ระบบทะเบียนนักเรียน</a>
+          <a href="#tips">13) เคล็ดลับ & แก้ปัญหาพบบ่อย</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+  <section id="intro">
+    <h2>1) phpMyAdmin คืออะไร?</h2>
+    <p><strong>phpMyAdmin</strong> เป็นเครื่องมือบนเว็บสำหรับจัดการฐานข้อมูล <strong>MySQL/MariaDB</strong> ช่วยให้เราสร้างตาราง ใส่ข้อมูล เขียนคำสั่ง SQL ได้ โดยไม่ต้องพิมพ์คำสั่งยาก ๆ ตลอดเวลา เหมาะมากสำหรับผู้เริ่มต้นและงานในห้องเรียน</p>
+    <div class="callout ok">ใช้ได้ทั้งกับ XAMPP, WAMP, MAMP หรือเซิร์ฟเวอร์จริงของโรงเรียน/โฮสติ้ง</div>
+  </section>
+
+  <section id="login">
+    <h2>2) การเข้าใช้งานและส่วนประกอบหน้าจอ</h2>
+    <div class="two">
+      <div class="card" style="padding:16px">
+        <h3>วิธีเข้าใช้งาน</h3>
+        <ol>
+          <li>เปิด XAMPP แล้วกด <span class="kbd">Start</span> ที่ <strong>Apache</strong> และ <strong>MySQL</strong></li>
+          <li>เข้าที่เบราว์เซอร์ พิมพ์ <span class="kbd">http://localhost/phpmyadmin</span></li>
+          <li>ถ้ามีหน้า Login ให้ใส่ <em>Username</em> และ <em>Password</em> (เช่น <code>root</code> / ว่าง)</li>
+        </ol>
+        <p class="note">* บางเครื่องตั้งรหัสผ่านไว้แล้ว ให้สอบถามผู้ดูแลระบบ</p>
+      </div>
+      <div class="img">
+        <!-- ภาพประกอบแบบ SVG (จำลองหน้าจอ) -->
+        <svg viewBox="0 0 700 360" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="ภาพจำลองหน้าจอ phpMyAdmin">
+          <defs>
+            <linearGradient id="g1" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0" stop-color="#22d3ee" stop-opacity="0.25"/>
+              <stop offset="1" stop-color="#a78bfa" stop-opacity="0.25"/>
+            </linearGradient>
+          </defs>
+          <rect x="0" y="0" width="700" height="360" rx="16" fill="url(#g1)" stroke="rgba(255,255,255,0.2)"/>
+          <rect x="0" y="0" width="700" height="34" fill="rgba(255,255,255,0.07)"/>
+          <circle cx="18" cy="17" r="5" fill="#ef4444"/>
+          <circle cx="36" cy="17" r="5" fill="#f59e0b"/>
+          <circle cx="54" cy="17" r="5" fill="#10b981"/>
+          <!-- แถบเมนูซ้าย -->
+          <rect x="0" y="34" width="160" height="326" fill="rgba(3,7,18,0.4)"/>
+          <rect x="14" y="52" width="132" height="16" fill="rgba(255,255,255,0.25)" rx="4"/>
+          <rect x="14" y="76" width="110" height="12" fill="rgba(255,255,255,0.18)" rx="4"/>
+          <rect x="14" y="94" width="120" height="12" fill="rgba(255,255,255,0.18)" rx="4"/>
+          <rect x="14" y="112" width="90" height="12" fill="rgba(255,255,255,0.18)" rx="4"/>
+          <!-- เนื้อหา -->
+          <rect x="180" y="60" width="480" height="24" fill="rgba(255,255,255,0.18)" rx="6"/>
+          <rect x="180" y="96" width="300" height="12" fill="rgba(255,255,255,0.18)" rx="6"/>
+          <rect x="180" y="116" width="420" height="180" fill="rgba(255,255,255,0.12)" rx="8"/>
+        </svg>
+      </div>
+    </div>
+
+    <h3>ส่วนประกอบหลักของหน้าจอ</h3>
+    <ul class="card" style="padding:16px">
+      <li><strong>Sidebar (ซ้าย):</strong> รายชื่อฐานข้อมูลและตาราง</li>
+      <li><strong>แท็บบน:</strong> <em>Structure, SQL, Search, Insert, Export, Import, Operations</em> เป็นต้น</li>
+      <li><strong>แถบเครื่องมือ:</strong> ปุ่มสร้างฐานข้อมูล/ตาราง และการตั้งค่า</li>
+    </ul>
+  </section>
+
+  <section id="create-db">
+    <h2>3) สร้างฐานข้อมูล (Database)</h2>
+    <ol class="card" style="padding:16px">
+      <li>คลิกเมนู <strong>Databases</strong> → ใส่ชื่อฐานข้อมูล เช่น <code>school_db</code></li>
+      <li>เลือก <strong>Collation</strong> (การเรียงลำดับอักษร) แนะนำ <code>utf8mb4_unicode_ci</code> หรือ <code>utf8mb4_0900_ai_ci</code> (ถ้ามี)</li>
+      <li>กด <strong>Create</strong></li>
+    </ol>
+    <div class="note">เหตุผล: <em>utf8mb4</em> รองรับอีโมจิและภาษาไทยได้ดี</div>
+  </section>
+
+  <section id="create-table">
+    <h2>4) สร้างตารางและแอตทริบิวต์ (Table & Attributes)</h2>
+    <div class="two">
+      <div>
+        <h3>ขั้นตอน</h3>
+        <ol class="card" style="padding:16px">
+          <li>เลือกฐานข้อมูล <span class="tag">school_db</span></li>
+          <li>กด <strong>Create table</strong> ตั้งชื่อตาราง เช่น <code>students</code> ใส่จำนวนคอลัมน์ (เช่น 8)</li>
+          <li>กำหนดแอตทริบิวต์แต่ละคอลัมน์ (ชื่อชนิดข้อมูล ขนาด ค่าเริ่มต้น ฯลฯ)</li>
+        </ol>
+        <h3>ชนิดข้อมูลที่ใช้บ่อย</h3>
+        <ul class="card" style="padding:16px">
+          <li><strong>INT</strong> ตัวเลขจำนวนเต็ม (เช่น <code>id</code>)</li>
+          <li><strong>VARCHAR(n)</strong> ข้อความสั้น (เช่น ชื่อ, เบอร์โทร)</li>
+          <li><strong>TEXT</strong> ข้อความยาว</li>
+          <li><strong>DATE</strong> วันที่, <strong>DATETIME</strong> วันและเวลา</li>
+          <li><strong>ENUM</strong> ตัวเลือกเฉพาะ เช่น <code>ENUM('ชาย','หญิง','ไม่ระบุ')</code></li>
+        </ul>
+      </div>
+      <div class="card" style="padding:16px">
+        <h3>ตัวอย่างตาราง <code>students</code></h3>
+        <pre><code>id            INT            AUTO_INCREMENT  PRIMARY KEY
+student_code  VARCHAR(10)    NOT NULL       UNIQUE
+prefix        ENUM('เด็กชาย','เด็กหญิง','นาย','นางสาว') NOT NULL
+firstname     VARCHAR(100)   NOT NULL
+lastname      VARCHAR(100)   NOT NULL
+grade         TINYINT        NOT NULL       -- ระดับชั้น 1-6 หรือ 7-12
+class_no      TINYINT        NULL           -- ห้องเรียน
+birthdate     DATE           NULL
+created_at    DATETIME       DEFAULT CURRENT_TIMESTAMP</code></pre>
+        <div class="note">คำแนะนำ: ตั้งชื่อเป็นภาษาอังกฤษเพื่อเขียนโค้ดสะดวก แต่เนื้อหาข้อมูลเป็นภาษาไทยได้เต็มที่</div>
+      </div>
+    </div>
+
+    <h3>การตั้งค่าที่สำคัญของคอลัมน์</h3>
+    <ul class="card" style="padding:16px">
+      <li><strong>Length/Values:</strong> ขนาดของข้อมูล เช่น <code>VARCHAR(100)</code></li>
+      <li><strong>Default:</strong> ค่าปริยาย (เช่น <code>0</code>, <code>CURRENT_TIMESTAMP</code>)</li>
+      <li><strong>Null:</strong> อนุญาตให้ว่างได้หรือไม่ (ควร <em>NOT NULL</em> สำหรับข้อมูลสำคัญ)</li>
+      <li><strong>A_I (Auto Increment):</strong> นับเลขอัตโนมัติ (ใช้กับคีย์หลัก)</li>
+      <li><strong>Comments:</strong> ใส่คำอธิบายคอลัมน์เป็นภาษาไทยได้</li>
+    </ul>
+  </section>
+
+  <section id="keys">
+    <h2>5) คีย์: Primary / Foreign & Index</h2>
+    <div class="two">
+      <div class="card" style="padding:16px">
+        <h3>Primary Key (PK)</h3>
+        <p>ใช้ระบุตัวตนแถวข้อมูลไม่ให้ซ้ำ เช่น <code>id</code> ของตาราง <code>students</code></p>
+        <ol>
+          <li>ไปที่แท็บ <strong>Structure</strong></li>
+          <li>ติ๊กเลือกคอลัมน์ที่ต้องการ แล้วคลิก <strong>Primary</strong></li>
+        </ol>
+        <h3>Index</h3>
+        <p>ช่วยให้ค้นหาเร็วขึ้น (เช่น <code>student_code</code>)</p>
+        <ol>
+          <li>ที่แท็บ <strong>Structure</strong> → <strong>Indexes</strong> → <em>Add index</em></li>
+        </ol>
+      </div>
+      <div class="card" style="padding:16px">
+        <h3>Foreign Key (FK)</h3>
+        <p>เชื่อมความสัมพันธ์ระหว่างตาราง เช่น <code>enrollments.student_id</code> → <code>students.id</code></p>
+        <ol>
+          <li>ตั้ง <em>Storage Engine</em> เป็น <strong>InnoDB</strong></li>
+          <li>ไปที่แท็บ <strong>Structure</strong> → <strong>Relation view</strong> (หรือเมนู <em>Designer</em>)</li>
+          <li>เลือกคอลัมน์ FK แล้วชี้ไปยังตาราง/คอลัมน์ที่เกี่ยวข้อง</li>
+        </ol>
+        <div class="note">กำหนด <em>ON UPDATE / ON DELETE</em> เป็น <strong>CASCADE</strong> เมื่ออยากให้ข้อมูลลูกเปลี่ยนตาม ขณะลบ/แก้ไข</div>
+      </div>
+    </div>
+  </section>
+
+  <section id="crud">
+    <h2>6) เพิ่ม-แก้ไข-ลบข้อมูล (CRUD)</h2>
+    <div class="two">
+      <div class="card" style="padding:16px">
+        <h3>Insert (เพิ่ม)</h3>
+        <ol>
+          <li>เข้าไปที่ตาราง → แท็บ <strong>Insert</strong></li>
+          <li>กรอกข้อมูลแต่ละคอลัมน์ → กด <strong>Go</strong></li>
+        </ol>
+        <h3>Edit/Delete (แก้/ลบ)</h3>
+        <ol>
+          <li>แท็บ <strong>Browse</strong> → คลิกปุ่ม <strong>Edit</strong> หรือ <strong>Delete</strong></li>
+        </ol>
+      </div>
+      <div class="card" style="padding:16px">
+        <h3>ตัวอย่างคำสั่ง SQL</h3>
+        <pre><code>-- เพิ่มข้อมูล
+INSERT INTO students (student_code, prefix, firstname, lastname, grade)
+VALUES ('66001', 'นาย', 'ปรเมนทร์', 'ชัยชนะ', 11);
+
+-- แก้ไขข้อมูล
+UPDATE students SET grade = 12 WHERE student_code = '66001';
+
+-- ลบข้อมูล
+DELETE FROM students WHERE student_code = '66001';
+
+-- ค้นหา
+SELECT * FROM students WHERE grade = 11 ORDER BY firstname;</code></pre>
+      </div>
+    </div>
+  </section>
+
+  <section id="relation">
+    <h2>7) ความสัมพันธ์และแบบจำลอง (Designer)</h2>
+    <p>เมนู <strong>Designer</strong> แสดงแผนภาพ ER (Entity-Relationship) ช่วยลากเชื่อมตารางเพื่อกำหนดความสัมพันธ์ได้</p>
+    <div class="img">
+      <!-- แผนภาพ ER แบบ SVG -->
+      <svg viewBox="0 0 800 300" xmlns="http://www.w3.org/2000/svg" aria-label="ER Diagram">
+        <defs>
+          <filter id="f" x="-20%" y="-20%" width="140%" height="140%">
+            <feDropShadow dx="0" dy="6" stdDeviation="8" flood-color="#000" flood-opacity="0.35"/>
+          </filter>
+        </defs>
+        <rect x="30" y="50" width="210" height="120" rx="14" fill="#0b1222" stroke="#22d3ee" filter="url(#f)"/>
+        <text x="44" y="78" fill="#e5e7eb" font-size="16" font-weight="700">students</text>
+        <text x="44" y="102" fill="#94a3b8" font-size="13">id (PK)</text>
+        <text x="44" y="120" fill="#94a3b8" font-size="13">firstname</text>
+        <text x="44" y="138" fill="#94a3b8" font-size="13">lastname</text>
+
+        <rect x="540" y="50" width="230" height="140" rx="14" fill="#0b1222" stroke="#a78bfa" filter="url(#f)"/>
+        <text x="556" y="78" fill="#e5e7eb" font-size="16" font-weight="700">enrollments</text>
+        <text x="556" y="102" fill="#94a3b8" font-size="13">id (PK)</text>
+        <text x="556" y="120" fill="#94a3b8" font-size="13">student_id (FK)</text>
+        <text x="556" y="138" fill="#94a3b8" font-size="13">subject_id (FK)</text>
+
+        <rect x="285" y="170" width="210" height="110" rx="14" fill="#0b1222" stroke="#22d3ee" filter="url(#f)"/>
+        <text x="300" y="198" fill="#e5e7eb" font-size="16" font-weight="700">subjects</text>
+        <text x="300" y="222" fill="#94a3b8" font-size="13">id (PK)</text>
+        <text x="300" y="240" fill="#94a3b8" font-size="13">name</text>
+
+        <line x1="240" y1="110" x2="540" y2="120" stroke="#22d3ee" stroke-dasharray="6 6"/>
+        <text x="320" y="102" fill="#94a3b8" font-size="12">students.id → enrollments.student_id</text>
+        <line x1="500" y1="210" x2="540" y2="170" stroke="#a78bfa" stroke-dasharray="6 6"/>
+        <text x="520" y="210" fill="#94a3b8" font-size="12">subjects.id → enrollments.subject_id</text>
+      </svg>
+    </div>
+  </section>
+
+  <section id="import">
+    <h2>8) การนำเข้า (Import) CSV/SQL</h2>
+    <div class="two">
+      <div class="card" style="padding:16px">
+        <h3>นำเข้าไฟล์ CSV</h3>
+        <ol>
+          <li>เข้าไปที่ตาราง → แท็บ <strong>Import</strong></li>
+          <li>เลือกไฟล์ <strong>.csv</strong> → กำหนดตัวคั่น (เช่น <code>,</code> หรือ <code>;</code>)</li>
+          <li>กำหนด <em>Character set</em> เป็น <code>utf-8</code></li>
+          <li>ติ๊ก <em>The first line... column names</em> ถ้าแถวแรกเป็นหัวตาราง</li>
+          <li>กด <strong>Go</strong></li>
+        </ol>
+        <div class="note">ถ้าภาษาไทยเพี้ยน ให้เช็คเข้ารหัสไฟล์ว่าเป็น <strong>UTF-8</strong> (ไม่ใช่ TIS-620)</div>
+      </div>
+      <div class="card" style="padding:16px">
+        <h3>นำเข้าไฟล์ SQL</h3>
+        <ol>
+          <li>ไปที่ฐานข้อมูลหรือแท็บตาราง → <strong>Import</strong></li>
+          <li>เลือกไฟล์ <strong>.sql</strong> ที่มีคำสั่ง <code>CREATE TABLE</code> / <code>INSERT</code></li>
+          <li>กด <strong>Go</strong></li>
+        </ol>
+      </div>
+    </div>
+  </section>
+
+  <section id="export">
+    <h2>9) การส่งออก (Export)</h2>
+    <div class="two">
+      <div class="card" style="padding:16px">
+        <h3>Quick (รวดเร็ว)</h3>
+        <p>เลือกฐานข้อมูลหรือตาราง → <strong>Export</strong> → <em>Quick</em> → เลือกรูปแบบ เช่น <strong>SQL</strong> หรือ <strong>CSV</strong> → <strong>Go</strong></p>
+      </div>
+      <div class="card" style="padding:16px">
+        <h3>Custom (ปรับแต่ง)</h3>
+        <p>เลือกเฉพาะตาราง ฟิลด์ เงื่อนไข การเข้ารหัส และตัวคั่นตามต้องการ เหมาะสำหรับเตรียมไฟล์ส่งครู/ย้ายระบบ</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="charset">
+    <h2>10) ภาษาไทย & การตั้งค่า Collation</h2>
+    <ul class="card" style="padding:16px">
+      <li>แนะนำใช้ <strong>utf8mb4</strong> ทุกตาราง/คอลัมน์</li>
+      <li><strong>Collation</strong> แนะนำ <code>utf8mb4_unicode_ci</code> หรือ <code>utf8mb4_0900_ai_ci</code> (บน MySQL 8+)</li>
+      <li>ตอน <strong>Import CSV</strong> ให้ตั้ง <em>Character set</em> = <code>utf-8</code></li>
+      <li>ถ้าอักษรเกิน/ตัด ให้เพิ่มขนาด <code>VARCHAR</code> หรือเปลี่ยนเป็น <code>TEXT</code></li>
+    </ul>
+  </section>
+
+  <section id="users">
+    <h2>11) สิทธิ์ผู้ใช้ (User Accounts / Privileges)</h2>
+    <div class="two">
+      <div class="card" style="padding:16px">
+        <h3>สร้างผู้ใช้ใหม่</h3>
+        <ol>
+          <li>ไปที่เมนู <strong>User accounts</strong></li>
+          <li>คลิก <strong>Add user account</strong></li>
+          <li>ตั้ง <em>Username</em>, <em>Password</em> แข็งแรง (มีตัวพิมพ์ใหญ่ ตัวเลข อักขระพิเศษ)</li>
+          <li>กำหนดสิทธิ์ <em>Global</em> หรือ <em>Database-specific</em> ตามความเหมาะสม</li>
+        </ol>
+      </div>
+      <div class="card warn" style="padding:16px">
+        <strong>ข้อควรระวัง:</strong> หลีกเลี่ยงการใช้บัญชี <code>root</code> ในงานจริง ตั้งรหัสผ่าน และให้สิทธิ์เท่าที่จำเป็น
+      </div>
+    </div>
+  </section>
+
+  <section id="sample">
+    <h2>12) ตัวอย่างโปรเจกต์: ระบบทะเบียนนักเรียน</h2>
+    <div class="two">
+      <div class="card" style="padding:16px">
+        <h3>โครงสร้างตาราง</h3>
+        <pre><code>-- ตารางนักเรียน
+CREATE TABLE students (
+  id INT PRIMARY KEY AUTO_INCREMENT,
+  student_code VARCHAR(10) NOT NULL UNIQUE,
+  prefix ENUM('เด็กชาย','เด็กหญิง','นาย','นางสาว') NOT NULL,
+  firstname VARCHAR(100) NOT NULL,
+  lastname VARCHAR(100) NOT NULL,
+  grade TINYINT NOT NULL,
+  class_no TINYINT,
+  birthdate DATE,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- ตารางรายวิชา
+CREATE TABLE subjects (
+  id INT PRIMARY KEY AUTO_INCREMENT,
+  name VARCHAR(150) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- ตารางลงทะเบียนเรียน (หลายต่อหลาย)
+CREATE TABLE enrollments (
+  id INT PRIMARY KEY AUTO_INCREMENT,
+  student_id INT NOT NULL,
+  subject_id INT NOT NULL,
+  enrolled_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT fk_enroll_student FOREIGN KEY (student_id) REFERENCES students(id)
+    ON UPDATE CASCADE ON DELETE CASCADE,
+  CONSTRAINT fk_enroll_subject FOREIGN KEY (subject_id) REFERENCES subjects(id)
+    ON UPDATE CASCADE ON DELETE RESTRICT
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;</code></pre>
+      </div>
+      <div class="card" style="padding:16px">
+        <h3>ตัวอย่างการเชื่อมต่อด้วย PHP (MySQLi)</h3>
+        <pre><code>&lt;?php
+$host = 'localhost';
+$user = 'root';
+$pass = '';
+$db   = 'school_db';
+
+$conn = new mysqli($host, $user, $pass, $db);
+if ($conn-&gt;connect_error) die('เชื่อมต่อไม่ได้: ' . $conn-&gt;connect_error);
+$conn-&gt;set_charset('utf8mb4');
+
+$sql = "SELECT student_code, firstname, lastname, grade FROM students ORDER BY grade, firstname";
+$result = $conn-&gt;query($sql);
+while($row = $result-&gt;fetch_assoc()){
+  echo $row['student_code'].' - '.$row['firstname'].' '.$row['lastname'].' (ม.' . $row['grade'] . ")&lt;br&gt;";
+}
+$conn-&gt;close();
+?&gt;</code></pre>
+        <div class="note">หากใช้ PDO ก็ได้เช่นกัน เพียงเปลี่ยนวิธีเชื่อมต่อ</div>
+      </div>
+    </div>
+  </section>
+
+  <section id="tips">
+    <h2>13) เคล็ดลับ & แก้ปัญหาพบบ่อย</h2>
+    <div class="grid">
+      <div class="card" style="padding:16px">
+        <h3>ก) Import CSV ภาษาไทยกลายเป็น ?</h3>
+        <ul>
+          <li>บันทึกไฟล์ CSV เป็น <strong>UTF-8 (Comma delimited)</strong></li>
+          <li>ตอน Import ตั้ง <em>Character set</em> = <code>utf-8</code></li>
+          <li>ตั้งตารางให้เป็น <code>utf8mb4</code> + <code>utf8mb4_unicode_ci</code></li>
+        </ul>
+      </div>
+      <div class="card" style="padding:16px">
+        <h3>ข) Primary key ซ้ำ/ลบไม่ได้</h3>
+        <ul>
+          <li>ตรวจว่ามี <strong>Foreign key</strong> อ้างถึงอยู่หรือไม่</li>
+          <li>ลองตั้งค่า <em>ON DELETE</em> เป็น <strong>CASCADE</strong> (ถ้าเหมาะสม)</li>
+        </ul>
+      </div>
+      <div class="card" style="padding:16px">
+        <h3>ค) MySQL ไม่ยอมเริ่มทำงาน (XAMPP)</h3>
+        <ul>
+          <li>อาจมีโปรแกรมอื่นใช้พอร์ต <code>3306</code> อยู่ → เปลี่ยนพอร์ตหรือปิดโปรแกรมนั้น</li>
+          <li>เช็คไฟล์ <code>my.ini</code> และดู <em>Logs</em> ของ XAMPP</li>
+        </ul>
+      </div>
+      <div class="card" style="padding:16px">
+        <h3>ง) ตั้งชื่อและออกแบบข้อมูลให้ดี</h3>
+        <ul>
+          <li>ใช้ <strong>lower_snake_case</strong> เช่น <code>student_code</code></li>
+          <li>ปกติไม่เก็บข้อมูลที่คำนวณได้ซ้ำ (ลดความซ้ำซ้อน)</li>
+          <li>ใส่ <strong>Index</strong> กับคอลัมน์ที่ค้นหาบ่อย</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="card" style="padding:16px; margin-top:24px">
+    <h3>สรุป</h3>
+    <p>เพียงเข้าใจโครงสร้างฐานข้อมูล การตั้งคีย์ การนำเข้า/ส่งออก และดูแลภาษาไทยให้ถูกต้อง ก็สามารถใช้ phpMyAdmin ทำโปรเจกต์ระดับโรงเรียนได้สบาย ๆ ลองเริ่มจากตัวอย่างตารางด้านบน แล้วปรับให้เข้ากับงานของคุณนะครับ ✨</p>
+  </section>
+
+  <footer>
+    <div class="small">จัดทำเพื่อการศึกษา</div>
+  </footer>
+</main>
+</body>
+</html>
