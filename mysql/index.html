@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>คู่มือ MySQL สำหรับนักเรียน ม.ปลาย (พร้อมตัวอย่างคำสั่ง)</title>
+  <style>
+    :root{
+      --bg:#0f172a;
+      --panel:#111827;
+      --card:#0b1220;
+      --ink:#e5e7eb;
+      --muted:#9ca3af;
+      --accent:#22d3ee;
+      --accent-2:#38bdf8;
+      --ok:#34d399;
+      --warn:#f59e0b;
+      --danger:#fb7185;
+      --code:#0b1220;
+      --link:#60a5fa;
+    }
+    *{box-sizing:border-box}
+    html,body{background:var(--bg);color:var(--ink);margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Inter,Helvetica,Arial,"Noto Sans Thai",sans-serif;line-height:1.6}
+    a{color:var(--link);text-decoration:none}
+    a:hover{text-decoration:underline}
+    header{
+      position:sticky;top:0;z-index:1000;
+      background:linear-gradient(90deg, rgba(34,211,238,0.08), rgba(56,189,248,0.08));
+      backdrop-filter:blur(6px);
+      border-bottom:1px solid rgba(255,255,255,0.06);
+    }
+    .wrap{max-width:1100px;margin:0 auto;padding:16px}
+    .title{display:flex;align-items:center;gap:12px}
+    .logo{
+      width:36px;height:36px;border-radius:10px;
+      background:conic-gradient(from 90deg, var(--accent), var(--accent-2), #a78bfa, var(--accent));
+      filter:saturate(120%);box-shadow:0 0 0 4px rgba(255,255,255,0.06) inset;
+    }
+    h1{font-size:1.6rem;margin:0}
+    main{display:grid;grid-template-columns:260px 1fr;gap:20px;margin-top:14px}
+    nav{
+      position:sticky; top:72px; align-self:start;
+      background:var(--panel); border:1px solid rgba(255,255,255,0.06);
+      border-radius:14px; padding:14px; max-height:80vh; overflow:auto
+    }
+    nav h3{margin:0 0 8px 0; font-size:1rem; color:var(--muted)}
+    nav a{display:block;padding:6px 8px;border-radius:8px;color:var(--ink)}
+    nav a:hover{background:rgba(255,255,255,0.06)}
+    section{
+      background:var(--panel); border:1px solid rgba(255,255,255,0.06);
+      border-radius:16px; padding:18px; margin-bottom:18px
+    }
+    h2{margin-top:0;font-size:1.3rem}
+    .badge{display:inline-block;font-size:.8rem;padding:2px 8px;border-radius:999px;background:rgba(34,211,238,0.15);color:var(--accent)}
+    .card{background:var(--card);border:1px solid rgba(255,255,255,0.06);border-radius:12px;padding:12px;margin:10px 0}
+    .grid{display:grid;gap:12px}
+    .grid-2{grid-template-columns:repeat(2,1fr)}
+    .grid-3{grid-template-columns:repeat(3,1fr)}
+    .muted{color:var(--muted)}
+    code,pre{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+    pre{
+      margin:0; background:var(--code); border:1px solid rgba(255,255,255,0.06);
+      padding:12px; border-radius:10px; overflow:auto; position:relative
+    }
+    .cmd{display:flex;justify-content:space-between;align-items:center;margin:6px 0}
+    .copy{
+      border:1px solid rgba(255,255,255,0.1);
+      background:rgba(255,255,255,0.06);
+      color:var(--ink); padding:6px 10px; border-radius:8px; cursor:pointer
+    }
+    .copy:hover{background:rgba(255,255,255,0.1)}
+    .tag{font-size:.75rem;padding:2px 6px;border-radius:6px;background:rgba(255,255,255,0.06);margin-left:8px;color:var(--muted)}
+    table{width:100%;border-collapse:collapse;background:var(--card);border:1px solid rgba(255,255,255,0.06);border-radius:12px;overflow:hidden}
+    th,td{border-bottom:1px solid rgba(255,255,255,0.06);padding:8px;text-align:left}
+    tbody tr:hover{background:rgba(255,255,255,0.04)}
+    .note{border-left:4px solid var(--accent); padding:8px 12px; background:rgba(34,211,238,0.08); border-radius:6px}
+    .ok{color:var(--ok)} .warn{color:var(--warn)} .danger{color:var(--danger)}
+    footer{color:var(--muted);text-align:center;padding:30px 8px}
+    @media (max-width:940px){
+      main{grid-template-columns:1fr}
+      nav{position:relative;top:0;max-height:none}
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="wrap title">
+      <div class="logo" aria-hidden="true"></div>
+      <div>
+        <h1>คู่มือ MySQL สำหรับนักเรียน ม.ปลาย</h1>
+        <div class="muted">สรุปแนวคิดสำคัญ + ตัวอย่างคำสั่งใช้งานได้จริง เหมาะสำหรับครูและนักเรียน</div>
+      </div>
+    </div>
+  </header>
+
+  <div class="wrap">
+    <main>
+      <nav>
+        <h3>สารบัญ</h3>
+        <a href="#intro">1. รู้จักฐานข้อมูลและ MySQL</a>
+        <a href="#install">2. การติดตั้งและเครื่องมือ</a>
+        <a href="#syntax">3. โครงสร้างคำสั่ง SQL</a>
+        <a href="#sample">4. ชุดข้อมูลตัวอย่าง (โรงเรียน)</a>
+        <a href="#crud">5. สร้าง-อ่าน-แก้ไข-ลบ (CRUD)</a>
+        <a href="#filter-sort">6. การคัดกรอง/จัดเรียง/จำกัดผล</a>
+        <a href="#join">7. การ JOIN ตาราง</a>
+        <a href="#agg">8. สรุปผลด้วย Aggregates</a>
+        <a href="#func">9. ฟังก์ชันที่พบบ่อย</a>
+        <a href="#subq">10. Subquery</a>
+        <a href="#index">11. ดัชนี (Index)</a>
+        <a href="#norm">12. การออกแบบฐานข้อมูลเบื้องต้น</a>
+        <a href="#practice">13. แบบฝึกหัด</a>
+        <a href="#cheatsheet">14. ชีตสรุป</a>
+      </nav>
+
+      <div>
+        <section id="intro">
+          <h2>1) รู้จักฐานข้อมูลและ <span class="badge">MySQL</span></h2>
+          <div class="grid grid-2">
+            <div class="card">
+              <strong>ฐานข้อมูล (Database)</strong> คือที่เก็บข้อมูลจำนวนมากอย่างเป็นระบบ เพื่อค้นหาและปรับปรุงได้สะดวก
+              <ul>
+                <li><em>ตาราง (Table)</em> = เหมือนชีตในสเปรดชีต</li>
+                <li><em>แถว/ระเบียน (Row/Record)</em> = ข้อมูล 1 รายการ</li>
+                <li><em>คอลัมน์/ฟิลด์ (Column/Field)</em> = ชนิดข้อมูลแต่ละช่อง</li>
+                <li><em>กุญแจหลัก (Primary Key)</em> = รหัสไม่ซ้ำ เช่น <code>student_id</code></li>
+              </ul>
+            </div>
+            <div class="card">
+              <strong>MySQL</strong> คือระบบฐานข้อมูลแบบสัมพันธ์ (Relational DBMS) ที่ใช้ภาษา <strong>SQL</strong> ในการสั่งงาน
+              <div class="note" style="margin-top:8px">
+                หมายเหตุ: SQL เป็นมาตรฐาน ส่วน MySQL มีไวยากรณ์เฉพาะบางส่วน แต่คำสั่งพื้นฐานใช้ได้ร่วมกันส่วนใหญ่
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section id="install">
+          <h2>2) การติดตั้งและเครื่องมือ</h2>
+          <div class="grid grid-2">
+            <div class="card">
+              <h3>ตัวเลือกยอดนิยม</h3>
+              <ul>
+                <li><strong>XAMPP</strong> (มี MySQL + phpMyAdmin) — เหมาะสำหรับห้องคอม</li>
+                <li><strong>MySQL Community Server</strong> + <em>MySQL Workbench</em></li>
+                <li><strong>Docker</strong> (สำหรับชั้นเรียนที่มีพื้นฐาน)</li>
+              </ul>
+            </div>
+            <div class="card">
+              <h3>เชื่อมต่อครั้งแรก</h3>
+              <div class="cmd">
+                <span>เข้าสู่ MySQL</span>
+                <button class="copy" data-copy="mysql -u root -p">คัดลอก</button>
+              </div>
+              <pre>mysql -u root -p</pre>
+              <div class="cmd">
+                <span>สร้างฐานข้อมูล</span>
+                <button class="copy" data-copy="CREATE DATABASE school_db; USE school_db;">คัดลอก</button>
+              </div>
+              <pre>CREATE DATABASE school_db;
+USE school_db;</pre>
+            </div>
+          </div>
+        </section>
+
+        <section id="syntax">
+          <h2>3) โครงสร้างคำสั่ง SQL เบื้องต้น</h2>
+          <table>
+            <thead><tr><th>รูปแบบ</th><th>ความหมาย</th></tr></thead>
+            <tbody>
+              <tr><td><code>CREATE TABLE ...</code></td><td>สร้างตารางใหม่</td></tr>
+              <tr><td><code>INSERT INTO ...</code></td><td>เพิ่มข้อมูล</td></tr>
+              <tr><td><code>SELECT ... FROM ...</code></td><td>อ่านข้อมูล</td></tr>
+              <tr><td><code>UPDATE ... SET ...</code></td><td>แก้ไขข้อมูล</td></tr>
+              <tr><td><code>DELETE FROM ...</code></td><td>ลบข้อมูล</td></tr>
+            </tbody>
+          </table>
+          <div class="note" style="margin-top:10px">
+            เคล็ดลับ: ตัวพิมพ์เล็ก-ใหญ่ไม่สำคัญสำหรับคำสั่ง แต่ควรเขียนคำสงวนเป็นตัวใหญ่เพื่ออ่านง่าย เช่น <code>SELECT</code>, <code>FROM</code>, <code>WHERE</code>
+          </div>
+        </section>
+
+        <section id="sample">
+          <h2>4) ชุดข้อมูลตัวอย่าง: <span class="badge">โรงเรียน</span></h2>
+          <p>ใช้ฐานข้อมูล <code>school_db</code> ที่มี 3 ตาราง: <code>students</code>, <code>classes</code>, <code>scores</code></p>
+          <div class="grid grid-2">
+            <div class="card">
+              <h3>สร้างตาราง</h3>
+              <div class="cmd">
+                <span>DDL (สร้างโครงสร้าง)</span>
+                <button class="copy" data-copy="CREATE TABLE classes (
+  class_id INT PRIMARY KEY AUTO_INCREMENT,
+  class_name VARCHAR(50) NOT NULL,
+  teacher VARCHAR(60) NOT NULL
+);
+CREATE TABLE students (
+  student_id INT PRIMARY KEY AUTO_INCREMENT,
+  full_name VARCHAR(80) NOT NULL,
+  gender ENUM('M','F') NOT NULL,
+  birthdate DATE NOT NULL,
+  class_id INT,
+  CONSTRAINT fk_class FOREIGN KEY (class_id) REFERENCES classes(class_id)
+);
+CREATE TABLE scores (
+  score_id INT PRIMARY KEY AUTO_INCREMENT,
+  student_id INT NOT NULL,
+  subject VARCHAR(40) NOT NULL,
+  term VARCHAR(10) NOT NULL,
+  score DECIMAL(5,2) NOT NULL CHECK (score BETWEEN 0 AND 100),
+  CONSTRAINT fk_student FOREIGN KEY (student_id) REFERENCES students(student_id)
+);">คัดลอก</button>
+              </div>
+              <pre>CREATE TABLE classes (
+  class_id INT PRIMARY KEY AUTO_INCREMENT,
+  class_name VARCHAR(50) NOT NULL,
+  teacher VARCHAR(60) NOT NULL
+);
+CREATE TABLE students (
+  student_id INT PRIMARY KEY AUTO_INCREMENT,
+  full_name VARCHAR(80) NOT NULL,
+  gender ENUM('M','F') NOT NULL,
+  birthdate DATE NOT NULL,
+  class_id INT,
+  CONSTRAINT fk_class FOREIGN KEY (class_id) REFERENCES classes(class_id)
+);
+CREATE TABLE scores (
+  score_id INT PRIMARY KEY AUTO_INCREMENT,
+  student_id INT NOT NULL,
+  subject VARCHAR(40) NOT NULL,
+  term VARCHAR(10) NOT NULL,
+  score DECIMAL(5,2) NOT NULL CHECK (score BETWEEN 0 AND 100),
+  CONSTRAINT fk_student FOREIGN KEY (student_id) REFERENCES students(student_id)
+);</pre>
+            </div>
+            <div class="card">
+              <h3>เพิ่มข้อมูลตัวอย่าง</h3>
+              <div class="cmd">
+                <span>INSERT เริ่มต้น</span>
+                <button class="copy" data-copy="INSERT INTO classes (class_name, teacher) VALUES
+('ม.5/1','ครูอร'),
+('ม.5/2','ครูพิช'),
+('ม.6/1','ครูนา');
+INSERT INTO students (full_name, gender, birthdate, class_id) VALUES
+('กานต์ มณี','M','2007-04-12',1),
+('ณิชา รัตน์','F','2007-09-03',1),
+('พีรพัฒน์ ใจดี','M','2006-11-20',2),
+('ศิรินทร์ ดวงดี','F','2006-01-05',3);
+INSERT INTO scores (student_id, subject, term, score) VALUES
+(1,'คณิตศาสตร์','1/2567',78.50),
+(1,'ภาษาไทย','1/2567',82.00),
+(2,'คณิตศาสตร์','1/2567',91.25),
+(2,'ภาษาไทย','1/2567',77.00),
+(3,'คณิตศาสตร์','1/2567',65.00),
+(3,'ภาษาไทย','1/2567',72.75),
+(4,'คณิตศาสตร์','1/2567',88.00),
+(4,'ภาษาไทย','1/2567',85.50);">คัดลอก</button>
+              </div>
+              <pre>INSERT INTO classes (class_name, teacher) VALUES
+('ม.5/1','ครูอร'),
+('ม.5/2','ครูพิช'),
+('ม.6/1','ครูนา');
+INSERT INTO students (full_name, gender, birthdate, class_id) VALUES
+('กานต์ มณี','M','2007-04-12',1),
+('ณิชา รัตน์','F','2007-09-03',1),
+('พีรพัฒน์ ใจดี','M','2006-11-20',2),
+('ศิรินทร์ ดวงดี','F','2006-01-05',3);
+INSERT INTO scores (student_id, subject, term, score) VALUES
+(1,'คณิตศาสตร์','1/2567',78.50),
+(1,'ภาษาไทย','1/2567',82.00),
+(2,'คณิตศาสตร์','1/2567',91.25),
+(2,'ภาษาไทย','1/2567',77.00),
+(3,'คณิตศาสตร์','1/2567',65.00),
+(3,'ภาษาไทย','1/2567',72.75),
+(4,'คณิตศาสตร์','1/2567',88.00),
+(4,'ภาษาไทย','1/2567',85.50);</pre>
+            </div>
+          </div>
+        </section>
+
+        <section id="crud">
+          <h2>5) CRUD: สร้าง อ่าน แก้ไข ลบ</h2>
+          <div class="grid grid-2">
+            <div class="card">
+              <h3>SELECT (อ่าน)</h3>
+              <div class="cmd">
+                <span>เลือกคอลัมน์ที่ต้องการ</span>
+                <button class="copy" data-copy="SELECT student_id, full_name FROM students;">คัดลอก</button>
+              </div>
+              <pre>SELECT student_id, full_name FROM students;</pre>
+              <div class="cmd">
+                <span>นับจำนวนแถว</span>
+                <button class="copy" data-copy="SELECT COUNT(*) AS total_students FROM students;">คัดลอก</button>
+              </div>
+              <pre>SELECT COUNT(*) AS total_students FROM students;</pre>
+            </div>
+            <div class="card">
+              <h3>INSERT / UPDATE / DELETE</h3>
+              <div class="cmd">
+                <span>INSERT เพิ่มนักเรียน</span>
+                <button class="copy" data-copy="INSERT INTO students (full_name, gender, birthdate, class_id)
+VALUES ('ปุณณวิชญ์ ก้อง','M','2007-02-14',2);">คัดลอก</button>
+              </div>
+              <pre>INSERT INTO students (full_name, gender, birthdate, class_id)
+VALUES ('ปุณณวิชญ์ ก้อง','M','2007-02-14',2);</pre>
+
+              <div class="cmd">
+                <span>UPDATE เปลี่ยนห้อง</span>
+                <button class="copy" data-copy="UPDATE students SET class_id = 3 WHERE student_id = 1;">คัดลอก</button>
+              </div>
+              <pre>UPDATE students SET class_id = 3 WHERE student_id = 1;</pre>
+
+              <div class="cmd">
+                <span>DELETE ลบคะแนนผิดพลาด</span>
+                <button class="copy" data-copy="DELETE FROM scores WHERE score &gt; 100;">คัดลอก</button>
+              </div>
+              <pre>DELETE FROM scores WHERE score &gt; 100;</pre>
+            </div>
+          </div>
+        </section>
+
+        <section id="filter-sort">
+          <h2>6) คัดกรอง จัดเรียง จำกัดผล</h2>
+          <div class="grid grid-2">
+            <div class="card">
+              <h3>WHERE</h3>
+              <div class="cmd">
+                <span>คณิตศาสตร์มากกว่า 80</span>
+                <button class="copy" data-copy="SELECT * FROM scores WHERE subject = 'คณิตศาสตร์' AND score &gt; 80;">คัดลอก</button>
+              </div>
+              <pre>SELECT * FROM scores WHERE subject = 'คณิตศาสตร์' AND score &gt; 80;</pre>
+              <div class="cmd">
+                <span>ระหว่าง 70-85</span>
+                <button class="copy" data-copy="SELECT * FROM scores WHERE score BETWEEN 70 AND 85;">คัดลอก</button>
+              </div>
+              <pre>SELECT * FROM scores WHERE score BETWEEN 70 AND 85;</pre>
+            </div>
+            <div class="card">
+              <h3>ORDER BY / LIMIT</h3>
+              <div class="cmd">
+                <span>เรียงจากมากไปน้อย</span>
+                <button class="copy" data-copy="SELECT full_name, birthdate FROM students ORDER BY birthdate ASC;">คัดลอก</button>
+              </div>
+              <pre>SELECT full_name, birthdate FROM students ORDER BY birthdate ASC;</pre>
+              <div class="cmd">
+                <span>เอา 3 แถวแรก</span>
+                <button class="copy" data-copy="SELECT * FROM scores ORDER BY score DESC LIMIT 3;">คัดลอก</button>
+              </div>
+              <pre>SELECT * FROM scores ORDER BY score DESC LIMIT 3;</pre>
+            </div>
+          </div>
+        </section>
+
+        <section id="join">
+          <h2>7) การ JOIN ตาราง</h2>
+          <div class="card">
+            <p><strong>JOIN</strong> ใช้เชื่อมข้อมูลจากหลายตารางผ่านคีย์ที่สัมพันธ์กัน</p>
+            <div class="cmd">
+              <span>รายชื่อนักเรียนพร้อมชื่อห้อง</span>
+              <button class="copy" data-copy="SELECT s.student_id, s.full_name, c.class_name
+FROM students s
+JOIN classes c ON s.class_id = c.class_id;">คัดลอก</button>
+            </div>
+            <pre>SELECT s.student_id, s.full_name, c.class_name
+FROM students s
+JOIN classes c ON s.class_id = c.class_id;</pre>
+
+            <div class="cmd">
+              <span>คะแนนพร้อมชื่อ นร. และห้อง</span>
+              <button class="copy" data-copy="SELECT s.full_name, c.class_name, sc.subject, sc.term, sc.score
+FROM scores sc
+JOIN students s ON sc.student_id = s.student_id
+LEFT JOIN classes c ON s.class_id = c.class_id;">คัดลอก</button>
+            </div>
+            <pre>SELECT s.full_name, c.class_name, sc.subject, sc.term, sc.score
+FROM scores sc
+JOIN students s ON sc.student_id = s.student_id
+LEFT JOIN classes c ON s.class_id = c.class_id;</pre>
+          </div>
+        </section>
+
+        <section id="agg">
+          <h2>8) สรุปผลด้วย Aggregates และ GROUP BY</h2>
+          <div class="grid grid-2">
+            <div class="card">
+              <h3>ค่าเฉลี่ย/สูงสุด/ต่ำสุด</h3>
+              <div class="cmd">
+                <span>เฉลี่ยคะแนนคณิตฯ รายชั้น</span>
+                <button class="copy" data-copy="SELECT c.class_name, AVG(sc.score) AS avg_math
+FROM scores sc
+JOIN students s ON sc.student_id = s.student_id
+JOIN classes c ON s.class_id = c.class_id
+WHERE sc.subject = 'คณิตศาสตร์'
+GROUP BY c.class_name
+ORDER BY avg_math DESC;">คัดลอก</button>
+              </div>
+              <pre>SELECT c.class_name, AVG(sc.score) AS avg_math
+FROM scores sc
+JOIN students s ON sc.student_id = s.student_id
+JOIN classes c ON s.class_id = c.class_id
+WHERE sc.subject = 'คณิตศาสตร์'
+GROUP BY c.class_name
+ORDER BY avg_math DESC;</pre>
+            </div>
+            <div class="card">
+              <h3>HAVING (กรองหลังสรุปแล้ว)</h3>
+              <div class="cmd">
+                <span>เฉลี่ย &gt;= 80</span>
+                <button class="copy" data-copy="SELECT subject, AVG(score) AS avg_score
+FROM scores
+GROUP BY subject
+HAVING AVG(score) &gt;= 80;">คัดลอก</button>
+              </div>
+              <pre>SELECT subject, AVG(score) AS avg_score
+FROM scores
+GROUP BY subject
+HAVING AVG(score) &gt;= 80;</pre>
+            </div>
+          </div>
+        </section>
+
+        <section id="func">
+          <h2>9) ฟังก์ชันที่พบบ่อย</h2>
+          <div class="grid grid-3">
+            <div class="card">
+              <h3>สตริง</h3>
+              <pre>SELECT UPPER(full_name) AS upper_name FROM students;
+SELECT SUBSTRING(full_name,1,3) FROM students;</pre>
+            </div>
+            <div class="card">
+              <h3>ตัวเลข</h3>
+              <pre>SELECT ROUND(AVG(score),2) FROM scores;
+SELECT CEIL(78.2), FLOOR(78.9);</pre>
+            </div>
+            <div class="card">
+              <h3>วันที่/เวลา</h3>
+              <pre>SELECT TIMESTAMPDIFF(YEAR, birthdate, CURDATE()) AS age FROM students;
+SELECT DATE_FORMAT(birthdate, '%d/%m/%Y') FROM students;</pre>
+            </div>
+          </div>
+        </section>
+
+        <section id="subq">
+          <h2>10) Subquery (คำสั่งซ้อน)</h2>
+          <div class="card">
+            <div class="cmd">
+              <span>หานักเรียนที่คะแนนคณิตฯ สูงกว่าค่าเฉลี่ยทั้งโรงเรียน</span>
+              <button class="copy" data-copy="SELECT s.full_name, sc.score
+FROM scores sc
+JOIN students s ON sc.student_id = s.student_id
+WHERE sc.subject = 'คณิตศาสตร์'
+AND sc.score &gt; (
+  SELECT AVG(score) FROM scores WHERE subject = 'คณิตศาสตร์'
+);">คัดลอก</button>
+            </div>
+            <pre>SELECT s.full_name, sc.score
+FROM scores sc
+JOIN students s ON sc.student_id = s.student_id
+WHERE sc.subject = 'คณิตศาสตร์'
+AND sc.score &gt; (
+  SELECT AVG(score) FROM scores WHERE subject = 'คณิตศาสตร์'
+);</pre>
+          </div>
+        </section>
+
+        <section id="index">
+          <h2>11) ดัชนี (Index)</h2>
+          <div class="card">
+            <p>ดัชนีช่วยให้ค้นหาข้อมูลเร็วขึ้น โดยเฉพาะคอลัมน์ที่ถูกใช้ในเงื่อนไข <code>WHERE</code> หรือการเชื่อมตาราง</p>
+            <div class="cmd">
+              <span>สร้างดัชนีที่ subject+term</span>
+              <button class="copy" data-copy="CREATE INDEX idx_scores_subject_term ON scores(subject, term);">คัดลอก</button>
+            </div>
+            <pre>CREATE INDEX idx_scores_subject_term ON scores(subject, term);</pre>
+            <p class="muted">ข้อควรระวัง: ดัชนีช่วยอ่านข้อมูลเร็วขึ้น แต่ทำให้การ INSERT/UPDATE ช้าลงเล็กน้อย</p>
+          </div>
+        </section>
+
+        <section id="norm">
+          <h2>12) การออกแบบฐานข้อมูลเบื้องต้น (Normalization ย่อ)</h2>
+          <div class="grid grid-2">
+            <div class="card">
+              <h3>แนวคิด</h3>
+              <ul>
+                <li>ข้อมูลไม่ซ้ำซ้อน</li>
+                <li>แบ่งตารางตามหน่วยข้อมูล (เช่น นักเรียน/ห้อง/คะแนน)</li>
+                <li>ใช้กุญแจหลัก (PK) และกุญแจนอก (FK) ให้สัมพันธ์กัน</li>
+              </ul>
+            </div>
+            <div class="card">
+              <h3>ตัวอย่างออกแบบ</h3>
+              <pre>students(student_id PK, full_name, gender, birthdate, class_id FK)
+classes(class_id PK, class_name, teacher)
+scores(score_id PK, student_id FK, subject, term, score)</pre>
+            </div>
+          </div>
+        </section>
+
+        <section id="practice">
+          <h2>13) แบบฝึกหัด</h2>
+          <ol>
+            <li>หาชื่อนักเรียนทุกคนในห้อง <code>ม.5/1</code></li>
+            <li>หาคะแนนเฉลี่ยวิชา <em>ภาษาไทย</em> ของเทอม <code>1/2567</code></li>
+            <li>หานักเรียนที่อายุมากกว่า <code>17</code> ปี</li>
+            <li>สรุปค่าเฉลี่ยคณิตฯ แยกตามห้อง และเรียงจากมากไปน้อย</li>
+            <li>เพิ่มนักเรียนใหม่ 1 คน และเพิ่มคะแนนอย่างน้อย 2 วิชา</li>
+          </ol>
+          <div class="card">
+            <strong>เฉลยตัวอย่างสั้น ๆ</strong>
+            <pre>-- 1
+SELECT s.full_name
+FROM students s
+JOIN classes c ON s.class_id = c.class_id
+WHERE c.class_name = 'ม.5/1';
+
+-- 2
+SELECT AVG(score) AS avg_th
+FROM scores
+WHERE subject='ภาษาไทย' AND term='1/2567';
+
+-- 3
+SELECT full_name
+FROM students
+WHERE TIMESTAMPDIFF(YEAR, birthdate, CURDATE()) &gt; 17;</pre>
+          </div>
+        </section>
+
+        <section id="cheatsheet">
+          <h2>14) ชีตสรุป (Cheat Sheet)</h2>
+          <div class="grid grid-3">
+            <div class="card"><pre>-- เลือกคอลัมน์
+SELECT col1, col2 FROM t;
+
+-- เงื่อนไข
+SELECT * FROM t WHERE col &gt; 10;</pre></div>
+            <div class="card"><pre>-- จัดเรียง/จำกัด
+SELECT * FROM t
+ORDER BY col DESC
+LIMIT 5;</pre></div>
+            <div class="card"><pre>-- สรุปผล
+SELECT col, AVG(x)
+FROM t
+GROUP BY col;</pre></div>
+          </div>
+          <p class="muted">แนะนำให้เปิดใช้ <em>MySQL Workbench</em> หรือ <em>phpMyAdmin</em> เพื่อทดลองรันคำสั่งทีละบรรทัด</p>
+        </section>
+
+        <footer>
+          จัดทำเพื่อการศึกษา – ปรับแก้ เพิ่มรูป/โลโก้โรงเรียนได้ตามต้องการ
+        </footer>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    // ปุ่มคัดลอกโค้ด
+    document.querySelectorAll('.copy').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const text = btn.getAttribute('data-copy');
+        try{
+          await navigator.clipboard.writeText(text);
+          const old = btn.textContent;
+          btn.textContent = 'คัดลอกแล้ว ✓';
+          setTimeout(()=>btn.textContent = old, 1200);
+        }catch(e){
+          alert('คัดลอกไม่สำเร็จ');
+        }
+      });
+    });
+  </script>
+</body>
+</html>
