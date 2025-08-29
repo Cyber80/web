@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>POS ระบบขายหน้าร้าน - ตัวอย่างสำหรับนักเรียน</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <h1>POS ระบบขายหน้าร้าน (ตัวอย่าง)</h1>
+    <p class="muted">ทดสอบบน XAMPP: วางโฟลเดอร์นี้ใน htdocs แล้วเปิด <code>http://localhost/test/</code></p>
+  </header>
+
+  <main class="container">
+    <section class="products">
+      <h2>รายการสินค้า</h2>
+      <div id="product-list" class="grid"></div>
+    </section>
+
+    <aside class="cart">
+      <h2>ตะกร้าสินค้า</h2>
+      <div id="cart-items"></div>
+      <div class="summary">
+        <label>ส่วนลด: <input id="discount" type="number" value="0" min="0" /> บาท</label>
+        <div class="totals">
+          <div>รวมสุทธิ: <strong id="total">0</strong> บาท</div>
+        </div>
+        <div class="buttons">
+          <button id="checkout">บันทึก / พิมพ์บิล</button>
+          <button id="clear">ล้างตะกร้า</button>
+          <button id="export">Export CSV</button>
+        </div>
+      </div>
+    </aside>
+  </main>
+
+  <!-- Modal / Invoice -->
+  <div id="invoiceModal" class="modal hidden">
+    <div class="modal-content">
+      <button class="close" id="closeInvoice">✕</button>
+      <h3>ใบเสร็จ / Invoice</h3>
+      <div id="invoiceArea"></div>
+      <button id="printInvoice">พิมพ์</button>
+    </div>
+  </div>
+
+  <footer>
+    <small>จัดทำเพื่อการเรียนรู้ — ตัวอย่างระบบขายหน้าร้าน (HTML + JavaScript)</small>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
