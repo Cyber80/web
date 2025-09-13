@@ -74,6 +74,12 @@
             padding: 10px;
             border-radius: 5px;
         }
+        .error {
+            color: red;
+            font-size: 14px;
+            text-align: center;
+            margin-top: 10px;
+        }
     </style>
 </head>
 <body>
@@ -112,20 +118,71 @@
         <h3>ผลลัพธ์:</h3>
         <p id="result">---</p>
     </div>
+    <div class="error" id="error-message"></div>
 </div>
 
 <script>
-    // Note: The JavaScript logic to perform the calculations is missing.
-    // This is just a basic HTML template.
-    // You would need to add functions here to:
-    // 1. Get values from 'num1', 'num2', and 'base'.
-    // 2. Validate the input to ensure it's a valid number for the selected base.
-    // 3. Convert the numbers to a common base (e.g., base 10) to perform the operation.
-    // 4. Perform the calculation (add, subtract, multiply, or divide).
-    // 5. Convert the result back to the selected base.
-    // 6. Display the result in the 'result' paragraph.
     function calculate(operation) {
-        alert("This is a static HTML template. Please add your JavaScript code to make the calculator work!");
+        // Get user inputs from the HTML form
+        const num1Str = document.getElementById('num1').value;
+        const num2Str = document.getElementById('num2').value;
+        const base = parseInt(document.getElementById('base').value);
+        const resultElement = document.getElementById('result');
+        const errorElement = document.getElementById('error-message');
+
+        // Reset error message and result display
+        errorElement.textContent = '';
+        resultElement.textContent = '---';
+
+        // Validate the input to ensure it's a valid number for the selected base
+        try {
+            // Convert strings from their base to base 10 for calculation
+            const num1Decimal = parseInt(num1Str, base);
+            const num2Decimal = parseInt(num2Str, base);
+            
+            // Check for invalid input (e.g., "G" in base 10)
+            if (isNaN(num1Decimal) || isNaN(num2Decimal)) {
+                throw new Error('กรุณาป้อนตัวเลขที่ถูกต้องสำหรับเลขฐานที่เลือก');
+            }
+
+            let resultDecimal;
+            // Perform the chosen mathematical operation
+            switch (operation) {
+                case 'add':
+                    resultDecimal = num1Decimal + num2Decimal;
+                    break;
+                case 'subtract':
+                    resultDecimal = num1Decimal - num2Decimal;
+                    break;
+                case 'multiply':
+                    resultDecimal = num1Decimal * num2Decimal;
+                    break;
+                case 'divide':
+                    if (num2Decimal === 0) {
+                        throw new Error('ไม่สามารถหารด้วยศูนย์ได้');
+                    }
+                    resultDecimal = Math.floor(num1Decimal / num2Decimal); // Integer division
+                    break;
+                default:
+                    throw new Error('การดำเนินการไม่ถูกต้อง');
+            }
+
+            // Convert the result back to the original base for display
+            const finalResult = resultDecimal.toString(base).toUpperCase();
+            
+            // Handle division with a remainder
+            if (operation === 'divide') {
+                const remainderDecimal = num1Decimal % num2Decimal;
+                const remainder = remainderDecimal.toString(base).toUpperCase();
+                resultElement.textContent = `ผลลัพธ์: ${finalResult}, เศษ: ${remainder}`;
+            } else {
+                resultElement.textContent = finalResult;
+            }
+
+        } catch (error) {
+            // Display an error message if any issues occur
+            errorElement.textContent = error.message;
+        }
     }
 </script>
 
