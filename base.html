@@ -11,7 +11,7 @@
             justify-content: center;
             align-items: center;
             height: 100vh;
-            background-color: #f0f0f0;
+            background-color: #f0f0f0;    
         }
         .calculator {
             background-color: #fff;
@@ -74,6 +74,34 @@
             padding: 10px;
             border-radius: 5px;
         }
+        .convert-section {
+            margin-top: 20px;
+            border-top: 1px solid #ccc;
+            padding-top: 15px;
+        }
+        .convert-section h3 {
+            text-align: center;
+            color: #333;
+        }
+        .convert-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        .convert-buttons button {
+            padding: 10px;
+            font-size: 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            background-color: #f0ad4e;
+            color: #fff;
+            transition: background-color 0.3s ease;
+        }
+        .convert-buttons button:hover {
+            background-color: #ec971f;
+        }
         .error {
             color: red;
             font-size: 14px;
@@ -115,38 +143,55 @@
     </div>
 
     <div class="result-group">
-        <h3>ผลลัพธ์:</h3>
+        <h3>ผลลัพธ์ (ฐานเดิม):</h3>
         <p id="result">---</p>
+    </div>
+
+    <div class="convert-section">
+        <h3>แปลงผลลัพธ์เป็นฐานอื่น</h3>
+        <div class="input-group">
+            <label for="convert-base">เลือกเลขฐานใหม่:</label>
+            <select id="convert-base">
+                <option value="2">ฐาน 2 (Binary)</option>
+                <option value="8">ฐาน 8 (Octal)</option>
+                <option value="10">ฐาน 10 (Decimal)</option>
+                <option value="16">ฐาน 16 (Hexadecimal)</option>
+            </select>
+        </div>
+        <div class="convert-buttons">
+            <button onclick="convertResult()">แปลง</button>
+        </div>
+        <div class="result-group">
+            <h3>ผลลัพธ์ (ฐานใหม่):</h3>
+            <p id="converted-result">---</p>
+        </div>
     </div>
     <div class="error" id="error-message"></div>
 </div>
 
 <script>
+    let lastResultDecimal = null; // Stores the base-10 result from the last calculation
+
     function calculate(operation) {
-        // Get user inputs from the HTML form
         const num1Str = document.getElementById('num1').value;
         const num2Str = document.getElementById('num2').value;
         const base = parseInt(document.getElementById('base').value);
         const resultElement = document.getElementById('result');
         const errorElement = document.getElementById('error-message');
 
-        // Reset error message and result display
         errorElement.textContent = '';
         resultElement.textContent = '---';
+        document.getElementById('converted-result').textContent = '---';
 
-        // Validate the input to ensure it's a valid number for the selected base
         try {
-            // Convert strings from their base to base 10 for calculation
             const num1Decimal = parseInt(num1Str, base);
             const num2Decimal = parseInt(num2Str, base);
             
-            // Check for invalid input (e.g., "G" in base 10)
             if (isNaN(num1Decimal) || isNaN(num2Decimal)) {
                 throw new Error('กรุณาป้อนตัวเลขที่ถูกต้องสำหรับเลขฐานที่เลือก');
             }
 
             let resultDecimal;
-            // Perform the chosen mathematical operation
             switch (operation) {
                 case 'add':
                     resultDecimal = num1Decimal + num2Decimal;
@@ -161,16 +206,15 @@
                     if (num2Decimal === 0) {
                         throw new Error('ไม่สามารถหารด้วยศูนย์ได้');
                     }
-                    resultDecimal = Math.floor(num1Decimal / num2Decimal); // Integer division
+                    resultDecimal = Math.floor(num1Decimal / num2Decimal);
                     break;
-                default:
-                    throw new Error('การดำเนินการไม่ถูกต้อง');
             }
 
-            // Convert the result back to the original base for display
+            // Store the base-10 result for later conversion
+            lastResultDecimal = resultDecimal;
+            
             const finalResult = resultDecimal.toString(base).toUpperCase();
             
-            // Handle division with a remainder
             if (operation === 'divide') {
                 const remainderDecimal = num1Decimal % num2Decimal;
                 const remainder = remainderDecimal.toString(base).toUpperCase();
@@ -180,8 +224,30 @@
             }
 
         } catch (error) {
-            // Display an error message if any issues occur
             errorElement.textContent = error.message;
+            lastResultDecimal = null; // Clear stored result if there was an error
+        }
+    }
+
+    function convertResult() {
+        const convertBase = parseInt(document.getElementById('convert-base').value);
+        const convertedResultElement = document.getElementById('converted-result');
+        const errorElement = document.getElementById('error-message');
+
+        errorElement.textContent = '';
+        convertedResultElement.textContent = '---';
+
+        if (lastResultDecimal === null) {
+            errorElement.textContent = 'กรุณาคำนวณผลลัพธ์ก่อนทำการแปลง';
+            return;
+        }
+
+        try {
+            // Convert the base-10 result to the new base
+            const convertedValue = lastResultDecimal.toString(convertBase).toUpperCase();
+            convertedResultElement.textContent = convertedValue;
+        } catch (error) {
+            errorElement.textContent = 'เกิดข้อผิดพลาดในการแปลงผลลัพธ์';
         }
     }
 </script>
