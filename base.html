@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>เครื่องคิดเลขเลขฐาน</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f0f0f0;
+        }
+        .calculator {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            width: 350px;
+        }
+        .calculator h1 {
+            text-align: center;
+            color: #333;
+        }
+        .input-group {
+            margin-bottom: 15px;
+        }
+        .input-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #555;
+        }
+        .input-group input, .input-group select {
+            width: 95%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        .operation-buttons {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin-top: 15px;
+        }
+        .operation-buttons button {
+            padding: 15px;
+            font-size: 18px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            background-color: #007bff;
+            color: #fff;
+            transition: background-color 0.3s ease;
+        }
+        .operation-buttons button:hover {
+            background-color: #0056b3;
+        }
+        .result-group {
+            margin-top: 20px;
+            text-align: center;
+        }
+        .result-group h3 {
+            margin-bottom: 10px;
+            color: #333;
+        }
+        .result-group p {
+            font-size: 24px;
+            font-weight: bold;
+            color: #28a745;
+            background-color: #e9f5ee;
+            padding: 10px;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="calculator">
+    <h1>เครื่องคิดเลขเลขฐาน</h1>
+
+    <div class="input-group">
+        <label for="base">เลือกเลขฐาน:</label>
+        <select id="base">
+            <option value="2">ฐาน 2 (Binary)</option>
+            <option value="8">ฐาน 8 (Octal)</option>
+            <option value="10" selected>ฐาน 10 (Decimal)</option>
+            <option value="16">ฐาน 16 (Hexadecimal)</option>
+        </select>
+    </div>
+    
+    <div class="input-group">
+        <label for="num1">ตัวเลขที่ 1:</label>
+        <input type="text" id="num1" placeholder="ป้อนตัวเลข">
+    </div>
+
+    <div class="input-group">
+        <label for="num2">ตัวเลขที่ 2:</label>
+        <input type="text" id="num2" placeholder="ป้อนตัวเลข">
+    </div>
+
+    <div class="operation-buttons">
+        <button onclick="calculate('add')">+</button>
+        <button onclick="calculate('subtract')">-</button>
+        <button onclick="calculate('multiply')">×</button>
+        <button onclick="calculate('divide')">÷</button>
+    </div>
+
+    <div class="result-group">
+        <h3>ผลลัพธ์:</h3>
+        <p id="result">---</p>
+    </div>
+</div>
+
+<script>
+    // Note: The JavaScript logic to perform the calculations is missing.
+    // This is just a basic HTML template.
+    // You would need to add functions here to:
+    // 1. Get values from 'num1', 'num2', and 'base'.
+    // 2. Validate the input to ensure it's a valid number for the selected base.
+    // 3. Convert the numbers to a common base (e.g., base 10) to perform the operation.
+    // 4. Perform the calculation (add, subtract, multiply, or divide).
+    // 5. Convert the result back to the selected base.
+    // 6. Display the result in the 'result' paragraph.
+    function calculate(operation) {
+        alert("This is a static HTML template. Please add your JavaScript code to make the calculator work!");
+    }
+</script>
+
+</body>
+</html>
