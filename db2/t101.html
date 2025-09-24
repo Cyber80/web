@@ -1,0 +1,115 @@
+﻿<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<title>ข้อสอบระบบฐานข้อมูล</title>
+<style>
+  body { font-family: "Segoe UI", Arial, sans-serif; padding: 20px; background:#f9fafb; color:#333; }
+  h2 { color:#2c3e50; text-align:center; }
+  .question { margin-bottom: 20px; padding:15px; background:#fff; border-radius:10px; box-shadow:0 2px 4px rgba(0,0,0,0.1); }
+  .question p { font-weight:600; }
+  .options { margin-left: 20px; }
+  label { display:block; margin:5px 0; }
+  button { padding:12px 25px; font-size:16px; background:#3498db; color:white; border:none; border-radius:8px; cursor:pointer; }
+  button:hover { background:#2980b9; }
+  #result { margin-top:20px; padding:15px; background:#ecf0f1; border-radius:10px; }
+  .correct { color:green; }
+  .incorrect { color:red; }
+</style>
+</head>
+<body>
+
+<h2>ข้อสอบระบบฐานข้อมูล</h2>
+<form id="quizForm"></form>
+<button onclick="checkAnswers()">ส่งคำตอบ</button>
+<div id="result"></div>
+
+<script>
+const questions = [
+  {q:"คำสั่งใดใช้ดึงข้อมูลจากตารางในฐานข้อมูล?", options:["UPDATE","SELECT","DELETE","INSERT","CHANGE"], answer:"SELECT"},
+  {q:"หากต้องการลบข้อมูลบางแถวออกจากตาราง ควรใช้คำสั่งใด?", options:["REMOVE","ERASE","DELETE","DROP","CLEAR"], answer:"DELETE"},
+  {q:"ถ้าต้องการเพิ่มข้อมูลใหม่เข้าไปในตาราง Customers คำสั่งใดถูกต้อง?", options:["INSERT INTO Customers VALUES(...)","ADD INTO Customers VALUES(...)","CREATE Customers VALUES(...)","UPDATE Customers VALUES(...)","APPEND INTO Customers VALUES(...)"], answer:"INSERT INTO Customers VALUES(...)"},
+  {q:"คำสั่งใดใช้ปรับปรุงข้อมูลที่มีอยู่แล้วในตาราง?", options:["UPDATE","ALTER","MODIFY","CHANGE","RENAME"], answer:"UPDATE"},
+  {q:"ถ้าต้องการนับจำนวนแถวทั้งหมดในตาราง Products ควรใช้ฟังก์ชันใด?", options:["COUNT()","TOTAL()","SUM()","NUMBER()","SIZE()"], answer:"COUNT()"},
+  {q:"การกรองข้อมูลตามเงื่อนไขในคำสั่ง SELECT ใช้คำสั่งใด?", options:["WHERE","GROUP BY","ORDER BY","FILTER","HAVING"], answer:"WHERE"},
+  {q:"การเรียงข้อมูลจากน้อยไปมากควรใช้คำสั่งใด?", options:["ORDER BY ... ASC","ORDER BY ... DESC","SORT BY ... UP","GROUP BY ... ASC","ARRANGE BY ... ASC"], answer:"ORDER BY ... ASC"},
+  {q:"ถ้าต้องการสร้างตารางใหม่ในฐานข้อมูลควรใช้คำสั่งใด?", options:["CREATE TABLE","MAKE TABLE","NEW TABLE","ADD TABLE","BUILD TABLE"], answer:"CREATE TABLE"},
+  {q:"หากต้องการเลือกทุกคอลัมน์จากตาราง Customers ควรใช้สัญลักษณ์ใด?", options:["*","#","%","&","@"], answer:"*"},
+  {q:"GROUP BY มีไว้เพื่ออะไร?", options:["จัดกลุ่มข้อมูลที่มีค่าเหมือนกัน","เรียงข้อมูล","เชื่อมตาราง","ลบข้อมูลซ้ำ","เพิ่มคอลัมน์ใหม่"], answer:"จัดกลุ่มข้อมูลที่มีค่าเหมือนกัน"},
+  {q:"รูปแบบที่ถูกต้องของการแก้ไขข้อมูลในตาราง Employees คืออะไร?", options:["UPDATE Employees SET LastName='ใหม่' WHERE EmployeeID=1;","ALTER Employees SET LastName='ใหม่'","EDIT Employees SET LastName='ใหม่'","MODIFY Employees SET LastName='ใหม่'","CHANGE Employees SET LastName='ใหม่'"], answer:"UPDATE Employees SET LastName='ใหม่' WHERE EmployeeID=1;"},
+  {q:"ต้องการแก้ไขอายุนักเรียน StudentID=10 เป็น 20 ควรใช้คำสั่งใด?", options:["UPDATE Students SET Age=20 WHERE StudentID=10;","ALTER Students SET Age=20 WHERE StudentID=10;","EDIT Students SET Age=20 WHERE StudentID=10;","MODIFY Students SET Age=20 WHERE StudentID=10;","CHANGE Students SET Age=20 WHERE StudentID=10;"], answer:"UPDATE Students SET Age=20 WHERE StudentID=10;"},
+  {q:"ลบข้อมูลลูกค้าที่ชื่อ 'สมศรี' ใช้คำสั่งใด?", options:["DELETE FROM Customers WHERE Name='สมศรี';","DROP Customers WHERE Name='สมศรี';","ERASE FROM Customers WHERE Name='สมศรี';","REMOVE FROM Customers WHERE Name='สมศรี';","CLEAR FROM Customers WHERE Name='สมศรี';"], answer:"DELETE FROM Customers WHERE Name='สมศรี';"},
+  {q:"ต้องการเลือกลูกค้าที่อายุมากกว่า 25 ปี ควรใช้คำสั่งใดช่วยกรอง?", options:["WHERE Age > 25","HAVING Age > 25","FILTER Age > 25","ORDER BY Age > 25","SORT BY Age > 25"], answer:"WHERE Age > 25"},
+  {q:"ดึงข้อมูลทั้งหมดจากตาราง Customers ควรใช้คำสั่งใด?", options:["SELECT * FROM Customers","GET ALL FROM Customers","READ * FROM Customers","SELECT ALL FROM Customers","SHOW * FROM Customers"], answer:"SELECT * FROM Customers"},
+  {q:"คำสั่งใดใช้ลบตารางออกจากฐานข้อมูล?", options:["DROP TABLE","DELETE TABLE","REMOVE TABLE","CLEAR TABLE","ERASE TABLE"], answer:"DROP TABLE"},
+  {q:"การออกแบบฐานข้อมูลมีเป้าหมายหลักเพื่ออะไร?", options:["ลดความซ้ำซ้อนของข้อมูล","เก็บข้อมูลให้มากที่สุด","ทำให้ตารางซับซ้อน","ลดจำนวนผู้ใช้ระบบ","ยกเลิกการใช้ระบบ"], answer:"ลดความซ้ำซ้อนของข้อมูล"},
+  {q:"ข้อใดเป็นผลกระทบของการออกแบบฐานข้อมูลไม่ดี?", options:["ประสิทธิภาพต่ำ","ข้อมูลปลอดภัยสูง","ระบบทำงานเร็วขึ้น","ลดค่าใช้จ่าย","ใช้ทรัพยากรน้อยลง"], answer:"ประสิทธิภาพต่ำ"},
+  {q:"การออกแบบฐานข้อมูลแบบใดช่วยลดข้อมูลซ้ำซ้อน?", options:["แยกข้อมูลเป็นตารางตามประเภท","รวมทุกข้อมูลในตารางเดียว","ไม่ใช้คีย์หลัก","ใช้กระดาษบันทึก","ป้อนข้อมูลซ้ำ"], answer:"แยกข้อมูลเป็นตารางตามประเภท"},
+  {q:"เครื่องมือใดใช้ในการออกแบบเชิงแนวคิด?", options:["ER Diagram","DFD","Flowchart","UML Activity Diagram","Sequence Diagram"], answer:"ER Diagram"}
+,
+  {q:"Entity คืออะไร", options:["คุณลักษณะของข้อมูล","ความสัมพันธ์ของข้อมูล","สิ่งที่ต้องการเก็บข้อมูล","คำสั่ง SQL","คีย์รอง"], answer:"สิ่งที่ต้องการเก็บข้อมูล"},
+  {q:"ความสัมพันธ์แบบ 1:M หมายถึงอะไร?", options:["หนึ่งต่อหนึ่ง","หนึ่งต่อกลุ่ม","หนึ่งต่อหลาย","หลายต่อหลาย","ไม่มีความสัมพันธ์"], answer:"หนึ่งต่อหลาย"},
+  {q:"ความสัมพันธ์แบบ Many-to-Many ต้องแก้ไขอย่างไรในการออกแบบฐานข้อมูล", options:["ใช้ Foreign Key โดยตรง","ใช้ตารางเชื่อมกลาง (Associative Entity)","ใช้ Primary Key ซํ้า","ใช้ Index","ใช้การจัดเรียงข้อมูลใหม่"], answer:"ใช้ตารางเชื่อมกลาง (Associative Entity)"},
+  {q:"ชนิดข้อมูล Text ใน Microsoft Access เหมาะกับการเก็บข้อมูลแบบใด", options:["ตัวเลขจำนวนเต็ม","วันเดือนปี","ข้อมูลเชิงภาพ","ข้อมูลคำหรือตัวอักษร","ข้อมูลที่คำนวณได้"], answer:"ข้อมูลคำหรือตัวอักษร"},
+  {q:"ฟิลด์ (Field) คืออะไร", options:["ข้อมูลที่อยู่ในตารางหนึ่ง","ชื่อของฐานข้อมูล","กลุ่มของตาราง","กลุ่มของข้อมูลในแต่ละแถว","ส่วนที่เก็บข้อมูลแต่ละรายการ"], answer:"ส่วนที่เก็บข้อมูลแต่ละรายการ"},
+  {q:"ระบบฐานข้อมูลคืออะไร", options:["โปรแกรมกราฟิกสำหรับออกแบบเว็บไซต์","การจัดเก็บข้อมูลที่ไม่เป็นระเบียบ","การเก็บข้อมูลแบบไฟล์อย่างเดียว","การเก็บและจัดการข้อมูลที่มีความสัมพันธ์กันอย่างเป็นระบบ","การเชื่อมต่ออินเทอร์เน็ตเพื่อค้นหาข้อมูล"], answer:"การเก็บและจัดการข้อมูลที่มีความสัมพันธ์กันอย่างเป็นระบบ"},
+  {q:"ความแตกต่างของไฟล์และฐานข้อมูล", options:["ไฟล์คือข้อมูลดิบ ส่วนฐานข้อมูลคือการจัดการข้อมูลอย่างเป็นระบบ","ไฟล์กับฐานข้อมูลไม่มีความแตกต่าง","ไฟล์ใช้ได้เฉพาะข้อมูลตัวเลข ส่วนฐานข้อมูลใช้ได้ทุกชนิด","ฐานข้อมูลเก็บข้อมูลได้จำกัด แต่ไฟล์เก็บได้ไม่จำกัด","ฐานข้อมูลไม่สามารถแก้ไขข้อมูลได้ แต่ไฟล์สามารถแก้ไขได้"], answer:"ไฟล์คือข้อมูลดิบ ส่วนฐานข้อมูลคือการจัดการข้อมูลอย่างเป็นระบบ"},
+  {q:"ระบบจัดการฐานข้อมูล (DBMS) คืออะไร", options:["ซอฟต์แวร์ที่ใช้ในการออกแบบกราฟิก","ระบบปฏิบัติการของคอมพิวเตอร์","ซอฟต์แวร์ที่ใช้ในการสร้าง จัดเก็บ และจัดการฐานข้อมูล","เครื่องมือสำหรับค้นหาข้อมูลในอินเทอร์เน็ต","อุปกรณ์ฮาร์ดแวร์สำหรับเก็บข้อมูล"], answer:"ซอฟต์แวร์ที่ใช้ในการสร้าง จัดเก็บ และจัดการฐานข้อมูล"},
+  {q:"โปรแกรม Microsoft Access เกี่ยวข้องอย่างไรกับ DBMS", options:["เป็นระบบปฏิบัติการ Windows","เป็นซอฟต์แวร์สำหรับสร้างเอกสาร","เป็น DBMS ที่ใช้สร้างและจัดการฐานข้อมูลเชิงสัมพันธ์","เป็นซอฟต์แวร์สำหรับสร้างงานนำเสนอ","เป็นเครื่องมือจัดการไฟล์ระบบ"], answer:"เป็น DBMS ที่ใช้สร้างและจัดการฐานข้อมูลเชิงสัมพันธ์"},
+  {q:"Microsoft Access ไม่มี Object ใดต่อไปนี้", options:["Table","Form","Report","Worksheet","Query"], answer:"Worksheet"},
+  {q:"แบบสอบถาม (Query) ใน Access สามารถใช้งานในรูปแบบใด", options:["กรองข้อมูล","คำนวณ","ค้นหา","แสดงข้อมูลจากหลายตาราง","ทั้งหมดที่กล่าวมา"], answer:"ทั้งหมดที่กล่าวมา"},
+  {q:"ฟอร์ม (Form) ใน Access ใช้เพื่ออะไร", options:["ป้อนและแสดงข้อมูล","จัดการฐานข้อมูลสำรอง","แก้ไขโค้ดโปรแกรม","สร้างแบบสอบถาม","ออกแบบเว็บไซต์"], answer:"ป้อนและแสดงข้อมูล"},
+  {q:"รายงาน (Report) ใน Access ใช้เพื่อวัตถุประสงค์ใด", options:["ตรวจสอบรหัสผ่าน","แสดงข้อมูลสรุปจากฐานข้อมูล","เก็บข้อมูลผู้ใช้งาน","พิมพ์ผลลัพธ์การคำนวณ","วิเคราะห์ข้อมูลภาพ"], answer:"แสดงข้อมูลสรุปจากฐานข้อมูล"},
+  {q:"ความสัมพันธ์ใดต้องใช้ Unique Key ทั้งสองฝั่ง", options:["One-to-Many","Many-to-Many","One-to-One","Self-Relationship","Hierarchical Relationship"], answer:"One-to-One"},
+  {q:"Attribute ที่สามารถแบ่งย่อยได้ เช่น 'ชื่อเต็ม' (แยกชื่อ-นามสกุล) เรียกว่าอะไร", options:["Composite Attribute","Simple Attribute","Multivalued Attribute","Derived Attribute","Foreign Attribute"], answer:"Composite Attribute"},
+  {q:"ถ้า ER Diagram มี Entity 'นักเรียน' และ 'เกรด' ความสัมพันธ์ควรเป็นแบบใด", options:["One-to-One","One-to-Many","Many-to-One","Many-to-Many","ไม่มีความสัมพันธ์กัน"], answer:"One-to-Many"},
+  {q:"ข้อใดไม่ใช่ข้อดีของ ER-Model", options:["ช่วยให้เห็นความสัมพันธ์ของข้อมูลได้ชัดเจน","ใช้เป็นแบบจำลองก่อนออกแบบฐานข้อมูลจริง","มีรูปแบบมาตรฐานที่เข้าใจง่าย","รองรับการประมวลผลแบบ Real-time ได้โดยตรง","แสดงชนิดของข้อมูลและความสัมพันธ์ได้ชัดเจน"], answer:"รองรับการประมวลผลแบบ Real-time ได้โดยตรง"},
+  {q:"ข้อใด กล่าวผิด เกี่ยวกับความแตกต่างระหว่าง Weak Entity และ Strong Entity", options:["Weak Entity ไม่มี Primary Key เป็นของตัวเอง","Strong Entity สามารถใช้ข้อมูลระบุเอกลักษณ์ของตัวเองได้","Weak Entity ต้องพึ่งพา Strong Entity ในการระบุตัวตน","Strong Entity ต้องมี Partial Key ร่วมกับ Foreign Key","Weak Entity มักใช้ Identifying Relationship เชื่อมกับ Strong Entity"], answer:"Strong Entity ต้องมี Partial Key ร่วมกับ Foreign Key"},
+  {q:"ข้อมูลใดมักอยู่ใน Data Dictionary", options:["ข้อมูลนักเรียนทั้งหมด","สูตรคำนวณ","คำอธิบายชื่อฟิลด์และชนิดข้อมูล","รายงานประจำเดือน","รหัสผ่านของผู้ใช้"], answer:"คำอธิบายชื่อฟิลด์และชนิดข้อมูล"},
+  {q:"Data Dictionary ช่วยเรื่องใดมากที่สุด", options:["การเก็บสำรองข้อมูล","การสื่อสารระหว่างนักพัฒนาและผู้ใช้ระบบ","การเร่งความเร็วของ SQL","การทำกราฟสรุปผล","การเข้ารหัสข้อมูล"], answer:"การสื่อสารระหว่างนักพัฒนาและผู้ใช้ระบบ"},
+  {q:"ข้อมูลที่มีความยาวมาก เช่น รายงานบันทึกประจำวัน เหมาะกับชนิดข้อมูลใด", options:["Short Text","Memo (Long Text)","Number","Date/Time","Currency"], answer:"Memo (Long Text)"},
+  {q:"ถ้าต้องการเก็บข้อมูลเกี่ยวกับรูปภาพ ควรใช้ชนิดข้อมูลใด", options:["OLE Object","Short Text","Yes/No","Hyperlink","Currency"], answer:"OLE Object"},
+  {q:"ข้อใด ไม่ใช่ คุณสมบัติของ Super Key", options:["เป็นชุดของแอตทริบิวต์ที่สามารถระบุเอนทิตีหนึ่ง ๆ ได้อย่างไม่ซ้ำ","อาจประกอบด้วย Primary Key และแอตทริบิวต์อื่น ๆ","ทุก Primary Key เป็น Super Key","Super Key ทุกชุดจะต้องเป็น Candidate Key","Super Key อาจมีหลายชุดในตารางเดียว"], answer:"Super Key ทุกชุดจะต้องเป็น Candidate Key"},
+  {q:"ข้อใดต่อไปนี้อธิบาย Foreign Key ได้ถูกต้องที่สุด", options:["เป็นคีย์ที่มีค่าซ้ำกันได้และไม่จำเป็นต้องตรงกับตารางอื่น","เป็นคีย์ที่ใช้ระบุเอนทิตีเฉพาะตัวในตารางนั้น","เป็นคีย์ที่เชื่อมโยงตารางหนึ่งเข้ากับ Primary Key ของอีกตารางหนึ่ง","เป็นคีย์ที่ต้องเป็น Candidate Key ของตารางนั้นเสมอ","เป็นคีย์ที่ไม่สามารถมีค่า NULL ได้"], answer:"เป็นคีย์ที่เชื่อมโยงตารางหนึ่งเข้ากับ Primary Key ของอีกตารางหนึ่ง"},
+  {q:"จากตาราง Students(StudentID, CitizenID, Email, Name, BirthDate) หาก StudentID, CitizenID และ Email ต่างสามารถระบุแถวในตารางได้ไม่ซ้ำกัน ข้อใดถูกต้องที่สุด", options:["ทั้งสามคือ Primary Key","ทั้งสามคือ Super Key","ทั้งสามคือ Candidate Key","ทั้งสามคือ Foreign Key","ทั้งสามคือ Composite Key"], answer:"ทั้งสามคือ Candidate Key"},
+  {q:"หากเรามีตาราง Enrollment(StudentID, CourseID, Grade) และต้องการให้ไม่มีนักศึกษาคนใดลงทะเบียนวิชาเดียวกันซ้ำได้ คีย์หลักของตารางนี้ควรเป็น Composite Key คือตัวใด", options:["StudentID เพียงอย่างเดียว","CourseID เพียงอย่างเดียว","Grade","(StudentID, CourseID)","(StudentID, Grade)"], answer:"(StudentID, CourseID)"}
+
+
+];
+
+// แสดงข้อสอบ
+const form = document.getElementById('quizForm');
+questions.forEach((q,i) => {
+  const div = document.createElement('div');
+  div.className = 'question';
+  div.innerHTML = `<p>${i+1}. ${q.q}</p>`;
+  const optsDiv = document.createElement('div');
+  optsDiv.className = 'options';
+  q.options.forEach(opt => {
+    const id = `q${i}_${opt}`;
+    optsDiv.innerHTML += `<label><input type="radio" name="q${i}" value="${opt}"> ${opt}</label>`;
+  });
+  div.appendChild(optsDiv);
+  form.appendChild(div);
+});
+
+// ตรวจคำตอบ
+function checkAnswers() {
+  let score = 0;
+  let output = "<h3>ผลการตรวจคำตอบ</h3>";
+  questions.forEach((q,i) => {
+    const selected = document.querySelector(`input[name="q${i}"]:checked`);
+    if(selected && selected.value === q.answer) {
+      score++;
+      output += `<p class='correct'>ข้อ ${i+1}: ✅ ถูกต้อง (${q.answer})</p>`;
+    } else {
+      output += `<p class='incorrect'>ข้อ ${i+1}: ❌ ผิด - คำตอบที่ถูกคือ (${q.answer})</p>`;
+    }
+  });
+  output += `<h3>คุณได้คะแนน ${score} จาก ${questions.length} ข้อ</h3>`;
+  document.getElementById('result').innerHTML = output;
+}
+</script>
+
+</body>
+</html>
