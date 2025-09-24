@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<title>ข้อสอบ SQL เบื้องต้น</title>
+<style>
+  body { font-family: Arial, sans-serif; padding: 20px; }
+  h2 { color: #333; }
+  .question { margin-bottom: 20px; }
+  .options { margin-left: 20px; }
+  button { padding: 10px 20px; font-size: 16px; }
+</style>
+</head>
+<body>
+
+<h2>ข้อสอบ SQL เบื้องต้น (20 ข้อ)</h2>
+
+<form id="quizForm">
+</form>
+
+<button onclick="checkAnswers()">ตรวจคำตอบ</button>
+
+<p id="result"></p>
+
+<script>
+const questions = [
+  {q:"คำสั่งใดใช้ดึงข้อมูลจากตารางในฐานข้อมูล?", options:["UPDATE","SELECT","DELETE","INSERT","CHANGE"], answer:"SELECT"},
+  {q:"หากต้องการลบข้อมูลบางแถวออกจากตาราง ควรใช้คำสั่งใด?", options:["REMOVE","ERASE","DELETE","DROP","CLEAR"], answer:"DELETE"},
+  {q:"ถ้าต้องการเพิ่มข้อมูลใหม่เข้าไปในตาราง Customers คำสั่งใดถูกต้อง?", options:["INSERT INTO Customers VALUES(...)","ADD INTO Customers VALUES(...)","CREATE Customers VALUES(...)","UPDATE Customers VALUES(...)","APPEND INTO Customers VALUES(...)"], answer:"INSERT INTO Customers VALUES(...)"},
+  {q:"คำสั่งใดใช้ปรับปรุงข้อมูลที่มีอยู่แล้วในตาราง?", options:["UPDATE","ALTER","MODIFY","CHANGE","RENAME"], answer:"UPDATE"},
+  {q:"ถ้าต้องการนับจำนวนแถวทั้งหมดในตาราง Products ควรใช้ฟังก์ชันใด?", options:["COUNT()","TOTAL()","SUM()","NUMBER()","SIZE()"], answer:"COUNT()"},
+  {q:"การกรองข้อมูลตามเงื่อนไขในคำสั่ง SELECT ใช้คำสั่งใด?", options:["WHERE","GROUP BY","ORDER BY","FILTER","HAVING"], answer:"WHERE"},
+  {q:"การเรียงข้อมูลจากน้อยไปมากควรใช้คำสั่งใด?", options:["ORDER BY ... ASC","ORDER BY ... DESC","SORT BY ... UP","GROUP BY ... ASC","ARRANGE BY ... ASC"], answer:"ORDER BY ... ASC"},
+  {q:"ถ้าต้องการสร้างตารางใหม่ในฐานข้อมูลควรใช้คำสั่งใด?", options:["CREATE TABLE","MAKE TABLE","NEW TABLE","ADD TABLE","BUILD TABLE"], answer:"CREATE TABLE"},
+  {q:"หากต้องการเลือกทุกคอลัมน์จากตาราง Customers ควรใช้สัญลักษณ์ใด?", options:["*","#","%","&","@"], answer:"*"},
+  {q:"GROUP BY มีไว้เพื่ออะไร?", options:["จัดกลุ่มข้อมูลที่มีค่าเหมือนกัน","เรียงข้อมูล","เชื่อมตาราง","ลบข้อมูลซ้ำ","เพิ่มคอลัมน์ใหม่"], answer:"จัดกลุ่มข้อมูลที่มีค่าเหมือนกัน"},
+  {q:"รูปแบบที่ถูกต้องของการแก้ไขข้อมูลในตาราง Employees คืออะไร?", options:["UPDATE Employees SET LastName='ใหม่' WHERE EmployeeID=1;","ALTER Employees SET LastName='ใหม่'","EDIT Employees SET LastName='ใหม่'","MODIFY Employees SET LastName='ใหม่'","CHANGE Employees SET LastName='ใหม่'"], answer:"UPDATE Employees SET LastName='ใหม่' WHERE EmployeeID=1;"},
+  {q:"ต้องการแก้ไขอายุนักเรียน StudentID=10 เป็น 20 ควรใช้คำสั่งใด?", options:["UPDATE Students SET Age=20 WHERE StudentID=10;","ALTER Students SET Age=20 WHERE StudentID=10;","EDIT Students SET Age=20 WHERE StudentID=10;","MODIFY Students SET Age=20 WHERE StudentID=10;","CHANGE Students SET Age=20 WHERE StudentID=10;"], answer:"UPDATE Students SET Age=20 WHERE StudentID=10;"},
+  {q:"ลบข้อมูลลูกค้าที่ชื่อ 'สมศรี' ใช้คำสั่งใด?", options:["DELETE FROM Customers WHERE Name='สมศรี';","DROP Customers WHERE Name='สมศรี';","ERASE FROM Customers WHERE Name='สมศรี';","REMOVE FROM Customers WHERE Name='สมศรี';","CLEAR FROM Customers WHERE Name='สมศรี';"], answer:"DELETE FROM Customers WHERE Name='สมศรี';"},
+  {q:"ต้องการเลือกลูกค้าที่อายุมากกว่า 25 ปี ควรใช้คำสั่งใดช่วยกรอง?", options:["WHERE Age > 25","HAVING Age > 25","FILTER Age > 25","ORDER BY Age > 25","SORT BY Age > 25"], answer:"WHERE Age > 25"},
+  {q:"ดึงข้อมูลทั้งหมดจากตาราง Customers ควรใช้คำสั่งใด?", options:["SELECT * FROM Customers","GET ALL FROM Customers","READ * FROM Customers","SELECT ALL FROM Customers","SHOW * FROM Customers"], answer:"SELECT * FROM Customers"},
+  {q:"คำสั่งใดใช้ลบตารางออกจากฐานข้อมูล?", options:["DROP TABLE","DELETE TABLE","REMOVE TABLE","CLEAR TABLE","ERASE TABLE"], answer:"DROP TABLE"},
+  {q:"การออกแบบฐานข้อมูลมีเป้าหมายหลักเพื่ออะไร?", options:["ลดความซ้ำซ้อนของข้อมูล","เก็บข้อมูลให้มากที่สุด","ทำให้ตารางซับซ้อน","ลดจำนวนผู้ใช้ระบบ","ยกเลิกการใช้ระบบ"], answer:"ลดความซ้ำซ้อนของข้อมูล"},
+  {q:"ข้อใดเป็นผลกระทบของการออกแบบฐานข้อมูลไม่ดี?", options:["ประสิทธิภาพต่ำ","ข้อมูลปลอดภัยสูง","ระบบทำงานเร็วขึ้น","ลดค่าใช้จ่าย","ใช้ทรัพยากรน้อยลง"], answer:"ประสิทธิภาพต่ำ"},
+  {q:"การออกแบบฐานข้อมูลแบบใดช่วยลดข้อมูลซ้ำซ้อน?", options:["แยกข้อมูลเป็นตารางตามประเภท","รวมทุกข้อมูลในตารางเดียว","ไม่ใช้คีย์หลัก","ใช้กระดาษบันทึก","ป้อนข้อมูลซ้ำ"], answer:"แยกข้อมูลเป็นตารางตามประเภท"},
+  {q:"เครื่องมือใดใช้ในการออกแบบเชิงแนวคิด?", options:["ER Diagram","DFD","Flowchart","UML Activity Diagram","Sequence Diagram"], answer:"ER Diagram"}
+];
+
+// สร้างข้อสอบ HTML
+const form = document.getElementById('quizForm');
+questions.forEach((q,i) => {
+  const div = document.createElement('div');
+  div.className = 'question';
+  div.innerHTML = `<p>${i+1}. ${q.q}</p>`;
+  const optsDiv = document.createElement('div');
+  optsDiv.className = 'options';
+  q.options.forEach(opt => {
+    const id = `q${i}_${opt}`;
+    optsDiv.innerHTML += `<label><input type="radio" name="q${i}" value="${opt}"> ${opt}</label><br>`;
+  });
+  div.appendChild(optsDiv);
+  form.appendChild(div);
+});
+
+// ตรวจคำตอบ
+function checkAnswers() {
+  let score = 0;
+  questions.forEach((q,i) => {
+    const selected = document.querySelector(`input[name="q${i}"]:checked`);
+    if(selected && selected.value === q.answer) score++;
+  });
+  document.getElementById('result').innerText = `คุณได้คะแนน ${score} จาก ${questions.length} ข้อ`;
+}
+</script>
+
+</body>
+</html>
