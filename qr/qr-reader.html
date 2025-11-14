@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <title>QR Scanner with History</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- โหลด jsQR จาก CDN สำหรับถอดรหัส QR Code -->
+    <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+        body {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            background: #f3f4f6;
+            margin: 0;
+            padding: 16px;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: #fff;
+            border-radius: 12px;
+            padding: 16px 20px 24px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+        }
+        h1 {
+            font-size: 1.4rem;
+            margin: 0 0 10px;
+        }
+        p.subtitle {
+            margin: 0 0 16px;
+            color: #6b7280;
+            font-size: 0.9rem;
+        }
+        .btn-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+        button {
+            border: none;
+            border-radius: 8px;
+            padding: 8px 14px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            background: #2563eb;
+            color: white;
+        }
+        button.secondary {
+            background: #6b7280;
+        }
+        button.danger {
+            background: #dc2626;
+        }
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        #video-container {
+            margin-top: 10px;
+            display: none;
+        }
+        video {
+            width: 100%;
+            max-height: 300px;
+            border-radius: 8px;
+            background: #000;
+        }
+        .history-section {
+            margin-top: 20px;
+        }
+        .history-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+        .history-header h2 {
+            font-size: 1.1rem;
+            margin: 0;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+        }
+        th, td {
+            border-bottom: 1px solid #e5e7eb;
+            padding: 6px 4px;
+            text-align: left;
+            vertical-align: top;
+        }
+        th {
+            background: #f9fafb;
+            font-weight: 600;
+        }
+        td pre {
+            margin: 0;
+            white-space: pre-wrap;
+            word-break: break-all;
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+        }
+        .chip {
+            display: inline-block;
+            padding: 2px 6px;
+            border-radius: 999px;
+            font-size: 0.7rem;
+            background: #e5e7eb;
+            color: #374151;
+        }
+        .chip.camera {
+            background: #dbeafe;
+            color: #1d4ed8;
+        }
+        .chip.image {
+            background: #fef3c7;
+            color: #b45309;
+        }
+        .small-btn {
+            font-size: 0.75rem;
+            padding: 4px 8px;
+            margin-right: 4px;
+        }
+        #status {
+            font-size: 0.8rem;
+            color: #6b7280;
+            margin-top: 6px;
+        }
+        @media (max-width: 600px) {
+            th:nth-child(1), td:nth-child(1) {
+                width: 40px;
+            }
+            th:nth-child(4), td:nth-child(4) {
+                width: 130px;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>ตัวอย่างสแกน / อ่าน QR Code + เก็บประวัติ (Local JSON)</h1>
+    <p class="subtitle">
+        - ปุ่ม <b>สแกนจากกล้อง</b> ใช้กล้องของอุปกรณ์ (ต้องอยู่บน HTTPS เช่น GitHub Pages)<br>
+        - ปุ่ม <b>เลือกภาพจากเครื่อง</b> อ่าน QR จากไฟล์รูปภาพ<br>
+        ทุกครั้งที่สแกนเจอจะเปิดลิงก์ในแท็บใหม่ และบันทึกประวัติใน <code>localStorage</code>
+    </p>
+
+    <div class="btn-row">
+        <button id="startCameraBtn">📷 สแกนจากกล้อง</button>
+        <button id="stopCameraBtn" class="secondary" disabled>⏹️ หยุดกล้อง</button>
+
+        <button id="selectImageBtn">🖼️ เลือกภาพจากเครื่อง</button>
+        <input type="file" id="fileInput" accept="image/*" style="display:none">
+
+        <span id="status"></span>
+    </div>
+
+    <div id="video-container">
+        <video id="video" playsinline></video>
+    </div>
+
+    <!-- canvas ไว้ใช้ประมวลผลภาพ (ซ่อนไว้) -->
+    <canvas id="canvas" style="display:none;"></canvas>
+
+    <div class="history-section">
+        <div class="history-header">
+            <h2>ประวัติการสแกน</h2>
+            <div>
+                <button id="refreshHistoryBtn" class="secondary small-btn">🔄 โหลดประวัติ</button>
+                <button id="clearHistoryBtn" class="danger small-btn">🗑️ ล้างประวัติทั้งหมด</button>
+            </div>
+        </div>
+
+        <table>
+            <thead>
+            <tr>
+                <th>#</th>
+                <th>เวลา</th>
+                <th>ข้อมูลที่อ่านได้</th>
+                <th>ประเภท / จัดการ</th>
+            </tr>
+            </thead>
+            <tbody id="historyBody">
+            <tr><td colspan="4" style="text-align:center;">ยังไม่มีประวัติการสแกน</td></tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+    // ======== ตัวแปรหลัก ========
+    const startCameraBtn = document.getElementById('startCameraBtn');
+    const stopCameraBtn  = document.getElementById('stopCameraBtn');
+    const selectImageBtn = document.getElementById('selectImageBtn');
+    const fileInput      = document.getElementById('fileInput');
+    const video          = document.getElementById('video');
+    const videoContainer = document.getElementById('video-container');
+    const canvas         = document.getElementById('canvas');
+    const ctx            = canvas.getContext('2d');
+    const historyBody    = document.getElementById('historyBody');
+    const clearHistoryBtn= document.getElementById('clearHistoryBtn');
+    const refreshHistoryBtn = document.getElementById('refreshHistoryBtn');
+    const statusSpan     = document.getElementById('status');
+
+    const STORAGE_KEY = 'qrScanHistory';
+
+    let historyData = [];
+    let scanning = false;
+    let videoStream = null;
+
+    // ======== ฟังก์ชัน Utility ========
+
+    function setStatus(msg) {
+        statusSpan.textContent = msg || '';
+    }
+
+    function escapeHtml(str) {
+        return str
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;");
+    }
+
+    function loadHistory() {
+        try {
+            const raw = localStorage.getItem(STORAGE_KEY);
+            historyData = raw ? JSON.parse(raw) : [];
+        } catch (e) {
+            console.error('Error loading history', e);
+            historyData = [];
+        }
+        renderHistory();
+    }
+
+    function saveHistory() {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(historyData));
+    }
+
+    function renderHistory() {
+        historyBody.innerHTML = '';
+
+        if (!historyData.length) {
+            historyBody.innerHTML =
+                '<tr><td colspan="4" style="text-align:center;">ยังไม่มีประวัติการสแกน</td></tr>';
+            return;
+        }
+
+        historyData.forEach((item, index) => {
+            const tr = document.createElement('tr');
+
+            const date = new Date(item.time);
+            const timeText = isNaN(date.getTime())
+                ? escapeHtml(item.time)
+                : date.toLocaleString();
+
+            let chipClass = 'chip';
+            if (item.source === 'camera') chipClass += ' camera';
+            if (item.source === 'image')  chipClass += ' image';
+
+            tr.innerHTML = `
+                <td>${index + 1}</td>
+                <td>${escapeHtml(timeText)}</td>
+                <td><pre>${escapeHtml(item.text)}</pre></td>
+                <td>
+                    <div style="margin-bottom:4px;">
+                        <span class="${chipClass}">
+                            ${item.source === 'camera' ? 'จากกล้อง' : 'จากไฟล์รูป'}
+                        </span>
+                    </div>
+                    <button class="small-btn open-btn" data-index="${index}">เปิดในแท็บใหม่</button>
+                    <button class="small-btn secondary copy-btn" data-index="${index}">คัดลอก</button>
+                </td>
+            `;
+            historyBody.appendChild(tr);
+        });
+    }
+
+    function addHistory(text, source) {
+        const item = {
+            text: text,
+            time: new Date().toISOString(),
+            source: source || 'unknown'
+        };
+        // เพิ่มด้านหน้า เพื่อให้รายการใหม่อยู่บนสุด
+        historyData.unshift(item);
+        saveHistory();
+        renderHistory();
+    }
+
+    // ======== จัดการกล้อง ========
+
+    async function startCamera() {
+        if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+            alert('เบราว์เซอร์นี้ไม่รองรับการใช้งานกล้อง');
+            return;
+        }
+
+        try {
+            setStatus('กำลังขอสิทธิ์ใช้งานกล้อง...');
+            const stream = await navigator.mediaDevices.getUserMedia({
+                video: { facingMode: 'environment' }
+            });
+
+            videoStream = stream;
+            video.srcObject = stream;
+            video.setAttribute('playsinline', true); // สำคัญสำหรับ iOS
+            videoContainer.style.display = 'block';
+            await video.play();
+
+            scanning = true;
+            startCameraBtn.disabled = true;
+            stopCameraBtn.disabled = false;
+            setStatus('กำลังสแกน... นำ QR Code เข้ากล้อง');
+
+            requestAnimationFrame(tickScan);
+        } catch (err) {
+            console.error(err);
+            alert('ไม่สามารถเปิดกล้องได้: ' + err.message);
+            setStatus('');
+        }
+    }
+
+    function stopCamera() {
+        scanning = false;
+        if (videoStream) {
+            videoStream.getTracks().forEach(track => track.stop());
+            videoStream = null;
+        }
+        video.srcObject = null;
+        videoContainer.style.display = 'none';
+        startCameraBtn.disabled = false;
+        stopCameraBtn.disabled = true;
+        setStatus('');
+    }
+
+    function tickScan() {
+        if (!scanning) return;
+
+        if (video.readyState === video.HAVE_ENOUGH_DATA) {
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+            const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+            const code = jsQR(imageData.data, imageData.width, imageData.height);
+
+            if (code) {
+                // เจอ QR แล้ว หยุดกล้อง และจัดการผลลัพธ์
+                scanning = false;
+                stopCamera();
+                handleScanResult(code.data, 'camera');
+                return;
+            }
+        }
+
+        requestAnimationFrame(tickScan);
+    }
+
+    // ======== อ่านจากไฟล์ภาพ ========
+
+    function scanFromFile(file) {
+        if (!file) return;
+
+        const img = new Image();
+        img.onload = function () {
+            canvas.width = img.width;
+            canvas.height = img.height;
+            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+            const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+            const code = jsQR(imageData.data, imageData.width, imageData.height);
+
+            if (code) {
+                handleScanResult(code.data, 'image');
+            } else {
+                alert('ไม่พบ QR Code ในภาพนี้');
+            }
+
+            // เคลียร์ไฟล์ input เพื่อให้เลือกภาพเดิมซ้ำได้ถ้าต้องการ
+            fileInput.value = '';
+        };
+        img.onerror = function () {
+            alert('ไม่สามารถอ่านไฟล์ภาพได้');
+            fileInput.value = '';
+        };
+
+        img.src = URL.createObjectURL(file);
+    }
+
+    // ======== จัดการผลลัพธ์ที่อ่านได้ ========
+
+    function handleScanResult(text, source) {
+        const trimmed = (text || '').trim();
+        if (!trimmed) {
+            alert('อ่านข้อมูลจาก QR ไม่ได้');
+            return;
+        }
+
+        addHistory(trimmed, source);
+
+        // ถ้าดูเหมือนลิงก์ ให้เปิดในแท็บใหม่
+        // (ถ้าไม่ใช่ลิงก์จริง เบราว์เซอร์อาจเปิดแล้ว error เอง)
+        const looksLikeUrl =
+            /^https?:\/\//i.test(trimmed) ||
+            /^www\./i.test(trimmed);
+
+        const target = looksLikeUrl ? trimmed : ('https://www.google.com/search?q=' + encodeURIComponent(trimmed));
+
+        try {
+            const opened = window.open(target, '_blank');
+            if (!opened) {
+                alert('เบราว์เซอร์บล็อกการเปิดแท็บใหม่ กรุณากดอนุญาตป็อปอัป หรือเปิดจากประวัติเอง');
+            }
+        } catch (e) {
+            console.error(e);
+            alert('ไม่สามารถเปิดลิงก์ได้: ' + e.message);
+        }
+    }
+
+    // ======== Event Listeners ========
+
+    startCameraBtn.addEventListener('click', startCamera);
+    stopCameraBtn.addEventListener('click', stopCamera);
+
+    selectImageBtn.addEventListener('click', () => fileInput.click());
+
+    fileInput.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            setStatus('กำลังอ่านภาพ...');
+            scanFromFile(file);
+            setStatus('');
+        }
+    });
+
+    clearHistoryBtn.addEventListener('click', () => {
+        if (!confirm('ต้องการล้างประวัติการสแกนทั้งหมดหรือไม่?')) return;
+        historyData = [];
+        localStorage.removeItem(STORAGE_KEY);
+        renderHistory();
+    });
+
+    refreshHistoryBtn.addEventListener('click', () => {
+        loadHistory();
+    });
+
+    // จัดการปุ่มในตารางประวัติ (เปิด / คัดลอก)
+    historyBody.addEventListener('click', async (e) => {
+        const btn = e.target;
+        if (!(btn instanceof HTMLButtonElement)) return;
+
+        const index = parseInt(btn.dataset.index, 10);
+        if (isNaN(index) || index < 0 || index >= historyData.length) return;
+
+        const item = historyData[index];
+
+        if (btn.classList.contains('open-btn')) {
+            // เปิดในแท็บใหม่
+            let target = item.text;
+            if (!/^https?:\/\//i.test(target) && !/^www\./i.test(target)) {
+                target = 'https://www.google.com/search?q=' + encodeURIComponent(target);
+            }
+            window.open(target, '_blank');
+        } else if (btn.classList.contains('copy-btn')) {
+            try {
+                await navigator.clipboard.writeText(item.text);
+                alert('คัดลอกข้อความไปยังคลิปบอร์ดแล้ว');
+            } catch (err) {
+                alert('คัดลอกไม่สำเร็จ: ' + err.message);
+            }
+        }
+    });
+
+    // ======== เริ่มต้นโหลดประวัติ ========
+    loadHistory();
+</script>
+</body>
+</html>
