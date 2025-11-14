@@ -1,1 +1,453 @@
-iu
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QR Code Generator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px 40px 40px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            max-width: 600px;
+            width: 100%;
+            transition: transform 0.3s ease;
+        }
+
+        .container:hover {
+            transform: translateY(-5px);
+        }
+
+        /* ==== เมนูด้านบน ==== */
+        .nav {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        .nav a {
+            text-decoration: none;
+            padding: 6px 12px;
+            border-radius: 999px;
+            font-size: 0.9rem;
+            background: rgba(102, 126, 234, 0.08);
+            color: #4b5563;
+            border: 1px solid transparent;
+            transition: all 0.2s ease;
+        }
+
+        .nav a:hover {
+            background: rgba(102, 126, 234, 0.18);
+            transform: translateY(-1px);
+        }
+
+        .nav a.active {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: #fff;
+            border-color: rgba(255, 255, 255, 0.6);
+            box-shadow: 0 6px 18px rgba(76, 81, 191, 0.4);
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 30px;
+            font-size: 2.2em;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .input-group {
+            margin-bottom: 30px;
+            text-align: left;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 10px;
+            color: #555;
+            font-weight: 600;
+            font-size: 1.05em;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 15px 20px;
+            border: 2px solid #e0e0e0;
+            border-radius: 15px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 20px rgba(102, 126, 234, 0.2);
+            transform: scale(1.02);
+        }
+
+        .size-group {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 30px;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .size-input {
+            flex: 1;
+            text-align: left;
+        }
+
+        .size-input input {
+            width: 100%;
+            padding: 10px;
+            text-align: center;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+        }
+
+        button {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 12px 26px;
+            font-size: 16px;
+            font-weight: 600;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 10px 6px 0;
+            min-width: 150px;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .qr-output {
+            margin-top: 30px;
+            padding: 30px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.1);
+            min-height: 120px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #qrcode {
+            display: inline-block;
+        }
+
+        #qrcode canvas,
+        #qrcode img {
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .download-btn {
+            background: linear-gradient(45deg, #28a745, #20c997);
+            margin-top: 20px;
+        }
+
+        .download-btn:hover {
+            box-shadow: 0 10px 25px rgba(40, 167, 69, 0.3);
+        }
+
+        .error {
+            color: #dc3545;
+            margin-top: 15px;
+            padding: 10px;
+            background: rgba(220, 53, 69, 0.1);
+            border-radius: 10px;
+            border-left: 4px solid #dc3545;
+        }
+
+        .loading {
+            color: #667eea;
+            font-style: italic;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px;
+                margin: 10px;
+            }
+
+            h1 {
+                font-size: 1.8em;
+            }
+
+            .size-group {
+                flex-direction: column;
+            }
+
+            .input-group {
+                margin-bottom: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+   <div class="container">
+        <!-- เมนูหลักของทุกหน้า -->
+        <nav class="nav">
+            <a href="qr-generator.html" class="active">QR Code Generator</a>
+            <a href="qr-reader.html">QR Code Reader</a>
+            <a href="short-url.html">Short URL</a>
+            <a href="convert-pdf.html">Convert PDF</a>
+            <a href="convert-jpg.html">Convert JPG</a>
+        </nav>
+
+        <h1>🔗 QR Code Generator</h1>
+        
+        <div class="input-group">
+            <label for="urlInput">ใส่ URL หรือข้อความที่ต้องการสร้าง QR Code:</label>
+            <input type="text" id="urlInput" placeholder="https://example.com" value="">
+        </div>
+
+        <div class="size-group">
+            <div class="size-input">
+                <label>ความกว้าง (px)</label>
+                <input type="number" id="widthInput" value="300" min="100" max="1000">
+            </div>
+            <div class="size-input">
+                <label>ความสูง (px)</label>
+                <input type="number" id="heightInput" value="300" min="100" max="1000">
+            </div>
+        </div>
+
+        <button onclick="generateQR()">สร้าง QR Code</button>
+
+        <div class="qr-output">
+            <div id="qrcode">
+                <p style="color: #888;">QR Code จะแสดงที่นี่</p>
+            </div>
+        </div>
+
+        <button id="downloadBtn" class="download-btn" onclick="downloadQR()" style="display: none;">
+            💾 ดาวน์โหลด QR Code
+        </button>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode/1.5.3/qrcode.min.js"></script>
+    <script>
+        let currentQRDataURL = null;
+
+        // ตรวจสอบว่า library โหลดสำเร็จหรือไม่
+        function checkQRLibrary() {
+            return typeof QRCode !== 'undefined';
+        }
+
+        function generateQR() {
+            const url = document.getElementById('urlInput').value.trim();
+            const width = parseInt(document.getElementById('widthInput').value) || 300;
+            const height = parseInt(document.getElementById('heightInput').value) || 300;
+            const qrContainer = document.getElementById('qrcode');
+            const downloadBtn = document.getElementById('downloadBtn');
+
+            // ล้างข้อมูลเก่า
+            qrContainer.innerHTML = '';
+            downloadBtn.style.display = 'none';
+            currentQRDataURL = null;
+
+            if (!url) {
+                qrContainer.innerHTML = '<p class="error">กรุณาใส่ URL หรือข้อความที่ต้องการสร้าง QR Code</p>';
+                return;
+            }
+
+            // ตรวจสอบ library
+            if (!checkQRLibrary()) {
+                qrContainer.innerHTML = '<p class="error">กำลังโหลด QR Library... กรุณารอสักครู่แล้วลองใหม่</p>';
+                // ลองโหลด library อีกครั้ง
+                setTimeout(() => {
+                    if (checkQRLibrary()) {
+                        generateQR();
+                    } else {
+                        generateQRWithAPI(url, width, height);
+                    }
+                }, 2000);
+                return;
+            }
+
+            // ตรวจสอบความถูกต้องของขนาด
+            if (width < 50 || width > 2000 || height < 50 || height > 2000) {
+                qrContainer.innerHTML = '<p class="error">ขนาดต้องอยู่ระหว่าง 50-2000 พิกเซล</p>';
+                return;
+            }
+
+            // แสดง Loading
+            qrContainer.innerHTML = '<p class="loading">กำลังสร้าง QR Code...</p>';
+
+            // สร้าง QR Code ด้วย timeout
+            const timeoutId = setTimeout(() => {
+                qrContainer.innerHTML = '<p class="error">หมดเวลาในการสร้าง QR Code กรุณาลองใหม่</p>';
+            }, 10000);
+
+            try {
+                QRCode.toCanvas(url, {
+                    width: Math.min(width, 1000),
+                    height: Math.min(height, 1000),
+                    margin: 2,
+                    color: {
+                        dark: '#333333',
+                        light: '#FFFFFF'
+                    },
+                    errorCorrectionLevel: 'M',
+                    type: 'image/png',
+                    quality: 0.92,
+                    scale: 4
+                }, function (error, canvas) {
+                    clearTimeout(timeoutId);
+                    
+                    if (error) {
+                        console.error('QRCode error:', error);
+                        generateQRWithAPI(url, width, height);
+                        return;
+                    }
+
+                    try {
+                        // ล้าง container แล้วใส่ canvas
+                        qrContainer.innerHTML = '';
+                        qrContainer.appendChild(canvas);
+
+                        // เก็บ data URL สำหรับดาวน์โหลด
+                        currentQRDataURL = canvas.toDataURL('image/png');
+                        
+                        // แสดงปุ่มดาวน์โหลด
+                        downloadBtn.style.display = 'inline-block';
+                    } catch (canvasError) {
+                        console.error('Canvas error:', canvasError);
+                        generateQRWithAPI(url, width, height);
+                    }
+                });
+            } catch (error) {
+                clearTimeout(timeoutId);
+                console.error('QR Code generation error:', error);
+                generateQRWithAPI(url, width, height);
+            }
+        }
+
+        // วิธีสำรองใช้ API สาธารณะ
+        function generateQRWithAPI(text, width, height) {
+            const qrContainer = document.getElementById('qrcode');
+            const downloadBtn = document.getElementById('downloadBtn');
+            
+            try {
+                const size = Math.min(width, height, 500); // จำกัดขนาดสำหรับ API
+                const encodedText = encodeURIComponent(text);
+                const apiUrl = `https://api.qrserver.com/v1/create-qr-code/?size=${size}x${size}&data=${encodedText}&format=png`;
+                
+                const img = new Image();
+                img.crossOrigin = 'anonymous';
+                
+                img.onload = function() {
+                    qrContainer.innerHTML = '';
+                    
+                    // สร้าง canvas เพื่อปรับขนาด
+                    const canvas = document.createElement('canvas');
+                    const ctx = canvas.getContext('2d');
+                    canvas.width = width;
+                    canvas.height = height;
+                    
+                    // วาด QR code ลงใน canvas
+                    ctx.fillStyle = 'white';
+                    ctx.fillRect(0, 0, width, height);
+                    ctx.drawImage(img, 0, 0, width, height);
+                    
+                    canvas.style.borderRadius = '10px';
+                    canvas.style.boxShadow = '0 10px 30px rgba(0, 0, 0, 0.2)';
+                    
+                    qrContainer.appendChild(canvas);
+                    
+                    // เก็บ data URL สำหรับดาวน์โหลด
+                    currentQRDataURL = canvas.toDataURL('image/png');
+                    downloadBtn.style.display = 'inline-block';
+                };
+                
+                img.onerror = function() {
+                    qrContainer.innerHTML = '<p class="error">ไม่สามารถสร้าง QR Code ได้ กรุณาตรวจสอบการเชื่อมต่ออินเทอร์เน็ต</p>';
+                };
+                
+                img.src = apiUrl;
+                
+            } catch (error) {
+                console.error('API QR generation error:', error);
+                qrContainer.innerHTML = '<p class="error">ไม่สามารถสร้าง QR Code ได้ กรุณาลองใหม่อีกครั้ง</p>';
+            }
+        }
+
+        function downloadQR() {
+            if (!currentQRDataURL) {
+                alert('กรุณาสร้าง QR Code ก่อนดาวน์โหลด');
+                return;
+            }
+
+            const url = document.getElementById('urlInput').value.trim();
+            const filename = 'qrcode-' + (url.substring(0, 20).replace(/[^a-zA-Z0-9]/g, '_')) + '.png';
+
+            const link = document.createElement('a');
+            link.download = filename;
+            link.href = currentQRDataURL;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        // Enter key support
+        document.getElementById('urlInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                generateQR();
+            }
+        });
+
+        // Auto-generate when size changes
+        document.getElementById('widthInput').addEventListener('change', function() {
+            const url = document.getElementById('urlInput').value.trim();
+            if (url) generateQR();
+        });
+
+        document.getElementById('heightInput').addEventListener('change', function() {
+            const url = document.getElementById('urlInput').value.trim();
+            if (url) generateQR();
+        });
+    </script>
+
+</body>
+</html>
