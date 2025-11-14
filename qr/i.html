@@ -25,10 +25,10 @@
             background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(10px);
             border-radius: 20px;
-            padding: 30px 40px 40px;
+            padding: 40px;
             box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
             text-align: center;
-            max-width: 600px;
+            max-width: 500px;
             width: 100%;
             transition: transform 0.3s ease;
         }
@@ -37,42 +37,10 @@
             transform: translateY(-5px);
         }
 
-        /* ==== เมนูด้านบน ==== */
-        .nav {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-            justify-content: center;
-            margin-bottom: 20px;
-        }
-
-        .nav a {
-            text-decoration: none;
-            padding: 6px 12px;
-            border-radius: 999px;
-            font-size: 0.9rem;
-            background: rgba(102, 126, 234, 0.08);
-            color: #4b5563;
-            border: 1px solid transparent;
-            transition: all 0.2s ease;
-        }
-
-        .nav a:hover {
-            background: rgba(102, 126, 234, 0.18);
-            transform: translateY(-1px);
-        }
-
-        .nav a.active {
-            background: linear-gradient(45deg, #667eea, #764ba2);
-            color: #fff;
-            border-color: rgba(255, 255, 255, 0.6);
-            box-shadow: 0 6px 18px rgba(76, 81, 191, 0.4);
-        }
-
         h1 {
             color: #333;
             margin-bottom: 30px;
-            font-size: 2.2em;
+            font-size: 2.5em;
             background: linear-gradient(45deg, #667eea, #764ba2);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
@@ -81,7 +49,6 @@
 
         .input-group {
             margin-bottom: 30px;
-            text-align: left;
         }
 
         label {
@@ -89,7 +56,7 @@
             margin-bottom: 10px;
             color: #555;
             font-weight: 600;
-            font-size: 1.05em;
+            font-size: 1.1em;
         }
 
         input[type="text"] {
@@ -119,7 +86,6 @@
 
         .size-input {
             flex: 1;
-            text-align: left;
         }
 
         .size-input input {
@@ -134,13 +100,13 @@
             background: linear-gradient(45deg, #667eea, #764ba2);
             color: white;
             border: none;
-            padding: 12px 26px;
-            font-size: 16px;
+            padding: 15px 30px;
+            font-size: 18px;
             font-weight: 600;
             border-radius: 15px;
             cursor: pointer;
             transition: all 0.3s ease;
-            margin: 10px 6px 0;
+            margin: 10px;
             min-width: 150px;
         }
 
@@ -211,30 +177,24 @@
             }
 
             h1 {
-                font-size: 1.8em;
+                font-size: 2em;
             }
 
             .size-group {
                 flex-direction: column;
             }
-
-            .input-group {
-                margin-bottom: 20px;
-            }
         }
     </style>
 </head>
 <body>
-   <div class="container">
-        <!-- เมนูหลักของทุกหน้า -->
-        <nav class="nav">
-            <a href="qr-generator.html" class="active">QR Code Generator</a>
-            <a href="qr-reader.html">QR Code Reader</a>
-            <a href="short-url.html">Short URL</a>
-            <a href="convert-pdf.html">Convert PDF</a>
-            <a href="convert-jpg.html">Convert JPG</a>
-        </nav>
-
+    <div aling=center> 
+        <a href=index.html><h1>QR Code Generator</h1></a> | 
+        <a href=qr-reader.html><h1>QR Code Reader</h1></a>
+        
+    </div>
+    
+    <P>
+    <div class="container">
         <h1>🔗 QR Code Generator</h1>
         
         <div class="input-group">
