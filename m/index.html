@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard ระบบวัสดุ-ครุภัณฑ์และสื่อนวัตกรรม</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: "Segoe UI", Tahoma, sans-serif;
+            background: #f4f6fb;
+            color: #333;
+            padding: 20px;
+        }
+        h1, h2, h3 { font-weight: 600; }
+
+        .layout {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .page-header h1 {
+            font-size: 1.6rem;
+        }
+
+        .badge {
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            background: #e1ecff;
+            color: #2952cc;
+        }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            gap: 8px;
+            margin: 16px 0;
+            flex-wrap: wrap;
+        }
+        .tab-btn {
+            border: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            background: #e5e7f0;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+        .tab-btn.active {
+            background: #4f46e5;
+            color: #fff;
+        }
+
+        /* Filter bar */
+        .filter-bar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            padding: 12px;
+            margin-bottom: 16px;
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(15, 23, 42, 0.06);
+        }
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            font-size: 0.8rem;
+        }
+        .filter-group label {
+            margin-bottom: 4px;
+            color: #4b5563;
+        }
+        .filter-group select {
+            padding: 6px 8px;
+            border-radius: 8px;
+            border: 1px solid #d1d5db;
+            min-width: 120px;
+            font-size: 0.85rem;
+        }
+
+        /* Summary cards */
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+        .card {
+            background: #fff;
+            border-radius: 12px;
+            padding: 14px;
+            box-shadow: 0 4px 10px rgba(15, 23, 42, 0.04);
+        }
+        .card h3 {
+            font-size: 0.95rem;
+            margin-bottom: 4px;
+        }
+        .card .big-number {
+            font-size: 1.6rem;
+            font-weight: 700;
+            margin: 4px 0;
+        }
+        .card small {
+            font-size: 0.75rem;
+            color: #6b7280;
+        }
+
+        /* Sections */
+        .section {
+            display: none;
+        }
+        .section.active {
+            display: block;
+        }
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 12px 0 8px;
+        }
+        .section-header h2 {
+            font-size: 1.05rem;
+        }
+        .section-header span {
+            font-size: 0.8rem;
+            color: #6b7280;
+        }
+
+        /* Tables */
+        .table-wrapper {
+            overflow-x: auto;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 6px;
+            font-size: 0.82rem;
+        }
+        thead {
+            background: #e5e7eb;
+        }
+        th, td {
+            padding: 8px 6px;
+            border-bottom: 1px solid #e5e7eb;
+            white-space: nowrap;
+        }
+        th {
+            text-align: left;
+            font-weight: 600;
+        }
+        tr:nth-child(even) td {
+            background: #f9fafb;
+        }
+        .status-badge {
+            padding: 2px 8px;
+            border-radius: 999px;
+            font-size: 0.7rem;
+            display: inline-block;
+        }
+        .status-wait { background: #fef3c7; color: #92400e; }
+        .status-progress { background: #dbeafe; color: #1d4ed8; }
+        .status-done { background: #dcfce7; color: #166534; }
+
+        /* Progress bar (for summary by term/year) */
+        .progress {
+            position: relative;
+            background: #e5e7eb;
+            border-radius: 999px;
+            height: 8px;
+            overflow: hidden;
+        }
+        .progress-inner {
+            position: absolute;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            width: 40%;
+            background: #4f46e5;
+        }
+
+        @media (max-width: 640px) {
+            .page-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 4px;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="layout">
+    <header class="page-header">
+        <h1>Dashboard ระบบวัสดุ-ครุภัณฑ์ &amp; สื่อนวัตกรรม</h1>
+        <span class="badge">เวอร์ชันตัวอย่าง - ปรับต่อได้ตามโรงเรียน</span>
+    </header>
+
+    <!-- เมนูหลักของ Dashboard -->
+    <nav class="tabs">
+        <button class="tab-btn active" data-tab="overview">ภาพรวม</button>
+        <button class="tab-btn" data-tab="repair">แจ้งซ่อม</button>
+        <button class="tab-btn" data-tab="status">สถานะวัสดุ/ครุภัณฑ์</button>
+        <button class="tab-btn" data-tab="media">ความต้องการ &amp; ปัญหาสื่อนวัตกรรม</button>
+        <button class="tab-btn" data-tab="report">รายงานสรุป เทอม/ปี</button>
+    </nav>
+
+    <!-- แถบตัวกรองหลัก -->
+    <section class="filter-bar">
+        <div class="filter-group">
+            <label for="filter-term">ภาคเรียน</label>
+            <select id="filter-term" class="filter-input">
+                <option value="all">ทั้งหมด</option>
+                <option value="1/2568">1/2568</option>
+                <option value="2/2568">2/2568</option>
+            </select>
+        </div>
+        <div class="filter-group">
+            <label for="filter-year">ปีการศึกษา</label>
+            <select id="filter-year" class="filter-input">
+                <option value="all">ทั้งหมด</option>
+                <option value="2568">2568</option>
+                <option value="2567">2567</option>
+            </select>
+        </div>
+        <div class="filter-group">
+            <label for="filter-room">ห้อง</label>
+            <select id="filter-room" class="filter-input">
+                <option value="all">ทุกห้อง</option>
+                <option value="ม.1/1">ม.1/1</option>
+                <option value="ม.1/2">ม.1/2</option>
+                <option value="ห้องเรียนคอมพิวเตอร์">ห้องเรียนคอมพิวเตอร์</option>
+                <option value="ห้องสมุด">ห้องสมุด</option>
+            </select>
+        </div>
+        <div class="filter-group">
+            <label for="filter-subject">กลุ่มสาระ / งาน</label>
+            <select id="filter-subject" class="filter-input">
+                <option value="all">ทั้งหมด</option>
+                <option value="วิทยาศาสตร์และเทคโนโลยี">วิทยาศาสตร์และเทคโนโลยี</option>
+                <option value="ภาษาไทย">ภาษาไทย</option>
+                <option value="ICT">ICT</option>
+                <option value="งานธุรการ">งานธุรการ</option>
+            </select>
+        </div>
+        <div class="filter-group">
+            <label for="filter-division">ฝ่าย</label>
+            <select id="filter-division" class="filter-input">
+                <option value="all">ทุกฝ่าย</option>
+                <option value="ฝ่ายวิชาการ">ฝ่ายวิชาการ</option>
+                <option value="ฝ่ายบริหารทั่วไป">ฝ่ายบริหารทั่วไป</option>
+                <option value="ฝ่ายกิจการนักเรียน">ฝ่ายกิจการนักเรียน</option>
+            </select>
+        </div>
+    </section>
+
+    <!-- ====== TAB 1: ภาพรวม ====== -->
+    <section id="overview" class="section active">
+        <div class="summary-grid">
+            <div class="card">
+                <h3>รายการแจ้งซ่อมทั้งหมด</h3>
+                <div class="big-number" id="summary-total-repair">18</div>
+                <small>ในช่วงตัวกรองที่เลือก</small>
+            </div>
+            <div class="card">
+                <h3>รอดำเนินการ</h3>
+                <div class="big-number" id="summary-repair-wait">6</div>
+                <small>รายการแจ้งซ่อมยังไม่เริ่ม</small>
+            </div>
+            <div class="card">
+                <h3>กำลังดำเนินการ</h3>
+                <div class="big-number" id="summary-repair-progress">5</div>
+                <small>อยู่ระหว่างซ่อม/ประสานงาน</small>
+            </div>
+            <div class="card">
+                <h3>สื่อ/นวัตกรรมที่มีปัญหา</h3>
+                <div class="big-number" id="summary-media-issue">9</div>
+                <small>รวมทั้งความต้องการเพิ่มเติมและการปรับปรุง</small>
+            </div>
+        </div>
+    </section>
+
+    <!-- ====== TAB 2: แจ้งซ่อม ====== -->
+    <section id="repair" class="section">
+        <div class="section-header">
+            <h2>รายการแจ้งซ่อม</h2>
+            <span>ตัวอย่างข้อมูล – ปรับเชื่อมฐานข้อมูล/Google Sheet ได้</span>
+        </div>
+        <div class="table-wrapper">
+            <table id="table-repair">
+                <thead>
+                <tr>
+                    <th>วันที่แจ้ง</th>
+                    <th>รหัสครุภัณฑ์/วัสดุ</th>
+                    <th>รายการ</th>
+                    <th>ห้อง</th>
+                    <th>กลุ่มสาระ / งาน</th>
+                    <th>ฝ่าย</th>
+                    <th>อาการเสีย / ปัญหา</th>
+                    <th>สถานะ</th>
+                    <th>ผู้แจ้ง</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr data-term="1/2568" data-year="2568" data-room="ห้องเรียนคอมพิวเตอร์"
+                    data-subject="วิทยาศาสตร์และเทคโนโลยี" data-division="ฝ่ายวิชาการ">
+                    <td>01/07/2568</td>
+                    <td>ICT-2568-001</td>
+                    <td>เครื่องคอมพิวเตอร์ PC #05</td>
+                    <td>ห้องเรียนคอมพิวเตอร์</td>
+                    <td>วิทยาศาสตร์และเทคโนโลยี</td>
+                    <td>ฝ่ายวิชาการ</td>
+                    <td>เปิดไม่ติด คาดว่า PSU มีปัญหา</td>
+                    <td><span class="status-badge status-progress">กำลังดำเนินการ</span></td>
+                    <td>ครูเอกชัย</td>
+                </tr>
+                <tr data-term="1/2568" data-year="2568" data-room="ม.1/1"
+                    data-subject="ภาษาไทย" data-division="ฝ่ายวิชาการ">
+                    <td>05/07/2568</td>
+                    <td>PRO-2567-112</td>
+                    <td>โปรเจกเตอร์ EPSON</td>
+                    <td>ม.1/1</td>
+                    <td>ภาษาไทย</td>
+                    <td>ฝ่ายวิชาการ</td>
+                    <td>ภาพไม่ชัด หลอดไฟเริ่มดับ</td>
+                    <td><span class="status-badge status-wait">รอดำเนินการ</span></td>
+                    <td>ครูสุธี</td>
+                </tr>
+                <tr data-term="2/2567" data-year="2567" data-room="ห้องสมุด"
+                    data-subject="ICT" data-division="ฝ่ายบริหารทั่วไป">
+                    <td>10/01/2568</td>
+                    <td>WIFI-2565-023</td>
+                    <td>เราเตอร์ Wi-Fi</td>
+                    <td>ห้องสมุด</td>
+                    <td>ICT</td>
+                    <td>ฝ่ายบริหารทั่วไป</td>
+                    <td>สัญญาณหลุดบ่อย ใช้งานไม่ได้ช่วงพักกลางวัน</td>
+                    <td><span class="status-badge status-done">ซ่อมเสร็จ</span></td>
+                    <td>บรรณารักษ์</td>
+                </tr>
+                <tr data-term="1/2568" data-year="2568" data-room="ม.1/2"
+                    data-subject="วิทยาศาสตร์และเทคโนโลยี" data-division="ฝ่ายวิชาการ">
+                    <td>20/07/2568</td>
+                    <td>NB-2566-098</td>
+                    <td>โน้ตบุ๊กครูประจำวิชา</td>
+                    <td>ม.1/2</td>
+                    <td>วิทยาศาสตร์และเทคโนโลยี</td>
+                    <td>ฝ่ายวิชาการ</td>
+                    <td>แบตเตอรี่เสื่อม ต้องเสียบปลั๊กตลอดเวลา</td>
+                    <td><span class="status-badge status-wait">รอดำเนินการ</span></td>
+                    <td>ครูวาสนา</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <!-- ====== TAB 3: สถานะวัสดุ/ครุภัณฑ์ ====== -->
+    <section id="status" class="section">
+        <div class="section-header">
+            <h2>สรุปสถานะวัสดุ/ครุภัณฑ์ตามห้อง &amp; กลุ่มสาระ</h2>
+            <span>ใช้เป็นภาพรวมตอนรับการประเมิน / นิเทศ</span>
+        </div>
+        <div class="table-wrapper">
+            <table id="table-status">
+                <thead>
+                <tr>
+                    <th>ห้อง</th>
+                    <th>กลุ่มสาระ / งาน</th>
+                    <th>ฝ่าย</th>
+                    <th>จำนวนทั้งหมด</th>
+                    <th>ใช้งานได้</th>
+                    <th>ชำรุดรอซ่อม</th>
+                    <th>รอจำหน่าย / ทดแทน</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr data-room="ห้องเรียนคอมพิวเตอร์"
+                    data-subject="วิทยาศาสตร์และเทคโนโลยี" data-division="ฝ่ายวิชาการ">
+                    <td>ห้องเรียนคอมพิวเตอร์</td>
+                    <td>วิทยาศาสตร์และเทคโนโลยี</td>
+                    <td>ฝ่ายวิชาการ</td>
+                    <td>32</td>
+                    <td>27</td>
+                    <td>4</td>
+                    <td>1</td>
+                </tr>
+                <tr data-room="ม.1/1"
+                    data-subject="ภาษาไทย" data-division="ฝ่ายวิชาการ">
+                    <td>ม.1/1</td>
+                    <td>ภาษาไทย</td>
+                    <td>ฝ่ายวิชาการ</td>
+                    <td>12</td>
+                    <td>10</td>
+                    <td>2</td>
+                    <td>0</td>
+                </tr>
+                <tr data-room="ห้องสมุด"
+                    data-subject="ICT" data-division="ฝ่ายบริหารทั่วไป">
+                    <td>ห้องสมุด</td>
+                    <td>ICT</td>
+                    <td>ฝ่ายบริหารทั่วไป</td>
+                    <td>15</td>
+                    <td>13</td>
+                    <td>1</td>
+                    <td>1</td>
+                </tr>
+                <tr data-room="ม.1/2"
+                    data-subject="วิทยาศาสตร์และเทคโนโลยี" data-division="ฝ่ายวิชาการ">
+                    <td>ม.1/2</td>
+                    <td>วิทยาศาสตร์และเทคโนโลยี</td>
+                    <td>ฝ่ายวิชาการ</td>
+                    <td>10</td>
+                    <td>9</td>
+                    <td>1</td>
+                    <td>0</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <!-- ====== TAB 4: ความต้องการ & ปัญหาสื่อนวัตกรรม ====== -->
+    <section id="media" class="section">
+        <div class="section-header">
+            <h2>สำรวจความต้องการ &amp; แจ้งปัญหาสื่อนวัตกรรม</h2>
+            <span>ใช้เก็บข้อมูลเพื่อปรับปรุงสื่อและของบประมาณ</span>
+        </div>
+        <div class="table-wrapper">
+            <table id="table-media">
+                <thead>
+                <tr>
+                    <th>วันที่บันทึก</th>
+                    <th>ประเภทสื่อ/นวัตกรรม</th>
+                    <th>รายละเอียดความต้องการ / ปัญหา</th>
+                    <th>ห้อง</th>
+                    <th>กลุ่มสาระ / งาน</th>
+                    <th>ฝ่าย</th>
+                    <th>ความเร่งด่วน</th>
+                    <th>สถานะดำเนินการ</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr data-term="1/2568" data-year="2568" data-room="ม.1/1"
+                    data-subject="วิทยาศาสตร์และเทคโนโลยี" data-division="ฝ่ายวิชาการ">
+                    <td>02/07/2568</td>
+                    <td>สื่อดิจิทัล (แบบทดสอบออนไลน์)</td>
+                    <td>ขอจัดทำคลังข้อสอบออนไลน์สำหรับวิชาวิทยาศาสตร์ ม.1</td>
+                    <td>ม.1/1</td>
+                    <td>วิทยาศาสตร์และเทคโนโลยี</td>
+                    <td>ฝ่ายวิชาการ</td>
+                    <td>สูง</td>
+                    <td><span class="status-badge status-progress">กำลังพัฒนา</span></td>
+                </tr>
+                <tr data-term="1/2568" data-year="2568" data-room="ห้องเรียนคอมพิวเตอร์"
+                    data-subject="ICT" data-division="ฝ่ายวิชาการ">
+                    <td>08/07/2568</td>
+                    <td>ห้องเรียนดิจิทัล</td>
+                    <td>ต้องการเพิ่มจอทีวีขนาดใหญ่สำหรับสาธิต/ประชุมออนไลน์</td>
+                    <td>ห้องเรียนคอมพิวเตอร์</td>
+                    <td>ICT</td>
+                    <td>ฝ่ายวิชาการ</td>
+                    <td>ปานกลาง</td>
+                    <td><span class="status-badge status-wait">รอจัดสรรงบ</span></td>
+                </tr>
+                <tr data-term="2/2567" data-year="2567" data-room="ห้องสมุด"
+                    data-subject="ICT" data-division="ฝ่ายบริหารทั่วไป">
+                    <td>15/01/2568</td>
+                    <td>สื่ออ่านเพิ่มเติม (e-book)</td>
+                    <td>ขอเพิ่มสิทธิ์ใช้งานห้องสมุดออนไลน์สำหรับนักเรียนทุกระดับชั้น</td>
+                    <td>ห้องสมุด</td>
+                    <td>ICT</td>
+                    <td>ฝ่ายบริหารทั่วไป</td>
+                    <td>ปานกลาง</td>
+                    <td><span class="status-badge status-done">ดำเนินการแล้ว</span></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <!-- ====== TAB 5: รายงานสรุป เทอม/ปี ====== -->
+    <section id="report" class="section">
+        <div class="section-header">
+            <h2>รายงานสรุปตามภาคเรียน &amp; ปีการศึกษา</h2>
+            <span>ใช้แนบประกอบรายงาน สมศ. / นิเทศ / PA</span>
+        </div>
+        <div class="table-wrapper">
+            <table id="table-report">
+                <thead>
+                <tr>
+                    <th>ภาคเรียน / ปีการศึกษา</th>
+                    <th>จำนวนแจ้งซ่อม</th>
+                    <th>ซ่อมเสร็จ</th>
+                    <th>ยังรอดำเนินการ</th>
+                    <th>จำนวนรายการสื่อ/นวัตกรรมที่ร้องขอ</th>
+                    <th>ความคืบหน้า (โดยประมาณ)</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>1/2568</td>
+                    <td>12</td>
+                    <td>5</td>
+                    <td>7</td>
+                    <td>8</td>
+                    <td>
+                        <div class="progress" aria-label="ความคืบหน้า 40%">
+                            <div class="progress-inner" style="width:40%"></div>
+                        </div>
+                        <small>40% ดำเนินการแล้ว</small>
+                    </td>
+                </tr>
+                <tr>
+                    <td>2/2567</td>
+                    <td>9</td>
+                    <td>8</td>
+                    <td>1</td>
+                    <td>4</td>
+                    <td>
+                        <div class="progress" aria-label="ความคืบหน้า 70%">
+                            <div class="progress-inner" style="width:70%"></div>
+                        </div>
+                        <small>70% ดำเนินการแล้ว</small>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+</div>
+
+<!-- JS เล็กน้อยสำหรับสลับแท็บ + ฟิลเตอร์ข้อมูล -->
+<script>
+    // สลับแท็บ
+    const tabButtons = document.querySelectorAll('.tab-btn');
+    const sections = document.querySelectorAll('.section');
+
+    tabButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+            tabButtons.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+
+            const tab = btn.dataset.tab;
+            sections.forEach(sec => {
+                sec.classList.toggle('active', sec.id === tab);
+            });
+        });
+    });
+
+    // ฟังก์ชันฟิลเตอร์แถวในทุกตารางที่มี data-* ครบ
+    const filterInputs = document.querySelectorAll('.filter-input');
+    const tablesToFilter = [
+        document.getElementById('table-repair'),
+        document.getElementById('table-status'),
+        document.getElementById('table-media')
+    ];
+
+    function applyFilters() {
+        const term = document.getElementById('filter-term').value;
+        const year = document.getElementById('filter-year').value;
+        const room = document.getElementById('filter-room').value;
+        const subject = document.getElementById('filter-subject').value;
+        const division = document.getElementById('filter-division').value;
+
+        tablesToFilter.forEach(table => {
+            if (!table) return;
+            const rows = table.querySelectorAll('tbody tr');
+            rows.forEach(row => {
+                // ถ้าไม่มี data-term/year แสดงว่าเป็นตารางสรุปห้อง (status) -> ข้าม term/year
+                const rTerm = row.dataset.term || null;
+                const rYear = row.dataset.year || null;
+                const rRoom = row.dataset.room || null;
+                const rSubject = row.dataset.subject || null;
+                const rDivision = row.dataset.division || null;
+
+                let show = true;
+
+                if (term !== 'all' && rTerm && rTerm !== term) show = false;
+                if (year !== 'all' && rYear && rYear !== year) show = false;
+                if (room !== 'all' && rRoom && rRoom !== room) show = false;
+                if (subject !== 'all' && rSubject && rSubject !== subject) show = false;
+                if (division !== 'all' && rDivision && rDivision !== division) show = false;
+
+                row.style.display = show ? '' : 'none';
+            });
+        });
+    }
+
+    filterInputs.forEach(input => {
+        input.addEventListener('change', applyFilters);
+    });
+</script>
+</body>
+</html>
