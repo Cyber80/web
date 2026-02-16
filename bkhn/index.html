@@ -1,0 +1,602 @@
+<!doctype html>
+<html lang="th" class="h-full">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>รายงานประจำโรงเรียนประถม</title>
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script src="/_sdk/element_sdk.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet">
+  <style>
+    * { font-family: 'Prompt', sans-serif; }
+    .category-card {
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .category-card:hover {
+      transform: translateY(-4px);
+    }
+    .report-item {
+      transition: all 0.2s ease;
+    }
+    .report-item:hover {
+      background: rgba(255,255,255,0.1);
+    }
+    .expand-icon {
+      transition: transform 0.3s ease;
+    }
+    .expanded .expand-icon {
+      transform: rotate(180deg);
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .animate-fade-in {
+      animation: fadeIn 0.4s ease forwards;
+    }
+    .sub-item {
+      animation: fadeIn 0.3s ease forwards;
+    }
+  </style>
+  <style>body { box-sizing: border-box; }</style>
+  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
+ </head>
+ <body class="h-full">
+  <div id="app-wrapper" class="h-full w-full overflow-auto"><!-- Header -->
+   <header id="header-section" class="sticky top-0 z-50 backdrop-blur-lg border-b" style="background: rgba(15, 23, 42, 0.95); border-color: rgba(148, 163, 184, 0.1);">
+    <div class="max-w-6xl mx-auto px-4 py-4">
+     <div class="flex items-center justify-between">
+      <div class="flex items-center gap-3">
+       <div class="w-12 h-12 rounded-xl flex items-center justify-center text-2xl" style="background: linear-gradient(135deg, #3b82f6, #8b5cf6);">
+        📋
+       </div>
+       <div>
+        <h1 id="app-title" class="text-xl font-bold" style="color: #f8fafc;">รายงานประจำโรงเรียนประถม</h1>
+        <p id="school-name" class="text-sm" style="color: #94a3b8;">ระบบติดตามรายงานตามกลุ่มบริหาร 4 ฝ่าย</p>
+       </div>
+      </div>
+      <div class="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full text-sm" style="background: rgba(34, 197, 94, 0.15); color: #4ade80;"><span class="w-2 h-2 rounded-full bg-green-400 animate-pulse"></span> <span>อัปเดตล่าสุด 2567</span>
+      </div>
+     </div>
+    </div>
+   </header><!-- Main Content -->
+   <main class="max-w-6xl mx-auto px-4 py-6"><!-- Stats Overview -->
+    <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-8">
+     <div class="rounded-xl p-4 text-center" style="background: linear-gradient(135deg, rgba(59, 130, 246, 0.2), rgba(59, 130, 246, 0.05)); border: 1px solid rgba(59, 130, 246, 0.3);">
+      <div class="text-3xl font-bold" style="color: #60a5fa;">
+       4
+      </div>
+      <div class="text-xs mt-1" style="color: #94a3b8;">
+       กลุ่มบริหาร
+      </div>
+     </div>
+     <div class="rounded-xl p-4 text-center" style="background: linear-gradient(135deg, rgba(168, 85, 247, 0.2), rgba(168, 85, 247, 0.05)); border: 1px solid rgba(168, 85, 247, 0.3);">
+      <div class="text-3xl font-bold" style="color: #c084fc;">
+       15
+      </div>
+      <div class="text-xs mt-1" style="color: #94a3b8;">
+       รายงานหลัก
+      </div>
+     </div>
+     <div class="rounded-xl p-4 text-center" style="background: linear-gradient(135deg, rgba(34, 197, 94, 0.2), rgba(34, 197, 94, 0.05)); border: 1px solid rgba(34, 197, 94, 0.3);">
+      <div class="text-3xl font-bold" style="color: #4ade80;">
+       5
+      </div>
+      <div class="text-xs mt-1" style="color: #94a3b8;">
+       นโยบายพิเศษ
+      </div>
+     </div>
+     <div class="rounded-xl p-4 text-center" style="background: linear-gradient(135deg, rgba(251, 146, 60, 0.2), rgba(251, 146, 60, 0.05)); border: 1px solid rgba(251, 146, 60, 0.3);">
+      <div class="text-3xl font-bold" style="color: #fb923c;">
+       สพป.
+      </div>
+      <div class="text-xs mt-1" style="color: #94a3b8;">
+       หน่วยงานหลัก
+      </div>
+     </div>
+    </div><!-- Categories Grid -->
+    <div id="categories-container" class="space-y-4"><!-- Category 1: Academic Administration -->
+     <div class="category-card rounded-2xl overflow-hidden" style="background: linear-gradient(135deg, #1e3a5f, #0f172a); border: 1px solid rgba(59, 130, 246, 0.3);"><button onclick="toggleCategory('cat1')" class="w-full p-5 flex items-center justify-between text-left" id="cat1-header">
+       <div class="flex items-center gap-4">
+        <div class="w-14 h-14 rounded-xl flex items-center justify-center text-3xl" style="background: linear-gradient(135deg, #3b82f6, #1d4ed8);">
+         📘
+        </div>
+        <div>
+         <h2 class="text-lg font-bold" style="color: #f8fafc;">1) กลุ่มบริหารงานวิชาการ</h2>
+         <p class="text-sm" style="color: #60a5fa;">4 รายงานหลัก • SAR, ผลสัมฤทธิ์, อ่านเขียน, หลักสูตร</p>
+        </div>
+       </div>
+       <svg class="expand-icon w-6 h-6" style="color: #60a5fa;" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+       </svg></button>
+      <div id="cat1-content" class="hidden px-5 pb-5">
+       <div class="space-y-3"><!-- Report 1.1 -->
+        <div class="report-item rounded-xl p-4" style="background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.2);">
+         <div class="flex items-start gap-3"><span class="text-xl">📄</span>
+          <div class="flex-1">
+           <h3 class="font-semibold" style="color: #f8fafc;">1.1 รายงาน SAR (รายงานการประเมินตนเอง)</h3>
+           <div class="mt-2 space-y-1.5">
+            <div class="flex items-center gap-2 text-sm" style="color: #94a3b8;"><span class="w-1.5 h-1.5 rounded-full" style="background: #60a5fa;"></span> รายงานตามมาตรฐานการศึกษาขั้นพื้นฐาน
+            </div>
+            <div class="flex items-center gap-2 text-sm" style="color: #94a3b8;"><span class="w-1.5 h-1.5 rounded-full" style="background: #60a5fa;"></span> อ้างอิงกรอบของ สำนักงานคณะกรรมการการศึกษาขั้นพื้นฐาน
+            </div>
+            <div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium mt-2" style="background: rgba(251, 146, 60, 0.2); color: #fb923c;">
+             📅 ส่ง สพป. ปีละ 1 ครั้ง
+            </div>
+           </div>
+          </div>
+         </div>
+        </div><!-- Report 1.2 -->
+        <div class="report-item rounded-xl p-4" style="background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.2);">
+         <div class="flex items-start gap-3"><span class="text-xl">📊</span>
+          <div class="flex-1">
+           <h3 class="font-semibold" style="color: #f8fafc;">1.2 รายงานผลสัมฤทธิ์ทางการเรียน</h3>
+           <div class="mt-2 flex flex-wrap gap-2"><span class="px-3 py-1 rounded-full text-xs font-medium" style="background: rgba(34, 197, 94, 0.2); color: #4ade80;">RT (ป.1)</span> <span class="px-3 py-1 rounded-full text-xs font-medium" style="background: rgba(168, 85, 247, 0.2); color: #c084fc;">NT (ป.3)</span> <span class="px-3 py-1 rounded-full text-xs font-medium" style="background: rgba(251, 146, 60, 0.2); color: #fb923c;">O-NET (ป.6)</span>
+           </div>
+           <p class="text-sm mt-2" style="color: #94a3b8;"><span class="text-xs px-2 py-0.5 rounded" style="background: rgba(59, 130, 246, 0.2); color: #60a5fa;">สทศ.</span> เปรียบเทียบค่าเฉลี่ยระดับเขต/ประเทศ</p>
+          </div>
+         </div>
+        </div><!-- Report 1.3 -->
+        <div class="report-item rounded-xl p-4" style="background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.2);">
+         <div class="flex items-start gap-3"><span class="text-xl">📖</span>
+          <div class="flex-1">
+           <h3 class="font-semibold" style="color: #f8fafc;">1.3 รายงานผลการอ่านออกเขียนได้</h3>
+           <div class="mt-2 flex flex-wrap gap-2"><span class="px-3 py-1 rounded-full text-xs" style="background: rgba(59, 130, 246, 0.2); color: #60a5fa;">ป.1–ป.3</span> <span class="px-3 py-1 rounded-full text-xs" style="background: rgba(148, 163, 184, 0.2); color: #94a3b8;">รายงานรอบภาคเรียน / รอบปี</span>
+           </div>
+          </div>
+         </div>
+        </div><!-- Report 1.4 -->
+        <div class="report-item rounded-xl p-4" style="background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.2);">
+         <div class="flex items-start gap-3"><span class="text-xl">📚</span>
+          <div class="flex-1">
+           <h3 class="font-semibold" style="color: #f8fafc;">1.4 รายงานพัฒนาหลักสูตรสถานศึกษา</h3>
+           <div class="mt-2 space-y-1.5">
+            <div class="flex items-center gap-2 text-sm" style="color: #94a3b8;"><span class="w-1.5 h-1.5 rounded-full" style="background: #60a5fa;"></span> ปรับปรุงหลักสูตร
+            </div>
+            <div class="flex items-center gap-2 text-sm" style="color: #94a3b8;"><span class="w-1.5 h-1.5 rounded-full" style="background: #60a5fa;"></span> แผนการจัดการเรียนรู้
+            </div>
+           </div>
+          </div>
+         </div>
+        </div>
+       </div>
+      </div>
+     </div><!-- Category 2: Budget & Personnel -->
+     <div class="category-card rounded-2xl overflow-hidden" style="background: linear-gradient(135deg, #3d1f5c, #1a0a2e); border: 1px solid rgba(168, 85, 247, 0.3);"><button onclick="toggleCategory('cat2')" class="w-full p-5 flex items-center justify-between text-left" id="cat2-header">
+       <div class="flex items-center gap-4">
+        <div class="w-14 h-14 rounded-xl flex items-center justify-center text-3xl" style="background: linear-gradient(135deg, #a855f7, #7c3aed);">
+         💰
+        </div>
+        <div>
+         <h2 class="text-lg font-bold" style="color: #f8fafc;">2) กลุ่มบริหารงบประมาณและบุคคล</h2>
+         <p class="text-sm" style="color: #c084fc;">4 รายงานหลัก • งบประมาณ, แผนปฏิบัติการ, อัตรากำลัง</p>
+        </div>
+       </div>
+       <svg class="expand-icon w-6 h-6" style="color: #c084fc;" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+       </svg></button>
+      <div id="cat2-content" class="hidden px-5 pb-5">
+       <div class="space-y-3"><!-- Report 2.1 -->
+        <div class="report-item rounded-xl p-4" style="background: rgba(168, 85, 247, 0.1); border: 1px solid rgba(168, 85, 247, 0.2);">
+         <div class="flex items-start gap-3"><span class="text-xl">💵</span>
+          <div class="flex-1">
+           <h3 class="font-semibold" style="color: #f8fafc;">2.1 รายงานการใช้จ่ายงบประมาณ</h3>
+           <div class="mt-2 space-y-1.5">
+            <div class="flex items-center gap-2 text-sm" style="color: #94a3b8;"><span class="w-1.5 h-1.5 rounded-full" style="background: #c084fc;"></span> เงินอุดหนุนรายหัว
+            </div>
+            <div class="flex items-center gap-2 text-sm" style="color: #94a3b8;"><span class="w-1.5 h-1.5 rounded-full" style="background: #c084fc;"></span> เงินกิจกรรมพัฒนาผู้เรียน
+            </div>
+            <div class="flex items-center gap-2 text-sm" style="color: #94a3b8;"><span class="w-1.5 h-1.5 rounded-full" style="background: #c084fc;"></span> งบประมาณตามโครงการ
+            </div>
+           </div>
+          </div>
+         </div>
+        </div><!-- Report 2.2 -->
+        <div class="report-item rounded-xl p-4" style="background: rgba(168, 85, 247, 0.1); border: 1px solid rgba(168, 85, 247, 0.2);">
+         <div class="flex items-start gap-3"><span class="text-xl">📋</span>
+          <div class="flex-1">
+           <h3 class="font-semibold" style="color: #f8fafc;">2.2 รายงานแผนปฏิบัติการประจำปี (Action Plan)</h3>
+           <div class="mt-2 flex flex-wrap gap-2"><span class="px-2 py-1 rounded text-xs" style="background: rgba(168, 85, 247, 0.2); color: #c084fc;">โครงการ</span> <span class="px-2 py-1 rounded text-xs" style="background: rgba(168, 85, 247, 0.2); color: #c084fc;">ตัวชี้วัด</span> <span class="px-2 py-1 rounded text-xs" style="background: rgba(168, 85, 247, 0.2); color: #c084fc;">งบประมาณ</span> <span class="px-2 py-1 rounded text-xs" style="background: rgba(168, 85, 247, 0.2); color: #c084fc;">ผลลัพธ์</span>
+           </div>
+          </div>
+         </div>
+        </div><!-- Report 2.3 -->
+        <div class="report-item rounded-xl p-4" style="background: rgba(168, 85, 247, 0.1); border: 1px solid rgba(168, 85, 247, 0.2);">
+         <div class="flex items-start gap-3"><span class="text-xl">👥</span>
+          <div class="flex-1">
+           <h3 class="font-semibold" style="color: #f8fafc;">2.3 รายงานอัตรากำลังครู</h3>
+           <div class="mt-2 grid grid-cols-2 gap-2">
+            <div class="flex items-center gap-2 text-sm" style="color: #4ade80;"><span>✓</span> ครูครบชั้น
+            </div>
+            <div class="flex items-center gap-2 text-sm" style="color: #f87171;"><span>✗</span> ไม่ครบชั้น
+            </div>
+            <div class="flex items-center gap-2 text-sm" style="color: #4ade80;"><span>✓</span> วิชาเอกตรง
+            </div>
+            <div class="flex items-center gap-2 text-sm" style="color: #f87171;"><span>✗</span> ไม่ตรง
+            </div>
+           </div>
+          </div>
+         </div>
+        </div><!-- Report 2.4 -->
+        <div class="report-item rounded-xl p-4" style="background: rgba(168, 85, 247, 0.1); border: 1px solid rgba(168, 85, 247, 0.2);">
+         <div class="flex items-start gap-3"><span class="text-xl">🗂️</span>
+          <div class="flex-1">
+           <h3 class="font-semibold" style="color: #f8fafc;">2.4 รายงานข้อมูลบุคลากร</h3>
+           <div class="mt-2 space-y-1.5">
+            <div class="flex items-center gap-2 text-sm" style="color: #94a3b8;"><span class="px-2 py-0.5 rounded text-xs" style="background: rgba(59, 130, 246, 0.2); color: #60a5fa;">DMC</span> ข้อมูลในระบบ DMC
+            </div>
+            <div class="flex items-center gap-2 text-sm" style="color: #94a3b8;"><span class="w-1.5 h-1.5 rounded-full" style="background: #c084fc;"></span> ข้อมูลเลื่อนขั้นเงินเดือน
+            </div>
+           </div>
+          </div>
+         </div>
+        </div>
+       </div>
+      </div>
+     </div><!-- Category 3: General Administration -->
+     <div class="category-card rounded-2xl overflow-hidden" style="background: linear-gradient(135deg, #1a4d3e, #0d2818); border: 1px solid rgba(34, 197, 94, 0.3);"><button onclick="toggleCategory('cat3')" class="w-full p-5 flex items-center justify-between text-left" id="cat3-header">
+       <div class="flex items-center gap-4">
+        <div class="w-14 h-14 rounded-xl flex items-center justify-center text-3xl" style="background: linear-gradient(135deg, #22c55e, #16a34a);">
+         🏫
+        </div>
+        <div>
+         <h2 class="text-lg font-bold" style="color: #f8fafc;">3) กลุ่มบริหารงานทั่วไป</h2>
+         <p class="text-sm" style="color: #4ade80;">3 รายงานหลัก • EMIS/DMC, แผนเผชิญเหตุ, ประกันคุณภาพ</p>
+        </div>
+       </div>
+       <svg class="expand-icon w-6 h-6" style="color: #4ade80;" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+       </svg></button>
+      <div id="cat3-content" class="hidden px-5 pb-5">
+       <div class="space-y-3"><!-- Report 3.1 -->
+        <div class="report-item rounded-xl p-4" style="background: rgba(34, 197, 94, 0.1); border: 1px solid rgba(34, 197, 94, 0.2);">
+         <div class="flex items-start gap-3"><span class="text-xl">🏢</span>
+          <div class="flex-1">
+           <h3 class="font-semibold" style="color: #f8fafc;">3.1 รายงานข้อมูลพื้นฐานสถานศึกษา</h3>
+           <div class="mt-2 flex flex-wrap gap-2 mb-2"><span class="px-2 py-0.5 rounded text-xs font-medium" style="background: rgba(59, 130, 246, 0.2); color: #60a5fa;">EMIS</span> <span class="px-2 py-0.5 rounded text-xs font-medium" style="background: rgba(168, 85, 247, 0.2); color: #c084fc;">DMC</span>
+           </div>
+           <div class="grid grid-cols-3 gap-2 mt-3">
+            <div class="text-center p-2 rounded-lg" style="background: rgba(34, 197, 94, 0.15);">
+             <div class="text-lg">
+              👨‍🎓
+             </div>
+             <div class="text-xs" style="color: #94a3b8;">
+              นักเรียน
+             </div>
+            </div>
+            <div class="text-center p-2 rounded-lg" style="background: rgba(34, 197, 94, 0.15);">
+             <div class="text-lg">
+              🚪
+             </div>
+             <div class="text-xs" style="color: #94a3b8;">
+              ห้องเรียน
+             </div>
+            </div>
+            <div class="text-center p-2 rounded-lg" style="background: rgba(34, 197, 94, 0.15);">
+             <div class="text-lg">
+              🏛️
+             </div>
+             <div class="text-xs" style="color: #94a3b8;">
+              อาคาร
+             </div>
+            </div>
+           </div>
+          </div>
+         </div>
+        </div><!-- Report 3.2 -->
+        <div class="report-item rounded-xl p-4" style="background: rgba(34, 197, 94, 0.1); border: 1px solid rgba(34, 197, 94, 0.2);">
+         <div class="flex items-start gap-3"><span class="text-xl">🚨</span>
+          <div class="flex-1">
+           <h3 class="font-semibold" style="color: #f8fafc;">3.2 รายงานแผนเผชิญเหตุ</h3>
+           <div class="mt-2 flex flex-wrap gap-2"><span class="px-3 py-1.5 rounded-lg text-sm flex items-center gap-1" style="background: rgba(239, 68, 68, 0.2); color: #f87171;"> 🔥 อัคคีภัย </span> <span class="px-3 py-1.5 rounded-lg text-sm flex items-center gap-1" style="background: rgba(59, 130, 246, 0.2); color: #60a5fa;"> 🌊 น้ำท่วม </span> <span class="px-3 py-1.5 rounded-lg text-sm flex items-center gap-1" style="background: rgba(251, 146, 60, 0.2); color: #fb923c;"> 🏚️ แผ่นดินไหว </span>
+           </div>
+          </div>
+         </div>
+        </div><!-- Report 3.3 -->
+        <div class="report-item rounded-xl p-4" style="background: rgba(34, 197, 94, 0.1); border: 1px solid rgba(34, 197, 94, 0.2);">
+         <div class="flex items-start gap-3"><span class="text-xl">✅</span>
+          <div class="flex-1">
+           <h3 class="font-semibold" style="color: #f8fafc;">3.3 รายงานประกันคุณภาพภายใน</h3>
+           <div class="mt-2 space-y-1.5">
+            <div class="flex items-center gap-2 text-sm" style="color: #94a3b8;"><span class="w-1.5 h-1.5 rounded-full" style="background: #4ade80;"></span> แผนประกันคุณภาพ
+            </div>
+            <div class="flex items-center gap-2 text-sm" style="color: #94a3b8;"><span class="w-1.5 h-1.5 rounded-full" style="background: #4ade80;"></span> รายงานติดตามภายใน
+            </div>
+           </div>
+          </div>
+         </div>
+        </div>
+       </div>
+      </div>
+     </div><!-- Category 4: Student Affairs -->
+     <div class="category-card rounded-2xl overflow-hidden" style="background: linear-gradient(135deg, #5c3d1f, #2e1a0a); border: 1px solid rgba(251, 146, 60, 0.3);"><button onclick="toggleCategory('cat4')" class="w-full p-5 flex items-center justify-between text-left" id="cat4-header">
+       <div class="flex items-center gap-4">
+        <div class="w-14 h-14 rounded-xl flex items-center justify-center text-3xl" style="background: linear-gradient(135deg, #f97316, #ea580c);">
+         👩‍🎓
+        </div>
+        <div>
+         <h2 class="text-lg font-bold" style="color: #f8fafc;">4) กลุ่มบริหารกิจการนักเรียน</h2>
+         <p class="text-sm" style="color: #fb923c;">4 รายงานหลัก • ดูแลช่วยเหลือ, อาหารกลางวัน, ทุน</p>
+        </div>
+       </div>
+       <svg class="expand-icon w-6 h-6" style="color: #fb923c;" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+       </svg></button>
+      <div id="cat4-content" class="hidden px-5 pb-5">
+       <div class="space-y-3"><!-- Report 4.1 -->
+        <div class="report-item rounded-xl p-4" style="background: rgba(251, 146, 60, 0.1); border: 1px solid rgba(251, 146, 60, 0.2);">
+         <div class="flex items-start gap-3"><span class="text-xl">🤝</span>
+          <div class="flex-1">
+           <h3 class="font-semibold" style="color: #f8fafc;">4.1 รายงานระบบดูแลช่วยเหลือนักเรียน</h3>
+           <div class="mt-3 grid grid-cols-3 gap-2">
+            <div class="text-center p-3 rounded-xl" style="background: rgba(34, 197, 94, 0.15); border: 1px solid rgba(34, 197, 94, 0.3);">
+             <div class="text-2xl mb-1">
+              😊
+             </div>
+             <div class="text-xs font-medium" style="color: #4ade80;">
+              กลุ่มปกติ
+             </div>
+            </div>
+            <div class="text-center p-3 rounded-xl" style="background: rgba(251, 191, 36, 0.15); border: 1px solid rgba(251, 191, 36, 0.3);">
+             <div class="text-2xl mb-1">
+              ⚠️
+             </div>
+             <div class="text-xs font-medium" style="color: #fbbf24;">
+              กลุ่มเสี่ยง
+             </div>
+            </div>
+            <div class="text-center p-3 rounded-xl" style="background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.3);">
+             <div class="text-2xl mb-1">
+              🆘
+             </div>
+             <div class="text-xs font-medium" style="color: #f87171;">
+              กลุ่มมีปัญหา
+             </div>
+            </div>
+           </div>
+          </div>
+         </div>
+        </div><!-- Report 4.2 -->
+        <div class="report-item rounded-xl p-4" style="background: rgba(251, 146, 60, 0.1); border: 1px solid rgba(251, 146, 60, 0.2);">
+         <div class="flex items-start gap-3"><span class="text-xl">🍱</span>
+          <div class="flex-1">
+           <h3 class="font-semibold" style="color: #f8fafc;">4.2 รายงานโครงการอาหารกลางวัน</h3>
+           <div class="mt-2 space-y-1.5">
+            <div class="flex items-center gap-2 text-sm" style="color: #94a3b8;"><span class="w-1.5 h-1.5 rounded-full" style="background: #fb923c;"></span> จำนวนนักเรียนรับสิทธิ์
+            </div>
+            <div class="flex items-center gap-2 text-sm" style="color: #94a3b8;"><span class="w-1.5 h-1.5 rounded-full" style="background: #fb923c;"></span> งบประมาณ
+            </div>
+            <div class="flex items-center gap-2 text-sm" style="color: #94a3b8;"><span class="w-1.5 h-1.5 rounded-full" style="background: #fb923c;"></span> การเบิกจ่าย
+            </div>
+           </div>
+          </div>
+         </div>
+        </div><!-- Report 4.3 -->
+        <div class="report-item rounded-xl p-4" style="background: rgba(251, 146, 60, 0.1); border: 1px solid rgba(251, 146, 60, 0.2);">
+         <div class="flex items-start gap-3"><span class="text-xl">🎓</span>
+          <div class="flex-1">
+           <h3 class="font-semibold" style="color: #f8fafc;">4.3 รายงานทุนการศึกษา</h3>
+           <p class="text-sm mt-1" style="color: #94a3b8;">รายงานนักเรียนที่ได้รับทุนการศึกษาต่างๆ</p>
+          </div>
+         </div>
+        </div><!-- Report 4.4 -->
+        <div class="report-item rounded-xl p-4" style="background: rgba(251, 146, 60, 0.1); border: 1px solid rgba(251, 146, 60, 0.2);">
+         <div class="flex items-start gap-3"><span class="text-xl">🎪</span>
+          <div class="flex-1">
+           <h3 class="font-semibold" style="color: #f8fafc;">4.4 รายงานกิจกรรมพัฒนาผู้เรียน</h3>
+           <div class="mt-2 flex flex-wrap gap-2"><span class="px-3 py-1.5 rounded-lg text-sm" style="background: rgba(251, 146, 60, 0.2); color: #fb923c;">⚜️ ลูกเสือ</span> <span class="px-3 py-1.5 rounded-lg text-sm" style="background: rgba(168, 85, 247, 0.2); color: #c084fc;">🎨 ชุมนุม</span> <span class="px-3 py-1.5 rounded-lg text-sm" style="background: rgba(59, 130, 246, 0.2); color: #60a5fa;">🚌 ทัศนศึกษา</span>
+           </div>
+          </div>
+         </div>
+        </div>
+       </div>
+      </div>
+     </div><!-- Category 5: Special Policies -->
+     <div class="category-card rounded-2xl overflow-hidden" style="background: linear-gradient(135deg, #4a1d5c, #1a0a2e); border: 1px solid rgba(236, 72, 153, 0.3);"><button onclick="toggleCategory('cat5')" class="w-full p-5 flex items-center justify-between text-left" id="cat5-header">
+       <div class="flex items-center gap-4">
+        <div class="w-14 h-14 rounded-xl flex items-center justify-center text-3xl" style="background: linear-gradient(135deg, #ec4899, #db2777);">
+         📊
+        </div>
+        <div>
+         <h2 class="text-lg font-bold" style="color: #f8fafc;">5) รายงานที่ สพป. ขอเพิ่มเติม</h2>
+         <p class="text-sm" style="color: #f472b6;">ตามนโยบายปีนั้น • เรียนดีมีสุข, STEM, โรงเรียนคุณภาพ</p>
+        </div>
+       </div>
+       <svg class="expand-icon w-6 h-6" style="color: #f472b6;" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+       </svg></button>
+      <div id="cat5-content" class="hidden px-5 pb-5">
+       <div class="p-3 rounded-xl mb-4" style="background: rgba(236, 72, 153, 0.1); border: 1px solid rgba(236, 72, 153, 0.2);">
+        <p class="text-sm" style="color: #f472b6;">💡 รายงานเหล่านี้อาจเปลี่ยนแปลงตามนโยบายของ สพฐ. และ สพป. ในแต่ละปีการศึกษา</p>
+       </div>
+       <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <div class="report-item rounded-xl p-4 flex items-center gap-3" style="background: rgba(236, 72, 153, 0.1); border: 1px solid rgba(236, 72, 153, 0.2);"><span class="text-2xl">😊</span>
+         <div>
+          <h3 class="font-medium" style="color: #f8fafc;">เรียนดี มีความสุข</h3>
+          <p class="text-xs" style="color: #94a3b8;">นโยบายหลัก กระทรวงศึกษาฯ</p>
+         </div>
+        </div>
+        <div class="report-item rounded-xl p-4 flex items-center gap-3" style="background: rgba(236, 72, 153, 0.1); border: 1px solid rgba(236, 72, 153, 0.2);"><span class="text-2xl">💻</span>
+         <div>
+          <h3 class="font-medium" style="color: #f8fafc;">Coding / STEM</h3>
+          <p class="text-xs" style="color: #94a3b8;">ส่งเสริมทักษะดิจิทัล</p>
+         </div>
+        </div>
+        <div class="report-item rounded-xl p-4 flex items-center gap-3" style="background: rgba(236, 72, 153, 0.1); border: 1px solid rgba(236, 72, 153, 0.2);"><span class="text-2xl">⭐</span>
+         <div>
+          <h3 class="font-medium" style="color: #f8fafc;">โรงเรียนคุณภาพ</h3>
+          <p class="text-xs" style="color: #94a3b8;">มาตรฐานโรงเรียนคุณภาพ</p>
+         </div>
+        </div>
+        <div class="report-item rounded-xl p-4 flex items-center gap-3" style="background: rgba(236, 72, 153, 0.1); border: 1px solid rgba(236, 72, 153, 0.2);"><span class="text-2xl">🤲</span>
+         <div>
+          <h3 class="font-medium" style="color: #f8fafc;">สุจริตศึกษา</h3>
+          <p class="text-xs" style="color: #94a3b8;">ส่งเสริมคุณธรรมจริยธรรม</p>
+         </div>
+        </div>
+        <div class="report-item rounded-xl p-4 flex items-center gap-3 sm:col-span-2" style="background: rgba(236, 72, 153, 0.1); border: 1px solid rgba(236, 72, 153, 0.2);"><span class="text-2xl">🛡️</span>
+         <div>
+          <h3 class="font-medium" style="color: #f8fafc;">โรงเรียนปลอดภัย</h3>
+          <p class="text-xs" style="color: #94a3b8;">ความปลอดภัยในสถานศึกษา MOE Safety Center</p>
+         </div>
+        </div>
+       </div>
+      </div>
+     </div>
+    </div><!-- Footer Info -->
+    <div class="mt-8 rounded-2xl p-5" style="background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(168, 85, 247, 0.1)); border: 1px solid rgba(148, 163, 184, 0.1);">
+     <div class="flex items-start gap-3">
+      <div class="text-2xl">
+       📌
+      </div>
+      <div>
+       <h3 class="font-semibold mb-2" style="color: #f8fafc;">หมายเหตุสำคัญ</h3>
+       <ul class="space-y-1.5 text-sm" style="color: #94a3b8;">
+        <li class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full" style="background: #60a5fa;"></span> รายงานบางรายการอาจปรับเปลี่ยนตามนโยบายของ สพฐ. และ สพป. ในแต่ละปี</li>
+        <li class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full" style="background: #c084fc;"></span> ควรตรวจสอบปฏิทินการส่งรายงานจาก สพป. เป็นประจำ</li>
+        <li class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full" style="background: #4ade80;"></span> จัดเก็บเอกสารอย่างเป็นระบบเพื่อการตรวจสอบและประเมิน</li>
+       </ul>
+      </div>
+     </div>
+    </div>
+   </main><!-- Footer -->
+   <footer class="max-w-6xl mx-auto px-4 py-6 text-center" style="color: #64748b;">
+    <p class="text-sm">📚 รายงานประจำโรงเรียนประถม • ระบบติดตามรายงานตามกลุ่มบริหาร 4 ฝ่าย</p>
+    <p class="text-xs mt-1">อ้างอิงข้อมูลจาก สำนักงานคณะกรรมการการศึกษาขั้นพื้นฐาน (สพฐ.)</p>
+   </footer>
+  </div>
+  <script>
+    // Default configuration
+    const defaultConfig = {
+      app_title: 'รายงานประจำโรงเรียนประถม',
+      school_name: 'ระบบติดตามรายงานตามกลุ่มบริหาร 4 ฝ่าย',
+      background_color: '#0f172a',
+      surface_color: '#1e293b',
+      text_color: '#f8fafc',
+      primary_color: '#3b82f6',
+      secondary_color: '#94a3b8'
+    };
+
+    // Category toggle state
+    const expandedCategories = new Set();
+
+    function toggleCategory(catId) {
+      const content = document.getElementById(`${catId}-content`);
+      const header = document.getElementById(`${catId}-header`);
+      
+      if (expandedCategories.has(catId)) {
+        content.classList.add('hidden');
+        header.parentElement.classList.remove('expanded');
+        expandedCategories.delete(catId);
+      } else {
+        content.classList.remove('hidden');
+        header.parentElement.classList.add('expanded');
+        expandedCategories.add(catId);
+        
+        // Add animation to items
+        const items = content.querySelectorAll('.report-item');
+        items.forEach((item, index) => {
+          item.style.opacity = '0';
+          item.style.transform = 'translateY(10px)';
+          setTimeout(() => {
+            item.style.transition = 'all 0.3s ease';
+            item.style.opacity = '1';
+            item.style.transform = 'translateY(0)';
+          }, index * 50);
+        });
+      }
+    }
+
+    // Initialize Element SDK
+    if (window.elementSdk) {
+      window.elementSdk.init({
+        defaultConfig,
+        onConfigChange: async (config) => {
+          // Update app title
+          const appTitle = document.getElementById('app-title');
+          if (appTitle) {
+            appTitle.textContent = config.app_title || defaultConfig.app_title;
+          }
+
+          // Update school name / subtitle
+          const schoolName = document.getElementById('school-name');
+          if (schoolName) {
+            schoolName.textContent = config.school_name || defaultConfig.school_name;
+          }
+
+          // Update background color
+          const appWrapper = document.getElementById('app-wrapper');
+          if (appWrapper) {
+            appWrapper.style.backgroundColor = config.background_color || defaultConfig.background_color;
+          }
+
+          // Update header
+          const header = document.getElementById('header-section');
+          if (header) {
+            header.style.background = `rgba(${hexToRgb(config.background_color || defaultConfig.background_color)}, 0.95)`;
+          }
+
+          // Update text colors
+          if (appTitle) {
+            appTitle.style.color = config.text_color || defaultConfig.text_color;
+          }
+          if (schoolName) {
+            schoolName.style.color = config.secondary_color || defaultConfig.secondary_color;
+          }
+        },
+        mapToCapabilities: (config) => ({
+          recolorables: [
+            {
+              get: () => config.background_color || defaultConfig.background_color,
+              set: (value) => {
+                config.background_color = value;
+                window.elementSdk.setConfig({ background_color: value });
+              }
+            },
+            {
+              get: () => config.surface_color || defaultConfig.surface_color,
+              set: (value) => {
+                config.surface_color = value;
+                window.elementSdk.setConfig({ surface_color: value });
+              }
+            },
+            {
+              get: () => config.text_color || defaultConfig.text_color,
+              set: (value) => {
+                config.text_color = value;
+                window.elementSdk.setConfig({ text_color: value });
+              }
+            },
+            {
+              get: () => config.primary_color || defaultConfig.primary_color,
+              set: (value) => {
+                config.primary_color = value;
+                window.elementSdk.setConfig({ primary_color: value });
+              }
+            },
+            {
+              get: () => config.secondary_color || defaultConfig.secondary_color,
+              set: (value) => {
+                config.secondary_color = value;
+                window.elementSdk.setConfig({ secondary_color: value });
+              }
+            }
+          ],
+          borderables: [],
+          fontEditable: undefined,
+          fontSizeable: undefined
+        }),
+        mapToEditPanelValues: (config) => new Map([
+          ['app_title', config.app_title || defaultConfig.app_title],
+          ['school_name', config.school_name || defaultConfig.school_name]
+        ])
+      });
+    }
+
+    // Helper function to convert hex to RGB
+    function hexToRgb(hex) {
+      const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+      return result 
+        ? `${parseInt(result[1], 16)}, ${parseInt(result[2], 16)}, ${parseInt(result[3], 16)}`
+        : '15, 23, 42';
+    }
+  </script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9ceb83be50dcf881',t:'MTc3MTIyODg2MS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
