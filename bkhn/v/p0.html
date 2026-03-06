@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>หน้าหลัก</title>
+<link href="https://fonts.googleapis.com/css2?family=Mitr:wght@300;400;500;600;700&family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+  :root {
+    --forest:  #1B4332;
+    --forest2: #2D6A4F;
+    --leaf:    #52B788;
+    --lime:    #95D5B2;
+    --sky:     #48CAE4;
+    --sun:     #F4A261;
+    --cream:   #F8F5EE;
+    --bark:    #6B4226;
+    --text:    #1a2e22;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Sarabun', sans-serif;
+    background: var(--cream);
+    color: var(--text);
+    overflow-x: hidden;
+  }
+
+  /* ─── HERO ─── */
+  .hero {
+    position: relative;
+    min-height: 380px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    background: linear-gradient(150deg, var(--forest) 0%, var(--forest2) 55%, #1a6b4a 100%);
+    padding: 60px 24px 80px;
+  }
+
+  /* animated circles */
+  .hero-bg span {
+    position: absolute;
+    border-radius: 50%;
+    opacity: 0.12;
+    animation: drift 8s ease-in-out infinite;
+  }
+  .hero-bg span:nth-child(1) { width:320px;height:320px;background:var(--leaf);top:-80px;left:-60px;animation-delay:0s; }
+  .hero-bg span:nth-child(2) { width:200px;height:200px;background:var(--sky);bottom:-40px;right:60px;animation-delay:2s; }
+  .hero-bg span:nth-child(3) { width:140px;height:140px;background:var(--sun);top:40px;right:200px;animation-delay:4s; }
+
+  @keyframes drift {
+    0%,100% { transform: translate(0,0) scale(1); }
+    50%      { transform: translate(12px,-14px) scale(1.06); }
+  }
+
+  .hero-content {
+    position: relative;
+    text-align: center;
+    max-width: 640px;
+  }
+
+  .hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(255,255,255,0.12);
+    border: 1px solid rgba(255,255,255,0.2);
+    color: var(--lime);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    padding: 6px 16px;
+    border-radius: 999px;
+    margin-bottom: 20px;
+    backdrop-filter: blur(8px);
+    animation: fadeUp 0.6s ease both;
+  }
+
+  .hero-title {
+    font-family: 'Mitr', sans-serif;
+    font-size: clamp(28px, 5vw, 44px);
+    font-weight: 600;
+    color: #fff;
+    line-height: 1.25;
+    margin-bottom: 14px;
+    animation: fadeUp 0.6s 0.1s ease both;
+  }
+  .hero-title em { color: var(--lime); font-style: normal; }
+
+  .hero-sub {
+    font-size: 15px;
+    color: rgba(255,255,255,0.72);
+    line-height: 1.7;
+    margin-bottom: 32px;
+    animation: fadeUp 0.6s 0.2s ease both;
+  }
+
+  .hero-stats {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    flex-wrap: wrap;
+    animation: fadeUp 0.6s 0.3s ease both;
+  }
+
+  .stat-pill {
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.18);
+    color: #fff;
+    padding: 10px 22px;
+    border-radius: 12px;
+    font-size: 13px;
+    font-weight: 500;
+    backdrop-filter: blur(6px);
+    transition: background 0.2s;
+  }
+  .stat-pill strong { display: block; font-size: 22px; font-family:'Mitr',sans-serif; color: var(--lime); }
+  .stat-pill:hover { background: rgba(255,255,255,0.16); }
+
+  @keyframes fadeUp {
+    from { opacity:0; transform: translateY(18px); }
+    to   { opacity:1; transform: translateY(0); }
+  }
+
+  /* wave divider */
+  .wave {
+    display: block;
+    width: 100%;
+    margin-bottom: -2px;
+  }
+
+  /* ─── SECTION ─── */
+  .section { padding: 52px 24px; max-width: 960px; margin: 0 auto; }
+
+  .section-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--leaf);
+    margin-bottom: 6px;
+  }
+  .section-title {
+    font-family: 'Mitr', sans-serif;
+    font-size: clamp(22px, 3vw, 30px);
+    font-weight: 600;
+    color: var(--forest);
+    margin-bottom: 32px;
+  }
+
+  /* ─── GRADE CARDS ─── */
+  .grade-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 22px;
+  }
+
+  .grade-card {
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 6px 28px rgba(0,0,0,0.09);
+    transition: transform 0.22s, box-shadow 0.22s;
+    cursor: pointer;
+    text-decoration: none;
+    display: block;
+    background: #fff;
+  }
+  .grade-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 16px 44px rgba(0,0,0,0.14);
+  }
+
+  .card-top {
+    height: 130px;
+    display: flex;
+    align-items: flex-end;
+    padding: 18px 22px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .card-top .deco {
+    position: absolute;
+    border-radius: 50%;
+    opacity: 0.22;
+  }
+
+  .grade-card.p4 .card-top { background: linear-gradient(135deg, #0077b6, #48CAE4); }
+  .grade-card.p5 .card-top { background: linear-gradient(135deg, #4a2c8a, #a29bfe); }
+  .grade-card.p6 .card-top { background: linear-gradient(135deg, #7f4f24, #F4A261); }
+
+  .card-num {
+    font-family: 'Mitr', sans-serif;
+    font-size: 56px;
+    font-weight: 700;
+    color: rgba(255,255,255,0.2);
+    position: absolute;
+    right: 16px;
+    bottom: 4px;
+    line-height: 1;
+    user-select: none;
+  }
+  .card-grade {
+    font-family: 'Mitr', sans-serif;
+    font-size: 22px;
+    font-weight: 600;
+    color: #fff;
+    position: relative;
+    z-index: 1;
+  }
+  .card-grade span { font-size: 13px; font-weight: 400; opacity: 0.8; display: block; }
+
+  .card-body { padding: 20px 22px 22px; }
+  .card-desc { font-size: 13.5px; color: #4a5568; line-height: 1.7; margin-bottom: 14px; }
+
+  .topic-pills { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 16px; }
+  .pill {
+    font-size: 11px;
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-weight: 600;
+    color: #fff;
+  }
+  .p4 .pill { background: #0096c7; }
+  .p5 .pill { background: #6c63ff; }
+  .p6 .pill { background: #e07c35; }
+
+  .card-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--leaf);
+  }
+  .card-btn .arr { transition: transform 0.2s; }
+  .grade-card:hover .arr { transform: translateX(4px); }
+
+  /* ─── FEATURES ROW ─── */
+  .features { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px,1fr)); gap: 18px; }
+
+  .feat {
+    background: #fff;
+    border-radius: 16px;
+    padding: 24px 20px;
+    text-align: center;
+    box-shadow: 0 3px 14px rgba(0,0,0,0.06);
+    transition: transform 0.2s;
+  }
+  .feat:hover { transform: translateY(-3px); }
+  .feat-icon { font-size: 36px; margin-bottom: 10px; }
+  .feat-title { font-family:'Mitr',sans-serif; font-size: 15px; font-weight: 600; color: var(--forest); margin-bottom: 6px; }
+  .feat-desc { font-size: 12.5px; color: #6b7280; line-height: 1.6; }
+
+  /* ─── BANNER ─── */
+  .banner {
+    background: linear-gradient(135deg, var(--forest), #145a32);
+    border-radius: 22px;
+    padding: 36px 36px;
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    flex-wrap: wrap;
+    box-shadow: 0 8px 32px rgba(27,67,50,0.25);
+  }
+  .banner-text { flex: 1; min-width: 200px; }
+  .banner-text h2 { font-family:'Mitr',sans-serif; font-size: 22px; color: #fff; margin-bottom: 8px; }
+  .banner-text p { font-size: 13.5px; color: var(--lime); line-height: 1.6; }
+  .banner-icon { font-size: 64px; filter: drop-shadow(0 4px 12px rgba(0,0,0,0.3)); }
+
+  /* ─── FOOTER ─── */
+  footer {
+    text-align: center;
+    padding: 28px 20px;
+    font-size: 12px;
+    color: #a0aec0;
+    border-top: 1px solid #e8e0d4;
+    background: #fff;
+  }
+  footer strong { color: var(--forest2); }
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-bg">
+    <span></span><span></span><span></span>
+  </div>
+  <div class="hero-content">
+    <div class="hero-badge">🌿 โรงเรียนบ้านเขาหัวนา</div>
+    <h1 class="hero-title">เรียนรู้<em>วิทยาศาสตร์</em><br>อย่างสนุกและเข้าใจ</h1>
+    <p class="hero-sub">แหล่งเรียนรู้วิทยาศาสตร์สำหรับนักเรียนชั้นประถมศึกษา<br>ครบทั้งเนื้อหา กิจกรรม และแบบทดสอบ</p>
+    <div class="hero-stats">
+      <div class="stat-pill"><strong>3</strong>ระดับชั้น</div>
+      <div class="stat-pill"><strong>6</strong>หน่วยการเรียน</div>
+      <div class="stat-pill"><strong>60+</strong>แบบทดสอบ</div>
+    </div>
+  </div>
+</div>
+
+<svg class="wave" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 48" preserveAspectRatio="none" style="background:var(--forest2);">
+  <path fill="#F8F5EE" d="M0,32 C240,0 480,48 720,32 C960,16 1200,48 1440,32 L1440,48 L0,48 Z"/>
+</svg>
+
+<!-- GRADE CARDS -->
+<section class="section">
+  <div class="section-label">เลือกระดับชั้น</div>
+  <div class="section-title">เนื้อหาแบ่งตามชั้นเรียน</div>
+
+  <div class="grade-grid">
+    <!-- P4 -->
+    <a class="grade-card p4" href="#" onclick="parent.navigate('p4.html','p4'); return false;">
+      <div class="card-top">
+        <div class="deco" style="width:160px;height:160px;background:#fff;top:-40px;right:-30px;"></div>
+        <div class="deco" style="width:80px;height:80px;background:#fff;bottom:-20px;left:20px;"></div>
+        <div class="card-num">4</div>
+        <div class="card-grade">
+          ชั้นประถมศึกษาปีที่ 4
+          <span>Primary 4</span>
+        </div>
+      </div>
+      <div class="card-body">
+        <p class="card-desc">สำรวจโลกของวัสดุ สสาร ระบบสุริยะ และปรากฏการณ์ธรรมชาติ ผ่านการทดลองและสังเกต</p>
+        <div class="topic-pills">
+          <span class="pill">วัสดุและสสาร</span>
+          <span class="pill">ระบบสุริยะ</span>
+          <span class="pill">ดวงจันทร์</span>
+        </div>
+        <div class="card-btn">เข้าสู่บทเรียน <span class="arr">→</span></div>
+      </div>
+    </a>
+
+    <!-- P5 -->
+    <a class="grade-card p5" href="#" onclick="parent.navigate('p5.html','p5'); return false;">
+      <div class="card-top">
+        <div class="deco" style="width:140px;height:140px;background:#fff;top:-30px;right:-20px;"></div>
+        <div class="deco" style="width:70px;height:70px;background:#fff;bottom:-10px;left:30px;"></div>
+        <div class="card-num">5</div>
+        <div class="card-grade">
+          ชั้นประถมศึกษาปีที่ 5
+          <span>Primary 5</span>
+        </div>
+      </div>
+      <div class="card-body">
+        <p class="card-desc">เรียนรู้เรื่องแรงและการเคลื่อนที่ สิ่งมีชีวิต ระบบนิเวศ และพลังงานรูปแบบต่างๆ</p>
+        <div class="topic-pills">
+          <span class="pill">แรงและการเคลื่อนที่</span>
+          <span class="pill">สิ่งมีชีวิต</span>
+          <span class="pill">พลังงาน</span>
+        </div>
+        <div class="card-btn">เข้าสู่บทเรียน <span class="arr">→</span></div>
+      </div>
+    </a>
+
+    <!-- P6 -->
+    <a class="grade-card p6" href="#" onclick="parent.navigate('p6.html','p6'); return false;">
+      <div class="card-top">
+        <div class="deco" style="width:150px;height:150px;background:#fff;top:-30px;right:-20px;"></div>
+        <div class="deco" style="width:90px;height:90px;background:#fff;bottom:-20px;left:10px;"></div>
+        <div class="card-num">6</div>
+        <div class="card-grade">
+          ชั้นประถมศึกษาปีที่ 6
+          <span>Primary 6</span>
+        </div>
+      </div>
+      <div class="card-body">
+        <p class="card-desc">ศึกษาปรากฏการณ์โลก วัฏจักรสาร ระบบร่างกาย และเทคโนโลยีในชีวิตประจำวัน</p>
+        <div class="topic-pills">
+          <span class="pill">ปรากฏการณ์โลก</span>
+          <span class="pill">ระบบร่างกาย</span>
+          <span class="pill">เทคโนโลยี</span>
+        </div>
+        <div class="card-btn">เข้าสู่บทเรียน <span class="arr">→</span></div>
+      </div>
+    </a>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section class="section" style="padding-top: 0;">
+  <div class="section-label">คุณสมบัติ</div>
+  <div class="section-title">ทำไมต้องเรียนที่นี่?</div>
+  <div class="features">
+    <div class="feat">
+      <div class="feat-icon">📚</div>
+      <div class="feat-title">เนื้อหาครบถ้วน</div>
+      <div class="feat-desc">เนื้อหาตรงตามหลักสูตร สสวท. ทุกบทเรียน ครบทั้ง 3 ระดับชั้น</div>
+    </div>
+    <div class="feat">
+      <div class="feat-icon">🧪</div>
+      <div class="feat-title">กิจกรรมทดลอง</div>
+      <div class="feat-desc">มีคำแนะนำกิจกรรมทดลองทางวิทยาศาสตร์ที่ทำได้จริง</div>
+    </div>
+    <div class="feat">
+      <div class="feat-icon">📝</div>
+      <div class="feat-title">แบบทดสอบ</div>
+      <div class="feat-desc">แบบทดสอบปลายบทพร้อมเฉลยและคำอธิบาย</div>
+    </div>
+    <div class="feat">
+      <div class="feat-icon">🌈</div>
+      <div class="feat-title">เข้าใจง่าย</div>
+      <div class="feat-desc">นำเสนอด้วยภาษาที่เหมาะสมกับวัยนักเรียนประถมศึกษา</div>
+    </div>
+  </div>
+</section>
+
+<!-- BANNER -->
+<section class="section" style="padding-top: 0;">
+  <div class="banner">
+    <div class="banner-text">
+      <h2>🎯 พร้อมเริ่มเรียนแล้วหรือยัง?</h2>
+      <p>เลือกระดับชั้นของคุณจากเมนูด้านบน<br>หรือคลิกการ์ดด้านบนเพื่อเข้าสู่บทเรียนทันที</p>
+    </div>
+    <div class="banner-icon">🚀</div>
+  </div>
+</section>
+
+<footer>
+  <strong>วิทยาศาสตร์ประถมศึกษา | โรงเรียนบ้านเขาหัวนา</strong><br>
+  จัดทำตามหลักสูตรแกนกลางการศึกษาขั้นพื้นฐาน พุทธศักราช 2551
+</footer>
+
+</body>
+</html>
