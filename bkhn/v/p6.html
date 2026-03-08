@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>วิทยาศาสตร์ ป.6</title>
+<link href="https://fonts.googleapis.com/css2?family=Mitr:wght@300;400;500;600;700&family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+  :root {
+    --c1: #7f4f24; --c2: #e07c35; --c3: #f4a261; --c4: #fde8d4;
+    --bg: #fff8f2; --text: #3d1f0a; --card: #ffffff;
+  }
+  html { scroll-behavior: smooth; }
+  body { font-family:'Sarabun',sans-serif; background:var(--bg); color:var(--text); overflow-x:hidden; }
+
+  .page-header {
+    background:linear-gradient(135deg,#3d1a00 0%,var(--c1) 50%,#a0522d 100%);
+    padding:44px 28px 60px; position:relative; overflow:hidden;
+  }
+  .page-header::before {
+    content:'🌍'; font-size:160px; position:absolute; right:20px; bottom:-20px;
+    opacity:0.07; pointer-events:none; line-height:1;
+  }
+  .page-header::after {
+    content:''; position:absolute; width:400px; height:400px;
+    background:radial-gradient(circle,rgba(244,162,97,0.2),transparent 65%);
+    top:-80px; right:-80px; pointer-events:none;
+  }
+  .breadcrumb { display:flex; gap:8px; align-items:center; margin-bottom:16px; font-size:12px; color:rgba(255,255,255,0.5); }
+  .breadcrumb a { color:var(--c4); text-decoration:none; }
+  .grade-tag {
+    display:inline-flex; align-items:center; gap:8px;
+    background:rgba(255,255,255,0.1); border:1px solid rgba(255,255,255,0.18);
+    color:var(--c4); font-size:11px; font-weight:700; letter-spacing:2px;
+    text-transform:uppercase; padding:5px 14px; border-radius:999px; margin-bottom:16px;
+  }
+  .page-header h1 { font-family:'Mitr',sans-serif; font-size:clamp(26px,4vw,38px); font-weight:600; color:#fff; margin-bottom:10px; }
+  .page-header p { font-size:14px; color:rgba(255,255,255,0.7); max-width:520px; line-height:1.7; }
+  .wave { display:block; width:100%; margin-bottom:-4px; }
+  .container { max-width:960px; margin:0 auto; padding:40px 24px 60px; }
+
+  .unit-tabs { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:32px; }
+  .unit-tab {
+    padding:8px 20px; border-radius:999px; border:2px solid #f0d0b8;
+    background:#fff; font-size:13px; font-weight:600; cursor:pointer;
+    color:#a0683a; transition:all .18s;
+  }
+  .unit-tab:hover { border-color:var(--c2); color:var(--c2); }
+  .unit-tab.active { background:var(--c1); color:#fff; border-color:var(--c1); }
+
+  .unit-section { display:none; animation:fadeIn .3s ease; }
+  .unit-section.active { display:block; }
+  @keyframes fadeIn { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
+
+  .lbl { font-size:10px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:var(--c2); margin-bottom:6px; }
+  .ttl { font-family:'Mitr',sans-serif; font-size:clamp(20px,3vw,26px); font-weight:600; color:var(--c1); margin-bottom:24px; }
+
+  .ch-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:20px; margin-bottom:36px; }
+  .ch-card { background:var(--card); border-radius:18px; box-shadow:0 4px 20px rgba(127,79,36,0.09); overflow:hidden; transition:transform .2s, box-shadow .2s; cursor:pointer; }
+  .ch-card:hover { transform:translateY(-4px); box-shadow:0 12px 36px rgba(127,79,36,0.16); }
+  .ch-top { height:110px; display:flex; align-items:flex-end; padding:14px 18px; position:relative; }
+  .ch-top .ch-num { font-family:'Mitr',sans-serif; font-size:64px; font-weight:700; color:rgba(255,255,255,0.18); position:absolute; right:12px; bottom:0; line-height:1; }
+  .ch-top .ch-label { font-family:'Mitr',sans-serif; font-size:16px; font-weight:600; color:#fff; position:relative; z-index:1; }
+  .ch-top .ch-label span { font-size:11px; font-weight:400; opacity:.75; display:block; }
+  .ch-body { padding:18px 18px 20px; }
+  .ch-desc { font-size:13px; color:#5a3a1a; line-height:1.7; margin-bottom:14px; }
+  .topic-list { list-style:none; display:flex; flex-direction:column; gap:7px; margin-bottom:14px; }
+  .topic-list li { display:flex; align-items:center; gap:8px; font-size:12.5px; color:#374151; }
+  .topic-list li::before { content:''; width:6px; height:6px; border-radius:50%; background:var(--c2); flex-shrink:0; }
+  .ch-footer { display:flex; align-items:center; justify-content:space-between; font-size:12px; color:#9ca3af; }
+  .ch-btn { font-size:12px; font-weight:700; color:var(--c2); display:flex; align-items:center; gap:4px; }
+  .ch-btn .arr { transition:transform .18s; }
+  .ch-card:hover .arr { transform:translateX(4px); }
+
+  .panel { background:var(--card); border-radius:20px; box-shadow:0 4px 24px rgba(127,79,36,0.1); overflow:hidden; margin-bottom:28px; display:none; }
+  .panel.open { display:block; animation:fadeIn .3s ease; }
+  .panel-head { background:linear-gradient(135deg,var(--c1),var(--c2)); padding:22px 26px; display:flex; align-items:center; justify-content:space-between; }
+  .panel-head h2 { font-family:'Mitr',sans-serif; font-size:18px; color:#fff; font-weight:600; }
+  .panel-head .close-btn { background:rgba(255,255,255,0.15); border:none; color:#fff; width:32px; height:32px; border-radius:8px; font-size:16px; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:background .18s; }
+  .panel-head .close-btn:hover { background:rgba(255,255,255,0.25); }
+  .panel-body { padding:26px; }
+
+  .info-box { border-radius:14px; padding:16px 20px; margin-bottom:18px; font-size:14px; line-height:1.8; }
+  .info-box.orange { background:#FFF5ED; border-left:4px solid var(--c2); }
+  .info-box.blue   { background:#EFF6FF; border-left:4px solid #3b82f6; }
+  .info-box.red    { background:#FEF2F2; border-left:4px solid #ef4444; }
+  .info-box.green  { background:#F0FDF4; border-left:4px solid #22c55e; }
+  .info-box strong { display:block; font-size:12px; font-weight:700; letter-spacing:.5px; margin-bottom:6px; }
+  .info-box.orange strong { color:var(--c1); }
+  .info-box.blue   strong { color:#1d4ed8; }
+  .info-box.red    strong { color:#b91c1c; }
+  .info-box.green  strong { color:#15803d; }
+
+  .tbl { width:100%; border-collapse:collapse; margin:12px 0 20px; font-size:13.5px; }
+  .tbl th { background:var(--c1); color:#fff; padding:10px 14px; text-align:left; font-weight:600; }
+  .tbl td { padding:9px 14px; border-bottom:1px solid #fde8d4; }
+  .tbl tr:nth-child(even) td { background:#fff8f2; }
+  .tbl th:first-child { border-radius:10px 0 0 0; }
+  .tbl th:last-child  { border-radius:0 10px 0 0; }
+
+  .sum-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:12px; margin:14px 0; }
+  .sum-item { background:linear-gradient(135deg,#FFF5ED,#FDE8D4); border:1px solid #F9C89F; border-radius:12px; padding:16px 12px; text-align:center; }
+  .sum-item .ico { font-size:30px; margin-bottom:6px; }
+  .sum-item .st { font-weight:700; font-size:13px; color:var(--c1); }
+  .sum-item .sd { font-size:11px; color:#8a5a2a; margin-top:3px; line-height:1.5; }
+
+  /* wind diagram */
+  .wind-box { background:linear-gradient(180deg,#bde0fe 0%,#90caf9 50%,#a8d8a8 100%); border-radius:14px; padding:20px; text-align:center; margin:14px 0; }
+  .wind-label { display:inline-block; background:rgba(255,255,255,0.82); border-radius:8px; padding:6px 14px; font-size:12.5px; font-weight:600; color:#1a3a5c; margin:4px; }
+  .wind-arrow { font-size:22px; margin:0 6px; vertical-align:middle; color:#1565c0; }
+
+  /* circuit */
+  .circuit-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:12px; margin:14px 0; }
+  .circuit-card { background:linear-gradient(135deg,#1a237e,#283593); border-radius:12px; padding:16px 12px; text-align:center; border:1px solid #3949ab; }
+  .circuit-card .ico { font-size:32px; margin-bottom:8px; }
+  .circuit-card .name { font-family:'Mitr',sans-serif; font-size:13px; color:#fff; font-weight:600; margin-bottom:4px; }
+  .circuit-card .desc { font-size:11px; color:rgba(255,255,255,0.7); line-height:1.5; }
+
+  /* disaster cards */
+  .disaster-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:12px; margin:14px 0; }
+  .dis-card { border-radius:14px; padding:16px 12px; text-align:center; }
+  .dis-card .ico { font-size:36px; margin-bottom:8px; }
+  .dis-card .name { font-family:'Mitr',sans-serif; font-size:14px; font-weight:600; margin-bottom:6px; }
+  .dis-card .tip { font-size:11.5px; line-height:1.6; }
+
+  .quiz-wrap { background:linear-gradient(135deg,#3d1a00,var(--c1)); border-radius:16px; padding:24px; margin-top:24px; }
+  .quiz-wrap h3 { font-family:'Mitr',sans-serif; font-size:18px; color:#fff; margin-bottom:16px; }
+  .q-item { background:rgba(255,255,255,0.08); border-radius:12px; padding:14px 16px; margin-bottom:14px; }
+  .q-text { font-size:14px; color:#fff; margin-bottom:10px; font-weight:500; }
+  .q-opts { display:flex; flex-direction:column; gap:7px; }
+  .q-opt { padding:9px 14px; border-radius:8px; background:rgba(255,255,255,0.07); border:1px solid rgba(255,255,255,0.12); color:rgba(255,255,255,0.8); font-size:13px; font-family:'Sarabun',sans-serif; cursor:pointer; transition:all .18s; text-align:left; }
+  .q-opt:hover:not(.correct):not(.wrong) { background:rgba(255,255,255,0.14); color:#fff; }
+  .q-opt.correct { background:rgba(34,197,94,0.25); border-color:rgba(34,197,94,0.5); color:#fff; }
+  .q-opt.wrong   { background:rgba(239,68,68,0.22); border-color:rgba(239,68,68,0.45); color:#fff; }
+  .q-opt.disabled { pointer-events:none; }
+  .q-feedback { font-size:12.5px; margin-top:8px; padding:8px 12px; border-radius:8px; display:none; }
+  .q-feedback.show { display:block; }
+  .q-feedback.ok  { background:rgba(34,197,94,.2); color:#a7f3d0; }
+  .q-feedback.err { background:rgba(239,68,68,.2); color:#fca5a5; }
+</style>
+</head>
+<body>
+
+<div class="page-header">
+  <div class="breadcrumb">
+    <a href="#" onclick="parent.navigate('p0.html','home'); return false;">หน้าหลัก</a>
+    <span>/</span>
+    <span style="color:rgba(255,255,255,0.7);">ชั้นประถมศึกษาปีที่ 6</span>
+  </div>
+  <div class="grade-tag">🌍 ป.6 · Primary 6</div>
+  <h1>วิทยาศาสตร์และเทคโนโลยี<br>ชั้นประถมศึกษาปีที่ 6</h1>
+  <p>หน่วยการเรียนรู้วิทยาศาสตร์ ป.6 ตามหลักสูตร สสวท. ครอบคลุมปรากฏการณ์ของโลก ภัยธรรมชาติ เงาและอุปราคา เทคโนโลยีอวกาศ และวงจรไฟฟ้า</p>
+</div>
+
+<svg class="wave" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 40" preserveAspectRatio="none" style="background:#3d1a00;">
+  <path fill="#fff8f2" d="M0,20 C480,40 960,0 1440,20 L1440,40 L0,40 Z"/>
+</svg>
+
+<div class="container">
+
+  <div class="unit-tabs">
+    <button class="unit-tab active" onclick="switchUnit('u1',this)">🌏 หน่วยที่ 4: ปรากฏการณ์ของโลก</button>
+    <button class="unit-tab" onclick="switchUnit('u2',this)">🌑 หน่วยที่ 5: เงา อุปราคา เทคโนโลยีอวกาศ</button>
+    <button class="unit-tab" onclick="switchUnit('u3',this)">⚡ หน่วยที่ 6: แรงไฟฟ้าและพลังงานไฟฟ้า</button>
+  </div>
+
+  <!-- ═══ UNIT 4 ─── -->
+  <div id="u1" class="unit-section active">
+    <div class="lbl">หน่วยที่ 4</div>
+    <div class="ttl">ปรากฏการณ์ของโลกและภัยธรรมชาติ</div>
+
+    <div class="ch-grid">
+      <div class="ch-card" onclick="openPanel('ch1')">
+        <div class="ch-top" style="background:linear-gradient(135deg,#1565c0,#42a5f5);">
+          <div class="ch-num">1</div>
+          <div class="ch-label">ลมบก ลมทะเล และมรสุม<span>บทที่ 1 · 6 ชั่วโมง</span></div>
+        </div>
+        <div class="ch-body">
+          <p class="ch-desc">เปรียบเทียบการเกิดลมบก ลมทะเล และมรสุม รวมทั้งอธิบายผลที่มีต่อสิ่งมีชีวิตและสิ่งแวดล้อม</p>
+          <ul class="topic-list">
+            <li>การเกิดลมบก ลมทะเล</li>
+            <li>มรสุมและฤดูกาลของไทย</li>
+            <li>ผลของลมต่อสิ่งแวดล้อม</li>
+          </ul>
+          <div class="ch-footer"><span></span><div class="ch-btn" style="color:#1565c0;">อ่านเพิ่ม <span class="arr">→</span></div></div>
+        </div>
+      </div>
+
+      <div class="ch-card" onclick="openPanel('ch2')">
+        <div class="ch-top" style="background:linear-gradient(135deg,#b71c1c,#e53935);">
+          <div class="ch-num">2</div>
+          <div class="ch-label">ปรากฏการณ์เรือนกระจก<span>บทที่ 2 · 6 ชั่วโมง</span></div>
+        </div>
+        <div class="ch-body">
+          <p class="ch-desc">ศึกษาปรากฏการณ์เรือนกระจก ภาวะโลกร้อน และแนวทางการลดปริมาณก๊าซเรือนกระจก</p>
+          <ul class="topic-list">
+            <li>ปรากฏการณ์เรือนกระจก</li>
+            <li>ภาวะโลกร้อนและผลกระทบ</li>
+            <li>การลดก๊าซเรือนกระจก</li>
+          </ul>
+          <div class="ch-footer"><span></span><div class="ch-btn" style="color:#e53935;">อ่านเพิ่ม <span class="arr">→</span></div></div>
+        </div>
+      </div>
+
+      <div class="ch-card" onclick="openPanel('ch3')">
+        <div class="ch-top" style="background:linear-gradient(135deg,#4a148c,#7b1fa2);">
+          <div class="ch-num">3</div>
+          <div class="ch-label">ภัยธรรมชาติ<span>บทที่ 3 · 4 ชั่วโมง</span></div>
+        </div>
+        <div class="ch-body">
+          <p class="ch-desc">รู้จักภัยธรรมชาติประเภทต่าง ๆ และวิธีปฏิบัติตนให้ปลอดภัยจากภัยธรรมชาติ</p>
+          <ul class="topic-list">
+            <li>ประเภทภัยธรรมชาติ</li>
+            <li>การเตรียมตัวรับมือ</li>
+            <li>การปฏิบัติตนให้ปลอดภัย</li>
+          </ul>
+          <div class="ch-footer"><span></span><div class="ch-btn" style="color:#7b1fa2;">อ่านเพิ่ม <span class="arr">→</span></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PANEL 1: ลมบก-ลมทะเล -->
+    <div class="panel" id="ch1">
+      <div class="panel-head" style="background:linear-gradient(135deg,#1565c0,#1976d2);">
+        <h2>💨 บทที่ 1: ลมบก ลมทะเล และมรสุม</h2>
+        <button class="close-btn" onclick="closePanel('ch1')">✕</button>
+      </div>
+      <div class="panel-body">
+        <div class="info-box blue"><strong>💡 แนวคิดสำคัญ</strong>ลมบก ลมทะเล และมรสุม เกิดจากความแตกต่างระหว่างอุณหภูมิอากาศเหนือพื้นดินและเหนือพื้นน้ำ อากาศจะเคลื่อนที่จากบริเวณที่มีอุณหภูมิต่ำไปยังบริเวณที่มีอุณหภูมิสูง</div>
+
+        <h3 style="font-family:'Mitr',sans-serif;font-size:16px;color:#1565c0;margin:0 0 12px;">🌊 ลมบกและลมทะเล</h3>
+        <div class="wind-box">
+          <div style="font-family:'Mitr',sans-serif;font-size:13px;color:#1a3a5c;font-weight:600;margin-bottom:12px;">หลักการเกิดลมบก-ลมทะเล</div>
+          <div style="margin-bottom:8px;">
+            <span class="wind-label">☀️ กลางวัน</span>
+            <span class="wind-arrow">→</span>
+            <span class="wind-label">พื้นดินร้อนกว่าทะเล</span>
+            <span class="wind-arrow">→</span>
+            <span class="wind-label">🌊 ลมทะเลพัดเข้าฝั่ง</span>
+          </div>
+          <div>
+            <span class="wind-label">🌙 กลางคืน</span>
+            <span class="wind-arrow">→</span>
+            <span class="wind-label">พื้นดินเย็นกว่าทะเล</span>
+            <span class="wind-arrow">→</span>
+            <span class="wind-label">🏔️ ลมบกพัดออกทะเล</span>
+          </div>
+        </div>
+
+        <h3 style="font-family:'Mitr',sans-serif;font-size:16px;color:#1565c0;margin:16px 0 10px;">🌏 มรสุมและฤดูกาลของไทย</h3>
+        <table class="tbl">
+          <tr><th style="background:#1565c0;">มรสุม</th><th style="background:#1565c0;">ช่วงเวลา</th><th style="background:#1565c0;">ผลต่อไทย</th></tr>
+          <tr><td>มรสุมตะวันตกเฉียงใต้</td><td>พฤษภาคม – ตุลาคม</td><td>🌧️ ฤดูฝน (พาความชื้น)</td></tr>
+          <tr><td>มรสุมตะวันออกเฉียงเหนือ</td><td>ตุลาคม – กุมภาพันธ์</td><td>❄️ ฤดูหนาว (อากาศแห้งหนาว)</td></tr>
+          <tr><td>อากาศร้อน (ไม่มีมรสุม)</td><td>มีนาคม – พฤษภาคม</td><td>☀️ ฤดูร้อน</td></tr>
+        </table>
+
+        <div class="quiz-wrap">
+          <h3>📝 ทดสอบความรู้ บทที่ 1</h3>
+          <div class="q-item" id="q1">
+            <div class="q-text">1. ลมทะเลพัดจากทะเลเข้าหาฝั่งในช่วงใด?</div>
+            <div class="q-opts">
+              <button class="q-opt" onclick="answer(this,'q1',false)">ก. กลางคืน เพราะทะเลร้อนกว่า</button>
+              <button class="q-opt" onclick="answer(this,'q1',true)">ข. กลางวัน เพราะพื้นดินร้อนกว่า</button>
+              <button class="q-opt" onclick="answer(this,'q1',false)">ค. กลางคืน เพราะพื้นดินร้อนกว่า</button>
+              <button class="q-opt" onclick="answer(this,'q1',false)">ง. ช่วงพระอาทิตย์ตกเท่านั้น</button>
+            </div>
+            <div class="q-feedback" id="fb-q1"></div>
+          </div>
+          <div class="q-item" id="q2">
+            <div class="q-text">2. มรสุมใดทำให้ประเทศไทยมีฤดูฝน?</div>
+            <div class="q-opts">
+              <button class="q-opt" onclick="answer(this,'q2',false)">ก. มรสุมตะวันออกเฉียงเหนือ</button>
+              <button class="q-opt" onclick="answer(this,'q2',true)">ข. มรสุมตะวันตกเฉียงใต้</button>
+              <button class="q-opt" onclick="answer(this,'q2',false)">ค. มรสุมเหนือ</button>
+              <button class="q-opt" onclick="answer(this,'q2',false)">ง. มรสุมใต้</button>
+            </div>
+            <div class="q-feedback" id="fb-q2"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PANEL 2: เรือนกระจก -->
+    <div class="panel" id="ch2">
+      <div class="panel-head" style="background:linear-gradient(135deg,#b71c1c,#c62828);">
+        <h2>🏭 บทที่ 2: ปรากฏการณ์เรือนกระจก</h2>
+        <button class="close-btn" onclick="closePanel('ch2')">✕</button>
+      </div>
+      <div class="panel-body">
+        <div class="info-box red"><strong>🔥 แนวคิดสำคัญ</strong>ปรากฏการณ์เรือนกระจกเป็นกระบวนการธรรมชาติที่ทำให้โลกอบอุ่น แต่เมื่อมนุษย์ปล่อยก๊าซเรือนกระจกมากเกินไป จะทำให้เกิดภาวะโลกร้อน</div>
+
+        <h3 style="font-family:'Mitr',sans-serif;font-size:16px;color:#b71c1c;margin:0 0 10px;">🌡️ ก๊าซเรือนกระจก</h3>
+        <div class="sum-grid">
+          <div class="sum-item" style="background:linear-gradient(135deg,#fff3e0,#ffe0b2);border-color:#ffcc80;"><div class="ico">💨</div><div class="st" style="color:#e65100;">CO₂</div><div class="sd">คาร์บอนไดออกไซด์ จากการเผาเชื้อเพลิง</div></div>
+          <div class="sum-item" style="background:linear-gradient(135deg,#e8f5e9,#c8e6c9);border-color:#a5d6a7;"><div class="ico">🐄</div><div class="st" style="color:#2e7d32;">CH₄</div><div class="sd">มีเทน จากปศุสัตว์ นาข้าว</div></div>
+          <div class="sum-item" style="background:linear-gradient(135deg,#e3f2fd,#bbdefb);border-color:#90caf9;"><div class="ico">💧</div><div class="st" style="color:#1565c0;">H₂O</div><div class="sd">ไอน้ำ ก๊าซเรือนกระจกหลักตามธรรมชาติ</div></div>
+          <div class="sum-item" style="background:linear-gradient(135deg,#fce4ec,#f8bbd0);border-color:#f48fb1;"><div class="ico">🏭</div><div class="st" style="color:#880e4f;">N₂O</div><div class="sd">ไนตรัสออกไซด์ จากปุ๋ย อุตสาหกรรม</div></div>
+        </div>
+
+        <div class="info-box green"><strong>✅ แนวทางแก้ไข</strong>ลดการเผาเชื้อเพลิงฟอสซิล ใช้พลังงานทางเลือก ปลูกต้นไม้ ลดการใช้รถยนต์ส่วนตัว ประหยัดไฟฟ้า และลดการทิ้งขยะอาหาร</div>
+
+        <div class="quiz-wrap">
+          <h3>📝 ทดสอบความรู้ บทที่ 2</h3>
+          <div class="q-item" id="q3">
+            <div class="q-text">3. ก๊าซใดเป็นก๊าซเรือนกระจกที่เกิดจากการเผาเชื้อเพลิงมากที่สุด?</div>
+            <div class="q-opts">
+              <button class="q-opt" onclick="answer(this,'q3',false)">ก. N₂O</button>
+              <button class="q-opt" onclick="answer(this,'q3',false)">ข. CH₄</button>
+              <button class="q-opt" onclick="answer(this,'q3',true)">ค. CO₂</button>
+              <button class="q-opt" onclick="answer(this,'q3',false)">ง. O₂</button>
+            </div>
+            <div class="q-feedback" id="fb-q3"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PANEL 3: ภัยธรรมชาติ -->
+    <div class="panel" id="ch3">
+      <div class="panel-head" style="background:linear-gradient(135deg,#4a148c,#6a1b9a);">
+        <h2>⛈️ บทที่ 3: ภัยธรรมชาติ</h2>
+        <button class="close-btn" onclick="closePanel('ch3')">✕</button>
+      </div>
+      <div class="panel-body">
+        <div class="info-box" style="background:#f3e5f5;border-color:#ab47bc;"><strong style="color:#4a148c;">💡 แนวคิดสำคัญ</strong>ภัยธรรมชาติเกิดขึ้นได้ทุกที่ทุกเวลา เราควรติดตามข้อมูลการเตือนภัย เตรียมตัวล่วงหน้า และรู้วิธีปฏิบัติตนให้ปลอดภัย</div>
+
+        <div class="disaster-grid">
+          <div class="dis-card" style="background:linear-gradient(135deg,#e3f2fd,#bbdefb);border:1px solid #90caf9;"><div class="ico">🌊</div><div class="name" style="color:#0d47a1;">น้ำท่วม</div><div class="tip" style="color:#1565c0;">ย้ายไปที่สูง อย่าเดินในน้ำไหลเร็ว ปิดสวิตช์ไฟ</div></div>
+          <div class="dis-card" style="background:linear-gradient(135deg,#fff3e0,#ffe0b2);border:1px solid #ffcc80;"><div class="ico">🌪️</div><div class="name" style="color:#e65100;">พายุ</div><div class="tip" style="color:#bf360c;">อยู่ในอาคาร ห่างจากต้นไม้และป้าย ไม่ใช้โทรศัพท์กลางแจ้ง</div></div>
+          <div class="dis-card" style="background:linear-gradient(135deg,#fce4ec,#f8bbd0);border:1px solid #f48fb1;"><div class="ico">🏔️</div><div class="name" style="color:#880e4f;">แผ่นดินไหว</div><div class="tip" style="color:#ad1457;">หมอบ คลุม ยึด ออกจากอาคารอย่างรวดเร็ว</div></div>
+          <div class="dis-card" style="background:linear-gradient(135deg,#f1f8e9,#dcedc8);border:1px solid #aed581;"><div class="ico">🌋</div><div class="name" style="color:#33691e;">ดินถล่ม</div><div class="tip" style="color:#558b2f;">สังเกตรอยแตกในดิน หนีออกจากพื้นที่เนินเร็ว ๆ</div></div>
+        </div>
+
+        <div class="quiz-wrap" style="background:linear-gradient(135deg,#4a148c,#6a1b9a);">
+          <h3>📝 ทดสอบความรู้ บทที่ 3</h3>
+          <div class="q-item" id="q4">
+            <div class="q-text">4. เมื่อเกิดแผ่นดินไหวควรปฏิบัติตนอย่างไร?</div>
+            <div class="q-opts">
+              <button class="q-opt" onclick="answer(this,'q4',false)">ก. วิ่งขึ้นบันได</button>
+              <button class="q-opt" onclick="answer(this,'q4',false)">ข. ยืนอยู่ใกล้กระจก</button>
+              <button class="q-opt" onclick="answer(this,'q4',true)">ค. หมอบ คลุมศีรษะ และยึดสิ่งมั่นคง</button>
+              <button class="q-opt" onclick="answer(this,'q4',false)">ง. วิ่งออกนอกอาคารทันที</button>
+            </div>
+            <div class="q-feedback" id="fb-q4"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- UNIT 5 เงา อุปราคา -->
+  <div id="u2" class="unit-section">
+    <div class="lbl">หน่วยที่ 5</div>
+    <div class="ttl">เงา อุปราคา และเทคโนโลยีอวกาศ</div>
+
+    <div class="ch-grid">
+      <div class="ch-card" onclick="openPanel('ch5')">
+        <div class="ch-top" style="background:linear-gradient(135deg,#0d0d0d,#37474f);">
+          <div class="ch-num">1</div>
+          <div class="ch-label" style="color:#eceff1;">เงาและอุปราคา<span style="color:rgba(236,239,241,.7);">บทที่ 1</span></div>
+        </div>
+        <div class="ch-body">
+          <p class="ch-desc">ศึกษาการเกิดเงา สุริยุปราคา และจันทรุปราคา รวมถึงสาเหตุที่เกิดปรากฏการณ์เหล่านี้</p>
+          <ul class="topic-list">
+            <li>การเกิดเงา</li>
+            <li>สุริยุปราคา (สุริยคราส)</li>
+            <li>จันทรุปราคา (จันทรคราส)</li>
+          </ul>
+          <div class="ch-footer"><span></span><div class="ch-btn" style="color:#607d8b;">อ่านเพิ่ม <span class="arr">→</span></div></div>
+        </div>
+      </div>
+
+      <div class="ch-card" onclick="openPanel('ch6')">
+        <div class="ch-top" style="background:linear-gradient(135deg,#003087,#0d47a1);">
+          <div class="ch-num">2</div>
+          <div class="ch-label" style="color:#e3f2fd;">เทคโนโลยีอวกาศ<span style="color:rgba(227,242,253,.7);">บทที่ 2</span></div>
+        </div>
+        <div class="ch-body">
+          <p class="ch-desc">รู้จักเทคโนโลยีอวกาศ การพัฒนา และประโยชน์ในชีวิตประจำวัน</p>
+          <ul class="topic-list">
+            <li>ประวัติการสำรวจอวกาศ</li>
+            <li>ดาวเทียมและสถานีอวกาศ</li>
+            <li>ประโยชน์ของเทคโนโลยีอวกาศ</li>
+          </ul>
+          <div class="ch-footer"><span></span><div class="ch-btn" style="color:#1565c0;">อ่านเพิ่ม <span class="arr">→</span></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PANEL เงา -->
+    <div class="panel" id="ch5" style="background:#0a0a0a;">
+      <div class="panel-head" style="background:linear-gradient(135deg,#0d0d0d,#37474f);">
+        <h2>🌑 บทที่ 1: เงาและอุปราคา</h2>
+        <button class="close-btn" onclick="closePanel('ch5')">✕</button>
+      </div>
+      <div class="panel-body">
+        <div class="info-box" style="background:rgba(100,100,120,0.15);border-color:#607d8b;"><strong style="color:#90a4ae;">💡 แนวคิดสำคัญ</strong><span style="color:#cfd8dc;">เงาเกิดเมื่อวัตถุทึบแสงขวางแสง สุริยุปราคาเกิดเมื่อดวงจันทร์อยู่ระหว่างโลกกับดวงอาทิตย์ จันทรุปราคาเกิดเมื่อโลกอยู่ระหว่างดวงอาทิตย์กับดวงจันทร์</span></div>
+
+        <table class="tbl" style="margin-top:12px;">
+          <tr><th style="background:#263238;">ปรากฏการณ์</th><th style="background:#263238;">ตำแหน่ง</th><th style="background:#263238;">สังเกตจาก</th></tr>
+          <tr><td style="color:#cfd8dc;">🌑 สุริยุปราคา</td><td style="color:#cfd8dc;">ดวงจันทร์อยู่ระหว่างโลก-ดวงอาทิตย์</td><td style="color:#cfd8dc;">โลก</td></tr>
+          <tr><td style="color:#cfd8dc;">🌕 จันทรุปราคา</td><td style="color:#cfd8dc;">โลกอยู่ระหว่างดวงอาทิตย์-ดวงจันทร์</td><td style="color:#cfd8dc;">โลก</td></tr>
+        </table>
+
+        <div class="quiz-wrap" style="background:linear-gradient(135deg,#263238,#37474f);">
+          <h3>📝 ทดสอบความรู้ บทที่ 1</h3>
+          <div class="q-item" id="q5">
+            <div class="q-text">5. สุริยุปราคาเกิดขึ้นเมื่อใด?</div>
+            <div class="q-opts">
+              <button class="q-opt" onclick="answer(this,'q5',false)">ก. โลกอยู่ระหว่างดวงอาทิตย์และดวงจันทร์</button>
+              <button class="q-opt" onclick="answer(this,'q5',true)">ข. ดวงจันทร์อยู่ระหว่างโลกและดวงอาทิตย์</button>
+              <button class="q-opt" onclick="answer(this,'q5',false)">ค. ดวงอาทิตย์อยู่ระหว่างโลกและดวงจันทร์</button>
+              <button class="q-opt" onclick="answer(this,'q5',false)">ง. ดวงจันทร์อยู่ห่างจากโลกมาก</button>
+            </div>
+            <div class="q-feedback" id="fb-q5"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PANEL เทคโนโลยีอวกาศ -->
+    <div class="panel" id="ch6" style="background:#020b18;">
+      <div class="panel-head" style="background:linear-gradient(135deg,#003087,#0d47a1);">
+        <h2>🚀 บทที่ 2: เทคโนโลยีอวกาศ</h2>
+        <button class="close-btn" onclick="closePanel('ch6')">✕</button>
+      </div>
+      <div class="panel-body">
+        <div class="info-box" style="background:rgba(13,71,161,0.18);border-color:#1976d2;"><strong style="color:#64b5f6;">💡 แนวคิดสำคัญ</strong><span style="color:#bbdefb;">เทคโนโลยีอวกาศพัฒนามาจากการแข่งขันระหว่างประเทศในยุคสงครามเย็น และปัจจุบันนำมาใช้ประโยชน์ในชีวิตประจำวันอย่างกว้างขวาง</span></div>
+
+        <div class="circuit-grid">
+          <div class="circuit-card"><div class="ico">📡</div><div class="name">ดาวเทียม</div><div class="desc">GPS สื่อสาร พยากรณ์อากาศ สำรวจทรัพยากร</div></div>
+          <div class="circuit-card"><div class="ico">🛸</div><div class="name">กล้องโทรทรรศน์อวกาศ</div><div class="desc">ฮับเบิล เจมส์ เวบบ์ ศึกษาจักรวาล</div></div>
+          <div class="circuit-card"><div class="ico">🏗️</div><div class="name">สถานีอวกาศนานาชาติ</div><div class="desc">ทดลองในสภาพไร้น้ำหนัก ความร่วมมือนานาชาติ</div></div>
+        </div>
+
+        <div class="quiz-wrap" style="background:linear-gradient(135deg,#003087,#0d47a1);">
+          <h3>📝 ทดสอบความรู้ บทที่ 2</h3>
+          <div class="q-item" id="q6">
+            <div class="q-text">6. ดาวเทียม GPS ใช้ประโยชน์ในด้านใด?</div>
+            <div class="q-opts">
+              <button class="q-opt" onclick="answer(this,'q6',false)">ก. ถ่ายภาพดาวดวงอื่น</button>
+              <button class="q-opt" onclick="answer(this,'q6',true)">ข. ระบุตำแหน่งและนำทางบนพื้นโลก</button>
+              <button class="q-opt" onclick="answer(this,'q6',false)">ค. เพิ่มออกซิเจนในชั้นบรรยากาศ</button>
+              <button class="q-opt" onclick="answer(this,'q6',false)">ง. บอกอุณหภูมิดวงอาทิตย์</button>
+            </div>
+            <div class="q-feedback" id="fb-q6"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- UNIT 6 ไฟฟ้า -->
+  <div id="u3" class="unit-section">
+    <div class="lbl">หน่วยที่ 6</div>
+    <div class="ttl">แรงไฟฟ้าและพลังงานไฟฟ้า</div>
+
+    <div class="ch-grid">
+      <div class="ch-card" onclick="openPanel('ch7')">
+        <div class="ch-top" style="background:linear-gradient(135deg,#f57f17,#fbc02d);">
+          <div class="ch-num">1</div>
+          <div class="ch-label" style="color:#1a237e;">แรงไฟฟ้า<span style="color:rgba(26,35,126,.7);">บทที่ 1</span></div>
+        </div>
+        <div class="ch-body">
+          <p class="ch-desc">ศึกษาการเกิดแรงไฟฟ้าสถิต ผลของแรงไฟฟ้า และการนำไปใช้ประโยชน์</p>
+          <ul class="topic-list">
+            <li>การเกิดแรงไฟฟ้าสถิต</li>
+            <li>ผลของแรงไฟฟ้า (ดูด-ผลัก)</li>
+            <li>การนำไฟฟ้าไปใช้ประโยชน์</li>
+          </ul>
+          <div class="ch-footer"><span></span><div class="ch-btn" style="color:#f57f17;">อ่านเพิ่ม <span class="arr">→</span></div></div>
+        </div>
+      </div>
+
+      <div class="ch-card" onclick="openPanel('ch8')">
+        <div class="ch-top" style="background:linear-gradient(135deg,#1a237e,#283593);">
+          <div class="ch-num">2</div>
+          <div class="ch-label" style="color:#e8eaf6;">วงจรไฟฟ้าอย่างง่าย<span style="color:rgba(232,234,246,.7);">บทที่ 2</span></div>
+        </div>
+        <div class="ch-body">
+          <p class="ch-desc">ต่อวงจรไฟฟ้าอย่างง่าย ศึกษาการต่อเซลล์ไฟฟ้าและหลอดไฟทั้งแบบอนุกรมและขนาน</p>
+          <ul class="topic-list">
+            <li>วงจรไฟฟ้าอย่างง่าย</li>
+            <li>การต่อเซลล์ไฟฟ้าแบบอนุกรม-ขนาน</li>
+            <li>การต่อหลอดไฟแบบอนุกรม-ขนาน</li>
+          </ul>
+          <div class="ch-footer"><span></span><div class="ch-btn" style="color:#5c6bc0;">อ่านเพิ่ม <span class="arr">→</span></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PANEL แรงไฟฟ้า -->
+    <div class="panel" id="ch7">
+      <div class="panel-head" style="background:linear-gradient(135deg,#f57f17,#f9a825);">
+        <h2">⚡ บทที่ 1: แรงไฟฟ้า</h2>
+        <button class="close-btn" onclick="closePanel('ch7')">✕</button>
+      </div>
+      <div class="panel-body">
+        <div class="info-box orange"><strong>💡 แนวคิดสำคัญ</strong>แรงไฟฟ้าเกิดจากประจุไฟฟ้า โดยประจุต่างชนิดกันดึงดูดกัน ประจุชนิดเดียวกันผลักกัน แรงไฟฟ้าสถิตเกิดจากการถ่ายโอนประจุไฟฟ้าจากวัตถุหนึ่งไปยังอีกวัตถุหนึ่ง</div>
+
+        <table class="tbl">
+          <tr><th>ประจุไฟฟ้า</th><th>ผลต่อกัน</th><th>ตัวอย่าง</th></tr>
+          <tr><td>➕ บวก และ ➕ บวก</td><td>🔙 ผลักกัน</td><td>แก้ว + แก้ว</td></tr>
+          <tr><td>➖ ลบ และ ➖ ลบ</td><td>🔙 ผลักกัน</td><td>ยาง + ยาง</td></tr>
+          <tr><td>➕ บวก และ ➖ ลบ</td><td>🤝 ดึงดูดกัน</td><td>แก้ว + ยาง</td></tr>
+        </table>
+
+        <div class="quiz-wrap">
+          <h3>📝 ทดสอบความรู้ บทที่ 1</h3>
+          <div class="q-item" id="q7">
+            <div class="q-text">7. วัตถุที่มีประจุไฟฟ้าต่างชนิดกันจะมีผลต่อกันอย่างไร?</div>
+            <div class="q-opts">
+              <button class="q-opt" onclick="answer(this,'q7',false)">ก. ผลักกัน</button>
+              <button class="q-opt" onclick="answer(this,'q7',true)">ข. ดึงดูดกัน</button>
+              <button class="q-opt" onclick="answer(this,'q7',false)">ค. ไม่มีแรงกระทำต่อกัน</button>
+              <button class="q-opt" onclick="answer(this,'q7',false)">ง. หมุนรอบกัน</button>
+            </div>
+            <div class="q-feedback" id="fb-q7"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PANEL วงจรไฟฟ้า -->
+    <div class="panel" id="ch8">
+      <div class="panel-head" style="background:linear-gradient(135deg,#1a237e,#283593);">
+        <h2>🔌 บทที่ 2: วงจรไฟฟ้าอย่างง่าย</h2>
+        <button class="close-btn" onclick="closePanel('ch8')">✕</button>
+      </div>
+      <div class="panel-body">
+        <div class="info-box blue"><strong>💡 แนวคิดสำคัญ</strong>วงจรไฟฟ้าอย่างง่ายประกอบด้วยเซลล์ไฟฟ้า สายไฟฟ้า และอุปกรณ์ไฟฟ้า การต่อแบบอนุกรมและขนานมีผลต่อความสว่างของหลอดไฟต่างกัน</div>
+
+        <table class="tbl">
+          <tr><th style="background:#1a237e;">การต่อ</th><th style="background:#1a237e;">ลักษณะ</th><th style="background:#1a237e;">ผลเมื่อขาด</th><th style="background:#1a237e;">ความสว่าง</th></tr>
+          <tr><td>🔗 อนุกรม</td><td>ต่อเป็นสายเดียว</td><td>ดับทุกดวง</td><td>ลดลงเมื่อเพิ่มหลอด</td></tr>
+          <tr><td>🔀 ขนาน</td><td>ต่อเป็นหลายสาย</td><td>ดับเฉพาะดวงนั้น</td><td>สว่างเท่าเดิม</td></tr>
+        </table>
+
+        <div class="circuit-grid">
+          <div class="circuit-card"><div class="ico">🔋</div><div class="name">เซลล์ไฟฟ้า</div><div class="desc">แหล่งพลังงาน อนุกรม = แรงดันสูงขึ้น</div></div>
+          <div class="circuit-card"><div class="ico">💡</div><div class="name">หลอดไฟ</div><div class="desc">ขนาน = แต่ละหลอดสว่างเต็มที่</div></div>
+          <div class="circuit-card"><div class="ico">🔁</div><div class="name">สวิตช์</div><div class="desc">เปิด-ปิดวงจร ควบคุมการไหลของกระแส</div></div>
+        </div>
+
+        <div class="quiz-wrap" style="background:linear-gradient(135deg,#1a237e,#283593);">
+          <h3>📝 ทดสอบความรู้ บทที่ 2</h3>
+          <div class="q-item" id="q8">
+            <div class="q-text">8. บ้านเราใช้การต่อไฟฟ้าแบบใด เพราะเหตุใด?</div>
+            <div class="q-opts">
+              <button class="q-opt" onclick="answer(this,'q8',false)">ก. แบบอนุกรม เพราะประหยัดสาย</button>
+              <button class="q-opt" onclick="answer(this,'q8',true)">ข. แบบขนาน เพราะเมื่อดวงหนึ่งดับ ดวงอื่นยังสว่าง</button>
+              <button class="q-opt" onclick="answer(this,'q8',false)">ค. แบบอนุกรม เพราะสว่างกว่า</button>
+              <button class="q-opt" onclick="answer(this,'q8',false)">ง. แบบผสม เพราะประหยัดไฟ</button>
+            </div>
+            <div class="q-feedback" id="fb-q8"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  function switchUnit(id, btn) {
+    document.querySelectorAll('.unit-section').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('.unit-tab').forEach(b => b.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    btn.classList.add('active');
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('open'));
+  }
+  function openPanel(id) {
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('open'));
+    const p = document.getElementById(id);
+    p.classList.add('open');
+    setTimeout(() => p.scrollIntoView({ behavior:'smooth', block:'nearest' }), 80);
+  }
+  function closePanel(id) { document.getElementById(id).classList.remove('open'); }
+
+  const explains = {
+    q1:'กลางวัน พื้นดินร้อนกว่าทะเล อากาศเหนือพื้นดินลอยสูงขึ้น อากาศเย็นจากทะเลจึงพัดเข้ามาแทนที่ = ลมทะเล',
+    q2:'มรสุมตะวันตกเฉียงใต้พัดผ่านมหาสมุทรอินเดียนำความชื้นมายังประเทศไทย ทำให้เกิดฤดูฝน',
+    q3:'CO₂ (คาร์บอนไดออกไซด์) เป็นก๊าซเรือนกระจกหลักที่เกิดจากการเผาเชื้อเพลิงฟอสซิล',
+    q4:'หลักการ "หมอบ คลุม ยึด" (Drop, Cover, Hold on) ป้องกันสิ่งของตกใส่ศีรษะขณะแผ่นดินไหว',
+    q5:'สุริยุปราคาเกิดเมื่อดวงจันทร์โคจรมาอยู่ระหว่างโลกกับดวงอาทิตย์ ทำให้เงาดวงจันทร์ตกบนโลก',
+    q6:'ดาวเทียม GPS (Global Positioning System) ใช้ระบุตำแหน่งทางภูมิศาสตร์และนำทาง',
+    q7:'ประจุบวก-ลบ ต่างชนิดกัน จะดึงดูดกัน ส่วนประจุชนิดเดียวกันจะผลักกัน',
+    q8:'บ้านใช้การต่อแบบขนาน เพราะเมื่อหลอดไฟดวงหนึ่งเสีย หลอดอื่นยังใช้งานได้ปกติ และแต่ละอุปกรณ์ได้รับแรงดันเต็มที่',
+  };
+
+  function answer(btn, qid, isCorrect) {
+    const q = document.getElementById(qid);
+    q.querySelectorAll('.q-opt').forEach(b => b.classList.add('disabled'));
+    btn.classList.add(isCorrect ? 'correct' : 'wrong');
+    if (!isCorrect) {
+      q.querySelectorAll('.q-opt').forEach(b => {
+        if (b.onclick.toString().includes(',true)')) b.classList.add('correct');
+      });
+    }
+    const fb = document.getElementById('fb-' + qid);
+    fb.className = 'q-feedback show ' + (isCorrect ? 'ok' : 'err');
+    fb.textContent = (isCorrect ? '✅ ถูกต้อง! — ' : '❌ ผิด — ') + explains[qid];
+  }
+</script>
+</body>
+</html>
