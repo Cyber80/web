@@ -3,1261 +3,254 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>วิทยาศาสตร์ ป.4 ป.5 ป.6</title>
-<link href="https://fonts.googleapis.com/css2?family=Mitr:wght@300;400;500;600;700&family=Sarabun:wght@300;400;500;700&display=swap" rel="stylesheet">
+<title>วิทยาศาสตร์ประถมศึกษา | โรงเรียนบ้านเขาหัวนา</title>
+<link href="https://fonts.googleapis.com/css2?family=Mitr:wght@300;400;500;600;700&family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
-:root {
-  --sky:#0ea5e9; --sky-dark:#0369a1;
-  --green:#22c55e; --orange:#f97316;
-  --purple:#a855f7; --yellow:#eab308;
-  --pink:#ec4899; --red:#ef4444;
-  --bg:#f0f9ff; --text:#1e293b; --text-light:#64748b;
-  --shadow:0 4px 24px rgba(14,165,233,0.12);
-  --p4-grad:linear-gradient(135deg,#22c55e,#0ea5e9);
-  --p5-grad:linear-gradient(135deg,#f97316,#ef4444);
-  --p6-grad:linear-gradient(135deg,#0ea5e9,#6366f1);
-}
-*{margin:0;padding:0;box-sizing:border-box;}
-body{font-family:'Sarabun',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
-/* HEADER */
-header{background:linear-gradient(135deg,#1e293b,#334155);position:sticky;top:0;z-index:200;box-shadow:0 4px 20px rgba(0,0,0,0.3);}
-.header-inner{display:flex;align-items:center;gap:12px;padding:10px 20px;flex-wrap:wrap;}
-.logo{font-family:'Mitr',sans-serif;font-size:20px;font-weight:700;color:white;display:flex;align-items:center;gap:8px;}
-.logo .spin{font-size:26px;animation:spin 8s linear infinite;display:inline-block;}
-@keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
-.grade-switcher{display:flex;gap:5px;margin-left:auto;flex-wrap:wrap;}
-.grade-tab{font-family:'Mitr',sans-serif;font-size:12px;font-weight:600;padding:6px 14px;border:2px solid transparent;border-radius:20px;cursor:pointer;transition:all 0.2s;color:rgba(255,255,255,0.65);background:rgba(255,255,255,0.1);}
-.grade-tab:hover{background:rgba(255,255,255,0.2);color:white;}
-.grade-tab.ap4{background:var(--p4-grad);color:white;box-shadow:0 2px 12px rgba(34,197,94,0.4);}
-.grade-tab.ap5{background:var(--p5-grad);color:white;box-shadow:0 2px 12px rgba(249,115,22,0.4);}
-.grade-tab.ap6{background:var(--p6-grad);color:white;box-shadow:0 2px 12px rgba(99,102,241,0.4);}
+  :root {
+    --forest:   #1B4332;
+    --forest2:  #2D6A4F;
+    --leaf:     #52B788;
+    --lime:     #95D5B2;
+    --sky:      #48CAE4;
+    --sun:      #F4A261;
+    --cream:    #F8F5EE;
+    --bark:     #6B4226;
+    --header-h: 80px;
+  }
 
-/* NAV */
-nav{background:white;border-bottom:3px solid #e2e8f0;overflow-x:auto;scrollbar-width:none;display:none;}
-nav::-webkit-scrollbar{display:none;}
-nav.show{display:block;}
-.nav-list{display:flex;list-style:none;padding:0 12px;gap:2px;min-width:max-content;}
-.nav-list li button{font-family:'Mitr',sans-serif;font-size:12px;font-weight:500;padding:10px 14px;border:none;background:none;cursor:pointer;color:var(--text-light);border-bottom:3px solid transparent;margin-bottom:-3px;transition:all 0.2s;white-space:nowrap;}
-nav.n4 .nav-list li button:hover,nav.n4 .nav-list li button.active{color:#15803d;border-bottom-color:#22c55e;background:#f0fdf4;}
-nav.n5 .nav-list li button:hover,nav.n5 .nav-list li button.active{color:#c2410c;border-bottom-color:#f97316;background:#fff7ed;}
-nav.n6 .nav-list li button:hover,nav.n6 .nav-list li button.active{color:#0369a1;border-bottom-color:#0ea5e9;background:#f0f9ff;}
+  html, body { height: 100%; }
 
-/* MAIN */
-main{max-width:1100px;margin:0 auto;padding:20px 16px;}
+  body {
+    font-family: 'Sarabun', sans-serif;
+    background: var(--cream);
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    overflow: hidden;
+  }
 
-/* LANDING */
-.landing{display:flex;flex-direction:column;align-items:center;padding:40px 20px;text-align:center;animation:fadeIn 0.5s ease;}
-.landing h1{font-family:'Mitr',sans-serif;font-size:clamp(22px,4vw,40px);font-weight:700;color:#1e293b;margin-bottom:8px;}
-.landing p{font-size:17px;color:var(--text-light);margin-bottom:36px;}
-.grade-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;max-width:800px;width:100%;}
-@media(max-width:640px){.grade-cards{grid-template-columns:1fr;}}
-.grade-card{border-radius:22px;padding:30px 22px;cursor:pointer;transition:all 0.3s;text-align:center;color:white;box-shadow:0 8px 32px rgba(0,0,0,0.12);position:relative;overflow:hidden;}
-.grade-card::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 70% 20%,rgba(255,255,255,0.15),transparent 60%);}
-.grade-card.c4{background:var(--p4-grad);}
-.grade-card.c5{background:var(--p5-grad);}
-.grade-card.c6{background:var(--p6-grad);}
-.grade-card:hover{transform:translateY(-8px);box-shadow:0 20px 48px rgba(0,0,0,0.2);}
-.grade-card .big-e{font-size:60px;margin-bottom:12px;display:block;}
-.grade-card h2{font-family:'Mitr',sans-serif;font-size:24px;font-weight:700;margin-bottom:6px;}
-.grade-card p{font-size:13px;opacity:0.88;line-height:1.6;}
-.grade-card .cta{display:inline-block;margin-top:16px;padding:8px 22px;background:rgba(255,255,255,0.22);border:2px solid rgba(255,255,255,0.45);border-radius:20px;font-family:'Mitr',sans-serif;font-size:13px;font-weight:600;transition:background 0.2s;}
-.grade-card:hover .cta{background:rgba(255,255,255,0.38);}
+  /* ─── HEADER ─── */
+  header {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    height: var(--header-h);
+    z-index: 1000;
+    background: var(--forest);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 28px;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.3);
+    gap: 20px;
+  }
 
-/* HOME PAGE */
-.home-page{display:none;animation:fadeIn 0.4s ease;}
-.home-page.active{display:block;}
-.home-hero{border-radius:18px;padding:24px 28px;margin-bottom:24px;color:white;position:relative;overflow:hidden;}
-.home-hero h1{font-family:'Mitr',sans-serif;font-size:clamp(18px,3vw,28px);font-weight:700;margin-bottom:5px;}
-.home-hero p{font-size:15px;opacity:0.9;}
-.chapter-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px;}
-.chapter-card{background:white;border-radius:18px;padding:20px 16px;text-align:center;cursor:pointer;box-shadow:var(--shadow);border:2px solid transparent;transition:all 0.25s;}
-.chapter-card:hover{transform:translateY(-5px);}
-.chapter-card.c4:hover{border-color:#22c55e;box-shadow:0 10px 36px rgba(34,197,94,0.18);}
-.chapter-card.c5:hover{border-color:#f97316;box-shadow:0 10px 36px rgba(249,115,22,0.18);}
-.chapter-card.c6:hover{border-color:#0ea5e9;box-shadow:0 10px 36px rgba(14,165,233,0.18);}
-.chapter-card .icon{font-size:44px;margin-bottom:10px;display:block;}
-.chapter-card h3{font-family:'Mitr',sans-serif;font-size:14px;font-weight:600;margin-bottom:5px;}
-.chapter-card.c4 h3{color:#15803d;}
-.chapter-card.c5 h3{color:#c2410c;}
-.chapter-card.c6 h3{color:#0369a1;}
-.chapter-card p{font-size:11px;color:var(--text-light);line-height:1.5;}
-.badge{display:inline-block;font-size:10px;font-weight:600;padding:2px 9px;border-radius:20px;margin-bottom:7px;font-family:'Mitr',sans-serif;}
-.badge.b4{background:#dcfce7;color:#15803d;}
-.badge.b5{background:#fff7ed;color:#c2410c;}
-.badge.b6{background:#e0f2fe;color:#0369a1;}
+  /* leaf-vein decoration */
+  header::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      repeating-linear-gradient(
+        105deg,
+        transparent,
+        transparent 60px,
+        rgba(82,183,136,0.07) 60px,
+        rgba(82,183,136,0.07) 61px
+      );
+    pointer-events: none;
+  }
 
-/* CHAPTER PAGE */
-.chapter-page{display:none;}
-.chapter-page.active{display:block;animation:fadeIn 0.35s ease;}
-@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
-.ch-header{border-radius:18px;padding:24px 28px;margin-bottom:22px;color:white;display:flex;align-items:center;gap:16px;}
-.ch-header .big-icon{font-size:56px;flex-shrink:0;}
-.ch-header h2{font-family:'Mitr',sans-serif;font-size:clamp(16px,2.5vw,26px);font-weight:700;}
-.ch-header p{font-size:14px;opacity:0.9;margin-top:4px;}
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    text-decoration: none;
+    flex-shrink: 0;
+  }
 
-/* TABS */
-.tabs{display:flex;gap:5px;margin-bottom:20px;border-bottom:2px solid #e2e8f0;overflow-x:auto;scrollbar-width:none;}
-.tabs::-webkit-scrollbar{display:none;}
-.tab-btn{font-family:'Mitr',sans-serif;font-size:13px;padding:8px 18px;border:none;background:none;cursor:pointer;color:var(--text-light);border-bottom:3px solid transparent;margin-bottom:-2px;transition:all 0.2s;border-radius:8px 8px 0 0;white-space:nowrap;}
-.tab-btn.t4.active,.tab-btn.t4:hover{color:#15803d;border-bottom-color:#22c55e;background:#f0fdf4;}
-.tab-btn.t5.active,.tab-btn.t5:hover{color:#c2410c;border-bottom-color:#f97316;background:#fff7ed;}
-.tab-btn.t6.active,.tab-btn.t6:hover{color:#0369a1;border-bottom-color:#0ea5e9;background:#f0f9ff;}
-.tab-content{display:none;}
-.tab-content.active{display:block;animation:fadeIn 0.25s ease;}
+  .brand-icon {
+    width: 46px; height: 46px;
+    background: linear-gradient(135deg, var(--leaf), var(--lime));
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 24px;
+    box-shadow: 0 4px 12px rgba(82,183,136,0.4);
+    flex-shrink: 0;
+  }
 
-/* CONTENT */
-.cs{background:white;border-radius:14px;padding:20px;margin-bottom:16px;box-shadow:var(--shadow);}
-.cs h3{font-family:'Mitr',sans-serif;font-size:17px;font-weight:600;margin-bottom:10px;display:flex;align-items:center;gap:7px;}
-.cs p{line-height:1.8;font-size:14px;margin-bottom:9px;}
-.ib{border-radius:10px;padding:12px 16px;margin:10px 0;}
-.ib.blue{background:linear-gradient(135deg,#f0f9ff,#e0f2fe);border:1px solid #bae6fd;}
-.ib.green{background:linear-gradient(135deg,#f0fdf4,#dcfce7);border:1px solid #86efac;}
-.ib.orange{background:linear-gradient(135deg,#fff7ed,#fed7aa);border:1px solid #fdba74;}
-.ib.purple{background:linear-gradient(135deg,#faf5ff,#ede9fe);border:1px solid #c4b5fd;}
-.ib.yellow{background:linear-gradient(135deg,#fefce8,#fef9c3);border:1px solid #fde047;}
-.ib.pink{background:linear-gradient(135deg,#fdf2f8,#fce7f3);border:1px solid #f9a8d4;}
-.ib strong{display:block;font-family:'Mitr',sans-serif;font-size:13px;margin-bottom:7px;}
-.ib.blue strong{color:#0369a1;} .ib.green strong{color:#15803d;} .ib.orange strong{color:#c2410c;}
-.ib.purple strong{color:#7e22ce;} .ib.yellow strong{color:#854d0e;} .ib.pink strong{color:#9d174d;}
-table{width:100%;border-collapse:collapse;margin:10px 0;font-size:13px;}
-th{color:white;font-family:'Mitr',sans-serif;padding:8px 12px;text-align:left;}
-th.g{background:#22c55e;} th.o{background:#f97316;} th.b{background:#0ea5e9;} th.p{background:#a855f7;}
-td{padding:7px 12px;border-bottom:1px solid #e2e8f0;font-size:13px;}
-tr:nth-child(even) td{background:#f8fafc;}
-ul.sl{list-style:none;padding:0;}
-ul.sl li{padding:6px 0 6px 24px;position:relative;font-size:13px;line-height:1.7;border-bottom:1px dashed #e2e8f0;}
-ul.sl li::before{content:'🔹';position:absolute;left:0;font-size:12px;}
+  .brand-text { line-height: 1.2; }
+  .brand-title {
+    font-family: 'Mitr', sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    color: #ffffff;
+    letter-spacing: 0.3px;
+  }
+  .brand-sub {
+    font-size: 11px;
+    color: var(--lime);
+    font-weight: 300;
+    letter-spacing: 0.5px;
+  }
 
-/* QUIZ */
-.quiz-wrap{display:flex;flex-direction:column;gap:16px;}
-.qcard{background:white;border-radius:14px;padding:18px 20px;box-shadow:var(--shadow);border:2px solid #e2e8f0;}
-.qcard .qnum{font-family:'Mitr',sans-serif;font-size:11px;font-weight:600;color:var(--sky);letter-spacing:1px;margin-bottom:6px;}
-.qcard .qtxt{font-family:'Mitr',sans-serif;font-size:15px;font-weight:600;color:var(--text);margin-bottom:12px;line-height:1.5;}
-.opts{display:flex;flex-direction:column;gap:7px;}
-.opt{display:flex;align-items:center;gap:9px;padding:10px 12px;border:2px solid #e2e8f0;border-radius:10px;background:#f8fafc;cursor:pointer;font-family:'Sarabun',sans-serif;font-size:13px;text-align:left;transition:all 0.2s;}
-.opt:hover:not(:disabled){border-color:#94a3b8;background:#f1f5f9;}
-.opt .ol{width:26px;height:26px;border-radius:50%;background:var(--sky);color:white;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:11px;flex-shrink:0;}
-.opt.correct{border-color:var(--green);background:#f0fdf4;}
-.opt.wrong{border-color:#ef4444;background:#fef2f2;}
-.opt.correct .ol{background:var(--green);}
-.opt.wrong .ol{background:#ef4444;}
-.expl{margin-top:9px;padding:10px 14px;background:#f0fdf4;border-left:4px solid var(--green);border-radius:0 8px 8px 0;font-size:12px;color:#15803d;display:none;}
-.expl.show{display:block;animation:fadeIn 0.2s ease;}
-.score-banner{text-align:center;padding:20px;background:linear-gradient(135deg,#0ea5e9,#6366f1);border-radius:14px;color:white;font-family:'Mitr',sans-serif;margin-top:16px;display:none;}
-.score-banner.show{display:block;}
-.score-banner .snum{font-size:44px;font-weight:700;}
-.btn-submit{display:block;margin:18px auto 0;padding:12px 36px;background:linear-gradient(135deg,#0ea5e9,#6366f1);color:white;border:none;border-radius:12px;font-family:'Mitr',sans-serif;font-size:15px;font-weight:600;cursor:pointer;box-shadow:0 4px 16px rgba(99,102,241,0.3);transition:all 0.2s;}
-.btn-submit:hover{transform:translateY(-2px);}
+  /* ─── NAV ─── */
+  nav {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+    flex-wrap: nowrap;
+  }
 
-/* EXERCISE */
-.excard{background:white;border-radius:14px;padding:18px 20px;box-shadow:var(--shadow);margin-bottom:14px;}
-.excard h4{font-family:'Mitr',sans-serif;font-size:14px;font-weight:600;margin-bottom:9px;}
-.fi{border:2px solid #e2e8f0;border-radius:8px;padding:6px 11px;font-family:'Sarabun',sans-serif;font-size:13px;width:100%;max-width:340px;margin-top:5px;transition:border-color 0.2s;}
-.fi:focus{outline:none;border-color:var(--sky);}
-.fi.ok{border-color:var(--green);background:#f0fdf4;}
-.fi.no{border-color:#ef4444;background:#fef2f2;}
-.btn-chk{margin-top:12px;padding:8px 20px;color:white;border:none;border-radius:9px;font-family:'Mitr',sans-serif;font-size:13px;cursor:pointer;transition:all 0.2s;}
-.btn-chk:hover{opacity:0.88;transform:scale(1.03);}
-.back-btn{display:inline-flex;align-items:center;gap:6px;padding:6px 14px;background:white;border:2px solid #cbd5e1;border-radius:9px;color:var(--text-light);font-family:'Mitr',sans-serif;font-size:12px;cursor:pointer;margin-bottom:16px;transition:all 0.2s;}
-.back-btn:hover{border-color:var(--sky);color:var(--sky-dark);}
-#landing{display:block;}
-#landing.hidden{display:none;}
+  .nav-btn {
+    position: relative;
+    padding: 9px 20px;
+    border: none;
+    border-radius: 10px;
+    font-family: 'Mitr', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.22s cubic-bezier(.4,0,.2,1);
+    white-space: nowrap;
+    color: var(--lime);
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.1);
+    letter-spacing: 0.4px;
+  }
+
+  .nav-btn:hover {
+    background: rgba(82,183,136,0.18);
+    color: #fff;
+    border-color: rgba(82,183,136,0.4);
+    transform: translateY(-1px);
+  }
+
+  .nav-btn.active {
+    background: linear-gradient(135deg, var(--leaf), var(--forest2));
+    color: #fff;
+    border-color: transparent;
+    box-shadow: 0 4px 14px rgba(82,183,136,0.45);
+    transform: translateY(-1px);
+  }
+
+  .nav-btn .grade-dot {
+    display: inline-block;
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    margin-right: 6px;
+    vertical-align: middle;
+  }
+
+  /* grade colors */
+  .dot-home { background: var(--sun); }
+  .dot-p4   { background: var(--sky); }
+  .dot-p5   { background: #a29bfe; }
+  .dot-p6   { background: var(--sun); }
+
+  /* ─── CONTENT FRAME ─── */
+  .frame-wrapper {
+    margin-top: var(--header-h);
+    flex: 1;
+    overflow: hidden;
+    position: relative;
+  }
+
+  #content-frame {
+    width: 100%;
+    height: 100%;
+    border: none;
+    display: block;
+    transition: opacity 0.2s ease;
+  }
+
+  #content-frame.loading { opacity: 0; }
+
+  /* loading overlay */
+  .frame-loader {
+    position: absolute;
+    inset: 0;
+    background: var(--cream);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s;
+  }
+  .frame-loader.show { opacity: 1; pointer-events: auto; }
+
+  .loader-ring {
+    width: 48px; height: 48px;
+    border: 4px solid rgba(82,183,136,0.2);
+    border-top-color: var(--leaf);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
 </style>
 </head>
 <body>
+
 <header>
-  <div class="header-inner">
-    <div class="logo"><span class="spin">⚗️</span>วิทยาศาสตร์ประถม</div>
-    <div class="grade-switcher">
-      <button class="grade-tab" id="tb-home" onclick="goHome()">🏠 หน้าหลัก</button>
-      <button class="grade-tab" id="tb-p4" onclick="selGrade('p4')">🟢 ป.4</button>
-      <button class="grade-tab" id="tb-p5" onclick="selGrade('p5')">🟠 ป.5</button>
-      <button class="grade-tab" id="tb-p6" onclick="selGrade('p6')">🔵 ป.6</button>
+  <a class="brand" href="#" onclick="navigate('p0.html','home'); return false;">
+    <div class="brand-icon">🌿</div>
+    <div class="brand-text">
+      <div class="brand-title">วิทยาศาสตร์ประถมศึกษา</div>
+      <div class="brand-sub">โรงเรียนบ้านเขาหัวนา</div>
     </div>
-  </div>
+  </a>
+
+  <nav>
+    <button class="nav-btn active" id="btn-home" onclick="navigate('p0.html','home')">
+      <span class="grade-dot dot-home"></span>หน้าหลัก
+    </button>
+    <button class="nav-btn" id="btn-p4" onclick="navigate('p4.html','p4')">
+      <span class="grade-dot dot-p4"></span>ป.4
+    </button>
+    <button class="nav-btn" id="btn-p5" onclick="navigate('p5.html','p5')">
+      <span class="grade-dot dot-p5"></span>ป.5
+    </button>
+    <button class="nav-btn" id="btn-p6" onclick="navigate('p6.html','p6')">
+      <span class="grade-dot dot-p6"></span>ป.6
+    </button>
+  </nav>
 </header>
-<nav id="main-nav"><ul class="nav-list" id="nav-ul"></ul></nav>
-<main>
 
-<!-- LANDING -->
-<div id="landing">
-  <div class="landing">
-    <h1>🔭 ห้องเรียนวิทยาศาสตร์ออนไลน์ ✨</h1>
-    <p>เลือกชั้นเรียนที่ต้องการ</p>
-    <div class="grade-cards">
-      <div class="grade-card c4" onclick="selGrade('p4')">
-        <span class="big-e">🌱</span>
-        <h2>วิทยาศาสตร์ ป.4</h2>
-        <p>สิ่งมีชีวิต แสง เสียง<br>วัสดุรอบตัว สภาพอากาศ<br>ระบบสุริยะเบื้องต้น</p>
-        <span class="cta">เริ่มเรียน →</span>
-      </div>
-      <div class="grade-card c5" onclick="selGrade('p5')">
-        <span class="big-e">🧪</span>
-        <h2>วิทยาศาสตร์ ป.5</h2>
-        <p>ระบบร่างกาย แรง<br>วัสดุ ระบบนิเวศ<br>โลกและบรรยากาศ</p>
-        <span class="cta">เริ่มเรียน →</span>
-      </div>
-      <div class="grade-card c6" onclick="selGrade('p6')">
-        <span class="big-e">🔭</span>
-        <h2>วิทยาศาสตร์ ป.6</h2>
-        <p>ดาราศาสตร์ สิ่งมีชีวิต<br>พลังงาน โลกและอากาศ<br>สารและสมบัติ</p>
-        <span class="cta">เริ่มเรียน →</span>
-      </div>
-    </div>
+<div class="frame-wrapper">
+  <div class="frame-loader" id="loader">
+    <div class="loader-ring"></div>
   </div>
+  <iframe id="content-frame" src="p0.html" title="เนื้อหา"></iframe>
 </div>
-
-<!-- HOME P4 -->
-<div class="home-page" id="home-p4">
-  <div class="home-hero" style="background:var(--p4-grad)">
-    <h1>🌱 วิทยาศาสตร์ ชั้นประถมศึกษาปีที่ 4 เทอม 2</h1>
-    <p>เลือกบทเรียนที่ต้องการ</p>
-  </div>
-  <div class="chapter-grid">
-    <div class="chapter-card c4" onclick="showCh('p4','ch1')"><span class="icon">🌿</span><span class="badge b4">บทที่ 1</span><h3>สิ่งมีชีวิต</h3><p>การจำแนกสิ่งมีชีวิต วงจรชีวิต การดำรงชีวิต</p></div>
-    <div class="chapter-card c4" onclick="showCh('p4','ch2')"><span class="icon">💡</span><span class="badge b4">บทที่ 2</span><h3>แสงและการมองเห็น</h3><p>แหล่งกำเนิดแสง การสะท้อน การหักเห</p></div>
-    <div class="chapter-card c4" onclick="showCh('p4','ch3')"><span class="icon">🔊</span><span class="badge b4">บทที่ 3</span><h3>เสียง</h3><p>การเกิดเสียง คุณสมบัติของเสียง การได้ยิน</p></div>
-    <div class="chapter-card c4" onclick="showCh('p4','ch4')"><span class="icon">🧱</span><span class="badge b4">บทที่ 4</span><h3>วัสดุรอบตัว</h3><p>สมบัติวัสดุ การเปลี่ยนแปลง การใช้ประโยชน์</p></div>
-    <div class="chapter-card c4" onclick="showCh('p4','ch5')"><span class="icon">⛅</span><span class="badge b4">บทที่ 5</span><h3>สภาพอากาศ</h3><p>ปัจจัยสภาพอากาศ ฤดูกาล การพยากรณ์อากาศ</p></div>
-  </div>
-</div>
-
-<!-- HOME P5 -->
-<div class="home-page" id="home-p5">
-  <div class="home-hero" style="background:var(--p5-grad)">
-    <h1>🧪 วิทยาศาสตร์ ชั้นประถมศึกษาปีที่ 5 เทอม 2</h1>
-    <p>เลือกบทเรียนที่ต้องการ</p>
-  </div>
-  <div class="chapter-grid">
-    <div class="chapter-card c5" onclick="showCh('p5','ch1')"><span class="icon">🫀</span><span class="badge b5">บทที่ 1</span><h3>ระบบร่างกาย</h3><p>หมุนเวียนเลือด หายใจ ย่อยอาหาร</p></div>
-    <div class="chapter-card c5" onclick="showCh('p5','ch2')"><span class="icon">🏋️</span><span class="badge b5">บทที่ 2</span><h3>แรงและพลังงาน</h3><p>แรงโน้มถ่วง เครื่องกลอย่างง่าย พลังงาน</p></div>
-    <div class="chapter-card c5" onclick="showCh('p5','ch3')"><span class="icon">🧲</span><span class="badge b5">บทที่ 3</span><h3>วัสดุและสมบัติ</h3><p>ตัวนำ ฉนวน ความแข็ง ความยืดหยุ่น</p></div>
-    <div class="chapter-card c5" onclick="showCh('p5','ch4')"><span class="icon">🌿</span><span class="badge b5">บทที่ 4</span><h3>ระบบนิเวศ</h3><p>ความสัมพันธ์ ห่วงโซ่อาหาร สิ่งแวดล้อม</p></div>
-    <div class="chapter-card c5" onclick="showCh('p5','ch5')"><span class="icon">🌦️</span><span class="badge b5">บทที่ 5</span><h3>โลกและบรรยากาศ</h3><p>ชั้นบรรยากาศ วัฏจักรน้ำ ปรากฏการณ์</p></div>
-  </div>
-</div>
-
-<!-- HOME P6 -->
-<div class="home-page" id="home-p6">
-  <div class="home-hero" style="background:var(--p6-grad)">
-    <h1>🔭 วิทยาศาสตร์ ชั้นประถมศึกษาปีที่ 6 เทอม 2</h1>
-    <p>เลือกบทเรียนที่ต้องการ</p>
-  </div>
-  <div class="chapter-grid">
-    <div class="chapter-card c6" onclick="showCh('p6','ch1')"><span class="icon">🌞</span><span class="badge b6">บทที่ 1</span><h3>ดาราศาสตร์</h3><p>ระบบสุริยะ ดาวเคราะห์ ปรากฏการณ์ท้องฟ้า</p></div>
-    <div class="chapter-card c6" onclick="showCh('p6','ch2')"><span class="icon">🧬</span><span class="badge b6">บทที่ 2</span><h3>สิ่งมีชีวิต</h3><p>ระบบนิเวศ ห่วงโซ่อาหาร การปรับตัว</p></div>
-    <div class="chapter-card c6" onclick="showCh('p6','ch3')"><span class="icon">⚡</span><span class="badge b6">บทที่ 3</span><h3>พลังงาน</h3><p>ไฟฟ้า แสง เสียง พลังงานทดแทน</p></div>
-    <div class="chapter-card c6" onclick="showCh('p6','ch4')"><span class="icon">🌍</span><span class="badge b6">บทที่ 4</span><h3>โลกและอากาศ</h3><p>หินและแร่ ธรณีวิทยา สภาพอากาศ</p></div>
-    <div class="chapter-card c6" onclick="showCh('p6','ch5')"><span class="icon">🔬</span><span class="badge b6">บทที่ 5</span><h3>สารและสมบัติ</h3><p>สถานะสาร การเปลี่ยนแปลง การแยกสาร</p></div>
-  </div>
-</div>
-
-<!-- ==================== P4 CHAPTERS ==================== -->
-
-<!-- P4 CH1: สิ่งมีชีวิต -->
-<div class="chapter-page" id="p4-ch1">
-  <button class="back-btn" onclick="showGHome('p4')">← กลับ ป.4</button>
-  <div class="ch-header" style="background:linear-gradient(135deg,#22c55e,#16a34a)">
-    <div class="big-icon">🌿</div>
-    <div><h2>บทที่ 1: สิ่งมีชีวิต</h2><p>การจำแนกสิ่งมีชีวิต วงจรชีวิต ความสัมพันธ์ในสิ่งแวดล้อม</p></div>
-  </div>
-  <div class="tabs">
-    <button class="tab-btn t4 active" onclick="swTab(this,'p4c1','ct')">📖 เนื้อหา</button>
-    <button class="tab-btn t4" onclick="swTab(this,'p4c1','qz')">🧪 แบบทดสอบ (10 ข้อ)</button>
-    <button class="tab-btn t4" onclick="swTab(this,'p4c1','ex')">✏️ แบบฝึกหัด</button>
-  </div>
-  <div class="tab-content active" id="p4c1-ct">
-    <div class="cs" style="border-left:5px solid #22c55e">
-      <h3 style="color:#15803d">🌿 การจำแนกสิ่งมีชีวิต</h3>
-      <p>สิ่งมีชีวิตแบ่งออกเป็น 2 กลุ่มใหญ่ คือ <strong>พืช</strong> และ <strong>สัตว์</strong> โดยใช้ลักษณะสำคัญในการจำแนก</p>
-      <div class="ib green"><strong>🌱 ลักษณะของสิ่งมีชีวิต</strong>
-        <ul class="sl"><li>มีการเจริญเติบโต</li><li>ต้องการอาหารและพลังงาน</li><li>มีการขับถ่ายของเสีย</li><li>มีการตอบสนองต่อสิ่งเร้า</li><li>มีการสืบพันธุ์</li></ul>
-      </div>
-      <table><tr><th class="g">เกณฑ์</th><th class="g">พืช</th><th class="g">สัตว์</th></tr>
-        <tr><td>การสร้างอาหาร</td><td>สร้างเองได้ (สังเคราะห์แสง)</td><td>สร้างเองไม่ได้</td></tr>
-        <tr><td>การเคลื่อนที่</td><td>เคลื่อนที่ไม่ได้</td><td>เคลื่อนที่ได้</td></tr>
-        <tr><td>ผนังเซลล์</td><td>มีผนังเซลล์</td><td>ไม่มีผนังเซลล์</td></tr>
-      </table>
-    </div>
-    <div class="cs" style="border-left:5px solid #22c55e">
-      <h3 style="color:#15803d">🦋 วงจรชีวิตของสัตว์</h3>
-      <div class="ib yellow"><strong>🐛 การเปลี่ยนรูปร่าง (Metamorphosis)</strong>
-        <ul class="sl"><li><strong>สมบูรณ์</strong> – ไข่ → ตัวอ่อน → ดักแด้ → ตัวเต็มวัย (ผีเสื้อ แมลงวัน)</li><li><strong>ไม่สมบูรณ์</strong> – ไข่ → ตัวอ่อน → ตัวเต็มวัย (ตั๊กแตน แมลงสาบ)</li></ul>
-      </div>
-      <div class="ib blue"><strong>🐸 วงจรชีวิตกบ</strong><p>ไข่ → ลูกอ๊อด (หายใจด้วยเหงือก) → กบตัวเต็มวัย (หายใจด้วยปอดและผิวหนัง)</p></div>
-    </div>
-    <div class="cs" style="border-left:5px solid #22c55e">
-      <h3 style="color:#15803d">🌾 ส่วนประกอบของพืชดอก</h3>
-      <table><tr><th class="g">ส่วนประกอบ</th><th class="g">หน้าที่</th></tr>
-        <tr><td>ราก</td><td>ดูดน้ำและแร่ธาตุ ยึดต้นพืช</td></tr>
-        <tr><td>ลำต้น</td><td>ลำเลียงน้ำและอาหาร ค้ำจุน</td></tr>
-        <tr><td>ใบ</td><td>สังเคราะห์แสง คายน้ำ</td></tr>
-        <tr><td>ดอก</td><td>สืบพันธุ์ ผสมเกสร</td></tr>
-        <tr><td>ผล/เมล็ด</td><td>ปกป้องเมล็ด ขยายพันธุ์</td></tr>
-      </table>
-    </div>
-  </div>
-  <div class="tab-content" id="p4c1-qz">
-    <div class="quiz-wrap" id="qw-p4c1">
-      <div class="qcard" data-ans="ข"><div class="qnum">ข้อที่ 1 / 10</div><div class="qtxt">ข้อใดเป็นลักษณะของสิ่งมีชีวิตทุกชนิด?</div><div class="opts">
-        <button class="opt" onclick="pickAns(this)"><span class="ol">ก</span>มีขนาดใหญ่</button>
-        <button class="opt" onclick="pickAns(this)"><span class="ol">ข</span>มีการสืบพันธุ์</button>
-        <button class="opt" onclick="pickAns(this)"><span class="ol">ค</span>เคลื่อนที่ได้</button>
-        <button class="opt" onclick="pickAns(this)"><span class="ol">ง</span>สร้างอาหารได้เอง</button>
-      </div><div class="expl">✅ สิ่งมีชีวิตทุกชนิดมีการสืบพันธุ์เพื่อดำรงเผ่าพันธุ์ ไม่ว่าจะเป็นพืชหรือสัตว์</div></div>
-
-      <div class="qcard" data-ans="ก"><div class="qnum">ข้อที่ 2 / 10</div><div class="qtxt">พืชต่างจากสัตว์ตรงที่พืชสามารถทำอะไรได้?</div><div class="opts">
-        <button class="opt" onclick="pickAns(this)"><span class="ol">ก</span>สังเคราะห์แสงสร้างอาหารได้เอง</button>
-        <button class="opt" onclick="pickAns(this)"><span class="ol">ข</span>เคลื่อนที่ได้เร็ว</button>
-        <button class="opt" onclick="pickAns(this)"><span class="ol">ค</span>หายใจด้วยปอด</button>
-        <button class="opt" onclick="pickAns(this)"><span class="ol">ง</span>มีระบบประสาท</button>
-      </div><div class="expl">✅ พืชสามารถสังเคราะห์แสงโดยใช้แสง น้ำ และ CO₂ สร้างเป็นน้ำตาลสำหรับใช้เป็นอาหาร</div></div>
-
-      <div class="qcard" data-ans="ค"><div class="qnum">ข้อที่ 3 / 10</div><div class="qtxt">วงจรชีวิตของผีเสื้อเรียกว่าการเปลี่ยนรูปร่างแบบใด?</div><div class="opts">
-        <button class="opt" onclick="pickAns(this)"><span class="ol">ก</span>ไม่สมบูรณ์</button>
-        <button class="opt" onclick="pickAns(this)"><span class="ol">ข</span>บางส่วน</button>
-        <button class="opt" onclick="pickAns(this)"><span class="ol">ค</span>สมบูรณ์</button>
-        <button class="opt" onclick="pickAns(this)"><span class="ol">ง</span>ไม่มีการเปลี่ยนรูป</button>
-      </div><div class="expl">✅ ผีเสื้อมีการเปลี่ยนรูปร่างสมบูรณ์ คือ ไข่ → หนอน → ดักแด้ → ผีเสื้อ</div></div>
-
-      <div class="qcard" data-ans="ข"><div class="qnum">ข้อที่ 4 / 10</div><div class="qtxt">ส่วนใดของพืชทำหน้าที่ดูดน้ำและแร่ธาตุจากดิน?</div><div class="opts">
-        <button class="opt" onclick="pickAns(this)"><span class="ol">ก</span>ใบ</button>
-        <button class="opt" onclick="pickAns(this)"><span class="ol">ข</span>ราก</button>
-        <button class="opt" onclick="pickAns(this)"><span class="ol">ค</span>ดอก</button>
-        <button class="opt" onclick="pickAns(this)"><span class="ol">ง</span>ผล</button>
-      </div><div class="expl">✅ รากทำหน้าที่ดูดน้ำและแร่ธาตุจากดิน รวมถึงยึดต้นพืชไว้กับพื้นดิน</div></div>
-
-      <div class="qcard" data-ans="ง"><div class="qnum">ข้อที่ 5 / 10</div><div class="qtxt">ลูกอ๊อดหายใจโดยใช้อวัยวะใด?</div><div class="opts">
-        <button class="opt" onclick="pickAns(this)"><span class="ol">ก</span>ปอด</button>
-        <button class="opt" onclick="pickAns(this)"><span class="ol">ข</span>ผิวหนัง</button>
-        <button class="opt" onclick="pickAns(this)"><span class="ol">ค</span>ปอดและผิวหนัง</button>
-        <button class="opt" onclick="pickAns(this)"><span class="ol">ง</span>เหงือก</button>
-      </div><div class="expl">✅ ลูกอ๊อดอาศัยอยู่ในน้ำจึงหายใจด้วยเหงือก เมื่อโตเป็นกบจะใช้ปอดและผิวหนังแทน</div></div>
-
-      <div class="qcard" data-ans="ก"><div class="qnum">ข้อที่ 6 / 10</div><div class="qtxt">ส่วนใดของพืชดอกทำหน้าที่สืบพันธุ์?</div><div class="opts">
-        <button class="opt" onclick="pickAns(this)"><span class="ol">ก</span>ดอก</button>
-        <button class="opt" onclick="pickAns(this)"><span class="ol">ข</span>ใบ</button>
-        <button class="opt" onclick="pickAns(this)"><span class="ol">ค</span>ราก</button>
-        <button class="opt" onclick="pickAns(this)"><span class="ol">ง</span>ลำต้น</button>
-      </div><div class="expl">✅ ดอกทำหน้าที่สืบพันธุ์โดยการผสมเกสร เพื่อสร้างเมล็ดและผล</div></div>
-
-      <div class="qcard" data-ans="ค"><div class="qnum">ข้อที่ 7 / 10</div><div class="qtxt">แมลงชนิดใดมีการเปลี่ยนรูปร่างไม่สมบูรณ์?</div><div class="opts">
-        <button class="opt" onclick="pickAns(this)"><span class="ol">ก</span>ผีเสื้อ</button>
-        <button class="opt" onclick="pickAns(this)"><span class="ol">ข</span>แมลงวัน</button>
-        <button class="opt" onclick="pickAns(this)"><span class="ol">ค</span>ตั๊กแตน</button>
-        <button class="opt" onclick="pickAns(this)"><span class="ol">ง</span>ยุง</button>
-      </div><div class="expl">✅ ตั๊กแตนมีการเปลี่ยนรูปร่างไม่สมบูรณ์ คือ ไข่ → ตัวอ่อน → ตัวเต็มวัย ไม่มีระยะดักแด้</div></div>
-
-      <div class="qcard" data-ans="ข"><div class="qnum">ข้อที่ 8 / 10</div><div class="qtxt">ใบทำหน้าที่อะไรในกระบวนการสังเคราะห์แสง?</div><div class="opts">
-        <button class="opt" onclick="pickAns(this)"><span class="ol">ก</span>ดูดน้ำจากดิน</button>
-        <button class="opt" onclick="pickAns(this)"><span class="ol">ข</span>รับแสงและแลกเปลี่ยนก๊าซ</button>
-        <button class="opt" onclick="pickAns(this)"><span class="ol">ค</span>ลำเลียงน้ำ</button>
-        <button class="opt" onclick="pickAns(this)"><span class="ol">ง</span>ยึดต้นพืช</button>
-      </div><div class="expl">✅ ใบรับแสงอาทิตย์ผ่านคลอโรฟิลล์ และแลกเปลี่ยนก๊าซ CO₂ กับ O₂ ผ่านปากใบ</div></div>
-
-      <div class="qcard" data-ans="ง"><div class="qnum">ข้อที่ 9 / 10</div><div class="qtxt">สิ่งใดต่อไปนี้ไม่ใช่สิ่งมีชีวิต?</div><div class="opts">
-        <button class="opt" onclick="pickAns(this)"><span class="ol">ก</span>เชื้อรา</button>
-        <button class="opt" onclick="pickAns(this)"><span class="ol">ข</span>แบคทีเรีย</button>
-        <button class="opt" onclick="pickAns(this)"><span class="ol">ค</span>สาหร่าย</button>
-        <button class="opt" onclick="pickAns(this)"><span class="ol">ง</span>หิน</button>
-      </div><div class="expl">✅ หินไม่มีการเจริญเติบโต ไม่หายใจ ไม่สืบพันธุ์ จึงเป็นสิ่งไม่มีชีวิต</div></div>
-
-      <div class="qcard" data-ans="ก"><div class="qnum">ข้อที่ 10 / 10</div><div class="qtxt">ลำต้นพืชทำหน้าที่อะไร?</div><div class="opts">
-        <button class="opt" onclick="pickAns(this)"><span class="ol">ก</span>ลำเลียงน้ำและอาหาร ค้ำจุนต้นพืช</button>
-        <button class="opt" onclick="pickAns(this)"><span class="ol">ข</span>สังเคราะห์แสง</button>
-        <button class="opt" onclick="pickAns(this)"><span class="ol">ค</span>ดูดแร่ธาตุจากดิน</button>
-        <button class="opt" onclick="pickAns(this)"><span class="ol">ง</span>ผสมเกสร</button>
-      </div><div class="expl">✅ ลำต้นทำหน้าที่ค้ำจุนต้นพืชและลำเลียงน้ำ แร่ธาตุ และอาหารไปยังส่วนต่างๆ</div></div>
-    </div>
-    <div class="score-banner" id="sc-p4c1"><div class="snum" id="sn-p4c1"></div><p id="sp-p4c1"></p></div>
-    <button class="btn-submit" onclick="submitQuiz('p4c1')">ส่งคำตอบ 📝</button>
-  </div>
-  <div class="tab-content" id="p4c1-ex">
-    <div class="excard" style="border-left:5px solid #22c55e"><h4 style="color:#15803d">✏️ เติมคำ: ส่วนประกอบพืช</h4>
-      <p>ส่วนที่ดูดน้ำจากดิน → <input class="fi" data-answer="ราก" style="width:150px;display:inline-block"></p>
-      <p style="margin-top:8px">ส่วนที่สังเคราะห์แสง → <input class="fi" data-answer="ใบ" style="width:150px;display:inline-block"></p>
-      <p style="margin-top:8px">ส่วนที่ทำหน้าที่สืบพันธุ์ → <input class="fi" data-answer="ดอก" style="width:150px;display:inline-block"></p>
-      <button class="btn-chk" style="background:#22c55e" onclick="chkFill(this)">ตรวจคำตอบ</button>
-    </div>
-  </div>
-</div>
-
-<!-- P4 CH2: แสง -->
-<div class="chapter-page" id="p4-ch2">
-  <button class="back-btn" onclick="showGHome('p4')">← กลับ ป.4</button>
-  <div class="ch-header" style="background:linear-gradient(135deg,#eab308,#f97316)">
-    <div class="big-icon">💡</div>
-    <div><h2>บทที่ 2: แสงและการมองเห็น</h2><p>แหล่งกำเนิดแสง การเดินทางของแสง การสะท้อน การหักเห</p></div>
-  </div>
-  <div class="tabs">
-    <button class="tab-btn t4 active" onclick="swTab(this,'p4c2','ct')">📖 เนื้อหา</button>
-    <button class="tab-btn t4" onclick="swTab(this,'p4c2','qz')">🧪 แบบทดสอบ (10 ข้อ)</button>
-    <button class="tab-btn t4" onclick="swTab(this,'p4c2','ex')">✏️ แบบฝึกหัด</button>
-  </div>
-  <div class="tab-content active" id="p4c2-ct">
-    <div class="cs" style="border-left:5px solid #eab308">
-      <h3 style="color:#854d0e">💡 แหล่งกำเนิดแสง</h3>
-      <p>แสงเดินทางในเส้นตรงด้วยความเร็ว 300,000 กม./วินาที</p>
-      <div class="ib yellow"><strong>🌟 ประเภทแหล่งกำเนิดแสง</strong>
-        <ul class="sl"><li><strong>ธรรมชาติ</strong> – ดวงอาทิตย์ ดาวฤกษ์ หิ่งห้อย ฟ้าแลบ ลาวา</li><li><strong>มนุษย์สร้าง</strong> – หลอดไฟ เทียน ไฟฉาย จอโทรทัศน์</li></ul>
-      </div>
-      <div class="ib blue"><strong>🔦 วัตถุกับแสง</strong>
-        <ul class="sl"><li><strong>วัตถุโปร่งแสง</strong> – ยอมให้แสงผ่านได้ทั้งหมด เช่น อากาศ กระจกใส</li><li><strong>วัตถุกึ่งโปร่งแสง</strong> – แสงผ่านได้บางส่วน เช่น กระดาษไข พลาสติกขุ่น</li><li><strong>วัตถุทึบแสง</strong> – แสงผ่านไม่ได้ เช่น กำแพง โลหะ ไม้</li></ul>
-      </div>
-    </div>
-    <div class="cs" style="border-left:5px solid #eab308">
-      <h3 style="color:#854d0e">🪞 การสะท้อนแสงและเงา</h3>
-      <p>เมื่อแสงกระทบวัตถุทึบแสง จะเกิด<strong>เงา</strong>บริเวณด้านหลังวัตถุ ขนาดเงาขึ้นอยู่กับระยะห่างระหว่างแหล่งกำเนิดแสง วัตถุ และฉาก</p>
-      <div class="ib orange"><strong>🔄 กฎการสะท้อนแสง</strong><p>มุมตกกระทบ = มุมสะท้อน เสมอ ใช้ในการออกแบบกระจกและกล้องโทรทรรศน์</p></div>
-      <div class="ib green"><strong>🌈 การหักเหของแสง</strong><p>แสงเปลี่ยนทิศทางเมื่อผ่านจากตัวกลางหนึ่งไปอีกตัวกลางหนึ่ง เช่น อากาศสู่น้ำ ทำให้แท่งดินสอในแก้วน้ำดูหักงอ</p></div>
-    </div>
-    <div class="cs" style="border-left:5px solid #eab308">
-      <h3 style="color:#854d0e">👁️ การมองเห็น</h3>
-      <table><tr><th class="o">ส่วนประกอบตา</th><th class="o">หน้าที่</th></tr>
-        <tr><td>กระจกตา</td><td>รับและหักเหแสง</td></tr>
-        <tr><td>ม่านตา</td><td>ควบคุมปริมาณแสงเข้าตา</td></tr>
-        <tr><td>เลนส์ตา</td><td>โฟกัสภาพบนเรตินา</td></tr>
-        <tr><td>เรตินา</td><td>รับภาพส่งสัญญาณไปสมอง</td></tr>
-      </table>
-    </div>
-  </div>
-  <div class="tab-content" id="p4c2-qz">
-    <div class="quiz-wrap" id="qw-p4c2">
-      <div class="qcard" data-ans="ก"><div class="qnum">ข้อที่ 1 / 10</div><div class="qtxt">แสงเดินทางด้วยความเร็วเท่าใด?</div><div class="opts">
-        <button class="opt" onclick="pickAns(this)"><span class="ol">ก</span>300,000 กิโลเมตรต่อวินาที</button>
-        <button class="opt" onclick="pickAns(this)"><span class="ol">ข</span>30,000 กิโลเมตรต่อวินาที</button>
-        <button class="opt" onclick="pickAns(this)"><span class="ol">ค</span>3,000 กิโลเมตรต่อวินาที</button>
-        <button class="opt" onclick="pickAns(this)"><span class="ol">ง</span>300 กิโลเมตรต่อวินาที</button>
-      </div><div class="expl">✅ แสงเดินทางในสุญญากาศด้วยความเร็ว 300,000 กม./วินาที เร็วที่สุดในจักรวาล</div></div>
-
-      <div class="qcard" data-ans="ค"><div class="qnum">ข้อที่ 2 / 10</div><div class="qtxt">หิ่งห้อยจัดเป็นแหล่งกำเนิดแสงประเภทใด?</div><div class="opts">
-        <button class="opt" onclick="pickAns(this)"><span class="ol">ก</span>มนุษย์สร้างขึ้น</button>
-        <button class="opt" onclick="pickAns(this)"><span class="ol">ข</span>ดาวเทียม</button>
-        <button class="opt" onclick="pickAns(this)"><span class="ol">ค</span>ธรรมชาติ</button>
-        <button class="opt" onclick="pickAns(this)"><span class="ol">ง</span>ไม่ใช่แหล่งกำเนิดแสง</button>
-      </div><div class="expl">✅ หิ่งห้อยเป็นสัตว์ที่เปล่งแสงได้เอง จึงเป็นแหล่งกำเนิดแสงตามธรรมชาติ</div></div>
-
-      <div class="qcard" data-ans="ข"><div class="qnum">ข้อที่ 3 / 10</div><div class="qtxt">วัตถุโปร่งแสงคือวัตถุชนิดใด?</div><div class="opts">
-        <button class="opt" onclick="pickAns(this)"><span class="ol">ก</span>วัตถุที่แสงผ่านไม่ได้เลย</button>
-        <button class="opt" onclick="pickAns(this)"><span class="ol">ข</span>วัตถุที่ยอมให้แสงผ่านได้ทั้งหมด</button>
-        <button class="opt" onclick="pickAns(this)"><span class="ol">ค</span>วัตถุที่แสงผ่านได้บางส่วน</button>
-        <button class="opt" onclick="pickAns(this)"><span class="ol">ง</span>วัตถุที่สะท้อนแสงทั้งหมด</button>
-      </div><div class="expl">✅ วัตถุโปร่งแสงยอมให้แสงผ่านได้ทั้งหมด มองเห็นภาพได้ชัดเจน เช่น กระจกใส อากาศ</div></div>
-
-      <div class="qcard" data-ans="ง"><div class="qnum">ข้อที่ 4 / 10</div><div class="qtxt">เมื่อแสงกระทบวัตถุทึบแสง สิ่งใดเกิดขึ้นด้านหลังวัตถุ?</div><div class="opts">
-        <button class="opt" onclick="pickAns(this)"><span class="ol">ก</span>แสงสะท้อน</button>
-        <button class="opt" onclick="pickAns(this)"><span class="ol">ข</span>สีรุ้ง</button>
-        <button class="opt" onclick="pickAns(this)"><span class="ol">ค</span>ความร้อน</button>
-        <button class="opt" onclick="pickAns(this)"><span class="ol">ง</span>เงา</button>
-      </div><div class="expl">✅ เมื่อแสงถูกวัตถุทึบแสงบัง จะเกิดเงาบริเวณด้านหลังวัตถุนั้น</div></div>
-
-      <div class="qcard" data-ans="ก"><div class="qnum">ข้อที่ 5 / 10</div><div class="qtxt">กฎการสะท้อนของแสงกล่าวว่าอย่างไร?</div><div class="opts">
-        <button class="opt" onclick="pickAns(this)"><span class="ol">ก</span>มุมตกกระทบเท่ากับมุมสะท้อน</button>
-        <button class="opt" onclick="pickAns(this)"><span class="ol">ข</span>มุมตกกระทบมากกว่ามุมสะท้อน</button>
-        <button class="opt" onclick="pickAns(this)"><span class="ol">ค</span>มุมตกกระทบน้อยกว่ามุมสะท้อน</button>
-        <button class="opt" onclick="pickAns(this)"><span class="ol">ง</span>ไม่มีความสัมพันธ์กัน</button>
-      </div><div class="expl">✅ กฎการสะท้อน: มุมตกกระทบ = มุมสะท้อน เสมอ</div></div>
-
-      <div class="qcard" data-ans="ค"><div class="qnum">ข้อที่ 6 / 10</div><div class="qtxt">ดินสอในแก้วน้ำดูหักงอเพราะเหตุใด?</div><div class="opts">
-        <button class="opt" onclick="pickAns(this)"><span class="ol">ก</span>การสะท้อนแสง</button>
-        <button class="opt" onclick="pickAns(this)"><span class="ol">ข</span>การดูดซับแสง</button>
-        <button class="opt" onclick="pickAns(this)"><span class="ol">ค</span>การหักเหของแสง</button>
-        <button class="opt" onclick="pickAns(this)"><span class="ol">ง</span>แสงกระจาย</button>
-      </div><div class="expl">✅ แสงเปลี่ยนความเร็วเมื่อผ่านจากอากาศสู่น้ำ ทำให้ทิศทางเปลี่ยน เห็นดินสอหักงอ</div></div>
-
-      <div class="qcard" data-ans="ข"><div class="qnum">ข้อที่ 7 / 10</div><div class="qtxt">กระดาษไขเป็นวัตถุประเภทใด?</div><div class="opts">
-        <button class="opt" onclick="pickAns(this)"><span class="ol">ก</span>โปร่งแสง</button>
-        <button class="opt" onclick="pickAns(this)"><span class="ol">ข</span>กึ่งโปร่งแสง</button>
-        <button class="opt" onclick="pickAns(this)"><span class="ol">ค</span>ทึบแสง</button>
-        <button class="opt" onclick="pickAns(this)"><span class="ol">ง</span>สะท้อนแสง</button>
-      </div><div class="expl">✅ กระดาษไขยอมให้แสงผ่านได้บางส่วน มองเห็นภาพไม่ชัด จัดเป็นวัตถุกึ่งโปร่งแสง</div></div>
-
-      <div class="qcard" data-ans="ง"><div class="qnum">ข้อที่ 8 / 10</div><div class="qtxt">ม่านตาทำหน้าที่อะไร?</div><div class="opts">
-        <button class="opt" onclick="pickAns(this)"><span class="ol">ก</span>รับภาพส่งสัญญาณไปสมอง</button>
-        <button class="opt" onclick="pickAns(this)"><span class="ol">ข</span>โฟกัสภาพ</button>
-        <button class="opt" onclick="pickAns(this)"><span class="ol">ค</span>หักเหแสง</button>
-        <button class="opt" onclick="pickAns(this)"><span class="ol">ง</span>ควบคุมปริมาณแสงเข้าตา</button>
-      </div><div class="expl">✅ ม่านตาปรับขนาดรูม่านตาเพื่อควบคุมปริมาณแสงที่เข้าสู่ตา เช่น ในที่มืดรูม่านตาขยาย</div></div>
-
-      <div class="qcard" data-ans="ก"><div class="qnum">ข้อที่ 9 / 10</div><div class="qtxt">สิ่งใดต่อไปนี้เป็นแหล่งกำเนิดแสงที่มนุษย์สร้าง?</div><div class="opts">
-        <button class="opt" onclick="pickAns(this)"><span class="ol">ก</span>หลอดไฟ LED</button>
-        <button class="opt" onclick="pickAns(this)"><span class="ol">ข</span>ดาวอังคาร</button>
-        <button class="opt" onclick="pickAns(this)"><span class="ol">ค</span>ดวงอาทิตย์</button>
-        <button class="opt" onclick="pickAns(this)"><span class="ol">ง</span>หิ่งห้อย</button>
-      </div><div class="expl">✅ หลอดไฟ LED เป็นแหล่งกำเนิดแสงที่มนุษย์ประดิษฐ์ขึ้น ส่วนดวงอาทิตย์และหิ่งห้อยเป็นธรรมชาติ ดาวอังคารไม่ใช่แหล่งกำเนิดแสง</div></div>
-
-      <div class="qcard" data-ans="ค"><div class="qnum">ข้อที่ 10 / 10</div><div class="qtxt">แสงเดินทางในลักษณะใด?</div><div class="opts">
-        <button class="opt" onclick="pickAns(this)"><span class="ol">ก</span>โค้งงอ</button>
-        <button class="opt" onclick="pickAns(this)"><span class="ol">ข</span>เป็นวงกลม</button>
-        <button class="opt" onclick="pickAns(this)"><span class="ol">ค</span>เส้นตรง</button>
-        <button class="opt" onclick="pickAns(this)"><span class="ol">ง</span>แบบคลื่น</button>
-      </div><div class="expl">✅ แสงเดินทางในเส้นตรงเสมอในตัวกลางเดียวกัน เราจึงมองเห็นสิ่งที่อยู่เป็นแนวเส้นตรงกับดวงตาเท่านั้น</div></div>
-    </div>
-    <div class="score-banner" id="sc-p4c2"><div class="snum" id="sn-p4c2"></div><p id="sp-p4c2"></p></div>
-    <button class="btn-submit" onclick="submitQuiz('p4c2')">ส่งคำตอบ 📝</button>
-  </div>
-  <div class="tab-content" id="p4c2-ex">
-    <div class="excard" style="border-left:5px solid #eab308"><h4 style="color:#854d0e">✏️ จำแนกประเภทวัตถุ</h4>
-      <p>กระจกใส → <input class="fi" data-answer="โปร่งแสง" style="width:160px;display:inline-block"></p>
-      <p style="margin-top:8px">กำแพงอิฐ → <input class="fi" data-answer="ทึบแสง" style="width:160px;display:inline-block"></p>
-      <p style="margin-top:8px">พลาสติกขุ่น → <input class="fi" data-answer="กึ่งโปร่งแสง" style="width:160px;display:inline-block"></p>
-      <button class="btn-chk" style="background:#eab308;color:#1c1917" onclick="chkFill(this)">ตรวจคำตอบ</button>
-    </div>
-  </div>
-</div>
-
-<!-- P4 CH3: เสียง -->
-<div class="chapter-page" id="p4-ch3">
-  <button class="back-btn" onclick="showGHome('p4')">← กลับ ป.4</button>
-  <div class="ch-header" style="background:linear-gradient(135deg,#a855f7,#6366f1)">
-    <div class="big-icon">🔊</div>
-    <div><h2>บทที่ 3: เสียง</h2><p>การเกิดเสียง คุณสมบัติของเสียง การได้ยิน ความปลอดภัยทางเสียง</p></div>
-  </div>
-  <div class="tabs">
-    <button class="tab-btn t4 active" onclick="swTab(this,'p4c3','ct')">📖 เนื้อหา</button>
-    <button class="tab-btn t4" onclick="swTab(this,'p4c3','qz')">🧪 แบบทดสอบ (10 ข้อ)</button>
-    <button class="tab-btn t4" onclick="swTab(this,'p4c3','ex')">✏️ แบบฝึกหัด</button>
-  </div>
-  <div class="tab-content active" id="p4c3-ct">
-    <div class="cs" style="border-left:5px solid #a855f7">
-      <h3 style="color:#7e22ce">🎵 การเกิดเสียง</h3>
-      <p>เสียงเกิดจาก<strong>การสั่นสะเทือน</strong>ของวัตถุ และเดินทางผ่านตัวกลาง (ของแข็ง ของเหลว ก๊าซ) เสียงไม่สามารถเดินทางในสุญญากาศได้</p>
-      <div class="ib purple"><strong>🌊 ความเร็วเสียงในตัวกลาง</strong>
-        <ul class="sl"><li>ของแข็ง – เร็วที่สุด (เสียงในรางรถไฟ)</li><li>ของเหลว – เร็วปานกลาง (เสียงใต้น้ำ)</li><li>อากาศ – ช้าที่สุด (~340 เมตร/วินาที)</li></ul>
-      </div>
-    </div>
-    <div class="cs" style="border-left:5px solid #a855f7">
-      <h3 style="color:#7e22ce">🎼 คุณสมบัติของเสียง</h3>
-      <table><tr><th class="p">คุณสมบัติ</th><th class="p">ความหมาย</th><th class="p">ตัวอย่าง</th></tr>
-        <tr><td>ระดับเสียง (Pitch)</td><td>แหลม-ทุ้ม ขึ้นกับความถี่</td><td>ความถี่สูง=แหลม ต่ำ=ทุ้ม</td></tr>
-        <tr><td>ความดังเสียง (Loudness)</td><td>ดัง-เบา ขึ้นกับแอมพลิจูด</td><td>ตีกลองแรง=ดัง</td></tr>
-        <tr><td>คุณภาพเสียง (Timbre)</td><td>ลักษณะเสียงเฉพาะของแหล่งกำเนิด</td><td>ไวโอลิน vs ขลุ่ย</td></tr>
-      </table>
-      <div class="ib orange"><strong>📢 เดซิเบล (dB)</strong><p>ความดังเสียงวัดเป็นเดซิเบล เสียงเกิน 85 dB ทำให้หูเสื่อมได้ เสียงกระซิบ ~20 dB / สนทนาปกติ ~60 dB / คอนเสิร์ต ~110 dB</p></div>
-    </div>
-    <div class="cs" style="border-left:5px solid #a855f7">
-      <h3 style="color:#7e22ce">👂 การได้ยิน</h3>
-      <div class="ib blue"><strong>👂 กลไกการได้ยิน</strong>
-        <p>คลื่นเสียง → ใบหู → ช่องหู → เยื่อแก้วหู (สั่น) → กระดูก 3 ชิ้น → หูชั้นใน (Cochlea) → เส้นประสาท → สมอง</p>
-      </div>
-    </div>
-  </div>
-  <div class="tab-content" id="p4c3-qz">
-    <div class="quiz-wrap" id="qw-p4c3">
-      <div class="qcard" data-ans="ข"><div class="qnum">ข้อที่ 1 / 10</div><div class="qtxt">เสียงเกิดจากสิ่งใด?</div><div class="opts">
-        <button class="opt" onclick="pickAns(this)"><span class="ol">ก</span>การเคลื่อนที่ของอากาศ</button>
-        <button class="opt" onclick="pickAns(this)"><span class="ol">ข</span>การสั่นสะเทือนของวัตถุ</button>
-        <button class="opt" onclick="pickAns(this)"><span class="ol">ค</span>การกระทบกันของอะตอม</button>
-        <button class="opt" onclick="pickAns(this)"><span class="ol">ง</span>การเปลี่ยนแปลงอุณหภูมิ</button>
-      </div><div class="expl">✅ เสียงเกิดจากการสั่นสะเทือนของวัตถุ แล้วส่งถ่ายผ่านตัวกลางมายังหูของเรา</div></div>
-
-      <div class="qcard" data-ans="ก"><div class="qnum">ข้อที่ 2 / 10</div><div class="qtxt">เสียงเดินทางได้เร็วที่สุดในตัวกลางใด?</div><div class="opts">
-        <button class="opt" onclick="pickAns(this)"><span class="ol">ก</span>ของแข็ง</button>
-        <button class="opt" onclick="pickAns(this)"><span class="ol">ข</span>ของเหลว</button>
-        <button class="opt" onclick="pickAns(this)"><span class="ol">ค</span>อากาศ</button>
-        <button class="opt" onclick="pickAns(this)"><span class="ol">ง</span>สุญญากาศ</button>
-      </div><div class="expl">✅ เสียงเดินทางได้เร็วที่สุดในของแข็ง เพราะโมเลกุลอยู่ชิดกัน ส่งการสั่นสะเทือนได้รวดเร็ว</div></div>
-
-      <div class="qcard" data-ans="ค"><div class="qnum">ข้อที่ 3 / 10</div><div class="qtxt">เสียงแหลมหรือทุ้มขึ้นอยู่กับอะไร?</div><div class="opts">
-        <button class="opt" onclick="pickAns(this)"><span class="ol">ก</span>ความดัง</button>
-        <button class="opt" onclick="pickAns(this)"><span class="ol">ข</span>แอมพลิจูด</button>
-        <button class="opt" onclick="pickAns(this)"><span class="ol">ค</span>ความถี่</button>
-        <button class="opt" onclick="pickAns(this)"><span class="ol">ง</span>ตัวกลาง</button>
-      </div><div class="expl">✅ ระดับเสียง (แหลม/ทุ้ม) ขึ้นอยู่กับความถี่ของการสั่น ความถี่สูง = เสียงแหลม</div></div>
-
-      <div class="qcard" data-ans="ง"><div class="qnum">ข้อที่ 4 / 10</div><div class="qtxt">เสียงดังหรือเบาขึ้นอยู่กับอะไร?</div><div class="opts">
-        <button class="opt" onclick="pickAns(this)"><span class="ol">ก</span>ความถี่</button>
-        <button class="opt" onclick="pickAns(this)"><span class="ol">ข</span>ตัวกลาง</button>
-        <button class="opt" onclick="pickAns(this)"><span class="ol">ค</span>อุณหภูมิ</button>
-        <button class="opt" onclick="pickAns(this)"><span class="ol">ง</span>แอมพลิจูด</button>
-      </div><div class="expl">✅ ความดังเสียงขึ้นอยู่กับแอมพลิจูด (ขนาดการสั่น) ยิ่งสั่นมาก เสียงยิ่งดัง</div></div>
-
-      <div class="qcard" data-ans="ข"><div class="qnum">ข้อที่ 5 / 10</div><div class="qtxt">เสียงไม่สามารถเดินทางผ่านสิ่งใดได้?</div><div class="opts">
-        <button class="opt" onclick="pickAns(this)"><span class="ol">ก</span>น้ำ</button>
-        <button class="opt" onclick="pickAns(this)"><span class="ol">ข</span>สุญญากาศ</button>
-        <button class="opt" onclick="pickAns(this)"><span class="ol">ค</span>เหล็ก</button>
-        <button class="opt" onclick="pickAns(this)"><span class="ol">ง</span>อากาศ</button>
-      </div><div class="expl">✅ เสียงต้องอาศัยตัวกลางในการเดินทาง จึงไม่สามารถเดินทางในสุญญากาศได้</div></div>
-
-      <div class="qcard" data-ans="ก"><div class="qnum">ข้อที่ 6 / 10</div><div class="qtxt">เสียงดังเกินกี่เดซิเบลที่อาจทำให้หูเสื่อม?</div><div class="opts">
-        <button class="opt" onclick="pickAns(this)"><span class="ol">ก</span>85 dB</button>
-        <button class="opt" onclick="pickAns(this)"><span class="ol">ข</span>20 dB</button>
-        <button class="opt" onclick="pickAns(this)"><span class="ol">ค</span>60 dB</button>
-        <button class="opt" onclick="pickAns(this)"><span class="ol">ง</span>40 dB</button>
-      </div><div class="expl">✅ การได้ยินเสียงดังเกิน 85 dB เป็นเวลานาน อาจทำให้ประสาทหูเสื่อม</div></div>
-
-      <div class="qcard" data-ans="ค"><div class="qnum">ข้อที่ 7 / 10</div><div class="qtxt">อวัยวะใดรับคลื่นเสียงจากภายนอกก่อน?</div><div class="opts">
-        <button class="opt" onclick="pickAns(this)"><span class="ol">ก</span>หูชั้นใน</button>
-        <button class="opt" onclick="pickAns(this)"><span class="ol">ข</span>เยื่อแก้วหู</button>
-        <button class="opt" onclick="pickAns(this)"><span class="ol">ค</span>ใบหูและช่องหู</button>
-        <button class="opt" onclick="pickAns(this)"><span class="ol">ง</span>เส้นประสาทหู</button>
-      </div><div class="expl">✅ ใบหูและช่องหูทำหน้าที่รับและนำคลื่นเสียงเข้าสู่หู ก่อนไปสั่นเยื่อแก้วหู</div></div>
-
-      <div class="qcard" data-ans="ข"><div class="qnum">ข้อที่ 8 / 10</div><div class="qtxt">กีตาร์กับขลุ่ยบรรเลงโน้ตเดียวกัน เสียงต่างกันเพราะอะไร?</div><div class="opts">
-        <button class="opt" onclick="pickAns(this)"><span class="ol">ก</span>ความถี่ต่างกัน</button>
-        <button class="opt" onclick="pickAns(this)"><span class="ol">ข</span>คุณภาพเสียง (Timbre) ต่างกัน</button>
-        <button class="opt" onclick="pickAns(this)"><span class="ol">ค</span>ความดังต่างกัน</button>
-        <button class="opt" onclick="pickAns(this)"><span class="ol">ง</span>ตัวกลางต่างกัน</button>
-      </div><div class="expl">✅ Timbre คือสีสันเสียงเฉพาะของแต่ละเครื่องดนตรี ทำให้เราแยกเสียงกีตาร์จากขลุ่ยได้แม้บรรเลงโน้ตเดียวกัน</div></div>
-
-      <div class="qcard" data-ans="ง"><div class="qnum">ข้อที่ 9 / 10</div><div class="qtxt">ทำไมในอวกาศจึงไม่ได้ยินเสียง?</div><div class="opts">
-        <button class="opt" onclick="pickAns(this)"><span class="ol">ก</span>เพราะอากาศร้อนเกิน</button>
-        <button class="opt" onclick="pickAns(this)"><span class="ol">ข</span>เพราะเสียงเดินทางช้าเกิน</button>
-        <button class="opt" onclick="pickAns(this)"><span class="ol">ค</span>เพราะหูไม่ทำงาน</button>
-        <button class="opt" onclick="pickAns(this)"><span class="ol">ง</span>เพราะไม่มีตัวกลาง (สุญญากาศ)</button>
-      </div><div class="expl">✅ อวกาศเป็นสุญญากาศ ไม่มีโมเลกุลใดส่งถ่ายการสั่นสะเทือน เสียงจึงไม่สามารถเดินทางได้</div></div>
-
-      <div class="qcard" data-ans="ก"><div class="qnum">ข้อที่ 10 / 10</div><div class="qtxt">ข้อใดช่วยป้องกันอันตรายจากเสียงดัง?</div><div class="opts">
-        <button class="opt" onclick="pickAns(this)"><span class="ol">ก</span>ใส่ที่ครอบหูเมื่ออยู่ในสภาพแวดล้อมเสียงดัง</button>
-        <button class="opt" onclick="pickAns(this)"><span class="ol">ข</span>ฟังเพลงดังมากขึ้นเรื่อยๆ</button>
-        <button class="opt" onclick="pickAns(this)"><span class="ol">ค</span>อยู่ใกล้แหล่งกำเนิดเสียงมากขึ้น</button>
-        <button class="opt" onclick="pickAns(this)"><span class="ol">ง</span>เปิดเสียงทีวีดังๆ</button>
-      </div><div class="expl">✅ การใส่ที่ครอบหูหรืออุดหูช่วยลดความดังเสียงที่ถึงหู ป้องกันประสาทหูเสื่อม</div></div>
-    </div>
-    <div class="score-banner" id="sc-p4c3"><div class="snum" id="sn-p4c3"></div><p id="sp-p4c3"></p></div>
-    <button class="btn-submit" onclick="submitQuiz('p4c3')">ส่งคำตอบ 📝</button>
-  </div>
-  <div class="tab-content" id="p4c3-ex">
-    <div class="excard" style="border-left:5px solid #a855f7"><h4 style="color:#7e22ce">✏️ เติมคำ: คุณสมบัติเสียง</h4>
-      <p>เสียงแหลม-ทุ้ม ขึ้นกับ → <input class="fi" data-answer="ความถี่" style="width:160px;display:inline-block"></p>
-      <p style="margin-top:8px">เสียงดัง-เบา ขึ้นกับ → <input class="fi" data-answer="แอมพลิจูด" style="width:160px;display:inline-block"></p>
-      <button class="btn-chk" style="background:#a855f7" onclick="chkFill(this)">ตรวจคำตอบ</button>
-    </div>
-  </div>
-</div>
-
-<!-- P4 CH4: วัสดุรอบตัว -->
-<div class="chapter-page" id="p4-ch4">
-  <button class="back-btn" onclick="showGHome('p4')">← กลับ ป.4</button>
-  <div class="ch-header" style="background:linear-gradient(135deg,#f97316,#eab308)">
-    <div class="big-icon">🧱</div>
-    <div><h2>บทที่ 4: วัสดุรอบตัว</h2><p>สมบัติของวัสดุ การเปลี่ยนแปลง การเลือกใช้วัสดุอย่างเหมาะสม</p></div>
-  </div>
-  <div class="tabs">
-    <button class="tab-btn t4 active" onclick="swTab(this,'p4c4','ct')">📖 เนื้อหา</button>
-    <button class="tab-btn t4" onclick="swTab(this,'p4c4','qz')">🧪 แบบทดสอบ (10 ข้อ)</button>
-    <button class="tab-btn t4" onclick="swTab(this,'p4c4','ex')">✏️ แบบฝึกหัด</button>
-  </div>
-  <div class="tab-content active" id="p4c4-ct">
-    <div class="cs" style="border-left:5px solid #f97316">
-      <h3 style="color:#c2410c">🧱 สมบัติของวัสดุ</h3>
-      <table><tr><th class="o">สมบัติ</th><th class="o">ความหมาย</th><th class="o">ตัวอย่าง</th></tr>
-        <tr><td>ความแข็ง</td><td>ทนต่อการขูดขีด</td><td>เพชร เหล็ก หิน</td></tr>
-        <tr><td>ความยืดหยุ่น</td><td>คืนรูปได้</td><td>ยาง สปริง</td></tr>
-        <tr><td>การนำไฟฟ้า</td><td>ยอมให้กระแสไฟผ่าน</td><td>ทองแดง เหล็ก</td></tr>
-        <tr><td>การนำความร้อน</td><td>ถ่ายโอนความร้อนได้ดี</td><td>โลหะ</td></tr>
-        <tr><td>ความโปร่งแสง</td><td>ยอมให้แสงผ่าน</td><td>กระจก น้ำ</td></tr>
-        <tr><td>การดูดซึมน้ำ</td><td>ดูดซึมน้ำได้</td><td>ฟองน้ำ กระดาษ</td></tr>
-      </table>
-    </div>
-    <div class="cs" style="border-left:5px solid #f97316">
-      <h3 style="color:#c2410c">🔄 การเปลี่ยนแปลงของวัสดุ</h3>
-      <div class="ib orange"><strong>🌡️ ประเภทการเปลี่ยนแปลง</strong>
-        <ul class="sl"><li><strong>การเปลี่ยนแปลงที่ผันกลับได้</strong> – น้ำแข็งละลาย น้ำกลายเป็นไอ ดินเหนียวถูกปั้น</li><li><strong>การเปลี่ยนแปลงที่ผันกลับไม่ได้</strong> – กระดาษไหม้ เหล็กเป็นสนิม ไข่สุก ซีเมนต์แข็งตัว</li></ul>
-      </div>
-      <div class="ib green"><strong>♻️ การรีไซเคิลวัสดุ</strong><p>วัสดุบางชนิดสามารถนำกลับมาใช้ใหม่ได้ เช่น แก้ว กระดาษ พลาสติก โลหะ การรีไซเคิลช่วยลดขยะและประหยัดทรัพยากร</p></div>
-    </div>
-  </div>
-  <div class="tab-content" id="p4c4-qz">
-    <div class="quiz-wrap" id="qw-p4c4">
-      <div class="qcard" data-ans="ค"><div class="qnum">ข้อที่ 1 / 10</div><div class="qtxt">วัสดุใดนำไฟฟ้าได้ดีที่สุด?</div><div class="opts">
-        <button class="opt" onclick="pickAns(this)"><span class="ol">ก</span>พลาสติก</button>
-        <button class="opt" onclick="pickAns(this)"><span class="ol">ข</span>ยาง</button>
-        <button class="opt" onclick="pickAns(this)"><span class="ol">ค</span>ทองแดง</button>
-        <button class="opt" onclick="pickAns(this)"><span class="ol">ง</span>ไม้</button>
-      </div><div class="expl">✅ ทองแดงเป็นโลหะที่นำไฟฟ้าได้ดีมาก จึงนิยมใช้ทำสายไฟฟ้า</div></div>
-
-      <div class="qcard" data-ans="ข"><div class="qnum">ข้อที่ 2 / 10</div><div class="qtxt">ยางมีสมบัติเด่นคืออะไร?</div><div class="opts">
-        <button class="opt" onclick="pickAns(this)"><span class="ol">ก</span>ความแข็ง</button>
-        <button class="opt" onclick="pickAns(this)"><span class="ol">ข</span>ความยืดหยุ่น</button>
-        <button class="opt" onclick="pickAns(this)"><span class="ol">ค</span>การนำไฟฟ้า</button>
-        <button class="opt" onclick="pickAns(this)"><span class="ol">ง</span>ความโปร่งแสง</button>
-      </div><div class="expl">✅ ยางมีความยืดหยุ่นสูง เมื่อดึงออกแล้วปล่อยจะคืนรูปร่างเดิม</div></div>
-
-      <div class="qcard" data-ans="ง"><div class="qnum">ข้อที่ 3 / 10</div><div class="qtxt">การเปลี่ยนแปลงใดผันกลับไม่ได้?</div><div class="opts">
-        <button class="opt" onclick="pickAns(this)"><span class="ol">ก</span>น้ำแข็งละลาย</button>
-        <button class="opt" onclick="pickAns(this)"><span class="ol">ข</span>ดินน้ำมันถูกปั้น</button>
-        <button class="opt" onclick="pickAns(this)"><span class="ol">ค</span>น้ำกลายเป็นไอ</button>
-        <button class="opt" onclick="pickAns(this)"><span class="ol">ง</span>กระดาษถูกเผาไหม้</button>
-      </div><div class="expl">✅ กระดาษไหม้เปลี่ยนเป็นเถ้าถ่าน ไม่สามารถนำกลับมาเป็นกระดาษได้อีก = ผันกลับไม่ได้</div></div>
-
-      <div class="qcard" data-ans="ก"><div class="qnum">ข้อที่ 4 / 10</div><div class="qtxt">ทำไมจึงใช้ไม้หรือพลาสติกทำด้ามช้อนส้อม?</div><div class="opts">
-        <button class="opt" onclick="pickAns(this)"><span class="ol">ก</span>เป็นฉนวนความร้อน ไม่นำความร้อน</button>
-        <button class="opt" onclick="pickAns(this)"><span class="ol">ข</span>นำความร้อนได้ดี</button>
-        <button class="opt" onclick="pickAns(this)"><span class="ol">ค</span>มีความแข็งมาก</button>
-        <button class="opt" onclick="pickAns(this)"><span class="ol">ง</span>นำไฟฟ้าได้ดี</button>
-      </div><div class="expl">✅ ไม้และพลาสติกเป็นฉนวนความร้อน ทำให้จับด้ามไม่ร้อนเมื่อใช้กับอาหารร้อน</div></div>
-
-      <div class="qcard" data-ans="ค"><div class="qnum">ข้อที่ 5 / 10</div><div class="qtxt">สมบัติใดที่ทำให้กระจกหน้าต่างมีประโยชน์?</div><div class="opts">
-        <button class="opt" onclick="pickAns(this)"><span class="ol">ก</span>ความแข็ง</button>
-        <button class="opt" onclick="pickAns(this)"><span class="ol">ข</span>การนำไฟฟ้า</button>
-        <button class="opt" onclick="pickAns(this)"><span class="ol">ค</span>ความโปร่งแสง</button>
-        <button class="opt" onclick="pickAns(this)"><span class="ol">ง</span>ความยืดหยุ่น</button>
-      </div><div class="expl">✅ กระจกเป็นวัตถุโปร่งแสง ยอมให้แสงผ่านได้ จึงใช้ทำหน้าต่างเพื่อให้แสงเข้ามาในห้อง</div></div>
-
-      <div class="qcard" data-ans="ข"><div class="qnum">ข้อที่ 6 / 10</div><div class="qtxt">การรีไซเคิลวัสดุมีประโยชน์อย่างไร?</div><div class="opts">
-        <button class="opt" onclick="pickAns(this)"><span class="ol">ก</span>ทำให้ขยะมีมากขึ้น</button>
-        <button class="opt" onclick="pickAns(this)"><span class="ol">ข</span>ลดขยะและประหยัดทรัพยากรธรรมชาติ</button>
-        <button class="opt" onclick="pickAns(this)"><span class="ol">ค</span>ทำให้วัสดุแข็งแรงขึ้น</button>
-        <button class="opt" onclick="pickAns(this)"><span class="ol">ง</span>ทำให้ใช้พลังงานมากขึ้น</button>
-      </div><div class="expl">✅ การรีไซเคิลลดปริมาณขยะ ประหยัดพลังงาน และช่วยอนุรักษ์ทรัพยากรธรรมชาติ</div></div>
-
-      <div class="qcard" data-ans="ง"><div class="qnum">ข้อที่ 7 / 10</div><div class="qtxt">วัสดุใดมีสมบัติการดูดซึมน้ำ?</div><div class="opts">
-        <button class="opt" onclick="pickAns(this)"><span class="ol">ก</span>แก้ว</button>
-        <button class="opt" onclick="pickAns(this)"><span class="ol">ข</span>โลหะ</button>
-        <button class="opt" onclick="pickAns(this)"><span class="ol">ค</span>พลาสติก</button>
-        <button class="opt" onclick="pickAns(this)"><span class="ol">ง</span>ฟองน้ำ</button>
-      </div><div class="expl">✅ ฟองน้ำมีรูพรุนมากมาย ทำให้ดูดซึมน้ำได้ดี ใช้ทำฟองน้ำอาบน้ำและเช็ดทำความสะอาด</div></div>
-
-      <div class="qcard" data-ans="ก"><div class="qnum">ข้อที่ 8 / 10</div><div class="qtxt">เหล็กเป็นสนิมเป็นการเปลี่ยนแปลงแบบใด?</div><div class="opts">
-        <button class="opt" onclick="pickAns(this)"><span class="ol">ก</span>ผันกลับไม่ได้</button>
-        <button class="opt" onclick="pickAns(this)"><span class="ol">ข</span>ผันกลับได้</button>
-        <button class="opt" onclick="pickAns(this)"><span class="ol">ค</span>ชั่วคราว</button>
-        <button class="opt" onclick="pickAns(this)"><span class="ol">ง</span>ทางกายภาพ</button>
-      </div><div class="expl">✅ เหล็กเป็นสนิมเกิดจากปฏิกิริยาเคมีกับออกซิเจน เป็นการเปลี่ยนแปลงที่ผันกลับไม่ได้</div></div>
-
-      <div class="qcard" data-ans="ค"><div class="qnum">ข้อที่ 9 / 10</div><div class="qtxt">ทำไมหม้อหุงข้าวจึงทำจากอลูมิเนียม?</div><div class="opts">
-        <button class="opt" onclick="pickAns(this)"><span class="ol">ก</span>เพราะโปร่งแสง</button>
-        <button class="opt" onclick="pickAns(this)"><span class="ol">ข</span>เพราะดูดซึมน้ำ</button>
-        <button class="opt" onclick="pickAns(this)"><span class="ol">ค</span>เพราะนำความร้อนได้ดี</button>
-        <button class="opt" onclick="pickAns(this)"><span class="ol">ง</span>เพราะยืดหยุ่น</button>
-      </div><div class="expl">✅ อลูมิเนียมเป็นโลหะที่นำความร้อนได้ดี ทำให้ความร้อนกระจายทั่วถึง เหมาะสำหรับทำภาชนะหุงต้ม</div></div>
-
-      <div class="qcard" data-ans="ข"><div class="qnum">ข้อที่ 10 / 10</div><div class="qtxt">วัสดุใดในบ้านที่สามารถรีไซเคิลได้?</div><div class="opts">
-        <button class="opt" onclick="pickAns(this)"><span class="ol">ก</span>เศษอาหาร</button>
-        <button class="opt" onclick="pickAns(this)"><span class="ol">ข</span>ขวดแก้ว</button>
-        <button class="opt" onclick="pickAns(this)"><span class="ol">ค</span>ยาง</button>
-        <button class="opt" onclick="pickAns(this)"><span class="ol">ง</span>ดิน</button>
-      </div><div class="expl">✅ ขวดแก้วสามารถนำไปหลอมแล้วผลิตเป็นขวดใหม่ได้ การรีไซเคิลแก้วประหยัดพลังงานได้มาก</div></div>
-    </div>
-    <div class="score-banner" id="sc-p4c4"><div class="snum" id="sn-p4c4"></div><p id="sp-p4c4"></p></div>
-    <button class="btn-submit" onclick="submitQuiz('p4c4')">ส่งคำตอบ 📝</button>
-  </div>
-  <div class="tab-content" id="p4c4-ex">
-    <div class="excard" style="border-left:5px solid #f97316"><h4 style="color:#c2410c">✏️ จำแนกการเปลี่ยนแปลง</h4>
-      <p>น้ำแข็งละลาย → ผันกลับ<input class="fi" data-answer="ได้" style="width:80px;display:inline-block"></p>
-      <p style="margin-top:8px">ไข่สุก → ผันกลับ<input class="fi" data-answer="ไม่ได้" style="width:80px;display:inline-block"></p>
-      <p style="margin-top:8px">น้ำเดือดกลายเป็นไอ → ผันกลับ<input class="fi" data-answer="ได้" style="width:80px;display:inline-block"></p>
-      <button class="btn-chk" style="background:#f97316" onclick="chkFill(this)">ตรวจคำตอบ</button>
-    </div>
-  </div>
-</div>
-
-<!-- P4 CH5: สภาพอากาศ -->
-<div class="chapter-page" id="p4-ch5">
-  <button class="back-btn" onclick="showGHome('p4')">← กลับ ป.4</button>
-  <div class="ch-header" style="background:linear-gradient(135deg,#0ea5e9,#38bdf8)">
-    <div class="big-icon">⛅</div>
-    <div><h2>บทที่ 5: สภาพอากาศ</h2><p>ปัจจัยที่มีผลต่อสภาพอากาศ ฤดูกาล การพยากรณ์อากาศ</p></div>
-  </div>
-  <div class="tabs">
-    <button class="tab-btn t4 active" onclick="swTab(this,'p4c5','ct')">📖 เนื้อหา</button>
-    <button class="tab-btn t4" onclick="swTab(this,'p4c5','qz')">🧪 แบบทดสอบ (10 ข้อ)</button>
-    <button class="tab-btn t4" onclick="swTab(this,'p4c5','ex')">✏️ แบบฝึกหัด</button>
-  </div>
-  <div class="tab-content active" id="p4c5-ct">
-    <div class="cs" style="border-left:5px solid #0ea5e9">
-      <h3 style="color:#0369a1">🌡️ ปัจจัยสภาพอากาศ</h3>
-      <table><tr><th class="b">ปัจจัย</th><th class="b">การวัด</th><th class="b">เครื่องมือ</th></tr>
-        <tr><td>อุณหภูมิ</td><td>องศาเซลเซียส (°C)</td><td>เทอร์โมมิเตอร์</td></tr>
-        <tr><td>ความชื้น</td><td>เปอร์เซ็นต์ (%)</td><td>ไฮโกรมิเตอร์</td></tr>
-        <tr><td>ความกดอากาศ</td><td>มิลลิบาร์ (mb)</td><td>บารอมิเตอร์</td></tr>
-        <tr><td>ปริมาณฝน</td><td>มิลลิเมตร (mm)</td><td>เรนเกจ</td></tr>
-        <tr><td>ความเร็วลม</td><td>กม./ชม.</td><td>แอนิโมมิเตอร์</td></tr>
-        <tr><td>ทิศทางลม</td><td>ทิศ</td><td>ลูกศรลม (Wind vane)</td></tr>
-      </table>
-    </div>
-    <div class="cs" style="border-left:5px solid #0ea5e9">
-      <h3 style="color:#0369a1">🍂 ฤดูกาลของไทย</h3>
-      <div class="ib blue"><strong>🇹🇭 3 ฤดูกาลของประเทศไทย</strong>
-        <ul class="sl"><li><strong>ฤดูร้อน</strong> (มีนาคม–พฤษภาคม) – ร้อนจัด อุณหภูมิสูง ลมร้อน</li><li><strong>ฤดูฝน</strong> (มิถุนายน–ตุลาคม) – ฝนตกชุก มรสุมตะวันตกเฉียงใต้</li><li><strong>ฤดูหนาว</strong> (พฤศจิกายน–กุมภาพันธ์) – อากาศเย็น มรสุมตะวันออกเฉียงเหนือ</li></ul>
-      </div>
-    </div>
-    <div class="cs" style="border-left:5px solid #0ea5e9">
-      <h3 style="color:#0369a1">☁️ ประเภทของเมฆ</h3>
-      <div class="ib orange"><strong>🌥️ เมฆที่ควรรู้</strong>
-        <ul class="sl"><li><strong>เมฆคิวมูลัส</strong> – ฟูฟ่อง ก้อนขาวๆ มักเห็นในวันอากาศดี</li><li><strong>เมฆสเตรตัส</strong> – แผ่เป็นชั้น ท้องฟ้าครึ้ม มักทำให้เกิดฝนพรำ</li><li><strong>เมฆเซอร์รัส</strong> – บาง เส้นขาวบางๆ ระดับสูง บอกอากาศดี</li><li><strong>เมฆคิวมูโลนิมบัส</strong> – ก้อนใหญ่สีดำ เกิดฟ้าแลบ ฟ้าร้อง พายุ</li></ul>
-      </div>
-    </div>
-  </div>
-  <div class="tab-content" id="p4c5-qz">
-    <div class="quiz-wrap" id="qw-p4c5">
-      <div class="qcard" data-ans="ก"><div class="qnum">ข้อที่ 1 / 10</div><div class="qtxt">เครื่องมือใดใช้วัดอุณหภูมิอากาศ?</div><div class="opts">
-        <button class="opt" onclick="pickAns(this)"><span class="ol">ก</span>เทอร์โมมิเตอร์</button>
-        <button class="opt" onclick="pickAns(this)"><span class="ol">ข</span>บารอมิเตอร์</button>
-        <button class="opt" onclick="pickAns(this)"><span class="ol">ค</span>ไฮโกรมิเตอร์</button>
-        <button class="opt" onclick="pickAns(this)"><span class="ol">ง</span>แอนิโมมิเตอร์</button>
-      </div><div class="expl">✅ เทอร์โมมิเตอร์ใช้วัดอุณหภูมิ มีหน่วยเป็นองศาเซลเซียส (°C) หรือฟาเรนไฮต์</div></div>
-
-      <div class="qcard" data-ans="ค"><div class="qnum">ข้อที่ 2 / 10</div><div class="qtxt">ฤดูฝนของไทยอยู่ในช่วงเดือนใด?</div><div class="opts">
-        <button class="opt" onclick="pickAns(this)"><span class="ol">ก</span>มกราคม–มีนาคม</button>
-        <button class="opt" onclick="pickAns(this)"><span class="ol">ข</span>มีนาคม–พฤษภาคม</button>
-        <button class="opt" onclick="pickAns(this)"><span class="ol">ค</span>มิถุนายน–ตุลาคม</button>
-        <button class="opt" onclick="pickAns(this)"><span class="ol">ง</span>พฤศจิกายน–กุมภาพันธ์</button>
-      </div><div class="expl">✅ ฤดูฝนของไทยอยู่ในช่วงมิถุนายน–ตุลาคม เกิดจากมรสุมตะวันตกเฉียงใต้พัดพาความชื้น</div></div>
-
-      <div class="qcard" data-ans="ข"><div class="qnum">ข้อที่ 3 / 10</div><div class="qtxt">ไฮโกรมิเตอร์ใช้วัดสิ่งใด?</div><div class="opts">
-        <button class="opt" onclick="pickAns(this)"><span class="ol">ก</span>อุณหภูมิ</button>
-        <button class="opt" onclick="pickAns(this)"><span class="ol">ข</span>ความชื้นในอากาศ</button>
-        <button class="opt" onclick="pickAns(this)"><span class="ol">ค</span>ความกดอากาศ</button>
-        <button class="opt" onclick="pickAns(this)"><span class="ol">ง</span>ความเร็วลม</button>
-      </div><div class="expl">✅ ไฮโกรมิเตอร์วัดความชื้นสัมพัทธ์ในอากาศ มีหน่วยเป็นเปอร์เซ็นต์ (%)</div></div>
-
-      <div class="qcard" data-ans="ง"><div class="qnum">ข้อที่ 4 / 10</div><div class="qtxt">เมฆคิวมูโลนิมบัสบ่งบอกถึงอะไร?</div><div class="opts">
-        <button class="opt" onclick="pickAns(this)"><span class="ol">ก</span>อากาศดี ไม่มีฝน</button>
-        <button class="opt" onclick="pickAns(this)"><span class="ol">ข</span>อากาศหนาวเย็น</button>
-        <button class="opt" onclick="pickAns(this)"><span class="ol">ค</span>แดดออกมาก</button>
-        <button class="opt" onclick="pickAns(this)"><span class="ol">ง</span>พายุ ฟ้าแลบ ฝนหนัก</button>
-      </div><div class="expl">✅ เมฆคิวมูโลนิมบัสเป็นเมฆฝนฟ้าคะนอง มีขนาดใหญ่ สีดำ ก่อให้เกิดพายุและฝนตกหนัก</div></div>
-
-      <div class="qcard" data-ans="ก"><div class="qnum">ข้อที่ 5 / 10</div><div class="qtxt">ฤดูหนาวของไทยเกิดจากมรสุมชนิดใด?</div><div class="opts">
-        <button class="opt" onclick="pickAns(this)"><span class="ol">ก</span>มรสุมตะวันออกเฉียงเหนือ</button>
-        <button class="opt" onclick="pickAns(this)"><span class="ol">ข</span>มรสุมตะวันตกเฉียงใต้</button>
-        <button class="opt" onclick="pickAns(this)"><span class="ol">ค</span>มรสุมเหนือ</button>
-        <button class="opt" onclick="pickAns(this)"><span class="ol">ง</span>มรสุมตะวันออก</button>
-      </div><div class="expl">✅ ฤดูหนาวของไทยเกิดจากมรสุมตะวันออกเฉียงเหนือที่พัดมาจากแผ่นดินใหญ่จีน นำอากาศเย็นและแห้งมาด้วย</div></div>
-
-      <div class="qcard" data-ans="ค"><div class="qnum">ข้อที่ 6 / 10</div><div class="qtxt">แอนิโมมิเตอร์ใช้วัดสิ่งใด?</div><div class="opts">
-        <button class="opt" onclick="pickAns(this)"><span class="ol">ก</span>ปริมาณฝน</button>
-        <button class="opt" onclick="pickAns(this)"><span class="ol">ข</span>ทิศทางลม</button>
-        <button class="opt" onclick="pickAns(this)"><span class="ol">ค</span>ความเร็วลม</button>
-        <button class="opt" onclick="pickAns(this)"><span class="ol">ง</span>ความชื้น</button>
-      </div><div class="expl">✅ แอนิโมมิเตอร์วัดความเร็วลม ส่วนทิศทางลมวัดด้วยลูกศรลม (Wind vane)</div></div>
-
-      <div class="qcard" data-ans="ข"><div class="qnum">ข้อที่ 7 / 10</div><div class="qtxt">ประเทศไทยมีกี่ฤดูกาล?</div><div class="opts">
-        <button class="opt" onclick="pickAns(this)"><span class="ol">ก</span>2 ฤดู</button>
-        <button class="opt" onclick="pickAns(this)"><span class="ol">ข</span>3 ฤดู</button>
-        <button class="opt" onclick="pickAns(this)"><span class="ol">ค</span>4 ฤดู</button>
-        <button class="opt" onclick="pickAns(this)"><span class="ol">ง</span>5 ฤดู</button>
-      </div><div class="expl">✅ ประเทศไทยมี 3 ฤดู คือ ฤดูร้อน ฤดูฝน และฤดูหนาว ต่างจากประเทศในเขตอบอุ่นที่มี 4 ฤดู</div></div>
-
-      <div class="qcard" data-ans="ง"><div class="qnum">ข้อที่ 8 / 10</div><div class="qtxt">เรนเกจใช้วัดสิ่งใด?</div><div class="opts">
-        <button class="opt" onclick="pickAns(this)"><span class="ol">ก</span>ความกดอากาศ</button>
-        <button class="opt" onclick="pickAns(this)"><span class="ol">ข</span>ความเร็วลม</button>
-        <button class="opt" onclick="pickAns(this)"><span class="ol">ค</span>อุณหภูมิ</button>
-        <button class="opt" onclick="pickAns(this)"><span class="ol">ง</span>ปริมาณน้ำฝน</button>
-      </div><div class="expl">✅ เรนเกจ (Rain gauge) ใช้วัดปริมาณน้ำฝนที่ตกใน 24 ชั่วโมง มีหน่วยเป็นมิลลิเมตร</div></div>
-
-      <div class="qcard" data-ans="ก"><div class="qnum">ข้อที่ 9 / 10</div><div class="qtxt">เมฆเซอร์รัสบ่งบอกถึงสภาพอากาศแบบใด?</div><div class="opts">
-        <button class="opt" onclick="pickAns(this)"><span class="ol">ก</span>อากาศดี ท้องฟ้าใส</button>
-        <button class="opt" onclick="pickAns(this)"><span class="ol">ข</span>ฝนจะตกหนัก</button>
-        <button class="opt" onclick="pickAns(this)"><span class="ol">ค</span>จะเกิดพายุ</button>
-        <button class="opt" onclick="pickAns(this)"><span class="ol">ง</span>อากาศหนาวจัด</button>
-      </div><div class="expl">✅ เมฆเซอร์รัสเป็นเมฆสูง บาง ลักษณะเป็นเส้นขาวๆ มักพบในวันอากาศดี ไม่ก่อให้เกิดฝน</div></div>
-
-      <div class="qcard" data-ans="ค"><div class="qnum">ข้อที่ 10 / 10</div><div class="qtxt">บารอมิเตอร์วัดสิ่งใด?</div><div class="opts">
-        <button class="opt" onclick="pickAns(this)"><span class="ol">ก</span>อุณหภูมิ</button>
-        <button class="opt" onclick="pickAns(this)"><span class="ol">ข</span>ความชื้น</button>
-        <button class="opt" onclick="pickAns(this)"><span class="ol">ค</span>ความกดอากาศ</button>
-        <button class="opt" onclick="pickAns(this)"><span class="ol">ง</span>ความเร็วลม</button>
-      </div><div class="expl">✅ บารอมิเตอร์วัดความกดอากาศ มีหน่วยเป็นมิลลิบาร์ ใช้ทำนายอากาศได้</div></div>
-    </div>
-    <div class="score-banner" id="sc-p4c5"><div class="snum" id="sn-p4c5"></div><p id="sp-p4c5"></p></div>
-    <button class="btn-submit" onclick="submitQuiz('p4c5')">ส่งคำตอบ 📝</button>
-  </div>
-  <div class="tab-content" id="p4c5-ex">
-    <div class="excard" style="border-left:5px solid #0ea5e9"><h4 style="color:#0369a1">✏️ จับคู่เครื่องมือวัดอากาศ</h4>
-      <p>วัดอุณหภูมิ → <input class="fi" data-answer="เทอร์โมมิเตอร์" style="width:200px;display:inline-block"></p>
-      <p style="margin-top:8px">วัดความเร็วลม → <input class="fi" data-answer="แอนิโมมิเตอร์" style="width:200px;display:inline-block"></p>
-      <p style="margin-top:8px">วัดปริมาณฝน → <input class="fi" data-answer="เรนเกจ" style="width:200px;display:inline-block"></p>
-      <button class="btn-chk" style="background:#0ea5e9" onclick="chkFill(this)">ตรวจคำตอบ</button>
-    </div>
-  </div>
-</div>
-
-
-<!-- ==================== P5 CHAPTERS (condensed with 5-question quiz) ==================== -->
-<!-- P5 CH1 -->
-<div class="chapter-page" id="p5-ch1">
-  <button class="back-btn" onclick="showGHome('p5')">← กลับ ป.5</button>
-  <div class="ch-header" style="background:linear-gradient(135deg,#f97316,#ef4444)"><div class="big-icon">🫀</div><div><h2>บทที่ 1: ระบบร่างกายมนุษย์</h2><p>ระบบหมุนเวียนเลือด ระบบหายใจ ระบบย่อยอาหาร</p></div></div>
-  <div class="tabs"><button class="tab-btn t5 active" onclick="swTab(this,'p5c1','ct')">📖 เนื้อหา</button><button class="tab-btn t5" onclick="swTab(this,'p5c1','qz')">🧪 แบบทดสอบ</button><button class="tab-btn t5" onclick="swTab(this,'p5c1','ex')">✏️ แบบฝึกหัด</button></div>
-  <div class="tab-content active" id="p5c1-ct">
-    <div class="cs" style="border-left:5px solid #f97316"><h3 style="color:#c2410c">🫀 ระบบหมุนเวียนเลือด</h3><p>หัวใจสูบฉีดเลือดผ่านเส้นเลือดไปทั่วร่างกาย เต้น 60-100 ครั้ง/นาที</p>
-      <div class="ib orange"><strong>❤️ องค์ประกอบ</strong><ul class="sl"><li>เส้นเลือดแดง – นำเลือดมีออกซิเจนออกจากหัวใจ</li><li>เส้นเลือดดำ – นำเลือดมี CO₂ กลับหัวใจ</li><li>หลอดเลือดฝอย – แลกเปลี่ยนสารกับเซลล์</li></ul></div></div>
-    <div class="cs" style="border-left:5px solid #f97316"><h3 style="color:#c2410c">🫁 ระบบหายใจ</h3><table><tr><th class="o">อวัยวะ</th><th class="o">หน้าที่</th></tr><tr><td>จมูก</td><td>กรองและอุ่นอากาศ</td></tr><tr><td>ปอด</td><td>แลกเปลี่ยนก๊าซ O₂/CO₂</td></tr><tr><td>กะบังลม</td><td>กล้ามเนื้อช่วยหายใจ</td></tr></table></div>
-    <div class="cs" style="border-left:5px solid #f97316"><h3 style="color:#c2410c">🍽️ ระบบย่อยอาหาร</h3><div class="ib yellow"><strong>🔄 เส้นทางอาหาร</strong><p style="text-align:center;font-size:14px;margin-top:5px">👄 ปาก → หลอดอาหาร → กระเพาะ → ลำไส้เล็ก → ลำไส้ใหญ่ → ทวารหนัก</p></div></div>
-  </div>
-  <div class="tab-content" id="p5c1-qz">
-    <div class="quiz-wrap" id="qw-p5c1">
-      <div class="qcard" data-ans="ข"><div class="qnum">ข้อที่ 1/5</div><div class="qtxt">อวัยวะใดสูบฉีดเลือด?</div><div class="opts"><button class="opt" onclick="pickAns(this)"><span class="ol">ก</span>ปอด</button><button class="opt" onclick="pickAns(this)"><span class="ol">ข</span>หัวใจ</button><button class="opt" onclick="pickAns(this)"><span class="ol">ค</span>ตับ</button><button class="opt" onclick="pickAns(this)"><span class="ol">ง</span>ไต</button></div><div class="expl">✅ หัวใจทำหน้าที่สูบฉีดเลือดไปทั่วร่างกายตลอดเวลา</div></div>
-      <div class="qcard" data-ans="ข"><div class="qnum">ข้อที่ 2/5</div><div class="qtxt">ก๊าซใดที่ร่างกายต้องการ?</div><div class="opts"><button class="opt" onclick="pickAns(this)"><span class="ol">ก</span>CO₂</button><button class="opt" onclick="pickAns(this)"><span class="ol">ข</span>ออกซิเจน</button><button class="opt" onclick="pickAns(this)"><span class="ol">ค</span>ไนโตรเจน</button><button class="opt" onclick="pickAns(this)"><span class="ol">ง</span>ไฮโดรเจน</button></div><div class="expl">✅ เซลล์ต้องการออกซิเจนในการผลิตพลังงาน</div></div>
-      <div class="qcard" data-ans="ค"><div class="qnum">ข้อที่ 3/5</div><div class="qtxt">อวัยวะใดดูดซึมสารอาหารเข้าเลือด?</div><div class="opts"><button class="opt" onclick="pickAns(this)"><span class="ol">ก</span>กระเพาะ</button><button class="opt" onclick="pickAns(this)"><span class="ol">ข</span>ลำไส้ใหญ่</button><button class="opt" onclick="pickAns(this)"><span class="ol">ค</span>ลำไส้เล็ก</button><button class="opt" onclick="pickAns(this)"><span class="ol">ง</span>ปาก</button></div><div class="expl">✅ ลำไส้เล็กมีวิลไลดูดซึมสารอาหารเข้าเลือด</div></div>
-      <div class="qcard" data-ans="ก"><div class="qnum">ข้อที่ 4/5</div><div class="qtxt">เส้นเลือดแดงทำหน้าที่ใด?</div><div class="opts"><button class="opt" onclick="pickAns(this)"><span class="ol">ก</span>นำเลือดมีออกซิเจนออกจากหัวใจ</button><button class="opt" onclick="pickAns(this)"><span class="ol">ข</span>นำเลือดกลับหัวใจ</button><button class="opt" onclick="pickAns(this)"><span class="ol">ค</span>แลกเปลี่ยนสาร</button><button class="opt" onclick="pickAns(this)"><span class="ol">ง</span>สร้างเม็ดเลือด</button></div><div class="expl">✅ เส้นเลือดแดงนำเลือดที่มีออกซิเจนสูงออกจากหัวใจ</div></div>
-      <div class="qcard" data-ans="ค"><div class="qnum">ข้อที่ 5/5</div><div class="qtxt">กะบังลมทำหน้าที่ใด?</div><div class="opts"><button class="opt" onclick="pickAns(this)"><span class="ol">ก</span>แลกเปลี่ยนก๊าซ</button><button class="opt" onclick="pickAns(this)"><span class="ol">ข</span>กรองอากาศ</button><button class="opt" onclick="pickAns(this)"><span class="ol">ค</span>กล้ามเนื้อช่วยหายใจ</button><button class="opt" onclick="pickAns(this)"><span class="ol">ง</span>สร้างเม็ดเลือด</button></div><div class="expl">✅ กะบังลมหดตัว-คลายตัวทำให้ปอดขยายและหดตัว</div></div>
-    </div>
-    <div class="score-banner" id="sc-p5c1"><div class="snum" id="sn-p5c1"></div><p id="sp-p5c1"></p></div>
-    <button class="btn-submit" onclick="submitQuiz('p5c1')">ส่งคำตอบ 📝</button>
-  </div>
-  <div class="tab-content" id="p5c1-ex"><div class="excard" style="border-left:5px solid #f97316"><h4 style="color:#c2410c">✏️ จับคู่ระบบ</h4>
-    <p>ปอด → ระบบ<input class="fi" data-answer="หายใจ" style="width:160px;display:inline-block"></p>
-    <p style="margin-top:8px">ลำไส้เล็ก → ระบบ<input class="fi" data-answer="ย่อยอาหาร" style="width:160px;display:inline-block"></p>
-    <button class="btn-chk" style="background:#f97316" onclick="chkFill(this)">ตรวจ</button></div>
-  </div>
-</div>
-
-<!-- P5 CH2-5 abbreviated -->
-<div class="chapter-page" id="p5-ch2">
-  <button class="back-btn" onclick="showGHome('p5')">← กลับ ป.5</button>
-  <div class="ch-header" style="background:linear-gradient(135deg,#eab308,#f97316)"><div class="big-icon">🏋️</div><div><h2>บทที่ 2: แรงและพลังงาน</h2><p>แรงโน้มถ่วง เครื่องกลอย่างง่าย พลังงาน</p></div></div>
-  <div class="tabs"><button class="tab-btn t5 active" onclick="swTab(this,'p5c2','ct')">📖 เนื้อหา</button><button class="tab-btn t5" onclick="swTab(this,'p5c2','qz')">🧪 แบบทดสอบ</button><button class="tab-btn t5" onclick="swTab(this,'p5c2','ex')">✏️ แบบฝึกหัด</button></div>
-  <div class="tab-content active" id="p5c2-ct">
-    <div class="cs" style="border-left:5px solid #eab308"><h3 style="color:#854d0e">⚡ ประเภทของแรง</h3>
-      <table><tr><th class="o">แรง</th><th class="o">ลักษณะ</th></tr><tr><td>โน้มถ่วง</td><td>ดึงวัตถุสู่โลก</td></tr><tr><td>เสียดทาน</td><td>ต้านการเคลื่อนที่</td></tr><tr><td>แม่เหล็ก</td><td>ดึงดูด/ผลักวัตถุแม่เหล็ก</td></tr><tr><td>ลอยตัว</td><td>ของเหลวดันวัตถุขึ้น</td></tr></table></div>
-    <div class="cs" style="border-left:5px solid #eab308"><h3 style="color:#854d0e">🔧 เครื่องกลอย่างง่าย</h3><div class="ib yellow"><strong>🛠️</strong><ul class="sl"><li>คาน – กรรไกร ชะแลง</li><li>รอก – รอกธง ลิฟต์</li><li>พื้นเอียง – ทางลาด</li><li>ลิ่ม – มีด ขวาน</li><li>สกรู – น็อต สว่าน</li></ul></div></div>
-  </div>
-  <div class="tab-content" id="p5c2-qz">
-    <div class="quiz-wrap" id="qw-p5c2">
-      <div class="qcard" data-ans="ข"><div class="qnum">ข้อที่ 1/5</div><div class="qtxt">แรงใดทำให้วัตถุตกสู่พื้น?</div><div class="opts"><button class="opt" onclick="pickAns(this)"><span class="ol">ก</span>เสียดทาน</button><button class="opt" onclick="pickAns(this)"><span class="ol">ข</span>โน้มถ่วง</button><button class="opt" onclick="pickAns(this)"><span class="ol">ค</span>แม่เหล็ก</button><button class="opt" onclick="pickAns(this)"><span class="ol">ง</span>ลอยตัว</button></div><div class="expl">✅ แรงโน้มถ่วงของโลกดึงวัตถุทุกชิ้นลงสู่พื้น</div></div>
-      <div class="qcard" data-ans="ค"><div class="qnum">ข้อที่ 2/5</div><div class="qtxt">กรรไกรใช้หลักการเครื่องกลใด?</div><div class="opts"><button class="opt" onclick="pickAns(this)"><span class="ol">ก</span>พื้นเอียง</button><button class="opt" onclick="pickAns(this)"><span class="ol">ข</span>รอก</button><button class="opt" onclick="pickAns(this)"><span class="ol">ค</span>คาน</button><button class="opt" onclick="pickAns(this)"><span class="ol">ง</span>สกรู</button></div><div class="expl">✅ กรรไกรใช้หลักการคาน มีจุดหมุนอยู่ตรงกลาง</div></div>
-      <div class="qcard" data-ans="ข"><div class="qnum">ข้อที่ 3/5</div><div class="qtxt">พัดลมเปลี่ยนพลังงานอะไร?</div><div class="opts"><button class="opt" onclick="pickAns(this)"><span class="ol">ก</span>แสง→ไฟฟ้า</button><button class="opt" onclick="pickAns(this)"><span class="ol">ข</span>ไฟฟ้า→กล</button><button class="opt" onclick="pickAns(this)"><span class="ol">ค</span>ความร้อน→ไฟฟ้า</button><button class="opt" onclick="pickAns(this)"><span class="ol">ง</span>เคมี→แสง</button></div><div class="expl">✅ พัดลมเปลี่ยนไฟฟ้าเป็นพลังงานกล (การหมุน)</div></div>
-      <div class="qcard" data-ans="ข"><div class="qnum">ข้อที่ 4/5</div><div class="qtxt">แรงเสียดทานมีประโยชน์อย่างไร?</div><div class="opts"><button class="opt" onclick="pickAns(this)"><span class="ol">ก</span>ทำให้เคลื่อนที่เร็วขึ้น</button><button class="opt" onclick="pickAns(this)"><span class="ol">ข</span>ช่วยหยุดและจับวัตถุ</button><button class="opt" onclick="pickAns(this)"><span class="ol">ค</span>ทำให้ลอยน้ำ</button><button class="opt" onclick="pickAns(this)"><span class="ol">ง</span>เปลี่ยนทิศแรง</button></div><div class="expl">✅ แรงเสียดทานช่วยให้เราเดินไม่ลื่น และเบรกรถได้</div></div>
-      <div class="qcard" data-ans="ค"><div class="qnum">ข้อที่ 5/5</div><div class="qtxt">ทางลาดคือเครื่องกลชนิดใด?</div><div class="opts"><button class="opt" onclick="pickAns(this)"><span class="ol">ก</span>คาน</button><button class="opt" onclick="pickAns(this)"><span class="ol">ข</span>รอก</button><button class="opt" onclick="pickAns(this)"><span class="ol">ค</span>พื้นเอียง</button><button class="opt" onclick="pickAns(this)"><span class="ol">ง</span>สกรู</button></div><div class="expl">✅ ทางลาดเป็นพื้นเอียง ช่วยลดแรงที่ต้องใช้ยกของ</div></div>
-    </div>
-    <div class="score-banner" id="sc-p5c2"><div class="snum" id="sn-p5c2"></div><p id="sp-p5c2"></p></div>
-    <button class="btn-submit" onclick="submitQuiz('p5c2')">ส่งคำตอบ 📝</button>
-  </div>
-  <div class="tab-content" id="p5c2-ex"><div class="excard" style="border-left:5px solid #eab308"><h4 style="color:#854d0e">✏️ จับคู่เครื่องกล</h4>
-    <p>มีด → <input class="fi" data-answer="ลิ่ม" style="width:120px;display:inline-block"></p>
-    <p style="margin-top:8px">น็อต → <input class="fi" data-answer="สกรู" style="width:120px;display:inline-block"></p>
-    <button class="btn-chk" style="background:#eab308;color:#1c1917" onclick="chkFill(this)">ตรวจ</button></div>
-  </div>
-</div>
-
-<div class="chapter-page" id="p5-ch3">
-  <button class="back-btn" onclick="showGHome('p5')">← กลับ ป.5</button>
-  <div class="ch-header" style="background:linear-gradient(135deg,#a855f7,#6366f1)"><div class="big-icon">🧲</div><div><h2>บทที่ 3: วัสดุและสมบัติ</h2><p>ตัวนำ ฉนวน ความแข็ง ความยืดหยุ่น 3R</p></div></div>
-  <div class="tabs"><button class="tab-btn t5 active" onclick="swTab(this,'p5c3','ct')">📖 เนื้อหา</button><button class="tab-btn t5" onclick="swTab(this,'p5c3','qz')">🧪 แบบทดสอบ</button><button class="tab-btn t5" onclick="swTab(this,'p5c3','ex')">✏️ แบบฝึกหัด</button></div>
-  <div class="tab-content active" id="p5c3-ct">
-    <div class="cs" style="border-left:5px solid #a855f7"><h3 style="color:#7e22ce">🔬 สมบัติวัสดุ</h3><table><tr><th class="p">สมบัติ</th><th class="p">ตัวอย่าง</th></tr><tr><td>แข็ง</td><td>เพชร เหล็ก</td></tr><tr><td>ยืดหยุ่น</td><td>ยาง สปริง</td></tr><tr><td>นำไฟฟ้า</td><td>ทองแดง เหล็ก</td></tr><tr><td>ฉนวนไฟฟ้า</td><td>พลาสติก ยาง</td></tr></table></div>
-    <div class="cs" style="border-left:5px solid #a855f7"><h3 style="color:#7e22ce">♻️ หลัก 3R</h3><div class="ib purple"><strong>🌍</strong><ul class="sl"><li>Reduce – ลดการใช้</li><li>Reuse – ใช้ซ้ำ</li><li>Recycle – แปรรูปใหม่</li></ul></div></div>
-  </div>
-  <div class="tab-content" id="p5c3-qz">
-    <div class="quiz-wrap" id="qw-p5c3">
-      <div class="qcard" data-ans="ก"><div class="qnum">ข้อที่ 1/5</div><div class="qtxt">วัสดุใดนำไฟฟ้าได้?</div><div class="opts"><button class="opt" onclick="pickAns(this)"><span class="ol">ก</span>ทองแดง</button><button class="opt" onclick="pickAns(this)"><span class="ol">ข</span>ยาง</button><button class="opt" onclick="pickAns(this)"><span class="ol">ค</span>พลาสติก</button><button class="opt" onclick="pickAns(this)"><span class="ol">ง</span>แก้ว</button></div><div class="expl">✅ ทองแดงเป็นโลหะที่นำไฟฟ้าได้ดี ใช้ทำสายไฟ</div></div>
-      <div class="qcard" data-ans="ข"><div class="qnum">ข้อที่ 2/5</div><div class="qtxt">ด้ามหม้อพลาสติกเพราะอะไร?</div><div class="opts"><button class="opt" onclick="pickAns(this)"><span class="ol">ก</span>นำไฟฟ้า</button><button class="opt" onclick="pickAns(this)"><span class="ol">ข</span>ฉนวนความร้อน</button><button class="opt" onclick="pickAns(this)"><span class="ol">ค</span>นำความร้อน</button><button class="opt" onclick="pickAns(this)"><span class="ol">ง</span>ราคาถูก</button></div><div class="expl">✅ พลาสติกเป็นฉนวนความร้อน จับได้โดยไม่ร้อน</div></div>
-      <div class="qcard" data-ans="ค"><div class="qnum">ข้อที่ 3/5</div><div class="qtxt">วัสดุใดมีความยืดหยุ่น?</div><div class="opts"><button class="opt" onclick="pickAns(this)"><span class="ol">ก</span>แก้ว</button><button class="opt" onclick="pickAns(this)"><span class="ol">ข</span>หิน</button><button class="opt" onclick="pickAns(this)"><span class="ol">ค</span>ยาง</button><button class="opt" onclick="pickAns(this)"><span class="ol">ง</span>ไม้</button></div><div class="expl">✅ ยางมีความยืดหยุ่นสูง คืนรูปเมื่อแรงหยุด</div></div>
-      <div class="qcard" data-ans="ค"><div class="qnum">ข้อที่ 4/5</div><div class="qtxt">นำกระดาษเก่าผลิตใหม่คือข้อใด?</div><div class="opts"><button class="opt" onclick="pickAns(this)"><span class="ol">ก</span>Reduce</button><button class="opt" onclick="pickAns(this)"><span class="ol">ข</span>Reuse</button><button class="opt" onclick="pickAns(this)"><span class="ol">ค</span>Recycle</button><button class="opt" onclick="pickAns(this)"><span class="ol">ง</span>Refuse</button></div><div class="expl">✅ Recycle = แปรรูปวัสดุเก่าให้เป็นสินค้าใหม่</div></div>
-      <div class="qcard" data-ans="ข"><div class="qnum">ข้อที่ 5/5</div><div class="qtxt">กระจกใสเป็นวัสดุแบบใด?</div><div class="opts"><button class="opt" onclick="pickAns(this)"><span class="ol">ก</span>ทึบแสง</button><button class="opt" onclick="pickAns(this)"><span class="ol">ข</span>โปร่งแสง</button><button class="opt" onclick="pickAns(this)"><span class="ol">ค</span>นำไฟฟ้า</button><button class="opt" onclick="pickAns(this)"><span class="ol">ง</span>ยืดหยุ่น</button></div><div class="expl">✅ กระจกใสยอมให้แสงผ่านได้ทั้งหมด = โปร่งแสง</div></div>
-    </div>
-    <div class="score-banner" id="sc-p5c3"><div class="snum" id="sn-p5c3"></div><p id="sp-p5c3"></p></div>
-    <button class="btn-submit" onclick="submitQuiz('p5c3')">ส่งคำตอบ 📝</button>
-  </div>
-  <div class="tab-content" id="p5c3-ex"><div class="excard" style="border-left:5px solid #a855f7"><h4 style="color:#7e22ce">✏️ ตัวนำ/ฉนวน</h4>
-    <p>เหล็ก → <input class="fi" data-answer="ตัวนำ" style="width:120px;display:inline-block"></p>
-    <p style="margin-top:8px">ยาง → <input class="fi" data-answer="ฉนวน" style="width:120px;display:inline-block"></p>
-    <button class="btn-chk" style="background:#a855f7" onclick="chkFill(this)">ตรวจ</button></div>
-  </div>
-</div>
-
-<div class="chapter-page" id="p5-ch4">
-  <button class="back-btn" onclick="showGHome('p5')">← กลับ ป.5</button>
-  <div class="ch-header" style="background:linear-gradient(135deg,#22c55e,#16a34a)"><div class="big-icon">🌿</div><div><h2>บทที่ 4: ระบบนิเวศและสิ่งแวดล้อม</h2><p>ความสัมพันธ์สิ่งมีชีวิต ห่วงโซ่อาหาร</p></div></div>
-  <div class="tabs"><button class="tab-btn t5 active" onclick="swTab(this,'p5c4','ct')">📖 เนื้อหา</button><button class="tab-btn t5" onclick="swTab(this,'p5c4','qz')">🧪 แบบทดสอบ</button><button class="tab-btn t5" onclick="swTab(this,'p5c4','ex')">✏️ แบบฝึกหัด</button></div>
-  <div class="tab-content active" id="p5c4-ct">
-    <div class="cs" style="border-left:5px solid #22c55e"><h3 style="color:#15803d">🌿 ความสัมพันธ์</h3><table><tr><th class="g">ความสัมพันธ์</th><th class="g">ลักษณะ</th></tr><tr><td>พึ่งพากัน</td><td>ทั้งคู่ได้ประโยชน์</td></tr><tr><td>เกื้อกูล</td><td>ฝ่ายหนึ่งได้ อีกฝ่ายเฉย</td></tr><tr><td>ปรสิต</td><td>ฝ่ายหนึ่งได้ อีกฝ่ายเสีย</td></tr><tr><td>ล่าเหยื่อ</td><td>ผู้ล่าและเหยื่อ</td></tr></table></div>
-    <div class="cs" style="border-left:5px solid #22c55e"><h3 style="color:#15803d">🔗 ห่วงโซ่อาหาร</h3><div class="ib green"><strong>🌾</strong><p style="text-align:center;font-size:15px;margin:6px 0">ข้าว → ตั๊กแตน → กบ → งู → นกอินทรี</p></div></div>
-  </div>
-  <div class="tab-content" id="p5c4-qz">
-    <div class="quiz-wrap" id="qw-p5c4">
-      <div class="qcard" data-ans="ก"><div class="qnum">ข้อที่ 1/5</div><div class="qtxt">ดอกไม้กับแมลงผสมเกสรเป็นความสัมพันธ์ใด?</div><div class="opts"><button class="opt" onclick="pickAns(this)"><span class="ol">ก</span>พึ่งพากัน</button><button class="opt" onclick="pickAns(this)"><span class="ol">ข</span>ปรสิต</button><button class="opt" onclick="pickAns(this)"><span class="ol">ค</span>ล่าเหยื่อ</button><button class="opt" onclick="pickAns(this)"><span class="ol">ง</span>แก่งแย่ง</button></div><div class="expl">✅ ทั้งคู่ได้ประโยชน์ = พึ่งพากัน</div></div>
-      <div class="qcard" data-ans="ค"><div class="qnum">ข้อที่ 2/5</div><div class="qtxt">ผู้ผลิตในห่วงโซ่อาหารคือ?</div><div class="opts"><button class="opt" onclick="pickAns(this)"><span class="ol">ก</span>สัตว์กินเนื้อ</button><button class="opt" onclick="pickAns(this)"><span class="ol">ข</span>ผู้ย่อยสลาย</button><button class="opt" onclick="pickAns(this)"><span class="ol">ค</span>พืช</button><button class="opt" onclick="pickAns(this)"><span class="ol">ง</span>สัตว์กินพืช</button></div><div class="expl">✅ พืชสังเคราะห์แสงสร้างอาหารได้เอง = ผู้ผลิต</div></div>
-      <div class="qcard" data-ans="ค"><div class="qnum">ข้อที่ 3/5</div><div class="qtxt">เห็บกับสุนัขเป็นความสัมพันธ์ใด?</div><div class="opts"><button class="opt" onclick="pickAns(this)"><span class="ol">ก</span>พึ่งพา</button><button class="opt" onclick="pickAns(this)"><span class="ol">ข</span>เกื้อกูล</button><button class="opt" onclick="pickAns(this)"><span class="ol">ค</span>ปรสิต</button><button class="opt" onclick="pickAns(this)"><span class="ol">ง</span>ล่าเหยื่อ</button></div><div class="expl">✅ เห็บดูดเลือดสุนัข เห็บได้ สุนัขเสีย = ปรสิต</div></div>
-      <div class="qcard" data-ans="ข"><div class="qnum">ข้อที่ 4/5</div><div class="qtxt">การทำลายป่าส่งผลอย่างไร?</div><div class="opts"><button class="opt" onclick="pickAns(this)"><span class="ol">ก</span>ฝนตกมากขึ้น</button><button class="opt" onclick="pickAns(this)"><span class="ol">ข</span>สัตว์สูญพันธุ์ ดินเสื่อม</button><button class="opt" onclick="pickAns(this)"><span class="ol">ค</span>อากาศดีขึ้น</button><button class="opt" onclick="pickAns(this)"><span class="ol">ง</span>น้ำสะอาด</button></div><div class="expl">✅ ป่าถูกทำลาย สัตว์สูญเสียที่อยู่ ดินเสื่อม น้ำแล้ง</div></div>
-      <div class="qcard" data-ans="ค"><div class="qnum">ข้อที่ 5/5</div><div class="qtxt">สายใยอาหารคืออะไร?</div><div class="opts"><button class="opt" onclick="pickAns(this)"><span class="ol">ก</span>ห่วงโซ่เดี่ยว</button><button class="opt" onclick="pickAns(this)"><span class="ol">ข</span>รายชื่อสิ่งมีชีวิต</button><button class="opt" onclick="pickAns(this)"><span class="ol">ค</span>หลายห่วงโซ่เชื่อมกัน</button><button class="opt" onclick="pickAns(this)"><span class="ol">ง</span>แผนที่ระบบนิเวศ</button></div><div class="expl">✅ สายใยอาหาร = หลายห่วงโซ่อาหารที่เชื่อมต่อกัน</div></div>
-    </div>
-    <div class="score-banner" id="sc-p5c4"><div class="snum" id="sn-p5c4"></div><p id="sp-p5c4"></p></div>
-    <button class="btn-submit" onclick="submitQuiz('p5c4')">ส่งคำตอบ 📝</button>
-  </div>
-  <div class="tab-content" id="p5c4-ex"><div class="excard" style="border-left:5px solid #22c55e"><h4 style="color:#15803d">✏️ ระบุความสัมพันธ์</h4>
-    <p>สิงโต-กวาง → ภาวะ<input class="fi" data-answer="ล่าเหยื่อ" style="width:160px;display:inline-block"></p>
-    <button class="btn-chk" style="background:#22c55e" onclick="chkFill(this)">ตรวจ</button></div>
-  </div>
-</div>
-
-<div class="chapter-page" id="p5-ch5">
-  <button class="back-btn" onclick="showGHome('p5')">← กลับ ป.5</button>
-  <div class="ch-header" style="background:linear-gradient(135deg,#0ea5e9,#38bdf8)"><div class="big-icon">🌦️</div><div><h2>บทที่ 5: โลกและบรรยากาศ</h2><p>ชั้นบรรยากาศ วัฏจักรน้ำ ปรากฏการณ์ธรรมชาติ</p></div></div>
-  <div class="tabs"><button class="tab-btn t5 active" onclick="swTab(this,'p5c5','ct')">📖 เนื้อหา</button><button class="tab-btn t5" onclick="swTab(this,'p5c5','qz')">🧪 แบบทดสอบ</button><button class="tab-btn t5" onclick="swTab(this,'p5c5','ex')">✏️ แบบฝึกหัด</button></div>
-  <div class="tab-content active" id="p5c5-ct">
-    <div class="cs" style="border-left:5px solid #0ea5e9"><h3 style="color:#0369a1">🌏 ชั้นบรรยากาศ</h3><table><tr><th class="b">ชั้น</th><th class="b">ระยะสูง</th><th class="b">ลักษณะ</th></tr><tr><td>โทรโพสเฟียร์</td><td>0-12 กม.</td><td>เกิดเมฆ ฝน</td></tr><tr><td>สตราโตสเฟียร์</td><td>12-50 กม.</td><td>มีโอโซน</td></tr><tr><td>มีโซสเฟียร์</td><td>50-85 กม.</td><td>อุกกาบาตไหม้</td></tr></table></div>
-    <div class="cs" style="border-left:5px solid #0ea5e9"><h3 style="color:#0369a1">💧 วัฏจักรน้ำ</h3><div class="ib blue"><strong>🔄</strong><ul class="sl"><li>การระเหย → ไอน้ำขึ้นสู่อากาศ</li><li>การควบแน่น → เกิดเมฆ</li><li>การตกตะกอน → ฝนตก</li></ul></div></div>
-  </div>
-  <div class="tab-content" id="p5c5-qz">
-    <div class="quiz-wrap" id="qw-p5c5">
-      <div class="qcard" data-ans="ก"><div class="qnum">ข้อที่ 1/5</div><div class="qtxt">ชั้นบรรยากาศที่เราอาศัยอยู่?</div><div class="opts"><button class="opt" onclick="pickAns(this)"><span class="ol">ก</span>โทรโพสเฟียร์</button><button class="opt" onclick="pickAns(this)"><span class="ol">ข</span>สตราโตสเฟียร์</button><button class="opt" onclick="pickAns(this)"><span class="ol">ค</span>มีโซสเฟียร์</button><button class="opt" onclick="pickAns(this)"><span class="ol">ง</span>เทอร์โมสเฟียร์</button></div><div class="expl">✅ โทรโพสเฟียร์ (0-12 กม.) เป็นชั้นที่มีชีวิตอยู่ เกิดสภาพอากาศ</div></div>
-      <div class="qcard" data-ans="ค"><div class="qnum">ข้อที่ 2/5</div><div class="qtxt">ขั้นตอนแรกวัฏจักรน้ำ?</div><div class="opts"><button class="opt" onclick="pickAns(this)"><span class="ol">ก</span>ฝนตก</button><button class="opt" onclick="pickAns(this)"><span class="ol">ข</span>การควบแน่น</button><button class="opt" onclick="pickAns(this)"><span class="ol">ค</span>การระเหย</button><button class="opt" onclick="pickAns(this)"><span class="ol">ง</span>การไหลกลับ</button></div><div class="expl">✅ วัฏจักรน้ำเริ่มจากการระเหยของน้ำ</div></div>
-      <div class="qcard" data-ans="ข"><div class="qnum">ข้อที่ 3/5</div><div class="qtxt">ชั้นโอโซนอยู่ในชั้นใด?</div><div class="opts"><button class="opt" onclick="pickAns(this)"><span class="ol">ก</span>โทรโพสเฟียร์</button><button class="opt" onclick="pickAns(this)"><span class="ol">ข</span>สตราโตสเฟียร์</button><button class="opt" onclick="pickAns(this)"><span class="ol">ค</span>มีโซสเฟียร์</button><button class="opt" onclick="pickAns(this)"><span class="ol">ง</span>เทอร์โมสเฟียร์</button></div><div class="expl">✅ ชั้นโอโซนอยู่ในสตราโตสเฟียร์ กรองรังสี UV</div></div>
-      <div class="qcard" data-ans="ค"><div class="qnum">ข้อที่ 4/5</div><div class="qtxt">ก๊าซใดทำให้โลกร้อน?</div><div class="opts"><button class="opt" onclick="pickAns(this)"><span class="ol">ก</span>ออกซิเจน</button><button class="opt" onclick="pickAns(this)"><span class="ol">ข</span>ไนโตรเจน</button><button class="opt" onclick="pickAns(this)"><span class="ol">ค</span>คาร์บอนไดออกไซด์</button><button class="opt" onclick="pickAns(this)"><span class="ol">ง</span>อาร์กอน</button></div><div class="expl">✅ CO₂ เป็นก๊าซเรือนกระจกหลัก ทำให้โลกร้อนขึ้น</div></div>
-      <div class="qcard" data-ans="ข"><div class="qnum">ข้อที่ 5/5</div><div class="qtxt">เมฆเกิดจากอะไร?</div><div class="opts"><button class="opt" onclick="pickAns(this)"><span class="ol">ก</span>การระเหย</button><button class="opt" onclick="pickAns(this)"><span class="ol">ข</span>การควบแน่นของไอน้ำ</button><button class="opt" onclick="pickAns(this)"><span class="ol">ค</span>กระแสน้ำ</button><button class="opt" onclick="pickAns(this)"><span class="ol">ง</span>ลม</button></div><div class="expl">✅ ไอน้ำเย็นตัวควบแน่นกลายเป็นหยดน้ำเล็กๆ = เมฆ</div></div>
-    </div>
-    <div class="score-banner" id="sc-p5c5"><div class="snum" id="sn-p5c5"></div><p id="sp-p5c5"></p></div>
-    <button class="btn-submit" onclick="submitQuiz('p5c5')">ส่งคำตอบ 📝</button>
-  </div>
-  <div class="tab-content" id="p5c5-ex"><div class="excard" style="border-left:5px solid #0ea5e9"><h4 style="color:#0369a1">✏️ วัฏจักรน้ำ</h4>
-    <p>ขั้นที่ 1: <input class="fi" data-answer="การระเหย" style="width:180px;display:inline-block"></p>
-    <p style="margin-top:8px">ขั้นที่ 2: <input class="fi" data-answer="การควบแน่น" style="width:180px;display:inline-block"></p>
-    <button class="btn-chk" onclick="chkFill(this)">ตรวจ</button></div>
-  </div>
-</div>
-
-
-<!-- ==================== P6 CHAPTERS ==================== -->
-<div class="chapter-page" id="p6-ch1">
-  <button class="back-btn" onclick="showGHome('p6')">← กลับ ป.6</button>
-  <div class="ch-header" style="background:linear-gradient(135deg,#0ea5e9,#6366f1)"><div class="big-icon">🌞</div><div><h2>บทที่ 1: ดาราศาสตร์และอวกาศ</h2><p>ระบบสุริยะ ดาวเคราะห์ ดวงจันทร์ ปรากฏการณ์ท้องฟ้า</p></div></div>
-  <div class="tabs"><button class="tab-btn t6 active" onclick="swTab(this,'p6c1','ct')">📖 เนื้อหา</button><button class="tab-btn t6" onclick="swTab(this,'p6c1','qz')">🧪 แบบทดสอบ</button><button class="tab-btn t6" onclick="swTab(this,'p6c1','ex')">✏️ แบบฝึกหัด</button></div>
-  <div class="tab-content active" id="p6c1-ct">
-    <div class="cs"><h3 style="color:#0369a1">🌍 ระบบสุริยะ</h3><p>ดวงอาทิตย์เป็นศูนย์กลาง มีดาวเคราะห์ 8 ดวงโคจรรอบ</p><div class="ib blue"><strong>🪐 ลำดับดาวเคราะห์</strong><ul class="sl"><li>ดาวพุธ – เล็กสุด ใกล้สุด</li><li>ดาวศุกร์ – ร้อนสุด CO₂ หนา</li><li>โลก – มีน้ำ สิ่งมีชีวิต</li><li>ดาวอังคาร – สีแดง</li><li>ดาวพฤหัสบดี – ใหญ่สุด</li><li>ดาวเสาร์ – มีวงแหวน</li><li>ดาวยูเรนัส – หมุนแนวนอน</li><li>ดาวเนปจูน – ไกลสุด</li></ul></div></div>
-    <div class="cs"><h3 style="color:#0369a1">🌙 ดวงจันทร์และปรากฏการณ์</h3><p>ดวงจันทร์โคจรรอบโลกใช้ 29.5 วัน</p><div class="ib orange"><strong>🌑 ปรากฏการณ์</strong><p><strong>สุริยุปราคา</strong> – ดวงจันทร์บังดวงอาทิตย์<br><strong>จันทรุปราคา</strong> – โลกบังดวงจันทร์</p></div></div>
-  </div>
-  <div class="tab-content" id="p6c1-qz">
-    <div class="quiz-wrap" id="qw-p6c1">
-      <div class="qcard" data-ans="ข"><div class="qnum">ข้อที่ 1/5</div><div class="qtxt">ดาวเคราะห์ใดใหญ่ที่สุด?</div><div class="opts"><button class="opt" onclick="pickAns(this)"><span class="ol">ก</span>ดาวเสาร์</button><button class="opt" onclick="pickAns(this)"><span class="ol">ข</span>ดาวพฤหัสบดี</button><button class="opt" onclick="pickAns(this)"><span class="ol">ค</span>ดาวอังคาร</button><button class="opt" onclick="pickAns(this)"><span class="ol">ง</span>ดาวเนปจูน</button></div><div class="expl">✅ ดาวพฤหัสบดีใหญ่ที่สุดในระบบสุริยะ</div></div>
-      <div class="qcard" data-ans="ค"><div class="qnum">ข้อที่ 2/5</div><div class="qtxt">ดวงจันทร์โคจรรอบโลกกี่วัน?</div><div class="opts"><button class="opt" onclick="pickAns(this)"><span class="ol">ก</span>7</button><button class="opt" onclick="pickAns(this)"><span class="ol">ข</span>15</button><button class="opt" onclick="pickAns(this)"><span class="ol">ค</span>29.5</button><button class="opt" onclick="pickAns(this)"><span class="ol">ง</span>365</button></div><div class="expl">✅ ดวงจันทร์ใช้ 29.5 วัน</div></div>
-      <div class="qcard" data-ans="ข"><div class="qnum">ข้อที่ 3/5</div><div class="qtxt">สุริยุปราคาเกิดเมื่อใด?</div><div class="opts"><button class="opt" onclick="pickAns(this)"><span class="ol">ก</span>โลกบังดวงจันทร์</button><button class="opt" onclick="pickAns(this)"><span class="ol">ข</span>ดวงจันทร์บังดวงอาทิตย์</button><button class="opt" onclick="pickAns(this)"><span class="ol">ค</span>ดาวอังคารบังโลก</button><button class="opt" onclick="pickAns(this)"><span class="ol">ง</span>ดวงอาทิตย์บังโลก</button></div><div class="expl">✅ สุริยุปราคา = ดวงจันทร์บังดวงอาทิตย์</div></div>
-      <div class="qcard" data-ans="ก"><div class="qnum">ข้อที่ 4/5</div><div class="qtxt">ดาวใดใกล้ดวงอาทิตย์มากสุด?</div><div class="opts"><button class="opt" onclick="pickAns(this)"><span class="ol">ก</span>ดาวพุธ</button><button class="opt" onclick="pickAns(this)"><span class="ol">ข</span>ดาวศุกร์</button><button class="opt" onclick="pickAns(this)"><span class="ol">ค</span>โลก</button><button class="opt" onclick="pickAns(this)"><span class="ol">ง</span>ดาวอังคาร</button></div><div class="expl">✅ ดาวพุธอยู่ใกล้ดวงอาทิตย์มากที่สุด</div></div>
-      <div class="qcard" data-ans="ค"><div class="qnum">ข้อที่ 5/5</div><div class="qtxt">ดาวฤกษ์ต่างจากดาวเคราะห์คือ?</div><div class="opts"><button class="opt" onclick="pickAns(this)"><span class="ol">ก</span>เล็กกว่า</button><button class="opt" onclick="pickAns(this)"><span class="ol">ข</span>ไม่โคจร</button><button class="opt" onclick="pickAns(this)"><span class="ol">ค</span>มีแสงในตัวเอง</button><button class="opt" onclick="pickAns(this)"><span class="ol">ง</span>มีดาวบริวาร</button></div><div class="expl">✅ ดาวฤกษ์มีแสงในตัวเองจากปฏิกิริยาฟิวชัน</div></div>
-    </div>
-    <div class="score-banner" id="sc-p6c1"><div class="snum" id="sn-p6c1"></div><p id="sp-p6c1"></p></div>
-    <button class="btn-submit" onclick="submitQuiz('p6c1')">ส่งคำตอบ 📝</button>
-  </div>
-  <div class="tab-content" id="p6c1-ex"><div class="excard"><h4>✏️ เรียงดาวเคราะห์</h4>
-    <p>อันดับ 3: <input class="fi" data-answer="โลก" style="width:150px;display:inline-block"></p>
-    <p style="margin-top:8px">อันดับ 5: <input class="fi" data-answer="ดาวพฤหัสบดี" style="width:150px;display:inline-block"></p>
-    <button class="btn-chk" onclick="chkFill(this)">ตรวจ</button></div>
-  </div>
-</div>
-
-<div class="chapter-page" id="p6-ch2">
-  <button class="back-btn" onclick="showGHome('p6')">← กลับ ป.6</button>
-  <div class="ch-header" style="background:linear-gradient(135deg,#22c55e,#16a34a)"><div class="big-icon">🧬</div><div><h2>บทที่ 2: สิ่งมีชีวิตและสิ่งแวดล้อม</h2><p>ระบบนิเวศ ห่วงโซ่อาหาร การปรับตัว</p></div></div>
-  <div class="tabs"><button class="tab-btn t6 active" onclick="swTab(this,'p6c2','ct')">📖 เนื้อหา</button><button class="tab-btn t6" onclick="swTab(this,'p6c2','qz')">🧪 แบบทดสอบ</button><button class="tab-btn t6" onclick="swTab(this,'p6c2','ex')">✏️ แบบฝึกหัด</button></div>
-  <div class="tab-content active" id="p6c2-ct">
-    <div class="cs" style="border-left:5px solid #22c55e"><h3 style="color:#15803d">🌿 ระบบนิเวศ</h3><div class="ib green"><strong>🌱 องค์ประกอบ</strong><ul class="sl"><li>ผู้ผลิต – พืช สังเคราะห์แสง</li><li>ผู้บริโภค – สัตว์</li><li>ผู้ย่อยสลาย – แบคทีเรีย เชื้อรา</li></ul></div></div>
-    <div class="cs" style="border-left:5px solid #22c55e"><h3 style="color:#15803d">🦋 การปรับตัว</h3><div class="ib orange"><strong>🌵</strong><ul class="sl"><li>กระบองเพชร – ใบเป็นหนาม</li><li>หมีขั้วโลก – ขนหนา</li><li>ปลา – ครีบ เหงือก</li></ul></div></div>
-  </div>
-  <div class="tab-content" id="p6c2-qz">
-    <div class="quiz-wrap" id="qw-p6c2">
-      <div class="qcard" data-ans="ข"><div class="qnum">ข้อที่ 1/5</div><div class="qtxt">ผู้ย่อยสลายคือ?</div><div class="opts"><button class="opt" onclick="pickAns(this)"><span class="ol">ก</span>พืช</button><button class="opt" onclick="pickAns(this)"><span class="ol">ข</span>แบคทีเรียและเชื้อรา</button><button class="opt" onclick="pickAns(this)"><span class="ol">ค</span>แมลง</button><button class="opt" onclick="pickAns(this)"><span class="ol">ง</span>สัตว์กินเนื้อ</button></div><div class="expl">✅ แบคทีเรียและเชื้อราย่อยซากสิ่งมีชีวิต</div></div>
-      <div class="qcard" data-ans="ก"><div class="qnum">ข้อที่ 2/5</div><div class="qtxt">ตั๊กแตนในห่วงโซ่ หญ้า→ตั๊กแตน→กบ คือผู้บริโภคลำดับใด?</div><div class="opts"><button class="opt" onclick="pickAns(this)"><span class="ol">ก</span>ลำดับที่ 1</button><button class="opt" onclick="pickAns(this)"><span class="ol">ข</span>ลำดับที่ 2</button><button class="opt" onclick="pickAns(this)"><span class="ol">ค</span>ผู้ผลิต</button><button class="opt" onclick="pickAns(this)"><span class="ol">ง</span>ผู้ย่อยสลาย</button></div><div class="expl">✅ ตั๊กแตนกินหญ้าโดยตรง = ผู้บริโภคลำดับ 1</div></div>
-      <div class="qcard" data-ans="ข"><div class="qnum">ข้อที่ 3/5</div><div class="qtxt">กระบองเพชรใบเป็นหนามเพื่อ?</div><div class="opts"><button class="opt" onclick="pickAns(this)"><span class="ol">ก</span>ล่อแมลง</button><button class="opt" onclick="pickAns(this)"><span class="ol">ข</span>ลดการสูญเสียน้ำ</button><button class="opt" onclick="pickAns(this)"><span class="ol">ค</span>ดูดซับแสง</button><button class="opt" onclick="pickAns(this)"><span class="ol">ง</span>สังเคราะห์แสง</button></div><div class="expl">✅ ใบเป็นหนามลดพื้นที่ผิวระเหยน้ำ</div></div>
-      <div class="qcard" data-ans="ข"><div class="qnum">ข้อที่ 4/5</div><div class="qtxt">วัฏจักรน้ำขับเคลื่อนด้วย?</div><div class="opts"><button class="opt" onclick="pickAns(this)"><span class="ol">ก</span>แรงโน้มถ่วงเพียงอย่างเดียว</button><button class="opt" onclick="pickAns(this)"><span class="ol">ข</span>แสงอาทิตย์และแรงโน้มถ่วง</button><button class="opt" onclick="pickAns(this)"><span class="ol">ค</span>การหายใจ</button><button class="opt" onclick="pickAns(this)"><span class="ol">ง</span>การสังเคราะห์แสง</button></div><div class="expl">✅ แสงอาทิตย์ระเหยน้ำ แรงโน้มถ่วงทำให้ฝนตก</div></div>
-      <div class="qcard" data-ans="ข"><div class="qnum">ข้อที่ 5/5</div><div class="qtxt">ความหลากหลายทางชีวภาพสำคัญอย่างไร?</div><div class="opts"><button class="opt" onclick="pickAns(this)"><span class="ol">ก</span>มีสัตว์สวย</button><button class="opt" onclick="pickAns(this)"><span class="ol">ข</span>ระบบนิเวศสมดุล</button><button class="opt" onclick="pickAns(this)"><span class="ol">ค</span>มีพืชมาก</button><button class="opt" onclick="pickAns(this)"><span class="ol">ง</span>สัตว์แก่งแย่ง</button></div><div class="expl">✅ ความหลากหลายทำให้ระบบนิเวศสมดุลและยืดหยุ่น</div></div>
-    </div>
-    <div class="score-banner" id="sc-p6c2"><div class="snum" id="sn-p6c2"></div><p id="sp-p6c2"></p></div>
-    <button class="btn-submit" onclick="submitQuiz('p6c2')">ส่งคำตอบ 📝</button>
-  </div>
-  <div class="tab-content" id="p6c2-ex"><div class="excard" style="border-left:5px solid #22c55e"><h4 style="color:#15803d">✏️ จัดประเภท</h4>
-    <p>ข้าว → <input class="fi" data-answer="ผู้ผลิต" style="width:140px;display:inline-block"></p>
-    <p style="margin-top:8px">เห็ด → <input class="fi" data-answer="ผู้ย่อยสลาย" style="width:140px;display:inline-block"></p>
-    <button class="btn-chk" style="background:#22c55e" onclick="chkFill(this)">ตรวจ</button></div>
-  </div>
-</div>
-
-<div class="chapter-page" id="p6-ch3">
-  <button class="back-btn" onclick="showGHome('p6')">← กลับ ป.6</button>
-  <div class="ch-header" style="background:linear-gradient(135deg,#f97316,#eab308)"><div class="big-icon">⚡</div><div><h2>บทที่ 3: พลังงาน</h2><p>ไฟฟ้า แสง เสียง พลังงานทดแทน</p></div></div>
-  <div class="tabs"><button class="tab-btn t6 active" onclick="swTab(this,'p6c3','ct')">📖 เนื้อหา</button><button class="tab-btn t6" onclick="swTab(this,'p6c3','qz')">🧪 แบบทดสอบ</button><button class="tab-btn t6" onclick="swTab(this,'p6c3','ex')">✏️ แบบฝึกหัด</button></div>
-  <div class="tab-content active" id="p6c3-ct">
-    <div class="cs" style="border-left:5px solid #f97316"><h3 style="color:#c2410c">⚡ วงจรไฟฟ้า</h3><div class="ib orange"><strong>🔌</strong><ul class="sl"><li>อนุกรม – ต่อเรียง ขาดทีเดียวดับหมด</li><li>ขนาน – ขาดตัวหนึ่ง อื่นยังทำงาน (วงจรบ้าน)</li></ul></div></div>
-    <div class="cs" style="border-left:5px solid #f97316"><h3 style="color:#c2410c">💡 สมบัติแสง</h3><table><tr><th class="o">สมบัติ</th><th class="o">ตัวอย่าง</th></tr><tr><td>สะท้อน</td><td>กระจก</td></tr><tr><td>หักเห</td><td>ปริซึม</td></tr><tr><td>กระจาย</td><td>สายรุ้ง</td></tr></table></div>
-  </div>
-  <div class="tab-content" id="p6c3-qz">
-    <div class="quiz-wrap" id="qw-p6c3">
-      <div class="qcard" data-ans="ข"><div class="qnum">ข้อที่ 1/5</div><div class="qtxt">วงจรในบ้านเป็นชนิดใด?</div><div class="opts"><button class="opt" onclick="pickAns(this)"><span class="ol">ก</span>อนุกรม</button><button class="opt" onclick="pickAns(this)"><span class="ol">ข</span>ขนาน</button><button class="opt" onclick="pickAns(this)"><span class="ol">ค</span>ผสม</button><button class="opt" onclick="pickAns(this)"><span class="ol">ง</span>เปิด</button></div><div class="expl">✅ วงจรในบ้านเป็นแบบขนาน</div></div>
-      <div class="qcard" data-ans="ข"><div class="qnum">ข้อที่ 2/5</div><div class="qtxt">สายรุ้งเกิดจาก?</div><div class="opts"><button class="opt" onclick="pickAns(this)"><span class="ol">ก</span>การสะท้อน</button><button class="opt" onclick="pickAns(this)"><span class="ol">ข</span>การกระจายและหักเห</button><button class="opt" onclick="pickAns(this)"><span class="ol">ค</span>การดูดซับ</button><button class="opt" onclick="pickAns(this)"><span class="ol">ง</span>การเลี้ยวเบน</button></div><div class="expl">✅ สายรุ้ง = แสงหักเหและกระจายผ่านละอองน้ำ</div></div>
-      <div class="qcard" data-ans="ค"><div class="qnum">ข้อที่ 3/5</div><div class="qtxt">เสียงเดินทางเร็วสุดใน?</div><div class="opts"><button class="opt" onclick="pickAns(this)"><span class="ol">ก</span>อากาศ</button><button class="opt" onclick="pickAns(this)"><span class="ol">ข</span>น้ำ</button><button class="opt" onclick="pickAns(this)"><span class="ol">ค</span>ของแข็ง</button><button class="opt" onclick="pickAns(this)"><span class="ol">ง</span>สุญญากาศ</button></div><div class="expl">✅ ของแข็งโมเลกุลชิดกัน เสียงเดินทางเร็วสุด</div></div>
-      <div class="qcard" data-ans="ข"><div class="qnum">ข้อที่ 4/5</div><div class="qtxt">โซลาร์เซลล์แปลงพลังงานใด?</div><div class="opts"><button class="opt" onclick="pickAns(this)"><span class="ol">ก</span>ลม</button><button class="opt" onclick="pickAns(this)"><span class="ol">ข</span>แสงอาทิตย์</button><button class="opt" onclick="pickAns(this)"><span class="ol">ค</span>น้ำ</button><button class="opt" onclick="pickAns(this)"><span class="ol">ง</span>ความร้อน</button></div><div class="expl">✅ โซลาร์เซลล์แปลงแสงอาทิตย์เป็นไฟฟ้า</div></div>
-      <div class="qcard" data-ans="ค"><div class="qnum">ข้อที่ 5/5</div><div class="qtxt">ความถี่สูง = เสียงแบบใด?</div><div class="opts"><button class="opt" onclick="pickAns(this)"><span class="ol">ก</span>ทุ้ม</button><button class="opt" onclick="pickAns(this)"><span class="ol">ข</span>ดัง</button><button class="opt" onclick="pickAns(this)"><span class="ol">ค</span>แหลม</button><button class="opt" onclick="pickAns(this)"><span class="ol">ง</span>เบา</button></div><div class="expl">✅ ความถี่สูง = เสียงแหลม</div></div>
-    </div>
-    <div class="score-banner" id="sc-p6c3"><div class="snum" id="sn-p6c3"></div><p id="sp-p6c3"></p></div>
-    <button class="btn-submit" onclick="submitQuiz('p6c3')">ส่งคำตอบ 📝</button>
-  </div>
-  <div class="tab-content" id="p6c3-ex"><div class="excard" style="border-left:5px solid #f97316"><h4 style="color:#c2410c">✏️ เติมคำ</h4>
-    <p>วงจรต่อเรียง = วงจร<input class="fi" data-answer="อนุกรม" style="width:130px;display:inline-block"></p>
-    <button class="btn-chk" style="background:#f97316" onclick="chkFill(this)">ตรวจ</button></div>
-  </div>
-</div>
-
-<div class="chapter-page" id="p6-ch4">
-  <button class="back-btn" onclick="showGHome('p6')">← กลับ ป.6</button>
-  <div class="ch-header" style="background:linear-gradient(135deg,#84cc16,#16a34a)"><div class="big-icon">🌍</div><div><h2>บทที่ 4: โลกและอากาศ</h2><p>หินและแร่ ธรณีวิทยา สภาพอากาศ</p></div></div>
-  <div class="tabs"><button class="tab-btn t6 active" onclick="swTab(this,'p6c4','ct')">📖 เนื้อหา</button><button class="tab-btn t6" onclick="swTab(this,'p6c4','qz')">🧪 แบบทดสอบ</button><button class="tab-btn t6" onclick="swTab(this,'p6c4','ex')">✏️ แบบฝึกหัด</button></div>
-  <div class="tab-content active" id="p6c4-ct">
-    <div class="cs" style="border-left:5px solid #84cc16"><h3 style="color:#365314">🪨 ประเภทหิน</h3><table><tr><th class="g">ประเภท</th><th class="g">การเกิด</th><th class="g">ตัวอย่าง</th></tr><tr><td>อัคนี</td><td>ลาวาแข็งตัว</td><td>แกรนิต บะซอลต์</td></tr><tr><td>ตะกอน</td><td>ตะกอนทับถม</td><td>ทราย ปูน</td></tr><tr><td>แปร</td><td>ความร้อน+แรงดัน</td><td>หินอ่อน ชนวน</td></tr></table></div>
-    <div class="cs" style="border-left:5px solid #84cc16"><h3 style="color:#365314">🌋 ธรณีวิทยา</h3><div class="ib orange"><strong>⚠️</strong><ul class="sl"><li>ภูเขาไฟ – แมกมาดันออกมา</li><li>แผ่นดินไหว – แผ่นเปลือกโลกเคลื่อน</li><li>สึนามิ – แผ่นดินไหวใต้ทะเล</li></ul></div></div>
-  </div>
-  <div class="tab-content" id="p6c4-qz">
-    <div class="quiz-wrap" id="qw-p6c4">
-      <div class="qcard" data-ans="ก"><div class="qnum">ข้อที่ 1/5</div><div class="qtxt">หินแกรนิตเป็นหินชนิดใด?</div><div class="opts"><button class="opt" onclick="pickAns(this)"><span class="ol">ก</span>อัคนี</button><button class="opt" onclick="pickAns(this)"><span class="ol">ข</span>ตะกอน</button><button class="opt" onclick="pickAns(this)"><span class="ol">ค</span>แปร</button><button class="opt" onclick="pickAns(this)"><span class="ol">ง</span>ปูน</button></div><div class="expl">✅ หินแกรนิต = หินอัคนีแทรกซอน</div></div>
-      <div class="qcard" data-ans="ข"><div class="qnum">ข้อที่ 2/5</div><div class="qtxt">แผ่นดินไหวใต้ทะเลทำให้เกิด?</div><div class="opts"><button class="opt" onclick="pickAns(this)"><span class="ol">ก</span>ภูเขาไฟ</button><button class="opt" onclick="pickAns(this)"><span class="ol">ข</span>สึนามิ</button><button class="opt" onclick="pickAns(this)"><span class="ol">ค</span>พายุ</button><button class="opt" onclick="pickAns(this)"><span class="ol">ง</span>ดินถล่ม</button></div><div class="expl">✅ แผ่นดินไหวใต้ทะเล = สึนามิ</div></div>
-      <div class="qcard" data-ans="ข"><div class="qnum">ข้อที่ 3/5</div><div class="qtxt">แร่ใดแข็งสุด?</div><div class="opts"><button class="opt" onclick="pickAns(this)"><span class="ol">ก</span>ทองคำ</button><button class="opt" onclick="pickAns(this)"><span class="ol">ข</span>เพชร</button><button class="opt" onclick="pickAns(this)"><span class="ol">ค</span>เหล็ก</button><button class="opt" onclick="pickAns(this)"><span class="ol">ง</span>หินทราย</button></div><div class="expl">✅ เพชรแข็งสุด 10/10 ตามสเกล Mohs</div></div>
-      <div class="qcard" data-ans="ก"><div class="qnum">ข้อที่ 4/5</div><div class="qtxt">สภาพอากาศต่างจากภูมิอากาศ?</div><div class="opts"><button class="opt" onclick="pickAns(this)"><span class="ol">ก</span>สภาพอากาศช่วงสั้น ภูมิอากาศเฉลี่ยยาว</button><button class="opt" onclick="pickAns(this)"><span class="ol">ข</span>ไม่ต่างกัน</button><button class="opt" onclick="pickAns(this)"><span class="ol">ค</span>สภาพอากาศเปลี่ยนช้า</button><button class="opt" onclick="pickAns(this)"><span class="ol">ง</span>ภูมิอากาศเปลี่ยนเร็ว</button></div><div class="expl">✅ สภาพอากาศ = ช่วงสั้น / ภูมิอากาศ = ค่าเฉลี่ย 30+ ปี</div></div>
-      <div class="qcard" data-ans="ข"><div class="qnum">ข้อที่ 5/5</div><div class="qtxt">หินอ่อนเกิดจากหินชนิดใด?</div><div class="opts"><button class="opt" onclick="pickAns(this)"><span class="ol">ก</span>หินแกรนิต</button><button class="opt" onclick="pickAns(this)"><span class="ol">ข</span>หินปูน</button><button class="opt" onclick="pickAns(this)"><span class="ol">ค</span>หินบะซอลต์</button><button class="opt" onclick="pickAns(this)"><span class="ol">ง</span>หินดินดาน</button></div><div class="expl">✅ หินอ่อน = หินแปรที่เกิดจากหินปูน</div></div>
-    </div>
-    <div class="score-banner" id="sc-p6c4"><div class="snum" id="sn-p6c4"></div><p id="sp-p6c4"></p></div>
-    <button class="btn-submit" onclick="submitQuiz('p6c4')">ส่งคำตอบ 📝</button>
-  </div>
-  <div class="tab-content" id="p6c4-ex"><div class="excard" style="border-left:5px solid #84cc16"><h4 style="color:#365314">✏️ จัดประเภทหิน</h4>
-    <p>หินบะซอลต์ → หิน<input class="fi" data-answer="อัคนี" style="width:130px;display:inline-block"></p>
-    <p style="margin-top:8px">หินชนวน → หิน<input class="fi" data-answer="แปร" style="width:130px;display:inline-block"></p>
-    <button class="btn-chk" style="background:#84cc16;color:#1a2e05" onclick="chkFill(this)">ตรวจ</button></div>
-  </div>
-</div>
-
-<div class="chapter-page" id="p6-ch5">
-  <button class="back-btn" onclick="showGHome('p6')">← กลับ ป.6</button>
-  <div class="ch-header" style="background:linear-gradient(135deg,#a855f7,#ec4899)"><div class="big-icon">🔬</div><div><h2>บทที่ 5: สารและสมบัติ</h2><p>สถานะสาร การเปลี่ยนแปลง การแยกสาร</p></div></div>
-  <div class="tabs"><button class="tab-btn t6 active" onclick="swTab(this,'p6c5','ct')">📖 เนื้อหา</button><button class="tab-btn t6" onclick="swTab(this,'p6c5','qz')">🧪 แบบทดสอบ</button><button class="tab-btn t6" onclick="swTab(this,'p6c5','ex')">✏️ แบบฝึกหัด</button></div>
-  <div class="tab-content active" id="p6c5-ct">
-    <div class="cs" style="border-left:5px solid #a855f7"><h3 style="color:#7e22ce">⚗️ สถานะของสาร</h3><table><tr><th class="p">สถานะ</th><th class="p">รูปร่าง</th><th class="p">ปริมาตร</th></tr><tr><td>ของแข็ง</td><td>แน่นอน</td><td>แน่นอน</td></tr><tr><td>ของเหลว</td><td>ไม่แน่นอน</td><td>แน่นอน</td></tr><tr><td>แก๊ส</td><td>ไม่แน่นอน</td><td>ไม่แน่นอน</td></tr></table></div>
-    <div class="cs" style="border-left:5px solid #a855f7"><h3 style="color:#7e22ce">🔄 การเปลี่ยนสถานะ</h3><div class="ib purple"><strong>🌡️</strong><ul class="sl"><li>หลอมเหลว – ของแข็ง→ของเหลว</li><li>กลายเป็นไอ – ของเหลว→แก๊ส</li><li>ควบแน่น – แก๊ส→ของเหลว</li><li>ระเหิด – ของแข็ง→แก๊ส (ลูกเหม็น)</li></ul></div></div>
-  </div>
-  <div class="tab-content" id="p6c5-qz">
-    <div class="quiz-wrap" id="qw-p6c5">
-      <div class="qcard" data-ans="ข"><div class="qnum">ข้อที่ 1/5</div><div class="qtxt">น้ำแข็งละลายคือการเปลี่ยนสถานะใด?</div><div class="opts"><button class="opt" onclick="pickAns(this)"><span class="ol">ก</span>ระเหิด</button><button class="opt" onclick="pickAns(this)"><span class="ol">ข</span>หลอมเหลว</button><button class="opt" onclick="pickAns(this)"><span class="ol">ค</span>กลายเป็นไอ</button><button class="opt" onclick="pickAns(this)"><span class="ol">ง</span>ควบแน่น</button></div><div class="expl">✅ หลอมเหลว = ของแข็ง→ของเหลว</div></div>
-      <div class="qcard" data-ans="ค"><div class="qnum">ข้อที่ 2/5</div><div class="qtxt">ข้อใดเป็นสารบริสุทธิ์?</div><div class="opts"><button class="opt" onclick="pickAns(this)"><span class="ol">ก</span>อากาศ</button><button class="opt" onclick="pickAns(this)"><span class="ol">ข</span>นม</button><button class="opt" onclick="pickAns(this)"><span class="ol">ค</span>น้ำบริสุทธิ์</button><button class="opt" onclick="pickAns(this)"><span class="ol">ง</span>น้ำเกลือ</button></div><div class="expl">✅ น้ำบริสุทธิ์มี H₂O ชนิดเดียว = สารบริสุทธิ์</div></div>
-      <div class="qcard" data-ans="ค"><div class="qnum">ข้อที่ 3/5</div><div class="qtxt">ลูกเหม็นเล็กลงเพราะ?</div><div class="opts"><button class="opt" onclick="pickAns(this)"><span class="ol">ก</span>หลอมเหลว</button><button class="opt" onclick="pickAns(this)"><span class="ol">ข</span>กลายเป็นไอ</button><button class="opt" onclick="pickAns(this)"><span class="ol">ค</span>ระเหิด</button><button class="opt" onclick="pickAns(this)"><span class="ol">ง</span>แข็งตัว</button></div><div class="expl">✅ ระเหิด = ของแข็ง→แก๊สโดยตรง</div></div>
-      <div class="qcard" data-ans="ข"><div class="qnum">ข้อที่ 4/5</div><div class="qtxt">แยกเหล็กออกจากทรายด้วยวิธีใด?</div><div class="opts"><button class="opt" onclick="pickAns(this)"><span class="ol">ก</span>การกรอง</button><button class="opt" onclick="pickAns(this)"><span class="ol">ข</span>ใช้แม่เหล็ก</button><button class="opt" onclick="pickAns(this)"><span class="ol">ค</span>การกลั่น</button><button class="opt" onclick="pickAns(this)"><span class="ol">ง</span>ตกผลึก</button></div><div class="expl">✅ เหล็กถูกแม่เหล็กดึงดูด ใช้แม่เหล็กแยกออกจากทรายได้</div></div>
-      <div class="qcard" data-ans="ข"><div class="qnum">ข้อที่ 5/5</div><div class="qtxt">ของเหลวมีสมบัติอย่างไร?</div><div class="opts"><button class="opt" onclick="pickAns(this)"><span class="ol">ก</span>รูปร่างและปริมาตรแน่นอน</button><button class="opt" onclick="pickAns(this)"><span class="ol">ข</span>รูปร่างไม่แน่นอน ปริมาตรแน่นอน</button><button class="opt" onclick="pickAns(this)"><span class="ol">ค</span>ทั้งคู่ไม่แน่นอน</button><button class="opt" onclick="pickAns(this)"><span class="ol">ง</span>รูปร่างแน่นอน ปริมาตรไม่แน่นอน</button></div><div class="expl">✅ ของเหลวรูปร่างตามภาชนะ แต่ปริมาตรคงที่</div></div>
-    </div>
-    <div class="score-banner" id="sc-p6c5"><div class="snum" id="sn-p6c5"></div><p id="sp-p6c5"></p></div>
-    <button class="btn-submit" onclick="submitQuiz('p6c5')">ส่งคำตอบ 📝</button>
-  </div>
-  <div class="tab-content" id="p6c5-ex"><div class="excard" style="border-left:5px solid #a855f7"><h4 style="color:#7e22ce">✏️ การเปลี่ยนสถานะ</h4>
-    <p>น้ำเดือดกลายเป็นไอ = <input class="fi" data-answer="การกลายเป็นไอ" style="width:200px;display:inline-block"></p>
-    <p style="margin-top:8px">ไอน้ำ→น้ำ = <input class="fi" data-answer="การควบแน่น" style="width:200px;display:inline-block"></p>
-    <button class="btn-chk" style="background:#a855f7" onclick="chkFill(this)">ตรวจ</button></div>
-  </div>
-</div>
-
-</main>
 
 <script>
-// ==================== NAV DATA ====================
-const navData = {
-  p4:[{id:'ch1',icon:'🌿',label:'บทที่ 1 สิ่งมีชีวิต'},{id:'ch2',icon:'💡',label:'บทที่ 2 แสง'},{id:'ch3',icon:'🔊',label:'บทที่ 3 เสียง'},{id:'ch4',icon:'🧱',label:'บทที่ 4 วัสดุ'},{id:'ch5',icon:'⛅',label:'บทที่ 5 อากาศ'}],
-  p5:[{id:'ch1',icon:'🫀',label:'บทที่ 1 ร่างกาย'},{id:'ch2',icon:'🏋️',label:'บทที่ 2 แรง'},{id:'ch3',icon:'🧲',label:'บทที่ 3 วัสดุ'},{id:'ch4',icon:'🌿',label:'บทที่ 4 นิเวศ'},{id:'ch5',icon:'🌦️',label:'บทที่ 5 โลก'}],
-  p6:[{id:'ch1',icon:'🌞',label:'บทที่ 1 ดาราศาสตร์'},{id:'ch2',icon:'🧬',label:'บทที่ 2 สิ่งมีชีวิต'},{id:'ch3',icon:'⚡',label:'บทที่ 3 พลังงาน'},{id:'ch4',icon:'🌍',label:'บทที่ 4 โลก'},{id:'ch5',icon:'🔬',label:'บทที่ 5 สาร'}]
-};
+  const buttons = {
+    home: document.getElementById('btn-home'),
+    p4:   document.getElementById('btn-p4'),
+    p5:   document.getElementById('btn-p5'),
+    p6:   document.getElementById('btn-p6'),
+  };
+  const frame  = document.getElementById('content-frame');
+  const loader = document.getElementById('loader');
 
-let curGrade = null;
+  function navigate(page, key) {
+    // Update active button
+    Object.values(buttons).forEach(b => b.classList.remove('active'));
+    buttons[key].classList.add('active');
 
-function hideAll(){
-  document.getElementById('landing').classList.add('hidden');
-  document.querySelectorAll('.home-page').forEach(e=>e.classList.remove('active'));
-  document.querySelectorAll('.chapter-page').forEach(e=>e.classList.remove('active'));
-}
-
-function goHome(){
-  hideAll(); curGrade=null;
-  document.getElementById('landing').classList.remove('hidden');
-  document.getElementById('main-nav').className='';
-  document.querySelectorAll('.grade-tab').forEach(b=>b.className='grade-tab');
-  window.scrollTo({top:0,behavior:'smooth'});
-}
-
-function selGrade(g){
-  curGrade=g; hideAll();
-  document.getElementById('home-'+g).classList.add('active');
-  const nav=document.getElementById('main-nav');
-  nav.className='show n'+g.slice(1);
-  const ul=document.getElementById('nav-ul');
-  ul.innerHTML='';
-  const hb=document.createElement('li');
-  hb.innerHTML=`<button onclick="showGHome('${g}')" id="nb-${g}-home" class="active">🏠 ป.${g.slice(1)}</button>`;
-  ul.appendChild(hb);
-  navData[g].forEach(item=>{
-    const li=document.createElement('li');
-    li.innerHTML=`<button onclick="showCh('${g}','${item.id}')" id="nb-${g}-${item.id}">${item.icon} ${item.label}</button>`;
-    ul.appendChild(li);
-  });
-  document.querySelectorAll('.grade-tab').forEach(b=>b.className='grade-tab');
-  document.getElementById('tb-'+g).className='grade-tab a'+g;
-  window.scrollTo({top:0,behavior:'smooth'});
-}
-
-function showGHome(g){
-  hideAll();
-  document.getElementById('home-'+g).classList.add('active');
-  document.querySelectorAll('#nav-ul button').forEach(b=>b.classList.remove('active'));
-  const hb=document.getElementById('nb-'+g+'-home'); if(hb) hb.classList.add('active');
-  window.scrollTo({top:0,behavior:'smooth'});
-}
-
-function showCh(g,ch){
-  hideAll();
-  const pg=document.getElementById(g+'-'+ch);
-  if(pg) pg.classList.add('active');
-  document.querySelectorAll('#nav-ul button').forEach(b=>b.classList.remove('active'));
-  const nb=document.getElementById('nb-'+g+'-'+ch); if(nb) nb.classList.add('active');
-  if(pg){ pg.querySelectorAll('.tab-btn').forEach((b,i)=>b.classList.toggle('active',i===0)); pg.querySelectorAll('.tab-content').forEach((c,i)=>c.classList.toggle('active',i===0)); }
-  window.scrollTo({top:0,behavior:'smooth'});
-}
-
-function swTab(btn,ch,tab){
-  const pg=btn.closest('.chapter-page');
-  pg.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
-  pg.querySelectorAll('.tab-content').forEach(c=>c.classList.remove('active'));
-  btn.classList.add('active');
-  document.getElementById(ch+'-'+tab).classList.add('active');
-}
-
-// ==================== QUIZ LOGIC ====================
-function pickAns(btn){
-  const card=btn.closest('.qcard');
-  if(card.dataset.picked) return;
-  card.dataset.picked=btn.querySelector('.ol').textContent;
-  btn.style.borderColor='#6366f1';
-  btn.style.background='#ede9fe';
-}
-
-function submitQuiz(qid){
-  const wrap=document.getElementById('qw-'+qid);
-  if(!wrap) return;
-  const cards=wrap.querySelectorAll('.qcard');
-  let correct=0, total=cards.length;
-  cards.forEach(card=>{
-    const ans=card.dataset.ans;
-    const picked=card.dataset.picked||'';
-    const opts=card.querySelectorAll('.opt');
-    opts.forEach(o=>{
-      const letter=o.querySelector('.ol').textContent;
-      o.disabled=true;
-      if(letter===ans){ o.classList.add('correct'); }
-      if(letter===picked && picked!==ans){ o.classList.add('wrong'); }
-    });
-    const expl=card.querySelector('.expl');
-    if(expl) expl.classList.add('show');
-    if(picked===ans) correct++;
-  });
-  const banner=document.getElementById('sc-'+qid);
-  const numEl=document.getElementById('sn-'+qid);
-  const pEl=document.getElementById('sp-'+qid);
-  if(banner && numEl && pEl){
-    numEl.textContent=correct+'/'+total;
-    const pct=Math.round(correct/total*100);
-    pEl.textContent=pct>=80?'🌟 ยอดเยี่ยม! ผ่านแล้ว':pct>=60?'👍 ดีมาก! ลองอีกครั้ง':'📚 ทบทวนเนื้อหาอีกนะ';
-    banner.classList.add('show');
+    // Show loader, swap src
+    loader.classList.add('show');
+    frame.style.opacity = '0';
+    frame.src = page;
   }
-}
 
-function chkFill(btn){
-  const card=btn.closest('.excard');
-  const inputs=card.querySelectorAll('.fi');
-  let ok=0;
-  inputs.forEach(inp=>{
-    const ans=(inp.dataset.answer||'').trim().toLowerCase();
-    const val=inp.value.trim().toLowerCase();
-    const pass=val&&(val===ans||ans.includes(val)||val.includes(ans));
-    inp.classList.toggle('ok',pass);
-    inp.classList.toggle('no',!pass);
-    if(pass) ok++;
+  frame.addEventListener('load', () => {
+    loader.classList.remove('show');
+    frame.style.opacity = '1';
   });
-  btn.textContent='ตรวจแล้ว: ถูก '+ok+'/'+inputs.length;
-}
 </script>
 </body>
 </html>
