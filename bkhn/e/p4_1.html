@@ -1,0 +1,925 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>แบบทดสอบ หน่วยที่ 4 — วิทยาศาสตร์ ป.6</title>
+<link href="https://fonts.googleapis.com/css2?family=Mitr:wght@300;400;500;600;700&family=Sarabun:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --ink:     #12130f;
+  --paper:   #faf7f2;
+  --cream:   #f0ebe0;
+  --moss:    #3a5a2c;
+  --leaf:    #5c8a42;
+  --sage:    #a8c897;
+  --sky:     #1a5276;
+  --storm:   #6e2c00;
+  --ember:   #c0392b;
+  --gold:    #d4a017;
+  --correct: #2d6a2d;
+  --wrong:   #8b1a1a;
+  --shadow:  rgba(18,19,15,0.12);
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Sarabun', sans-serif;
+  background: var(--paper);
+  color: var(--ink);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ── DECORATIVE TEXTURE OVERLAY ── */
+body::before {
+  content: '';
+  position: fixed; inset: 0;
+  background-image:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60'%3E%3Ccircle cx='1' cy='1' r='0.7' fill='%233a5a2c' opacity='0.04'/%3E%3C/svg%3E");
+  pointer-events: none; z-index: 0;
+}
+
+/* ── HERO ── */
+.hero {
+  position: relative;
+  background: var(--moss);
+  overflow: hidden;
+  padding: 0;
+}
+
+.hero-bg {
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(ellipse 70% 80% at 90% 20%, rgba(92,138,66,0.4), transparent 60%),
+    radial-gradient(ellipse 50% 60% at 10% 90%, rgba(26,82,118,0.3), transparent 55%),
+    linear-gradient(160deg, #0f1f0a 0%, #2a4a1e 40%, #1a3a4a 100%);
+  z-index: 0;
+}
+
+/* Ruled-line texture on hero */
+.hero-bg::after {
+  content: '';
+  position: absolute; inset: 0;
+  background: repeating-linear-gradient(
+    180deg,
+    transparent 0px, transparent 31px,
+    rgba(255,255,255,0.03) 31px, rgba(255,255,255,0.03) 32px
+  );
+}
+
+.hero-content {
+  position: relative; z-index: 1;
+  max-width: 860px; margin: 0 auto;
+  padding: 52px 28px 80px;
+}
+
+.breadcrumb {
+  display: flex; gap: 8px; align-items: center;
+  font-size: 11.5px; color: rgba(255,255,255,0.4);
+  margin-bottom: 24px; letter-spacing: 0.3px;
+}
+.breadcrumb a { color: var(--sage); text-decoration: none; }
+.breadcrumb a:hover { color: #fff; }
+.breadcrumb span { opacity: 0.4; }
+
+.hero-eyebrow {
+  display: inline-flex; align-items: center; gap: 9px;
+  background: rgba(255,255,255,0.07);
+  border: 1px solid rgba(255,255,255,0.14);
+  border-radius: 4px;
+  padding: 5px 14px 5px 10px;
+  font-size: 11px; font-weight: 700;
+  letter-spacing: 2px; text-transform: uppercase;
+  color: var(--sage); margin-bottom: 20px;
+  animation: riseIn .5s ease both;
+}
+.hero-eyebrow .dot {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: var(--sage);
+  animation: pulse 2s infinite;
+}
+@keyframes pulse {
+  0%,100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.4; transform: scale(0.7); }
+}
+
+.hero h1 {
+  font-family: 'Mitr', sans-serif;
+  font-size: clamp(28px, 4.5vw, 46px);
+  font-weight: 600; color: #fff; line-height: 1.2;
+  margin-bottom: 14px;
+  animation: riseIn .5s .06s ease both;
+}
+.hero h1 em {
+  display: block;
+  color: var(--sage); font-style: normal;
+  font-size: 0.75em; font-weight: 400; letter-spacing: 0.5px;
+  margin-bottom: 4px;
+}
+
+.hero-meta {
+  display: flex; gap: 20px; flex-wrap: wrap;
+  margin-bottom: 32px;
+  animation: riseIn .5s .12s ease both;
+}
+.meta-pill {
+  display: flex; align-items: center; gap: 7px;
+  font-size: 13px; color: rgba(255,255,255,0.6);
+}
+.meta-pill strong { color: rgba(255,255,255,0.9); }
+
+/* Progress tracker */
+.tracker {
+  animation: riseIn .5s .18s ease both;
+}
+.tracker-label {
+  font-size: 11px; letter-spacing: 1px; text-transform: uppercase;
+  color: rgba(255,255,255,0.4); margin-bottom: 10px;
+}
+.tracker-dots {
+  display: flex; gap: 5px; flex-wrap: wrap; margin-bottom: 8px;
+}
+.tdot {
+  width: 26px; height: 5px; border-radius: 3px;
+  background: rgba(255,255,255,0.15);
+  transition: background .3s, transform .2s;
+}
+.tdot.active  { background: var(--sage); transform: scaleY(1.4); }
+.tdot.ok      { background: #81c784; }
+.tdot.bad     { background: #ef9a9a; }
+
+.tracker-stat {
+  font-size: 12px; color: rgba(255,255,255,0.45);
+}
+.tracker-stat b { color: var(--sage); }
+
+@keyframes riseIn {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Wave separator */
+.hero-wave {
+  display: block; width: 100%;
+  margin-bottom: -2px;
+  background: #1a3a4a; /* matches hero bottom gradient */
+}
+
+/* ── LAYOUT ── */
+.wrapper {
+  position: relative; z-index: 1;
+  max-width: 860px; margin: 0 auto;
+  padding: 40px 20px 100px;
+}
+
+/* ── SECTION DIVIDERS ── */
+.sec-banner {
+  display: flex; align-items: center; gap: 0;
+  margin: 44px 0 22px;
+  border-radius: 12px; overflow: hidden;
+  box-shadow: 0 3px 14px var(--shadow);
+}
+.sec-banner:first-of-type { margin-top: 0; }
+.sec-icon-box {
+  width: 58px; height: 58px; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 26px;
+}
+.sec-text {
+  flex: 1; padding: 13px 18px;
+}
+.sec-text h2 {
+  font-family: 'Mitr', sans-serif;
+  font-size: 16px; font-weight: 600; color: #fff; margin-bottom: 2px;
+}
+.sec-text p { font-size: 12px; color: rgba(255,255,255,0.55); }
+.sec-badge {
+  padding: 0 18px; font-size: 12px;
+  color: rgba(255,255,255,0.6); white-space: nowrap;
+}
+
+.sec-wind  { background: linear-gradient(135deg, #0d2d52, #1565c0); }
+.sec-wind .sec-icon-box { background: rgba(255,255,255,0.08); }
+.sec-green { background: linear-gradient(135deg, #142b0a, #2e7d32); }
+.sec-green .sec-icon-box { background: rgba(255,255,255,0.08); }
+.sec-storm { background: linear-gradient(135deg, #2c0a2e, #6a1b9a); }
+.sec-storm .sec-icon-box { background: rgba(255,255,255,0.08); }
+
+/* ── QUESTION CARD ── */
+.qcard {
+  background: #fff;
+  border-radius: 16px;
+  border: 1.5px solid #e8e0d5;
+  box-shadow: 0 2px 12px var(--shadow);
+  margin-bottom: 14px;
+  overflow: hidden;
+  transition: border-color .2s, box-shadow .2s;
+}
+.qcard:hover { border-color: var(--sage); box-shadow: 0 5px 22px rgba(58,90,44,0.12); }
+
+.qcard-head {
+  display: flex; align-items: flex-start; gap: 14px;
+  padding: 20px 22px 14px;
+}
+.qnum {
+  flex-shrink: 0;
+  width: 36px; height: 36px; border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Mitr', sans-serif; font-size: 15px; font-weight: 700;
+  color: #fff; margin-top: 2px;
+}
+.n-blue  { background: linear-gradient(135deg, var(--sky), #2196f3); }
+.n-green { background: linear-gradient(135deg, var(--moss), var(--leaf)); }
+.n-storm { background: linear-gradient(135deg, #4a148c, #7b1fa2); }
+
+.qtext {
+  flex: 1; font-size: 15px; line-height: 1.75;
+  color: var(--ink); font-weight: 500;
+}
+.qtext strong { color: var(--ember); }
+
+/* ── OPTIONS ── */
+.opts { padding: 2px 22px 10px; display: flex; flex-direction: column; gap: 9px; }
+
+.opt {
+  display: grid; grid-template-columns: 34px 1fr auto;
+  align-items: center; gap: 10px;
+  padding: 11px 14px; border-radius: 10px;
+  border: 1.5px solid #e4ddd3;
+  background: var(--paper);
+  font-family: 'Sarabun', sans-serif;
+  font-size: 14px; color: #3a3530;
+  cursor: pointer; text-align: left;
+  transition: border-color .16s, background .16s, transform .16s;
+  position: relative;
+}
+.opt:hover:not(.locked) {
+  border-color: var(--leaf);
+  background: #f3faf0;
+  transform: translateX(4px);
+}
+
+.opt-ltr {
+  width: 28px; height: 28px; border-radius: 7px;
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 700; font-size: 13px;
+  background: var(--cream); color: #7a6f65;
+  transition: background .16s, color .16s;
+  flex-shrink: 0;
+}
+
+.opt-check { font-size: 16px; opacity: 0; transition: opacity .2s; }
+
+/* states */
+.opt.selected { border-color: var(--moss); background: #f0f7ec; }
+.opt.selected .opt-ltr { background: var(--moss); color: #fff; }
+
+.opt.correct { border-color: var(--correct); background: #f0faf0; }
+.opt.correct .opt-ltr { background: var(--correct); color: #fff; }
+.opt.correct .opt-check { opacity: 1; color: var(--correct); }
+
+.opt.wrong { border-color: var(--wrong); background: #fff5f5; }
+.opt.wrong .opt-ltr { background: var(--wrong); color: #fff; }
+.opt.wrong .opt-check { opacity: 1; color: var(--wrong); }
+
+.opt.reveal-correct { border-color: #4caf50; background: #f9fff7; }
+.opt.reveal-correct .opt-ltr { background: #4caf50; color: #fff; }
+.opt.reveal-correct .opt-check { opacity: 1; color: #4caf50; }
+
+.opt.locked { pointer-events: none; }
+
+/* ── EXPLANATION ── */
+.explain {
+  margin: 4px 22px 18px;
+  border-radius: 10px;
+  font-size: 13.5px; line-height: 1.8;
+  display: none;
+  animation: unfold .3s ease;
+  overflow: hidden;
+}
+.explain.show { display: flex; gap: 12px; padding: 14px 16px; }
+.explain.ok  { background: #f0faf0; border-left: 4px solid var(--correct); color: #1a3d1a; }
+.explain.err { background: #fff5f5; border-left: 4px solid var(--wrong);   color: #4a0a0a; }
+
+.ex-ico { font-size: 20px; flex-shrink: 0; margin-top: 1px; }
+.ex-body { flex: 1; }
+.ex-body strong { display: block; font-size: 12px; letter-spacing: .5px; margin-bottom: 4px; font-weight: 700; }
+.explain.ok  .ex-body strong { color: var(--correct); }
+.explain.err .ex-body strong { color: var(--wrong); }
+.ans-reveal {
+  display: inline-flex; align-items: center; gap: 5px;
+  background: rgba(0,0,0,0.06); border-radius: 5px;
+  padding: 2px 8px; font-weight: 700; font-size: 12px;
+  margin-left: 4px;
+}
+
+@keyframes unfold {
+  from { opacity: 0; max-height: 0; }
+  to   { opacity: 1; max-height: 300px; }
+}
+
+/* ── SUBMIT / RESULT ── */
+.action-zone { text-align: center; margin-top: 48px; }
+
+.btn-submit {
+  display: inline-flex; align-items: center; gap: 10px;
+  background: linear-gradient(135deg, var(--moss), var(--leaf));
+  color: #fff; border: none; border-radius: 14px;
+  padding: 16px 52px;
+  font-family: 'Mitr', sans-serif; font-size: 17px; font-weight: 600;
+  cursor: pointer; letter-spacing: 0.3px;
+  box-shadow: 0 6px 22px rgba(58,90,44,0.35), 0 1px 0 rgba(255,255,255,0.1) inset;
+  transition: transform .2s, box-shadow .2s;
+}
+.btn-submit:hover { transform: translateY(-3px); box-shadow: 0 12px 30px rgba(58,90,44,0.42); }
+.btn-submit:disabled { background: #c8c0b8; box-shadow: none; transform: none; cursor: default; }
+.btn-submit .bi { font-size: 22px; }
+
+.submit-hint { font-size: 12.5px; color: #9a9186; margin-top: 10px; }
+
+/* ── RESULT BOARD ── */
+.result {
+  display: none;
+  background: #fff;
+  border: 1.5px solid #e0d8cc;
+  border-radius: 20px;
+  padding: 44px 32px 40px;
+  text-align: center;
+  margin-top: 40px;
+  box-shadow: 0 8px 36px rgba(58,90,44,0.12);
+  animation: riseIn .4s ease;
+}
+.result.show { display: block; }
+
+/* Radial score */
+.score-wrap {
+  position: relative;
+  width: 128px; height: 128px;
+  margin: 0 auto 22px;
+}
+.score-svg { transform: rotate(-90deg); }
+.score-bg  { fill: none; stroke: #e8e0d5; stroke-width: 9; }
+.score-arc { fill: none; stroke-width: 9; stroke-linecap: round; transition: stroke-dashoffset 1s ease; }
+.score-inner {
+  position: absolute; inset: 0;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+}
+.score-n {
+  font-family: 'Mitr', sans-serif;
+  font-size: 38px; font-weight: 700; line-height: 1; color: var(--ink);
+}
+.score-d { font-size: 13px; color: #9a9186; }
+
+.result-grade {
+  font-family: 'Mitr', sans-serif;
+  font-size: 22px; font-weight: 600; color: var(--moss); margin-bottom: 6px;
+}
+.result-msg { font-size: 14px; color: #7a6f65; margin-bottom: 30px; }
+
+.stats {
+  display: flex; justify-content: center; gap: 30px;
+  margin-bottom: 30px; padding: 18px 24px;
+  background: var(--paper); border-radius: 12px;
+}
+.stat-item { text-align: center; }
+.stat-n {
+  font-family: 'Mitr', sans-serif;
+  font-size: 28px; font-weight: 700; line-height: 1.1;
+}
+.stat-n.c { color: var(--correct); }
+.stat-n.w { color: var(--wrong); }
+.stat-n.p { color: var(--sky); }
+.stat-l { font-size: 12px; color: #9a9186; margin-top: 3px; }
+
+.btn-retry {
+  display: inline-flex; align-items: center; gap: 8px;
+  border: 2px solid var(--moss); background: transparent;
+  color: var(--moss); border-radius: 12px;
+  padding: 11px 36px;
+  font-family: 'Mitr', sans-serif; font-size: 15px; font-weight: 600;
+  cursor: pointer; transition: all .18s;
+}
+.btn-retry:hover { background: var(--moss); color: #fff; }
+
+.review-tip {
+  font-size: 12px; color: #aaa4a0; margin-top: 16px;
+}
+.review-tip strong { color: var(--moss); }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 600px) {
+  .hero-content { padding: 36px 16px 68px; }
+  .wrapper { padding: 28px 14px 80px; }
+  .qcard-head, .opts { padding-left: 14px; padding-right: 14px; }
+  .explain { margin-left: 14px; margin-right: 14px; }
+  .hero-meta { gap: 12px; }
+  .stats { gap: 16px; }
+}
+</style>
+</head>
+<body>
+
+<!-- ── HERO ── -->
+<div class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-content">
+    <div class="breadcrumb">
+      <a href="#" onclick="if(parent.navigate)parent.navigate('p0.html','home');return false;">หน้าหลัก</a>
+      <span>/</span>
+      <a href="#" onclick="if(parent.navigate)parent.navigate('p6.html','p6');return false;">ป.6</a>
+      <span>/</span>
+      <span style="color:rgba(255,255,255,0.6);">แบบทดสอบ</span>
+    </div>
+
+    <div class="hero-eyebrow">
+      <span class="dot"></span>
+      วิทยาศาสตร์ ป.6 · หน่วยที่ 4
+    </div>
+
+    <h1>
+      <em>แบบทดสอบปลายบท</em>
+      ปรากฏการณ์ของโลก<br>และภัยธรรมชาติ
+    </h1>
+
+    <div class="hero-meta">
+      <div class="meta-pill">📋 <strong>15</strong> ข้อ</div>
+      <div class="meta-pill">🎯 <strong>15</strong> คะแนน</div>
+      <div class="meta-pill">⏱ <strong>3</strong> หน่วยเนื้อหา</div>
+      <div class="meta-pill">✍️ เลือกคำตอบที่ถูกที่สุดเพียงข้อเดียว</div>
+    </div>
+
+    <div class="tracker">
+      <div class="tracker-label">ความคืบหน้า</div>
+      <div class="tracker-dots" id="tracker-dots"></div>
+      <div class="tracker-stat">ตอบแล้ว <b id="done-count">0</b> / 15 ข้อ</div>
+    </div>
+  </div>
+</div>
+
+<svg class="hero-wave" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 48" preserveAspectRatio="none">
+  <path fill="#faf7f2" d="M0,24 C240,48 480,4 720,24 C960,44 1200,8 1440,24 L1440,48 L0,48 Z"/>
+</svg>
+
+<!-- ── QUIZ WRAPPER ── -->
+<div class="wrapper" id="quiz-wrap">
+
+  <!-- ===== SECTION 1 ===== -->
+  <div class="sec-banner sec-wind">
+    <div class="sec-icon-box">💨</div>
+    <div class="sec-text">
+      <h2>ส่วนที่ 1 — ลมบก ลมทะเล และมรสุม</h2>
+      <p>ข้อที่ 1–4</p>
+    </div>
+    <div class="sec-badge">4 คะแนน</div>
+  </div>
+
+  <!-- Q1 -->
+  <div class="qcard" id="qc1">
+    <div class="qcard-head">
+      <div class="qnum n-blue">1</div>
+      <div class="qtext">ลมบก ลมทะเล และมรสุม เกิดขึ้นจากสาเหตุหลักในข้อใด?</div>
+    </div>
+    <div class="opts">
+      <button class="opt" onclick="pick(1,'ก')"><span class="opt-ltr">ก</span><span>ความแตกต่างของความดันอากาศในแต่ละฤดูกาล</span><span class="opt-check">✓</span></button>
+      <button class="opt" onclick="pick(1,'ข')"><span class="opt-ltr">ข</span><span>ความแตกต่างของอุณหภูมิอากาศเหนือพื้นดินและพื้นน้ำ</span><span class="opt-check">✓</span></button>
+      <button class="opt" onclick="pick(1,'ค')"><span class="opt-ltr">ค</span><span>การหมุนรอบตัวเองของโลก</span><span class="opt-check">✓</span></button>
+      <button class="opt" onclick="pick(1,'ง')"><span class="opt-ltr">ง</span><span>แรงโน้มถ่วงของดวงจันทร์ที่กระทำต่อโลก</span><span class="opt-check">✓</span></button>
+    </div>
+    <div class="explain" id="ex1"></div>
+  </div>
+
+  <!-- Q2 -->
+  <div class="qcard" id="qc2">
+    <div class="qcard-head">
+      <div class="qnum n-blue">2</div>
+      <div class="qtext">ข้อใดกล่าวถูกต้องเกี่ยวกับการเกิด <strong>"ลมทะเล"</strong>?</div>
+    </div>
+    <div class="opts">
+      <button class="opt" onclick="pick(2,'ก')"><span class="opt-ltr">ก</span><span>เกิดในเวลากลางวัน ลมพัดจากทะเลเข้าสู่ชายฝั่ง</span><span class="opt-check">✓</span></button>
+      <button class="opt" onclick="pick(2,'ข')"><span class="opt-ltr">ข</span><span>เกิดในเวลากลางคืน ลมพัดจากทะเลเข้าสู่ชายฝั่ง</span><span class="opt-check">✓</span></button>
+      <button class="opt" onclick="pick(2,'ค')"><span class="opt-ltr">ค</span><span>เกิดในเวลากลางวัน ลมพัดจากชายฝั่งออกสู่ทะเล</span><span class="opt-check">✓</span></button>
+      <button class="opt" onclick="pick(2,'ง')"><span class="opt-ltr">ง</span><span>เกิดในเวลากลางคืน ลมพัดจากชายฝั่งออกสู่ทะเล</span><span class="opt-check">✓</span></button>
+    </div>
+    <div class="explain" id="ex2"></div>
+  </div>
+
+  <!-- Q3 -->
+  <div class="qcard" id="qc3">
+    <div class="qcard-head">
+      <div class="qnum n-blue">3</div>
+      <div class="qtext">การเกิดมรสุมมีความแตกต่างจากการเกิดลมบก ลมทะเล ในเรื่องใดมากที่สุด?</div>
+    </div>
+    <div class="opts">
+      <button class="opt" onclick="pick(3,'ก')"><span class="opt-ltr">ก</span><span>หลักการเกิดที่อาศัยแรงโน้มถ่วง</span><span class="opt-check">✓</span></button>
+      <button class="opt" onclick="pick(3,'ข')"><span class="opt-ltr">ข</span><span>มรสุมเกิดเฉพาะบริเวณขั้วโลกเท่านั้น</span><span class="opt-check">✓</span></button>
+      <button class="opt" onclick="pick(3,'ค')"><span class="opt-ltr">ค</span><span>ขนาดบริเวณที่เกิดซึ่งกว้างระดับทวีป และช่วงเวลาที่เกิดยาวนานเป็นฤดู</span><span class="opt-check">✓</span></button>
+      <button class="opt" onclick="pick(3,'ง')"><span class="opt-ltr">ง</span><span>มรสุมเกิดจากพายุหมุน แต่ลมบกลมทะเลเกิดจากแสงแดด</span><span class="opt-check">✓</span></button>
+    </div>
+    <div class="explain" id="ex3"></div>
+  </div>
+
+  <!-- Q4 -->
+  <div class="qcard" id="qc4">
+    <div class="qcard-head">
+      <div class="qnum n-blue">4</div>
+      <div class="qtext">ประเทศไทยได้รับอิทธิพลจากมรสุมตะวันตกเฉียงใต้ในช่วงกลางเดือนพฤษภาคมถึงกลางเดือนตุลาคม ซึ่งส่งผลให้เกิดฤดูใด?</div>
+    </div>
+    <div class="opts">
+      <button class="opt" onclick="pick(4,'ก')"><span class="opt-ltr">ก</span><span>ฤดูร้อน</span><span class="opt-check">✓</span></button>
+      <button class="opt" onclick="pick(4,'ข')"><span class="opt-ltr">ข</span><span>ฤดูฝน</span><span class="opt-check">✓</span></button>
+      <button class="opt" onclick="pick(4,'ค')"><span class="opt-ltr">ค</span><span>ฤดูหนาว</span><span class="opt-check">✓</span></button>
+      <button class="opt" onclick="pick(4,'ง')"><span class="opt-ltr">ง</span><span>ฤดูแล้ง</span><span class="opt-check">✓</span></button>
+    </div>
+    <div class="explain" id="ex4"></div>
+  </div>
+
+  <!-- ===== SECTION 2 ===== -->
+  <div class="sec-banner sec-green">
+    <div class="sec-icon-box">🏭</div>
+    <div class="sec-text">
+      <h2>ส่วนที่ 2 — ปรากฏการณ์เรือนกระจก</h2>
+      <p>ข้อที่ 5–9</p>
+    </div>
+    <div class="sec-badge">5 คะแนน</div>
+  </div>
+
+  <!-- Q5 -->
+  <div class="qcard" id="qc5">
+    <div class="qcard-head">
+      <div class="qnum n-green">5</div>
+      <div class="qtext">แก๊สในข้อใดต่อไปนี้ <strong>"ไม่ใช่"</strong> แก๊สเรือนกระจก?</div>
+    </div>
+    <div class="opts">
+      <button class="opt" onclick="pick(5,'ก')"><span class="opt-ltr">ก</span><span>แก๊สมีเทน</span><span class="opt-check">✓</span></button>
+      <button class="opt" onclick="pick(5,'ข')"><span class="opt-ltr">ข</span><span>แก๊สคาร์บอนไดออกไซด์</span><span class="opt-check">✓</span></button>
+      <button class="opt" onclick="pick(5,'ค')"><span class="opt-ltr">ค</span><span>แก๊สไนตรัสออกไซด์</span><span class="opt-check">✓</span></button>
+      <button class="opt" onclick="pick(5,'ง')"><span class="opt-ltr">ง</span><span>แก๊สออกซิเจน</span><span class="opt-check">✓</span></button>
+    </div>
+    <div class="explain" id="ex5"></div>
+  </div>
+
+  <!-- Q6 -->
+  <div class="qcard" id="qc6">
+    <div class="qcard-head">
+      <div class="qnum n-green">6</div>
+      <div class="qtext">ปรากฏการณ์เรือนกระจกในสภาวะปกติ มีประโยชน์ต่อโลกของเราอย่างไร?</div>
+    </div>
+    <div class="opts">
+      <button class="opt" onclick="pick(6,'ก')"><span class="opt-ltr">ก</span><span>ช่วยลดปริมาณรังสีอัลตราไวโอเลตไม่ให้เข้าสู่โลก</span><span class="opt-check">✓</span></button>
+      <button class="opt" onclick="pick(6,'ข')"><span class="opt-ltr">ข</span><span>ทำให้อากาศบนโลกมีอุณหภูมิโดยเฉลี่ยเหมาะสมต่อการดำรงชีวิต</span><span class="opt-check">✓</span></button>
+      <button class="opt" onclick="pick(6,'ค')"><span class="opt-ltr">ค</span><span>ช่วยทำให้พืชออกดอกและติดผลนอกฤดูกาล</span><span class="opt-check">✓</span></button>
+      <button class="opt" onclick="pick(6,'ง')"><span class="opt-ltr">ง</span><span>ป้องกันการเกิดภัยธรรมชาติทุกชนิด</span><span class="opt-check">✓</span></button>
+    </div>
+    <div class="explain" id="ex6"></div>
+  </div>
+
+  <!-- Q7 -->
+  <div class="qcard" id="qc7">
+    <div class="qcard-head">
+      <div class="qnum n-green">7</div>
+      <div class="qtext">กิจกรรมใดของมนุษย์ที่ส่งผลให้ปริมาณแก๊สเรือนกระจกในบรรยากาศเพิ่มขึ้นมากที่สุด?</div>
+    </div>
+    <div class="opts">
+      <button class="opt" onclick="pick(7,'ก')"><span class="opt-ltr">ก</span><span>การปลูกป่าทดแทน</span><span class="opt-check">✓</span></button>
+      <button class="opt" onclick="pick(7,'ข')"><span class="opt-ltr">ข</span><span>การคัดแยกขยะก่อนทิ้ง</span><span class="opt-check">✓</span></button>
+      <button class="opt" onclick="pick(7,'ค')"><span class="opt-ltr">ค</span><span>การเผาไหม้เชื้อเพลิงซากดึกดำบรรพ์และการทำปศุสัตว์</span><span class="opt-check">✓</span></button>
+      <button class="opt" onclick="pick(7,'ง')"><span class="opt-ltr">ง</span><span>การใช้จักรยานแทนการใช้รถยนต์</span><span class="opt-check">✓</span></button>
+    </div>
+    <div class="explain" id="ex7"></div>
+  </div>
+
+  <!-- Q8 -->
+  <div class="qcard" id="qc8">
+    <div class="qcard-head">
+      <div class="qnum n-green">8</div>
+      <div class="qtext">หากปริมาณแก๊สเรือนกระจกเพิ่มขึ้นจนเกิด <strong>"ภาวะโลกร้อน"</strong> จะส่งผลกระทบตามข้อใด?</div>
+    </div>
+    <div class="opts">
+      <button class="opt" onclick="pick(8,'ก')"><span class="opt-ltr">ก</span><span>น้ำแข็งขั้วโลกหลอมเหลวและระดับน้ำทะเลสูงขึ้น</span><span class="opt-check">✓</span></button>
+      <button class="opt" onclick="pick(8,'ข')"><span class="opt-ltr">ข</span><span>แผ่นดินไหวมีความรุนแรงมากขึ้น</span><span class="opt-check">✓</span></button>
+      <button class="opt" onclick="pick(8,'ค')"><span class="opt-ltr">ค</span><span>ภูเขาไฟระเบิดบ่อยครั้งขึ้น</span><span class="opt-check">✓</span></button>
+      <button class="opt" onclick="pick(8,'ง')"><span class="opt-ltr">ง</span><span>พืชเจริญเติบโตได้ดีกว่าปกติในทุกพื้นที่</span><span class="opt-check">✓</span></button>
+    </div>
+    <div class="explain" id="ex8"></div>
+  </div>
+
+  <!-- Q9 -->
+  <div class="qcard" id="qc9">
+    <div class="qcard-head">
+      <div class="qnum n-green">9</div>
+      <div class="qtext">นักเรียนสามารถช่วยลดการปล่อยแก๊สเรือนกระจกได้ด้วยวิธีใด?</div>
+    </div>
+    <div class="opts">
+      <button class="opt" onclick="pick(9,'ก')"><span class="opt-ltr">ก</span><span>เปิดเครื่องปรับอากาศทิ้งไว้เพื่อลดความร้อน</span><span class="opt-check">✓</span></button>
+      <button class="opt" onclick="pick(9,'ข')"><span class="opt-ltr">ข</span><span>เผาเศษใบไม้และขยะเพื่อลดพื้นที่จัดเก็บ</span><span class="opt-check">✓</span></button>
+      <button class="opt" onclick="pick(9,'ค')"><span class="opt-ltr">ค</span><span>ปิดสวิตช์ไฟและเครื่องใช้ไฟฟ้าทุกชนิดเมื่อเลิกใช้งาน</span><span class="opt-check">✓</span></button>
+      <button class="opt" onclick="pick(9,'ง')"><span class="opt-ltr">ง</span><span>ใช้ปุ๋ยเคมีในแปลงเกษตรให้มากขึ้น</span><span class="opt-check">✓</span></button>
+    </div>
+    <div class="explain" id="ex9"></div>
+  </div>
+
+  <!-- ===== SECTION 3 ===== -->
+  <div class="sec-banner sec-storm">
+    <div class="sec-icon-box">⛈️</div>
+    <div class="sec-text">
+      <h2>ส่วนที่ 3 — ภัยธรรมชาติ</h2>
+      <p>ข้อที่ 10–15</p>
+    </div>
+    <div class="sec-badge">6 คะแนน</div>
+  </div>
+
+  <!-- Q10 -->
+  <div class="qcard" id="qc10">
+    <div class="qcard-head">
+      <div class="qnum n-storm">10</div>
+      <div class="qtext">ภัยธรรมชาติในข้อใด มักมีสาเหตุหลักมาจากการเกิดแผ่นดินไหวรุนแรงใต้พื้นมหาสมุทร?</div>
+    </div>
+    <div class="opts">
+      <button class="opt" onclick="pick(10,'ก')"><span class="opt-ltr">ก</span><span>ดินถล่ม</span><span class="opt-check">✓</span></button>
+      <button class="opt" onclick="pick(10,'ข')"><span class="opt-ltr">ข</span><span>สึนามิ</span><span class="opt-check">✓</span></button>
+      <button class="opt" onclick="pick(10,'ค')"><span class="opt-ltr">ค</span><span>น้ำท่วมขัง</span><span class="opt-check">✓</span></button>
+      <button class="opt" onclick="pick(10,'ง')"><span class="opt-ltr">ง</span><span>การกัดเซาะชายฝั่ง</span><span class="opt-check">✓</span></button>
+    </div>
+    <div class="explain" id="ex10"></div>
+  </div>
+
+  <!-- Q11 -->
+  <div class="qcard" id="qc11">
+    <div class="qcard-head">
+      <div class="qnum n-storm">11</div>
+      <div class="qtext">หากนักเรียนอยู่บริเวณชายหาด แล้วสังเกตเห็นระดับน้ำทะเลลดลงอย่างรวดเร็วจนเห็นชายหาดถอยร่นลงไปในทะเลเป็นระยะทางไกล นักเรียนควรปฏิบัติตนอย่างไร?</div>
+    </div>
+    <div class="opts">
+      <button class="opt" onclick="pick(11,'ก')"><span class="opt-ltr">ก</span><span>รีบวิ่งลงไปจับปลาที่ติดอยู่บนหาดทราย</span><span class="opt-check">✓</span></button>
+      <button class="opt" onclick="pick(11,'ข')"><span class="opt-ltr">ข</span><span>นำโทรศัพท์มือถือไปถ่ายรูปปรากฏการณ์แปลกประหลาด</span><span class="opt-check">✓</span></button>
+      <button class="opt" onclick="pick(11,'ค')"><span class="opt-ltr">ค</span><span>รีบหนีขึ้นไปอยู่บนที่สูงที่มั่นคงแข็งแรงทันที</span><span class="opt-check">✓</span></button>
+      <button class="opt" onclick="pick(11,'ง')"><span class="opt-ltr">ง</span><span>หลบเข้าไปอยู่ในรถยนต์ที่จอดอยู่ริมหาด</span><span class="opt-check">✓</span></button>
+    </div>
+    <div class="explain" id="ex11"></div>
+  </div>
+
+  <!-- Q12 -->
+  <div class="qcard" id="qc12">
+    <div class="qcard-head">
+      <div class="qnum n-storm">12</div>
+      <div class="qtext">ข้อใดคือสัญญาณเตือนล่วงหน้าว่าอาจจะเกิด <strong>"ดินถล่ม"</strong>?</div>
+    </div>
+    <div class="opts">
+      <button class="opt" onclick="pick(12,'ก')"><span class="opt-ltr">ก</span><span>ระดับน้ำทะเลลดลงอย่างรวดเร็ว</span><span class="opt-check">✓</span></button>
+      <button class="opt" onclick="pick(12,'ข')"><span class="opt-ltr">ข</span><span>ฝนตกหนักต่อเนื่อง และน้ำในลำห้วยมีสีขุ่นเหมือนสีดินภูเขา</span><span class="opt-check">✓</span></button>
+      <button class="opt" onclick="pick(12,'ค')"><span class="opt-ltr">ค</span><span>ท้องฟ้ามืดครึ้มและมีลมกระโชกแรง</span><span class="opt-check">✓</span></button>
+      <button class="opt" onclick="pick(12,'ง')"><span class="opt-ltr">ง</span><span>สัตว์ป่าอพยพลงมาหาแหล่งน้ำ</span><span class="opt-check">✓</span></button>
+    </div>
+    <div class="explain" id="ex12"></div>
+  </div>
+
+  <!-- Q13 -->
+  <div class="qcard" id="qc13">
+    <div class="qcard-head">
+      <div class="qnum n-storm">13</div>
+      <div class="qtext">หากเกิดแผ่นดินไหวในขณะที่นักเรียนกำลังเรียนอยู่ในอาคารเรียนชั้น 2 ควรปฏิบัติตนอย่างไรจึงจะปลอดภัยที่สุด?</div>
+    </div>
+    <div class="opts">
+      <button class="opt" onclick="pick(13,'ก')"><span class="opt-ltr">ก</span><span>รีบวิ่งลงบันไดอย่างรวดเร็วเพื่อออกจากอาคาร</span><span class="opt-check">✓</span></button>
+      <button class="opt" onclick="pick(13,'ข')"><span class="opt-ltr">ข</span><span>ใช้ลิฟต์ลงมาชั้นล่างเพื่อความรวดเร็ว</span><span class="opt-check">✓</span></button>
+      <button class="opt" onclick="pick(13,'ค')"><span class="opt-ltr">ค</span><span>หมอบลงและหาที่กำบังใต้โต๊ะที่แข็งแรง และอยู่ห่างจากหน้าต่าง</span><span class="opt-check">✓</span></button>
+      <button class="opt" onclick="pick(13,'ง')"><span class="opt-ltr">ง</span><span>ไปยืนดูสถานการณ์ที่ริมระเบียง</span><span class="opt-check">✓</span></button>
+    </div>
+    <div class="explain" id="ex13"></div>
+  </div>
+
+  <!-- Q14 -->
+  <div class="qcard" id="qc14">
+    <div class="qcard-head">
+      <div class="qnum n-storm">14</div>
+      <div class="qtext">ข้อใดคือการปฏิบัติตนที่ถูกต้องเมื่อเกิดเหตุการณ์น้ำท่วม?</div>
+    </div>
+    <div class="opts">
+      <button class="opt" onclick="pick(14,'ก')"><span class="opt-ltr">ก</span><span>ลงไปว่ายน้ำเล่นในบริเวณที่น้ำท่วมขัง</span><span class="opt-check">✓</span></button>
+      <button class="opt" onclick="pick(14,'ข')"><span class="opt-ltr">ข</span><span>งดใช้เครื่องใช้ไฟฟ้า ถอดปลั๊กไฟฟ้า และสวมรองเท้ายางเมื่อเดินลุยน้ำ</span><span class="opt-check">✓</span></button>
+      <button class="opt" onclick="pick(14,'ค')"><span class="opt-ltr">ค</span><span>ดื่มน้ำที่ตักจากบริเวณที่น้ำท่วมขัง เพราะเป็นน้ำฝน</span><span class="opt-check">✓</span></button>
+      <button class="opt" onclick="pick(14,'ง')"><span class="opt-ltr">ง</span><span>ขับรถยนต์ขนาดเล็กฝ่ากระแสน้ำเพื่อหนีภัย</span><span class="opt-check">✓</span></button>
+    </div>
+    <div class="explain" id="ex14"></div>
+  </div>
+
+  <!-- Q15 -->
+  <div class="qcard" id="qc15">
+    <div class="qcard-head">
+      <div class="qnum n-storm">15</div>
+      <div class="qtext">ภัยธรรมชาติใดที่มีลักษณะเกิดขึ้นอย่างช้า ๆ ค่อยเป็นค่อยไป แตกต่างจากภัยธรรมชาติชนิดอื่นที่มักเกิดขึ้นอย่างฉับพลัน?</div>
+    </div>
+    <div class="opts">
+      <button class="opt" onclick="pick(15,'ก')"><span class="opt-ltr">ก</span><span>สึนามิ</span><span class="opt-check">✓</span></button>
+      <button class="opt" onclick="pick(15,'ข')"><span class="opt-ltr">ข</span><span>แผ่นดินไหว</span><span class="opt-check">✓</span></button>
+      <button class="opt" onclick="pick(15,'ค')"><span class="opt-ltr">ค</span><span>การกัดเซาะชายฝั่ง</span><span class="opt-check">✓</span></button>
+      <button class="opt" onclick="pick(15,'ง')"><span class="opt-ltr">ง</span><span>ดินถล่ม</span><span class="opt-check">✓</span></button>
+    </div>
+    <div class="explain" id="ex15"></div>
+  </div>
+
+  <!-- SUBMIT -->
+  <div class="action-zone" id="action-zone">
+    <button class="btn-submit" id="btn-sub" onclick="submit()" disabled>
+      <span class="bi">📊</span> ส่งคำตอบและดูผลคะแนน
+    </button>
+    <p class="submit-hint" id="sub-hint">ยังตอบไม่ครบ — เหลืออีก <b id="left-count">15</b> ข้อ</p>
+  </div>
+
+  <!-- RESULT BOARD -->
+  <div class="result" id="result-board">
+    <div class="score-wrap">
+      <svg class="score-svg" width="128" height="128" viewBox="0 0 128 128">
+        <circle class="score-bg" cx="64" cy="64" r="54"/>
+        <circle class="score-arc" id="arc" cx="64" cy="64" r="54"
+          stroke="#3a5a2c"
+          stroke-dasharray="339.3"
+          stroke-dashoffset="339.3"/>
+      </svg>
+      <div class="score-inner">
+        <div class="score-n" id="sn">0</div>
+        <div class="score-d">/ 15</div>
+      </div>
+    </div>
+
+    <div class="result-grade" id="rgrade">—</div>
+    <div class="result-msg"   id="rmsg">—</div>
+
+    <div class="stats">
+      <div class="stat-item">
+        <div class="stat-n c" id="sc">0</div>
+        <div class="stat-l">✅ ถูก</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-n w" id="sw">0</div>
+        <div class="stat-l">❌ ผิด</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-n p" id="sp">0%</div>
+        <div class="stat-l">🎯 คะแนน</div>
+      </div>
+    </div>
+
+    <button class="btn-retry" onclick="retry()">🔄 ทำแบบทดสอบอีกครั้ง</button>
+    <p class="review-tip">เลื่อนขึ้นดู <strong>เฉลยและคำอธิบาย</strong> ของแต่ละข้อ</p>
+  </div>
+
+</div><!-- /wrapper -->
+
+<script>
+/* ─── DATA ─── */
+const KEY = {1:'ข',2:'ก',3:'ค',4:'ข',5:'ง',6:'ข',7:'ค',8:'ก',9:'ค',10:'ข',11:'ค',12:'ข',13:'ค',14:'ข',15:'ค'};
+
+const EXP = {
+  1: {t:'เฉลย: ข', d:'ลมบก ลมทะเล และมรสุม เกิดจากความแตกต่างระหว่างอุณหภูมิของอากาศเหนือพื้นดินและอุณหภูมิของอากาศเหนือพื้นน้ำ อากาศร้อนจะลอยตัวสูงขึ้น อากาศเย็นจะเคลื่อนเข้ามาแทนที่'},
+  2: {t:'เฉลย: ก', d:'ลมทะเลเกิดในช่วงเวลากลางวัน พื้นดินชายฝั่งร้อนเร็วกว่าพื้นน้ำ อากาศเหนือพื้นดินลอยตัวสูงขึ้น อากาศเหนือพื้นทะเลที่เย็นกว่าจึงพัดเข้ามาแทนที่ (กลางคืน = ลมบก พัดออกทะเล)'},
+  3: {t:'เฉลย: ค', d:'ลมบก-ลมทะเลเกิดบริเวณชายฝั่งในระยะเวลา 1 วัน แต่มรสุมเกิดเป็นบริเวณกว้างระดับทวีปและมีระยะเวลายาวนานต่อเนื่องหลายเดือน (หลักการเกิดเหมือนกัน — ต่างกันที่ขนาดและระยะเวลา)'},
+  4: {t:'เฉลย: ข', d:'มรสุมตะวันตกเฉียงใต้พัดจากมหาสมุทรอินเดียนำความชื้นมายังประเทศไทยในช่วง พ.ค.–ต.ค. ส่งผลให้ประเทศไทยมีฤดูฝน'},
+  5: {t:'เฉลย: ง', d:'แก๊สเรือนกระจก ได้แก่ คาร์บอนไดออกไซด์ มีเทน ไนตรัสออกไซด์ คลอโรฟลูออโรคาร์บอน ไอน้ำ และโอโซน ส่วนออกซิเจน (O₂) ไม่ใช่แก๊สเรือนกระจก'},
+  6: {t:'เฉลย: ข', d:'ปรากฏการณ์เรือนกระจกในภาวะปกติช่วยดักจับความร้อนบางส่วนไว้ในชั้นบรรยากาศ ทำให้อุณหภูมิเฉลี่ยโลกอยู่ที่ประมาณ 15°C เหมาะสมต่อการดำรงชีวิต (หากไม่มีเลยจะหนาวถึง −18°C)'},
+  7: {t:'เฉลย: ค', d:'การเผาไหม้เชื้อเพลิงซากดึกดำบรรพ์ (น้ำมัน ถ่านหิน ก๊าซธรรมชาติ) ปล่อย CO₂ จำนวนมาก ส่วนการทำปศุสัตว์ปล่อย CH₄ (มีเทน) จากกระบวนการย่อยอาหารของสัตว์'},
+  8: {t:'เฉลย: ก', d:'ภาวะโลกร้อนทำให้น้ำแข็งขั้วโลกและธารน้ำแข็งหลอมเหลว ระดับน้ำทะเลสูงขึ้น พื้นที่ชายฝั่งถูกน้ำท่วม และรูปแบบสภาพอากาศเปลี่ยนแปลงรุนแรง (ไม่ได้เกี่ยวกับแผ่นดินไหวหรือภูเขาไฟโดยตรง)'},
+  9: {t:'เฉลย: ค', d:'การปิดไฟและเครื่องใช้ไฟฟ้าเมื่อไม่ใช้งาน ลดความต้องการไฟฟ้า ลดการเผาเชื้อเพลิงในโรงไฟฟ้า จึงช่วยลด CO₂ ส่วนการเผาขยะและใช้ปุ๋ยเคมีเป็นการเพิ่มแก๊สเรือนกระจก'},
+  10:{t:'เฉลย: ข', d:'สึนามิ (คลื่นยักษ์) มักเกิดจากแผ่นดินไหวรุนแรงใต้พื้นมหาสมุทรซึ่งดันน้ำขึ้นและเคลื่อนตัวเข้าหาฝั่งด้วยความเร็วและพลังงานสูง'},
+  11:{t:'เฉลย: ค', d:'การที่น้ำทะเลลดระดับลงผิดปกติอย่างรวดเร็วเป็นสัญญาณเตือนของสึนามิ ควรรีบหนีขึ้นที่สูงที่มั่นคงทันที ห้ามเสียเวลาถ่ายรูปหรือหลบในรถยนต์'},
+  12:{t:'เฉลย: ข', d:'สัญญาณเตือนดินถล่ม: ฝนตกหนักต่อเนื่อง ระดับน้ำในลำห้วยสูงขึ้นรวดเร็ว และน้ำมีสีขุ่นคล้ายดินภูเขา แสดงว่าดินบนเนินกำลังถูกพัดพาลงมา ควรออกจากพื้นที่ทันที'},
+  13:{t:'เฉลย: ค', d:'ขณะเกิดแผ่นดินไหวในอาคาร ให้ "หมอบ–คลุม–ยึด" (Drop, Cover, Hold on) ใต้โต๊ะแข็งแรง ห่างจากหน้าต่าง ไม่วิ่งลงบันไดและไม่ใช้ลิฟต์ขณะอาคารสั่นไหว'},
+  14:{t:'เฉลย: ข', d:'เมื่อน้ำท่วม ควรงดใช้ไฟฟ้า ถอดปลั๊ก สวมรองเท้ายางป้องกันไฟรั่วและสัตว์มีพิษ ไม่ว่ายน้ำเล่น ไม่ดื่มน้ำท่วม และไม่ขับรถฝ่ากระแสน้ำ'},
+  15:{t:'เฉลย: ค', d:'การกัดเซาะชายฝั่งเป็นกระบวนการที่เกิดขึ้นทีละน้อยอย่างช้าๆ ตลอดเวลา ต่างจากสึนามิ แผ่นดินไหว ดินถล่ม ที่เกิดขึ้นอย่างฉับพลันทันที'},
+};
+
+/* ─── STATE ─── */
+const picks = {};
+let done = false;
+
+/* Build tracker dots */
+const dotWrap = document.getElementById('tracker-dots');
+for (let i=1;i<=15;i++) {
+  const d = document.createElement('div');
+  d.className='tdot'; d.id='td'+i; dotWrap.appendChild(d);
+}
+
+function updateTracker() {
+  const n = Object.keys(picks).length;
+  document.getElementById('done-count').textContent = n;
+  const left = 15 - n;
+  document.getElementById('left-count').textContent = left;
+  document.getElementById('btn-sub').disabled = n < 15;
+  if (n === 15) {
+    document.getElementById('sub-hint').innerHTML = '✅ ตอบครบทุกข้อแล้ว กดส่งเพื่อดูผล';
+  }
+}
+
+/* Pick answer */
+function pick(q, letter) {
+  if (done) return;
+  picks[q] = letter;
+
+  const card = document.getElementById('qc'+q);
+  card.querySelectorAll('.opt').forEach(b => {
+    b.classList.remove('selected');
+    const l = b.querySelector('.opt-ltr').textContent;
+    if (l===letter) b.classList.add('selected');
+  });
+
+  const dot = document.getElementById('td'+q);
+  dot.classList.add('active');
+  updateTracker();
+}
+
+/* Submit */
+function submit() {
+  if (done) return;
+  done = true;
+  document.getElementById('btn-sub').disabled = true;
+
+  let correct = 0;
+  for (let i=1;i<=15;i++) {
+    const ans = picks[i];
+    const right = KEY[i];
+    const card = document.getElementById('qc'+i);
+    const dot  = document.getElementById('td'+i);
+    const isOk = ans === right;
+    if (isOk) correct++;
+
+    card.querySelectorAll('.opt').forEach(b => {
+      b.classList.add('locked');
+      const l = b.querySelector('.opt-ltr').textContent;
+      if (l===right && !isOk) b.classList.add('reveal-correct');
+      else if (l===right && isOk) b.classList.add('correct');
+      else if (l===ans && !isOk) b.classList.add('wrong');
+    });
+
+    // dot
+    dot.classList.remove('active');
+    dot.classList.add(isOk ? 'ok' : 'bad');
+
+    // explanation
+    const ex = document.getElementById('ex'+i);
+    const d = EXP[i];
+    ex.innerHTML = `<span class="ex-ico">${isOk?'✅':'❌'}</span><div class="ex-body"><strong>${isOk ? '✅ ถูกต้อง — '+d.t : '❌ ผิด — '+d.t}</strong>${d.d}</div>`;
+    ex.className = 'explain show ' + (isOk ? 'ok' : 'err');
+  }
+
+  /* Score display */
+  const pct = Math.round(correct/15*100);
+  document.getElementById('sn').textContent = correct;
+  document.getElementById('sc').textContent = correct;
+  document.getElementById('sw').textContent = 15-correct;
+  document.getElementById('sp').textContent = pct+'%';
+
+  /* Arc animation */
+  const circ = 2*Math.PI*54;  // 339.3
+  const offset = circ * (1 - pct/100);
+  const arc = document.getElementById('arc');
+  arc.style.strokeDashoffset = circ; // start
+  const color = pct>=80 ? '#2d6a2d' : pct>=60 ? '#d4a017' : '#8b1a1a';
+  arc.style.stroke = color;
+  setTimeout(() => { arc.style.strokeDashoffset = offset; }, 100);
+
+  /* Grade */
+  let grade, msg;
+  if (pct===100) { grade='🏆 ยอดเยี่ยม!'; msg='ตอบถูกทุกข้อ คุณเชี่ยวชาญหน่วยนี้แล้ว!'; }
+  else if (pct>=80) { grade='🌟 ดีมาก!'; msg=`ได้ ${correct} คะแนน ผ่านเกณฑ์ — ทบทวนข้อที่ผิดอีกครั้ง`; }
+  else if (pct>=60) { grade='👍 ผ่าน'; msg=`ได้ ${correct} คะแนน ควรทบทวนเนื้อหาเพิ่มเติม`; }
+  else { grade='📖 ต้องปรับปรุง'; msg=`ได้ ${correct} คะแนน กลับไปทบทวนเนื้อหาหน่วยที่ 4 ใหม่`; }
+
+  document.getElementById('rgrade').textContent = grade;
+  document.getElementById('rmsg').textContent   = msg;
+
+  const board = document.getElementById('result-board');
+  board.classList.add('show');
+  document.getElementById('action-zone').style.display='none';
+  setTimeout(() => board.scrollIntoView({behavior:'smooth', block:'center'}), 250);
+}
+
+/* Retry */
+function retry() {
+  for (let i=1;i<=15;i++) {
+    delete picks[i];
+    const dot = document.getElementById('td'+i);
+    dot.className='tdot';
+    const card = document.getElementById('qc'+i);
+    card.querySelectorAll('.opt').forEach(b => {
+      b.className='opt';
+    });
+    const ex = document.getElementById('ex'+i);
+    ex.className='explain'; ex.innerHTML='';
+  }
+  done=false;
+  document.getElementById('done-count').textContent='0';
+  document.getElementById('left-count').textContent='15';
+  document.getElementById('sub-hint').innerHTML='ยังตอบไม่ครบ — เหลืออีก <b id="left-count">15</b> ข้อ';
+  document.getElementById('btn-sub').disabled=true;
+  document.getElementById('result-board').classList.remove('show');
+  document.getElementById('action-zone').style.display='';
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+</script>
+</body>
+</html>
