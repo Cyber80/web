@@ -1,110 +1,540 @@
-import { useState, useEffect, useCallback, useRef } from "react";
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ระบบตารางสอน โรงเรียนบ้านเขาหัวนา</title>
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Sarabun',sans-serif;background:#EEF2F7;min-height:100vh;display:flex}
+::-webkit-scrollbar{width:6px;height:6px}
+::-webkit-scrollbar-track{background:#F1F5F9}
+::-webkit-scrollbar-thumb{background:#CBD5E1;border-radius:3px}
+.sidebar{width:248px;min-height:100vh;background:linear-gradient(175deg,#0F2340 0%,#1E3A5F 60%,#163354 100%);color:#fff;display:flex;flex-direction:column;flex-shrink:0;box-shadow:4px 0 20px rgba(0,0,0,.15);transition:width .3s}
+.sidebar.collapsed{width:64px}
+.sidebar-header{padding:18px 16px 14px;border-bottom:1px solid rgba(255,255,255,.08);display:flex;align-items:center;gap:10}
+.sidebar-header .title{flex:1;overflow:hidden}
+.sidebar-header .title h1{font-size:15px;font-weight:800;white-space:nowrap}
+.sidebar-header .title p{font-size:10px;opacity:.45;margin-top:1px;white-space:nowrap}
+.sidebar-sem{padding:10px 16px;background:rgba(255,255,255,.06);border-bottom:1px solid rgba(255,255,255,.07);overflow:hidden}
+.sidebar-sem .label{font-size:10px;opacity:.45;margin-bottom:2px}
+.sidebar-sem .name{font-size:12px;font-weight:700;color:#93C5FD;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sidebar-sem .school{font-size:10px;opacity:.5;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+nav{flex:1;padding:10px 0}
+.nav-btn{display:flex;align-items:center;gap:12;width:100%;padding:10px 20px;background:none;border:none;color:rgba(255,255,255,.55);border-left:3px solid transparent;cursor:pointer;font-size:14px;font-family:inherit;text-align:left;transition:all .18s;white-space:nowrap;overflow:hidden}
+.nav-btn.active{background:rgba(147,197,253,.12);color:#93C5FD;border-left-color:#93C5FD;font-weight:700}
+.nav-btn:hover:not(.active){background:rgba(255,255,255,.05);color:rgba(255,255,255,.8)}
+.nav-btn svg{flex-shrink:0}
+.sidebar-footer{padding:12px 16px;border-top:1px solid rgba(255,255,255,.08)}
+.refresh-btn{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.08);border:none;color:rgba(255,255,255,.6);border-radius:8px;padding:8px 12px;cursor:pointer;font-size:12px;font-family:inherit;width:100%;white-space:nowrap;overflow:hidden}
+.gs-note{font-size:10px;opacity:.3;margin-top:8px;text-align:center}
+.main{flex:1;overflow:auto;min-width:0}
+.page{display:none;padding:32px}
+.page.active{display:block}
+.page-header{margin-bottom:24px}
+.page-header h2{display:flex;align-items:center;gap:10;font-size:20px;font-weight:900;color:#0F172A;margin-bottom:4px}
+.page-header h2::before{content:'';display:inline-block;width:5px;height:24px;background:linear-gradient(#1E3A5F,#3B82F6);border-radius:3px;flex-shrink:0}
+.page-header p{color:#64748B;font-size:13px;padding-left:15px}
+/* Cards */
+.card{background:#fff;border-radius:14px;box-shadow:0 1px 6px rgba(0,0,0,.06)}
+/* Stats grid */
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px}
+.stat-card{background:#fff;border-radius:14px;padding:20px 24px;box-shadow:0 1px 6px rgba(0,0,0,.06);display:flex;align-items:center;gap:14px}
+.stat-icon{width:46px;height:46px;border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.stat-val{font-size:28px;font-weight:900;color:#0F172A;line-height:1}
+.stat-lbl{font-size:12px;color:#64748B;margin-top:3px}
+/* Buttons */
+.btn-primary{background:#1E3A5F;color:#fff;border:none;border-radius:9px;padding:9px 18px;cursor:pointer;font-size:13px;font-weight:700;font-family:inherit;display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
+.btn-primary:hover{background:#163154}
+.btn-outline{background:#fff;color:#475569;border:1.5px solid #E2E8F0;border-radius:8px;padding:7px 14px;cursor:pointer;font-size:12px;font-family:inherit;display:inline-flex;align-items:center;gap:5px;white-space:nowrap}
+.btn-outline:hover{background:#F8FAFC}
+.btn-danger{background:#fff;color:#EF4444;border:1.5px solid #FECACA;border-radius:8px;padding:7px 14px;cursor:pointer;font-size:12px;font-family:inherit;display:inline-flex;align-items:center;gap:5px}
+.btn-danger:hover{background:#FEF2F2}
+.btn-success{background:#fff;color:#059669;border:1.5px solid #A7F3D0;border-radius:8px;padding:7px 14px;cursor:pointer;font-size:12px;font-family:inherit;display:inline-flex;align-items:center;gap:5px}
+/* Badge */
+.badge{padding:2px 10px;border-radius:20px;font-size:11px;font-weight:700}
+.badge-draft{background:#FEF9C3;color:#854D0E}
+.badge-final{background:#DCFCE7;color:#166534}
+.badge-active{background:#DBEAFE;color:#1E40AF}
+.badge-archived{background:#F1F5F9;color:#475569}
+/* Form */
+.form-group{margin-bottom:14px}
+.form-group label{display:block;margin-bottom:5px;font-size:13px;font-weight:600;color:#475569}
+.form-group input,.form-group select,.form-group textarea{width:100%;padding:9px 13px;border-radius:8px;border:1.5px solid #E2E8F0;font-size:14px;color:#1E293B;font-family:inherit;outline:none;background:#F8FAFC;transition:border-color .2s}
+.form-group input:focus,.form-group select:focus{border-color:#1E3A5F;background:#fff}
+/* Modal */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(10,20,40,.55);z-index:1000;align-items:center;justify-content:center;padding:20px}
+.modal-overlay.show{display:flex}
+.modal-box{background:#fff;border-radius:18px;padding:28px;width:100%;max-width:500px;box-shadow:0 24px 64px rgba(0,0,0,.25);max-height:90vh;overflow-y:auto}
+.modal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}
+.modal-header h3{font-size:18px;font-weight:800;color:#1E3A5F}
+.modal-close{background:#F1F5F9;border:none;border-radius:8px;padding:6px;cursor:pointer;color:#475569;display:flex}
+/* Toast */
+#toast{position:fixed;top:20px;right:20px;z-index:9999;padding:12px 20px;border-radius:10px;color:#fff;font-weight:600;font-size:14px;display:none;align-items:center;gap:8px;box-shadow:0 4px 20px rgba(0,0,0,.2);animation:slideIn .3s ease}
+@keyframes slideIn{from{transform:translateX(60px);opacity:0}to{transform:translateX(0);opacity:1}}
+/* Loader */
+#loader{display:none;position:fixed;inset:0;background:rgba(10,20,40,.45);z-index:2000;align-items:center;justify-content:center}
+#loader.show{display:flex}
+.loader-box{background:#fff;border-radius:16px;padding:32px 48px;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.25)}
+.spinner{width:40px;height:40px;border:4px solid #E2E8F0;border-top-color:#1E3A5F;border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 16px}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loader-text{color:#1E3A5F;font-weight:700;font-size:15px}
+/* Teacher tabs */
+.teacher-tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px}
+.teacher-tab{padding:7px 15px;border-radius:8px;border:1.5px solid #E2E8F0;background:#fff;color:#475569;cursor:pointer;font-size:13px;font-family:inherit;transition:all .15s}
+.teacher-tab.active{background:#1E3A5F;color:#fff;border-color:#1E3A5F;font-weight:700}
+/* Timetable */
+.tt-wrap{background:#fff;border-radius:16px;overflow:auto;box-shadow:0 2px 12px rgba(0,0,0,.08)}
+.tt-table{width:100%;border-collapse:collapse;min-width:900px}
+.tt-table th{padding:11px 8px;text-align:center;font-size:11px;font-weight:700;color:#475569;background:#F8FAFC;border-bottom:1px solid #E2E8F0}
+.tt-table th.day-header{padding:11px 16px;text-align:left;min-width:90px}
+.tt-table th.lunch-header{background:#FAF5FF;color:#A855F7}
+.tt-table td{padding:5px;border-bottom:1px solid #F1F5F9;border-right:1px solid #F8FAFC}
+.tt-table td.day-cell{padding:12px 16px;font-weight:800;font-size:14px;border-right:2px solid #F1F5F9;white-space:nowrap}
+.tt-table td.lunch-cell{background:#FAF5FF}
+.tt-table tr:nth-child(even){background:#FAFBFF}
+.cell-card{border-radius:8px;padding:6px 8px;min-height:58px;position:relative;cursor:pointer;transition:opacity .15s}
+.cell-card:hover{opacity:.85}
+.cell-card .sub-name{font-size:12px;font-weight:800;line-height:1.3}
+.cell-card .grade{font-size:11px;color:#64748B;margin-top:2px}
+.cell-conflict{border-color:#EF4444 !important}
+.cell-empty{min-height:58px;border-radius:8px;border:1.5px dashed #E2E8F0;display:flex;align-items:center;justify-content:center;color:#CBD5E1;font-size:20px;cursor:pointer;transition:background .15s}
+.cell-empty:hover{background:#F8FAFC}
+.lunch-text{writing-mode:vertical-rl;transform:rotate(180deg);font-size:9px;color:#A855F7;white-space:nowrap;padding:6px 0;display:block;text-align:center}
+/* Color picker */
+.color-grid{display:flex;flex-wrap:wrap;gap:8px}
+.color-swatch{width:34px;height:34px;border-radius:9px;cursor:pointer;border:2px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,.2);transition:transform .1s}
+.color-swatch:hover{transform:scale(1.1)}
+.color-swatch.selected{border:3px solid #1E3A5F}
+/* Subject tags */
+.subject-tags{display:flex;flex-wrap:wrap;gap:6px}
+.subject-tag{padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;cursor:pointer;border:1.5px solid transparent;transition:all .15s}
+/* Teacher cards */
+.teacher-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:14px}
+.teacher-card{background:#fff;border-radius:14px;padding:20px;box-shadow:0 1px 6px rgba(0,0,0,.06)}
+.teacher-avatar{width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,#1E3A5F,#3B82F6);display:flex;align-items:center;justify-content:center;font-weight:900;color:#fff;font-size:18px;flex-shrink:0}
+/* Subject table */
+.subjects-table{width:100%;border-collapse:collapse}
+.subjects-table th{padding:12px 20px;text-align:left;font-size:13px;font-weight:700;color:#475569;background:#F8FAFC;border-bottom:1px solid #E2E8F0}
+.subjects-table td{padding:10px 20px;border-bottom:1px solid #F1F5F9}
+.subjects-table tr:nth-child(even) td{background:#FAFBFF}
+/* Semester cards */
+.sem-card{background:#fff;border-radius:16px;padding:22px;box-shadow:0 1px 6px rgba(0,0,0,.06);display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin-bottom:12px}
+.sem-card.is-active{box-shadow:0 0 0 2.5px #1E3A5F,0 4px 16px rgba(30,58,95,.12)}
+/* Dashboard panels */
+.dash-grid{display:grid;grid-template-columns:1.2fr 1fr;gap:16px;margin-bottom:24px}
+.dash-panel{background:linear-gradient(135deg,#0F2340,#1E3A5F,#1a4575);border-radius:16px;padding:28px;color:#fff}
+.conflict-box{background:#FEF2F2;border:1px solid #FCA5A5;border-radius:14px;padding:20px}
+/* Flex utils */
+.flex{display:flex}.items-center{align-items:center}.justify-between{justify-content:space-between}.gap-8{gap:8px}.gap-10{gap:10px}.gap-12{gap:12px}.gap-16{gap:16px}.flex-wrap{flex-wrap:wrap}.flex-1{flex:1}.ml-auto{margin-left:auto}
+/* Print */
+@media print{.sidebar,.btn-primary,.btn-outline,.btn-danger,.btn-success,#toast,#loader,.teacher-tabs,.page-header .flex{display:none!important}.tt-wrap{box-shadow:none}.main{padding:0}.page{padding:0}}
+/* Responsive */
+@media(max-width:768px){.stats-grid{grid-template-columns:repeat(2,1fr)}.dash-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
 
-// ─────────────────────────────────────────────
+<!-- LOADER -->
+<div id="loader">
+  <div class="loader-box">
+    <div class="spinner"></div>
+    <div class="loader-text" id="loader-text">กำลังโหลด...</div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div id="toast"></div>
+
+<!-- SIDEBAR -->
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <div class="title">
+      <h1>ระบบตารางสอน</h1>
+      <p>School Timetable System</p>
+    </div>
+    <button onclick="toggleSidebar()" style="background:rgba(255,255,255,.1);border:none;color:#fff;cursor:pointer;border-radius:7px;padding:7px;display:flex;flex-shrink:0">
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+    </button>
+  </div>
+  <div class="sidebar-sem" id="sidebar-sem">
+    <div class="label">ภาคเรียนที่ใช้งาน</div>
+    <div class="name" id="sidebar-sem-name">—</div>
+    <div class="school" id="sidebar-sem-school">—</div>
+  </div>
+  <nav>
+    <button class="nav-btn active" onclick="showPage('dashboard')" data-page="dashboard">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12l9-9 9 9M5 10v10h5v-6h4v6h5V10"/></svg>
+      <span>หน้าหลัก</span>
+    </button>
+    <button class="nav-btn" onclick="showPage('timetable')" data-page="timetable">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3h7v7H3zM14 3h7v7h-7zM14 14h7v7h-7zM3 14h7v7H3z"/></svg>
+      <span>ตารางสอน</span>
+    </button>
+    <button class="nav-btn" onclick="showPage('teachers')" data-page="teachers">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2M12 11a4 4 0 100-8 4 4 0 000 8z"/></svg>
+      <span>จัดการครู</span>
+    </button>
+    <button class="nav-btn" onclick="showPage('subjects')" data-page="subjects">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 016.5 17H20M4 19.5V5A2.5 2.5 0 016.5 2.5H20v17"/></svg>
+      <span>จัดการวิชา</span>
+    </button>
+    <button class="nav-btn" onclick="showPage('semesters')" data-page="semesters">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 4h18v18H3zM16 2v4M8 2v4M3 10h18"/></svg>
+      <span>ภาคเรียน</span>
+    </button>
+  </nav>
+  <div class="sidebar-footer">
+    <button class="refresh-btn" onclick="loadAll()">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 4v6h-6M1 20v-6h6M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/></svg>
+      รีเฟรชข้อมูล
+    </button>
+    <div class="gs-note">📊 Google Sheets Database</div>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<main class="main">
+
+  <!-- DASHBOARD -->
+  <div class="page active" id="page-dashboard">
+    <div class="page-header">
+      <h2>หน้าหลัก</h2>
+      <p id="dash-subtitle">กำลังโหลด...</p>
+    </div>
+    <div class="stats-grid">
+      <div class="stat-card"><div class="stat-icon" style="background:#EFF6FF;color:#3B82F6"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2M12 11a4 4 0 100-8 4 4 0 000 8z"/></svg></div><div><div class="stat-val" id="stat-teachers">0</div><div class="stat-lbl">ครูทั้งหมด</div></div></div>
+      <div class="stat-card"><div class="stat-icon" style="background:#F5F3FF;color:#8B5CF6"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 016.5 17H20M4 19.5V5A2.5 2.5 0 016.5 2.5H20v17"/></svg></div><div><div class="stat-val" id="stat-subjects">0</div><div class="stat-lbl">วิชาทั้งหมด</div></div></div>
+      <div class="stat-card"><div class="stat-icon" style="background:#ECFDF5;color:#059669"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3h7v7H3zM14 3h7v7h-7zM14 14h7v7h-7zM3 14h7v7H3z"/></svg></div><div><div class="stat-val" id="stat-cells">0</div><div class="stat-lbl">ช่องสอนที่จัด</div></div></div>
+      <div class="stat-card" id="stat-conflict-card"><div class="stat-icon" id="stat-conflict-icon" style="background:#ECFDF5;color:#059669"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 9v4M12 17h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/></svg></div><div><div class="stat-val" id="stat-conflicts">0</div><div class="stat-lbl">ความขัดแย้ง</div></div></div>
+    </div>
+    <div class="dash-grid">
+      <div class="dash-panel">
+        <div style="font-size:12px;opacity:.5;margin-bottom:6px;text-transform:uppercase;letter-spacing:1px">ภาคเรียนปัจจุบัน</div>
+        <div style="font-size:18px;font-weight:800;margin-bottom:4px" id="dash-sem-label">—</div>
+        <div style="font-size:13px;opacity:.6;margin-bottom:20px" id="dash-sem-school">—</div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap">
+          <button onclick="showPage('timetable')" style="background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.25);color:#fff;border-radius:9px;padding:8px 16px;cursor:pointer;font-size:13px;font-family:inherit;display:flex;align-items:center;gap:6px">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8zM12 9a3 3 0 100 6 3 3 0 000-6z"/></svg> ดูตาราง
+          </button>
+          <button onclick="openModal('modal-new-sem')" style="background:#fff;border:none;color:#1E3A5F;border-radius:9px;padding:8px 16px;cursor:pointer;font-size:13px;font-weight:700;font-family:inherit;display:flex;align-items:center;gap:6px">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg> สร้างตารางใหม่
+          </button>
+        </div>
+      </div>
+      <div class="card" style="padding:24px">
+        <div style="font-weight:800;font-size:14px;color:#1E293B;margin-bottom:14px">ภาคเรียนล่าสุด</div>
+        <div id="dash-sem-list"></div>
+      </div>
+    </div>
+    <div id="dash-conflicts"></div>
+  </div>
+
+  <!-- TIMETABLE -->
+  <div class="page" id="page-timetable">
+    <div class="page-header">
+      <div class="flex items-center justify-between flex-wrap gap-12">
+        <div>
+          <h2>ตารางสอน</h2>
+          <p id="tt-subtitle">—</p>
+        </div>
+        <div class="flex gap-8 items-center flex-wrap">
+          <select id="tt-sem-select" onchange="onSelectSem(this.value)" style="padding:8px 13px;border-radius:8px;border:1.5px solid #E2E8F0;font-size:13px;font-family:inherit;background:#fff;outline:none"></select>
+          <button onclick="printTimetable()" class="btn-outline" style="border-color:#BFDBFE;color:#1D4ED8">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9V2h12v7M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2M6 14h12v8H6z"/></svg> พิมพ์
+          </button>
+        </div>
+      </div>
+    </div>
+    <div class="teacher-tabs" id="teacher-tabs"></div>
+    <div class="tt-wrap" id="tt-wrap"></div>
+  </div>
+
+  <!-- TEACHERS -->
+  <div class="page" id="page-teachers">
+    <div class="page-header">
+      <div class="flex items-center justify-between flex-wrap gap-12">
+        <div>
+          <h2>จัดการครู</h2>
+          <p id="teachers-count">ทั้งหมด 0 คน</p>
+        </div>
+        <div class="flex gap-8">
+          <input type="text" id="teacher-search" placeholder="ค้นหาชื่อครู..." oninput="renderTeachers()" style="padding:9px 13px;border-radius:8px;border:1.5px solid #E2E8F0;font-size:14px;font-family:inherit;outline:none;background:#F8FAFC;width:200px">
+          <button onclick="openTeacherModal(null)" class="btn-primary">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg> เพิ่มครูใหม่
+          </button>
+        </div>
+      </div>
+    </div>
+    <div class="teacher-grid" id="teacher-grid"></div>
+  </div>
+
+  <!-- SUBJECTS -->
+  <div class="page" id="page-subjects">
+    <div class="page-header">
+      <div class="flex items-center justify-between flex-wrap gap-12">
+        <div>
+          <h2>จัดการวิชา</h2>
+          <p id="subjects-count">ทั้งหมด 0 วิชา</p>
+        </div>
+        <div class="flex gap-8">
+          <input type="text" id="subject-search" placeholder="ค้นหาวิชา..." oninput="renderSubjects()" style="padding:9px 13px;border-radius:8px;border:1.5px solid #E2E8F0;font-size:14px;font-family:inherit;outline:none;background:#F8FAFC;width:200px">
+          <button onclick="openSubjectModal(null)" class="btn-primary">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg> เพิ่มวิชาใหม่
+          </button>
+        </div>
+      </div>
+    </div>
+    <div class="card" style="overflow:hidden">
+      <table class="subjects-table" id="subjects-table">
+        <thead><tr><th>สี</th><th>ชื่อวิชา</th><th>หน่วยกิต</th><th>จัดการ</th></tr></thead>
+        <tbody id="subjects-tbody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- SEMESTERS -->
+  <div class="page" id="page-semesters">
+    <div class="page-header">
+      <div class="flex items-center justify-between flex-wrap gap-12">
+        <div>
+          <h2>จัดการภาคเรียน</h2>
+          <p id="semesters-count">ทั้งหมด 0 ภาคเรียน</p>
+        </div>
+        <button onclick="openModal('modal-new-sem')" class="btn-primary">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg> สร้างตารางสอนใหม่
+        </button>
+      </div>
+    </div>
+    <div id="sem-list"></div>
+  </div>
+
+</main>
+
+<!-- MODAL: CELL EDIT -->
+<div class="modal-overlay" id="modal-cell">
+  <div class="modal-box">
+    <div class="modal-header">
+      <h3 id="modal-cell-title">กำหนดการสอน</h3>
+      <button class="modal-close" onclick="closeModal('modal-cell')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
+    </div>
+    <div class="form-group">
+      <label>วิชาที่สอน</label>
+      <select id="cell-subject" onchange="updateCellPreview()">
+        <option value="">-- เลือกวิชา --</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>ระดับชั้น</label>
+      <select id="cell-grade" onchange="updateCellPreview()">
+        <option value="ป.1">ป.1</option><option value="ป.2">ป.2</option><option value="ป.3">ป.3</option>
+        <option value="ป.4">ป.4</option><option value="ป.5">ป.5</option><option value="ป.6">ป.6</option>
+      </select>
+    </div>
+    <div id="cell-preview" style="display:none;border-radius:10px;padding:12px;margin-bottom:14px;display:flex;align-items:center;gap:10px">
+      <div id="cell-preview-dot" style="width:16px;height:16px;border-radius:4px;flex-shrink:0"></div>
+      <span id="cell-preview-text" style="font-size:13px;font-weight:700;color:#1E293B"></span>
+    </div>
+    <div class="flex gap-8">
+      <button id="cell-delete-btn" onclick="deleteCell()" class="btn-danger" style="display:none">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6"/></svg> ลบออก
+      </button>
+      <button onclick="saveCell()" class="btn-primary" style="margin-left:auto">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2zM17 21v-8H7v8M7 3v5h8"/></svg> บันทึก
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: TEACHER -->
+<div class="modal-overlay" id="modal-teacher">
+  <div class="modal-box">
+    <div class="modal-header">
+      <h3 id="modal-teacher-title">เพิ่มครูใหม่</h3>
+      <button class="modal-close" onclick="closeModal('modal-teacher')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
+    </div>
+    <input type="hidden" id="teacher-id">
+    <div class="form-group"><label>ชื่อ-นามสกุล</label><input type="text" id="teacher-name" placeholder="ชื่อครู"></div>
+    <div class="form-group">
+      <label>ตำแหน่ง</label>
+      <select id="teacher-title">
+        <option>ครู</option><option>ครูชำนาญการ</option><option>ครูชำนาญการพิเศษ</option><option>ครูเชี่ยวชาญ</option><option>ผู้ช่วยครู</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>วิชาที่สอน (เลือกได้หลายวิชา)</label>
+      <div id="teacher-subjects-pick" class="subject-tags" style="max-height:170px;overflow-y:auto;padding:10px;background:#F8FAFC;border-radius:10px;border:1px solid #E2E8F0"></div>
+    </div>
+    <button onclick="saveTeacher()" class="btn-primary" style="width:100%;justify-content:center;margin-top:6px">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2zM17 21v-8H7v8M7 3v5h8"/></svg> บันทึกลง Google Sheets
+    </button>
+  </div>
+</div>
+
+<!-- MODAL: SUBJECT -->
+<div class="modal-overlay" id="modal-subject">
+  <div class="modal-box">
+    <div class="modal-header">
+      <h3 id="modal-subject-title">เพิ่มวิชาใหม่</h3>
+      <button class="modal-close" onclick="closeModal('modal-subject')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
+    </div>
+    <input type="hidden" id="subject-id">
+    <div class="form-group"><label>ชื่อวิชา</label><input type="text" id="subject-name" placeholder="ชื่อวิชา"></div>
+    <div class="form-group"><label>จำนวนหน่วยกิต</label><input type="number" id="subject-credits" min="0" max="10" value="1"></div>
+    <div class="form-group">
+      <label>สีประจำวิชา</label>
+      <div class="color-grid" id="color-grid"></div>
+    </div>
+    <button onclick="saveSubject()" class="btn-primary" style="width:100%;justify-content:center;margin-top:6px">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2zM17 21v-8H7v8M7 3v5h8"/></svg> บันทึกลง Google Sheets
+    </button>
+  </div>
+</div>
+
+<!-- MODAL: NEW SEMESTER -->
+<div class="modal-overlay" id="modal-new-sem">
+  <div class="modal-box">
+    <div class="modal-header">
+      <h3>สร้างตารางสอนใหม่</h3>
+      <button class="modal-close" onclick="closeModal('modal-new-sem')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
+    </div>
+    <div style="background:#FFFBEB;border:1px solid #FDE68A;border-radius:10px;padding:12px;font-size:13px;color:#92400E;display:flex;gap:8px;margin-bottom:16px;align-items:flex-start">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#F59E0B" stroke-width="2" style="flex-shrink:0;margin-top:1px"><path d="M12 9v4M12 17h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/></svg>
+      ตารางจะถูกบันทึกเป็น <strong style="margin:0 4px">ฉบับร่าง</strong> และบันทึกใน Google Sheets ทันที
+    </div>
+    <div class="form-group"><label>ปีการศึกษา (พ.ศ.)</label><input type="text" id="new-sem-year" placeholder="เช่น 2569" value="2569"></div>
+    <div class="form-group">
+      <label>ภาคเรียน</label>
+      <select id="new-sem-term"><option value="1">ภาคเรียนที่ 1</option><option value="2">ภาคเรียนที่ 2</option></select>
+    </div>
+    <div class="form-group"><label>ชื่อโรงเรียน</label><input type="text" id="new-sem-school" value="โรงเรียนบ้านเขาหัวนา"></div>
+    <button onclick="createSemester()" class="btn-primary" style="width:100%;justify-content:center;margin-top:6px">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2zM17 21v-8H7v8M7 3v5h8"/></svg> สร้างและบันทึกใน Google Sheets
+    </button>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════
 //  CONFIG
-// ─────────────────────────────────────────────
-const API_URL = "https://script.google.com/macros/s/AKfycbwbrBoiOWQQqFsDtsdgVk6-FEg2WilHieQ3trFCOMWawN7edMOLToyWCNpuXHYlIfKUYg/exec";
-
-const DAYS = ["จันทร์","อังคาร","พุธ","พฤหัสบดี","ศุกร์"];
+// ═══════════════════════════════════════════
+const API = 'https://script.google.com/macros/s/AKfycbwbrBoiOWQQqFsDtsdgVk6-FEg2WilHieQ3trFCOMWawN7edMOLToyWCNpuXHYlIfKUYg/exec';
+const DAYS = ['จันทร์','อังคาร','พุธ','พฤหัสบดี','ศุกร์'];
 const TIME_SLOTS = [
-  { id:"t1", label:"08.30-09.30" },
-  { id:"t2", label:"09.30-10.30" },
-  { id:"t3", label:"10.30-11.30" },
-  { id:"t4", label:"11.30-12.30", isLunch:true },
-  { id:"t5", label:"12.30-13.30" },
-  { id:"t6", label:"13.30-14.30" },
-  { id:"t7", label:"14.30-15.30" },
+  {id:'t1',label:'08.30-09.30'},
+  {id:'t2',label:'09.30-10.30'},
+  {id:'t3',label:'10.30-11.30'},
+  {id:'t4',label:'11.30-12.30',isLunch:true},
+  {id:'t5',label:'12.30-13.30'},
+  {id:'t6',label:'13.30-14.30'},
+  {id:'t7',label:'14.30-15.30'},
 ];
-const GRADES = ["ป.1","ป.2","ป.3","ป.4","ป.5","ป.6"];
-const PRESET_COLORS = [
-  "#3B82F6","#EF4444","#10B981","#F59E0B","#8B5CF6",
-  "#EC4899","#06B6D4","#84CC16","#F97316","#6366F1",
-  "#14B8A6","#E11D48","#7C3AED","#0EA5E9","#D97706",
-  "#059669","#DC2626","#7C2D12","#1D4ED8","#047857",
+const PRESET_COLORS = ['#3B82F6','#EF4444','#10B981','#F59E0B','#8B5CF6','#EC4899','#06B6D4','#84CC16','#F97316','#6366F1','#14B8A6','#E11D48','#7C3AED','#0EA5E9','#D97706','#059669','#DC2626','#7C2D12','#1D4ED8','#047857'];
+const DAY_COLORS = ['#F59E0B','#A78BFA','#34D399','#FB923C','#60A5FA'];
+
+// ═══════════════════════════════════════════
+//  STATE
+// ═══════════════════════════════════════════
+let teachers=[], subjects=[], semesters=[], ttMap={};
+let currentSemId=null, currentTeacherId=null;
+let editingCell=null; // {day,timeId}
+let selectedSubjectColor='#3B82F6';
+let teacherSubjectsPick=[];
+
+// ═══════════════════════════════════════════
+//  DEFAULT DATA
+// ═══════════════════════════════════════════
+const DEFAULT_TEACHERS=[
+  {id:'t1',name:'ศิรินญา เลิศณรงค์',title:'ครู',subjects:['s1','s12']},
+  {id:'t2',name:'วิไลรัตน์ ใบศรี',title:'ครู',subjects:['s3','s2']},
+  {id:'t3',name:'พัชรินทร์ บรรดาเทา',title:'ครู',subjects:['s4']},
+  {id:'t4',name:'จตุรวิทย์ กลิ่นจันทน์',title:'ครู',subjects:['s2','s3','s9']},
+  {id:'t5',name:'เทพรัตน์ ยอดแก้ว',title:'ครู',subjects:['s7','s8','s10']},
+  {id:'t6',name:'อรวรรณ ขุนชนะ',title:'ครู',subjects:['s3','s4','s2']},
+  {id:'t7',name:'ณัฐฐ์ณรัณ พระเพ็ชร',title:'ครู',subjects:['s3','s5']},
+  {id:'t8',name:'ทศพร สังประกุล',title:'ครู',subjects:['s2','s5']},
+];
+const DEFAULT_SUBJECTS=[
+  {id:'s1',name:'วิทยาศาสตร์',credits:3,color:'#3B82F6'},
+  {id:'s2',name:'คณิตศาสตร์',credits:3,color:'#EF4444'},
+  {id:'s3',name:'ภาษาไทย',credits:3,color:'#10B981'},
+  {id:'s4',name:'ภาษาอังกฤษ',credits:3,color:'#8B5CF6'},
+  {id:'s5',name:'สังคมศึกษา',credits:2,color:'#F59E0B'},
+  {id:'s6',name:'ประวัติศาสตร์',credits:1,color:'#EC4899'},
+  {id:'s7',name:'ศิลปะ',credits:1,color:'#06B6D4'},
+  {id:'s8',name:'ดนตรี',credits:1,color:'#0EA5E9'},
+  {id:'s9',name:'สุขศึกษา/พลศึกษา',credits:1,color:'#84CC16'},
+  {id:'s10',name:'การงานอาชีพ',credits:1,color:'#D97706'},
+  {id:'s11',name:'เศรษฐกิจและการเงิน',credits:1,color:'#6366F1'},
+  {id:'s12',name:'วิทยาการคำนวณ',credits:1,color:'#14B8A6'},
+  {id:'s13',name:'ด้านทุจริตศึกษา',credits:1,color:'#F97316'},
+  {id:'s14',name:'ซ่อมเสริม อ่านเขียน',credits:1,color:'#059669'},
+  {id:'s15',name:'ซ่อมเสริม คำนวณ',credits:1,color:'#7C3AED'},
+  {id:'s16',name:'ยกระดับผลสัมฤทธิ์',credits:1,color:'#DC2626'},
+  {id:'s17',name:'ลดเวลาเรียน',credits:0,color:'#9CA3AF'},
+  {id:'s18',name:'ลูกเสือ',credits:0,color:'#15803D'},
+  {id:'s19',name:'ชุมนุม',credits:0,color:'#1D4ED8'},
+  {id:'s20',name:'ประชุม',credits:0,color:'#7C2D12'},
+  {id:'s21',name:'แนะแนว',credits:0,color:'#0369A1'},
+  {id:'s22',name:'พละ',credits:1,color:'#B45309'},
+  {id:'s23',name:'สังคม',credits:2,color:'#BE123C'},
+];
+const DEFAULT_SEMESTERS=[
+  {id:'2568-2',year:'2568',term:'2',label:'ภาคเรียนที่ 2 ปีการศึกษา 2568',school:'โรงเรียนบ้านเขาหัวนา',status:'active'},
 ];
 
-// ─────────────────────────────────────────────
+// ═══════════════════════════════════════════
 //  GOOGLE SHEETS API
-// ─────────────────────────────────────────────
+// ═══════════════════════════════════════════
 async function gsRead(sheet) {
-  const url = `${API_URL}?action=read&sheet=${sheet}&t=${Date.now()}`;
+  const url = `${API}?action=read&sheet=${encodeURIComponent(sheet)}&t=${Date.now()}`;
   const res = await fetch(url);
   const json = await res.json();
-  if (!json.ok) throw new Error(json.error);
-  return json.data; // array of arrays
+  if(!json.ok) throw new Error(json.error||'Read failed');
+  return json.data||[];
 }
 
 async function gsWrite(sheet, rows) {
-  const res = await fetch(API_URL, {
-    method: "POST",
-    body: JSON.stringify({ rows }),
-    headers: { "Content-Type": "application/json" },
+  const res = await fetch(API, {
+    method:'POST',
+    body: JSON.stringify({rows}),
+    headers:{'Content-Type':'application/json'},
   });
   const json = await res.json();
-  if (!json.ok) throw new Error(json.error);
-  return true;
+  if(!json.ok) throw new Error(json.error||'Write failed');
 }
 
-// ─────────────────────────────────────────────
-//  SERIALISERS  (object ↔ sheet rows)
-// ─────────────────────────────────────────────
-// teachers sheet: id | name | title | subjects(json)
-function rowToTeacher(r) {
-  return { id:r[0], name:r[1], title:r[2], subjects: safeJson(r[3],[]) };
-}
-function teacherToRow(t) {
-  return [t.id, t.name, t.title, JSON.stringify(t.subjects)];
-}
+// ═══════════════════════════════════════════
+//  SERIALISERS
+// ═══════════════════════════════════════════
+function safeJson(v,d){try{return JSON.parse(v);}catch{return d;}}
+const t2r = t => [t.id,t.name,t.title,JSON.stringify(t.subjects)];
+const r2t = r => ({id:r[0],name:r[1],title:r[2],subjects:safeJson(r[3],[])});
+const s2r = s => [s.id,s.name,s.credits,s.color];
+const r2s = r => ({id:r[0],name:r[1],credits:Number(r[2])||0,color:r[3]});
+const sem2r = s => [s.id,s.year,s.term,s.label,s.school,s.status];
+const r2sem = r => ({id:r[0],year:r[1],term:r[2],label:r[3],school:r[4],status:r[5]});
 
-// subjects sheet: id | name | credits | color
-function rowToSubject(r) {
-  return { id:r[0], name:r[1], credits:Number(r[2])||0, color:r[3] };
-}
-function subjectToRow(s) {
-  return [s.id, s.name, s.credits, s.color];
-}
-
-// semesters sheet: id | year | term | label | school | status
-function rowToSemester(r) {
-  return { id:r[0], year:r[1], term:r[2], label:r[3], school:r[4], status:r[5] };
-}
-function semesterToRow(s) {
-  return [s.id, s.year, s.term, s.label, s.school, s.status];
-}
-
-// timetable sheet: semId | teacherId | day | timeId | subjectId | grade
-function rowToCell(r) {
-  return { semId:r[0], teacherId:r[1], day:r[2], timeId:r[3], subjectId:r[4], grade:r[5] };
-}
-function cellToRow(semId, teacherId, day, timeId, subjectId, grade) {
-  return [semId, teacherId, day, timeId, subjectId, grade];
-}
-
-function safeJson(v, def) {
-  try { return JSON.parse(v); } catch { return def; }
-}
-
-// Build timetable map: semId → teacherId → day → timeId → {subjectId,grade}
-function buildTTMap(cells) {
-  const map = {};
-  cells.forEach(c => {
-    if(!c.semId) return;
-    map[c.semId] = map[c.semId] || {};
-    map[c.semId][c.teacherId] = map[c.semId][c.teacherId] || {};
-    map[c.semId][c.teacherId][c.day] = map[c.semId][c.teacherId][c.day] || {};
-    map[c.semId][c.teacherId][c.day][c.timeId] = { subjectId:c.subjectId, grade:c.grade };
+function buildTTMap(rows) {
+  const m={};
+  rows.filter(r=>r[0]).forEach(r=>{
+    const [semId,tid,day,tsId,subId,grade]=r;
+    m[semId]=m[semId]||{};
+    m[semId][tid]=m[semId][tid]||{};
+    m[semId][tid][day]=m[semId][tid][day]||{};
+    m[semId][tid][day][tsId]={subjectId:subId,grade};
   });
-  return map;
+  return m;
 }
 
-// Flatten timetable map back to rows
-function flattenTTMap(ttMap) {
-  const rows = [];
-  Object.entries(ttMap).forEach(([semId, teachers]) =>
-    Object.entries(teachers).forEach(([teacherId, days]) =>
-      Object.entries(days).forEach(([day, slots]) =>
-        Object.entries(slots).forEach(([timeId, cell]) =>
-          rows.push(cellToRow(semId, teacherId, day, timeId, cell.subjectId, cell.grade))
+function flattenTTMap(m) {
+  const rows=[];
+  Object.entries(m).forEach(([semId,ts])=>
+    Object.entries(ts).forEach(([tid,days])=>
+      Object.entries(days).forEach(([day,slots])=>
+        Object.entries(slots).forEach(([tsId,c])=>
+          rows.push([semId,tid,day,tsId,c.subjectId,c.grade])
         )
       )
     )
@@ -112,985 +542,573 @@ function flattenTTMap(ttMap) {
   return rows;
 }
 
-// ─────────────────────────────────────────────
-//  DEFAULT SEED DATA
-// ─────────────────────────────────────────────
-const DEFAULT_TEACHERS = [
-  { id:"t1", name:"ศิรินญา เลิศณรงค์",   title:"ครู", subjects:["s1","s12"] },
-  { id:"t2", name:"วิไลรัตน์ ใบศรี",      title:"ครู", subjects:["s3","s2"] },
-  { id:"t3", name:"พัชรินทร์ บรรดาเทา",  title:"ครู", subjects:["s4"] },
-  { id:"t4", name:"จตุรวิทย์ กลิ่นจันทน์",title:"ครู", subjects:["s2","s3","s9"] },
-  { id:"t5", name:"เทพรัตน์ ยอดแก้ว",    title:"ครู", subjects:["s7","s8","s10"] },
-  { id:"t6", name:"อรวรรณ ขุนชนะ",       title:"ครู", subjects:["s3","s4","s2"] },
-  { id:"t7", name:"ณัฐฐ์ณรัณ พระเพ็ชร", title:"ครู", subjects:["s3","s5"] },
-  { id:"t8", name:"ทศพร สังประกุล",       title:"ครู", subjects:["s2","s5"] },
-];
-const DEFAULT_SUBJECTS = [
-  { id:"s1",  name:"วิทยาศาสตร์",         credits:3, color:"#3B82F6" },
-  { id:"s2",  name:"คณิตศาสตร์",          credits:3, color:"#EF4444" },
-  { id:"s3",  name:"ภาษาไทย",             credits:3, color:"#10B981" },
-  { id:"s4",  name:"ภาษาอังกฤษ",          credits:3, color:"#8B5CF6" },
-  { id:"s5",  name:"สังคมศึกษา",          credits:2, color:"#F59E0B" },
-  { id:"s6",  name:"ประวัติศาสตร์",       credits:1, color:"#EC4899" },
-  { id:"s7",  name:"ศิลปะ",               credits:1, color:"#06B6D4" },
-  { id:"s8",  name:"ดนตรี",               credits:1, color:"#0EA5E9" },
-  { id:"s9",  name:"สุขศึกษา/พลศึกษา",   credits:1, color:"#84CC16" },
-  { id:"s10", name:"การงานอาชีพ",         credits:1, color:"#D97706" },
-  { id:"s11", name:"เศรษฐกิจและการเงิน", credits:1, color:"#6366F1" },
-  { id:"s12", name:"วิทยาการคำนวณ",       credits:1, color:"#14B8A6" },
-  { id:"s13", name:"ด้านทุจริตศึกษา",    credits:1, color:"#F97316" },
-  { id:"s14", name:"ซ่อมเสริม อ่านเขียน",credits:1, color:"#059669" },
-  { id:"s15", name:"ซ่อมเสริม คำนวณ",    credits:1, color:"#7C3AED" },
-  { id:"s16", name:"ยกระดับผลสัมฤทธิ์",  credits:1, color:"#DC2626" },
-  { id:"s17", name:"ลดเวลาเรียน",         credits:0, color:"#9CA3AF" },
-  { id:"s18", name:"ลูกเสือ",             credits:0, color:"#15803D" },
-  { id:"s19", name:"ชุมนุม",              credits:0, color:"#1D4ED8" },
-  { id:"s20", name:"ประชุม",              credits:0, color:"#7C2D12" },
-  { id:"s21", name:"แนะแนว",             credits:0, color:"#0369A1" },
-  { id:"s22", name:"พละ",                 credits:1, color:"#B45309" },
-  { id:"s23", name:"สังคม",              credits:2, color:"#BE123C" },
-];
-const DEFAULT_SEMESTERS = [
-  { id:"2568-2", year:"2568", term:"2",
-    label:"ภาคเรียนที่ 2 ปีการศึกษา 2568",
-    school:"โรงเรียนบ้านเขาหัวนา", status:"active" },
-];
+// ═══════════════════════════════════════════
+//  LOAD ALL
+// ═══════════════════════════════════════════
+async function loadAll() {
+  showLoader('กำลังโหลดข้อมูลจาก Google Sheets...');
+  try {
+    const [tr,sr,semr,ttr] = await Promise.all([
+      gsRead('teachers'), gsRead('subjects'), gsRead('semesters'), gsRead('timetable')
+    ]);
+    let ts = tr.filter(r=>r[0]).map(r2t);
+    let ss = sr.filter(r=>r[0]).map(r2s);
+    let sems = semr.filter(r=>r[0]).map(r2sem);
 
-// ─────────────────────────────────────────────
-//  TINY ICONS
-// ─────────────────────────────────────────────
-const paths = {
-  plus:"M12 5v14M5 12h14",
-  edit:"M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z",
-  trash:"M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6",
-  save:"M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2zM17 21v-8H7v8M7 3v5h8",
-  check:"M20 6L9 17l-5-5",
-  x:"M18 6L6 18M6 6l12 12",
-  calendar:"M3 4h18v18H3zM16 2v4M8 2v4M3 10h18",
-  user:"M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2M12 11a4 4 0 100-8 4 4 0 000 8z",
-  book:"M4 19.5A2.5 2.5 0 016.5 17H20M4 19.5V5A2.5 2.5 0 016.5 2.5H20v17",
-  grid:"M3 3h7v7H3zM14 3h7v7h-7zM14 14h7v7h-7zM3 14h7v7H3z",
-  menu:"M4 6h16M4 12h16M4 18h16",
-  rocket:"M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 00-2.91-.09zM12 15l-3-3a22 22 0 012-3.95A12.88 12.88 0 0122 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 01-4 2z",
-  warning:"M12 9v4M12 17h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z",
-  refresh:"M23 4v6h-6M1 20v-6h6M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15",
-  home:"M3 12l9-9 9 9M5 10v10h5v-6h4v6h5V10",
-  cloud:"M18 10h-1.26A8 8 0 109 20h9a5 5 0 000-10z",
-  eye:"M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8zM12 9a3 3 0 100 6 3 3 0 000-6z",
-  download:"M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3",
-  print:"M6 9V2h12v7M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2M6 14h12v8H6z",
-};
-const Ic = ({ n, s=16, c }) => (
-  <svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke={c||"currentColor"} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <path d={paths[n]||""} />
-  </svg>
-);
+    if(ts.length===0){ ts=DEFAULT_TEACHERS; await gsWrite('teachers',ts.map(t2r)); }
+    if(ss.length===0){ ss=DEFAULT_SUBJECTS; await gsWrite('subjects',ss.map(s2r)); }
+    if(sems.length===0){ sems=DEFAULT_SEMESTERS; await gsWrite('semesters',sems.map(sem2r)); }
 
-// ─────────────────────────────────────────────
-//  STATUS BADGE
-// ─────────────────────────────────────────────
-const StatusBadge = ({ status }) => {
-  const m = {
-    draft:    { label:"ฉบับร่าง",   bg:"#FEF9C3", c:"#854D0E" },
-    final:    { label:"ยืนยันแล้ว", bg:"#DCFCE7", c:"#166534" },
-    active:   { label:"ใช้งานอยู่", bg:"#DBEAFE", c:"#1E40AF" },
-    archived: { label:"เก็บถาวร",   bg:"#F1F5F9", c:"#475569" },
-  };
-  const s = m[status]||m.draft;
-  return <span style={{ background:s.bg, color:s.c, padding:"2px 10px", borderRadius:20, fontSize:11, fontWeight:700 }}>{s.label}</span>;
-};
+    teachers=ts; subjects=ss; semesters=sems;
+    ttMap = buildTTMap(ttr);
 
-// ─────────────────────────────────────────────
-//  SHARED STYLES
-// ─────────────────────────────────────────────
-const inp = { width:"100%", padding:"9px 13px", borderRadius:8, border:"1.5px solid #E2E8F0", fontSize:14, color:"#1E293B", fontFamily:"inherit", outline:"none", background:"#F8FAFC", boxSizing:"border-box" };
-const lbl = { display:"block", marginBottom:5, fontSize:13, fontWeight:600, color:"#475569" };
-const primBtn = { background:"#1E3A5F", color:"#fff", border:"none", borderRadius:9, padding:"9px 18px", cursor:"pointer", fontSize:13, fontWeight:700, fontFamily:"inherit", display:"inline-flex", alignItems:"center", gap:6 };
-const outBtn = { background:"#fff", color:"#475569", border:"1.5px solid #E2E8F0", borderRadius:8, padding:"7px 14px", cursor:"pointer", fontSize:12, fontFamily:"inherit", display:"inline-flex", alignItems:"center", gap:5 };
+    const active = semesters.find(s=>s.status==='active')||semesters[0];
+    if(active){ currentSemId=active.id; }
+    if(teachers.length>0 && !currentTeacherId) currentTeacherId=teachers[0].id;
 
-// ─────────────────────────────────────────────
-//  MODAL WRAPPER
-// ─────────────────────────────────────────────
-function Modal({ onClose, title, children, width=480 }) {
-  return (
-    <div style={{ position:"fixed", inset:0, background:"rgba(10,20,40,0.55)", display:"flex", alignItems:"center", justifyContent:"center", zIndex:1000, padding:20 }}>
-      <div style={{ background:"#fff", borderRadius:18, padding:28, width:"100%", maxWidth:width, boxShadow:"0 24px 64px rgba(0,0,0,0.25)", maxHeight:"90vh", overflowY:"auto" }}>
-        <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", marginBottom:20 }}>
-          <h3 style={{ margin:0, fontSize:18, fontWeight:800, color:"#1E3A5F" }}>{title}</h3>
-          <button onClick={onClose} style={{ background:"#F1F5F9", border:"none", borderRadius:8, padding:6, cursor:"pointer", color:"#475569" }}><Ic n="x" s={16}/></button>
-        </div>
-        {children}
-      </div>
-    </div>
-  );
+    renderAll();
+    notify('โหลดข้อมูลสำเร็จ ✓');
+  } catch(e) {
+    notify('โหลดไม่ได้: '+e.message,'error');
+    console.error(e);
+  }
+  hideLoader();
 }
 
-// ─────────────────────────────────────────────
-//  TOAST
-// ─────────────────────────────────────────────
-function Toast({ msg, type }) {
-  const bg = type==="error" ? "#EF4444" : type==="warn" ? "#F59E0B" : "#22C55E";
-  return (
-    <div style={{ position:"fixed", top:20, right:20, zIndex:9999, background:bg, color:"#fff", padding:"12px 20px", borderRadius:10, boxShadow:"0 4px 20px rgba(0,0,0,0.2)", fontWeight:600, fontSize:14, display:"flex", alignItems:"center", gap:8, animation:"slideIn 0.3s ease" }}>
-      <Ic n={type==="error"?"warning":"check"} s={16}/>{msg}
-      <style>{`@keyframes slideIn{from{transform:translateX(60px);opacity:0}to{transform:translateX(0);opacity:1}}`}</style>
-    </div>
-  );
+// ═══════════════════════════════════════════
+//  RENDER ALL
+// ═══════════════════════════════════════════
+function renderAll() {
+  renderDashboard();
+  renderTimetable();
+  renderTeachers();
+  renderSubjects();
+  renderSemesters();
+  updateSidebar();
 }
 
-// ─────────────────────────────────────────────
-//  LOADING OVERLAY
-// ─────────────────────────────────────────────
-function Loader({ text="กำลังโหลด..." }) {
-  return (
-    <div style={{ position:"fixed", inset:0, background:"rgba(10,20,40,0.45)", display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", zIndex:2000 }}>
-      <div style={{ background:"#fff", borderRadius:16, padding:"32px 48px", textAlign:"center", boxShadow:"0 20px 60px rgba(0,0,0,0.25)" }}>
-        <div style={{ width:40, height:40, border:"4px solid #E2E8F0", borderTop:"4px solid #1E3A5F", borderRadius:"50%", animation:"spin 0.8s linear infinite", margin:"0 auto 16px" }}/>
-        <div style={{ color:"#1E3A5F", fontWeight:700, fontSize:15 }}>{text}</div>
-        <style>{`@keyframes spin{to{transform:rotate(360deg)}}`}</style>
-      </div>
-    </div>
-  );
+function updateSidebar() {
+  const active=semesters.find(s=>s.status==='active')||semesters[0];
+  if(active){
+    document.getElementById('sidebar-sem-name').textContent=active.label;
+    document.getElementById('sidebar-sem-school').textContent=active.school;
+  }
 }
 
-// ─────────────────────────────────────────────
-//  PRINT TIMETABLE (popup window)
-// ─────────────────────────────────────────────
-function printTeacherTimetable(teacher, semester, ttMap, subjects) {
-  const tt = ttMap[semester?.id]?.[teacher?.id] || {};
-  const subMap = Object.fromEntries(subjects.map(s=>[s.id,s]));
-  const dayColors = ["#F59E0B","#A78BFA","#34D399","#FB923C","#60A5FA"];
-
-  let rows = DAYS.map((day,di) => {
-    const cells = TIME_SLOTS.map(ts => {
-      if(ts.isLunch) return `<td style="background:#F5F3FF;color:#7C3AED;font-size:10px;writing-mode:vertical-rl;transform:rotate(180deg);text-align:center;padding:4px;">พักกลางวันและกิจกรรม</td>`;
-      const cell = tt[day]?.[ts.id];
-      if(!cell) return `<td style="padding:6px;border:1px solid #eee;"></td>`;
-      const sub = subMap[cell.subjectId];
-      return `<td style="padding:6px;border:1px solid #eee;"><div style="background:${sub?.color||'#ccc'}22;border-left:3px solid ${sub?.color||'#ccc'};padding:4px 6px;border-radius:4px;font-size:12px;font-weight:700;">${sub?.name||''}<br/><span style="font-weight:400;font-size:11px;">${cell.grade}</span></div></td>`;
-    }).join("");
-    return `<tr><td style="padding:10px 14px;font-weight:700;color:${dayColors[di]};border:1px solid #eee;white-space:nowrap;">${day}</td>${cells}</tr>`;
-  }).join("");
-
-  const headerCells = TIME_SLOTS.map(ts =>
-    `<th style="padding:10px 8px;font-size:11px;background:#F8FAFC;border:1px solid #eee;min-width:${ts.isLunch?70:120}px;">${ts.label}</th>`
-  ).join("");
-
-  const html = `<!DOCTYPE html><html><head><meta charset="utf-8">
-  <style>body{font-family:'Sarabun',sans-serif;padding:24px;}table{border-collapse:collapse;width:100%;}@media print{button{display:none}}</style>
-  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;600;700&display=swap" rel="stylesheet">
-  </head><body>
-  <button onclick="window.print()" style="margin-bottom:16px;padding:8px 20px;background:#1E3A5F;color:#fff;border:none;border-radius:8px;cursor:pointer;font-size:14px;">🖨️ พิมพ์</button>
-  <h2 style="margin:0 0 4px;">ตารางสอนคุณครู${teacher?.name}</h2>
-  <p style="margin:0 0 16px;color:#64748B;">${semester?.label} — ${semester?.school}</p>
-  <table><thead><tr><th style="padding:10px 14px;background:#F8FAFC;border:1px solid #eee;">วัน / เวลา</th>${headerCells}</tr></thead>
-  <tbody>${rows}</tbody></table></body></html>`;
-
-  const w = window.open("","_blank","width=1100,height=700");
-  w.document.write(html);
-  w.document.close();
-}
-
-// ─────────────────────────────────────────────
-//  ROOT APP
-// ─────────────────────────────────────────────
-export default function App() {
-  const [teachers,   setTeachers]   = useState([]);
-  const [subjects,   setSubjects]   = useState([]);
-  const [semesters,  setSemesters]  = useState([]);
-  const [ttMap,      setTTMap]      = useState({});   // full timetable map
-  const [rawCells,   setRawCells]   = useState([]);   // flat rows from sheet
-  const [loading,    setLoading]    = useState(false);
-  const [loadText,   setLoadText]   = useState("กำลังโหลด...");
-  const [toast,      setToast]      = useState(null);
-  const [view,       setView]       = useState("dashboard");
-  const [modal,      setModal]      = useState(null);
-  const [sideOpen,   setSideOpen]   = useState(true);
-  const [selSemId,   setSelSemId]   = useState(null);
-  const [initialized,setInitialized]= useState(false);
-  const toastTimer = useRef(null);
-
-  const notify = (msg, type="success") => {
-    clearTimeout(toastTimer.current);
-    setToast({ msg, type });
-    toastTimer.current = setTimeout(()=>setToast(null), 3500);
-  };
-
-  // ── LOAD ALL ──
-  const loadAll = useCallback(async (seed=false) => {
-    setLoadText("กำลังโหลดข้อมูลจาก Google Sheets...");
-    setLoading(true);
-    try {
-      const [tRows, sRows, semRows, ttRows] = await Promise.all([
-        gsRead("teachers"), gsRead("subjects"), gsRead("semesters"), gsRead("timetable"),
-      ]);
-      let ts = tRows.filter(r=>r[0]).map(rowToTeacher);
-      let ss = sRows.filter(r=>r[0]).map(rowToSubject);
-      let sems = semRows.filter(r=>r[0]).map(rowToSemester);
-      const cells = ttRows.filter(r=>r[0]).map(rowToCell);
-
-      // Seed if empty
-      if(ts.length===0){ ts=DEFAULT_TEACHERS; await gsWrite("teachers",ts.map(teacherToRow)); }
-      if(ss.length===0){ ss=DEFAULT_SUBJECTS; await gsWrite("subjects",ss.map(subjectToRow)); }
-      if(sems.length===0){ sems=DEFAULT_SEMESTERS; await gsWrite("semesters",sems.map(semesterToRow)); }
-
-      setTeachers(ts);
-      setSubjects(ss);
-      setSemesters(sems);
-      setRawCells(cells);
-      setTTMap(buildTTMap(cells));
-      setInitialized(true);
-    } catch(e) {
-      notify("โหลดข้อมูลไม่ได้: "+e.message, "error");
-    } finally { setLoading(false); }
-  }, []);
-
-  useEffect(() => { loadAll(true); }, [loadAll]);
-
-  // ── ACTIVE SEMESTER ──
-  const activeSemester = semesters.find(s=>s.status==="active") || semesters[0];
-  const currentSem = selSemId ? semesters.find(s=>s.id===selSemId) : activeSemester;
-
-  // ── SAVE TEACHERS ──
-  const saveTeacher = async (t) => {
-    setLoadText("กำลังบันทึกครู...");
-    setLoading(true);
-    try {
-      const updated = teachers.find(x=>x.id===t.id)
-        ? teachers.map(x=>x.id===t.id?t:x)
-        : [...teachers, { ...t, id:"t"+Date.now() }];
-      await gsWrite("teachers", updated.map(teacherToRow));
-      setTeachers(updated);
-      notify("บันทึกข้อมูลครูสำเร็จ ✓");
-    } catch(e){ notify(e.message,"error"); } finally { setLoading(false); }
-  };
-
-  const deleteTeacher = async (id) => {
-    setLoading(true); setLoadText("กำลังลบ...");
-    try {
-      const updated = teachers.filter(t=>t.id!==id);
-      await gsWrite("teachers", updated.map(teacherToRow));
-      setTeachers(updated);
-      notify("ลบครูสำเร็จ");
-    } catch(e){ notify(e.message,"error"); } finally { setLoading(false); }
-  };
-
-  // ── SAVE SUBJECTS ──
-  const saveSubject = async (s) => {
-    setLoadText("กำลังบันทึกวิชา...");
-    setLoading(true);
-    try {
-      const updated = subjects.find(x=>x.id===s.id)
-        ? subjects.map(x=>x.id===s.id?s:x)
-        : [...subjects, { ...s, id:"s"+Date.now() }];
-      await gsWrite("subjects", updated.map(subjectToRow));
-      setSubjects(updated);
-      notify("บันทึกวิชาสำเร็จ ✓");
-    } catch(e){ notify(e.message,"error"); } finally { setLoading(false); }
-  };
-
-  const deleteSubject = async (id) => {
-    setLoading(true); setLoadText("กำลังลบ...");
-    try {
-      const updated = subjects.filter(s=>s.id!==id);
-      await gsWrite("subjects", updated.map(subjectToRow));
-      setSubjects(updated);
-      notify("ลบวิชาสำเร็จ");
-    } catch(e){ notify(e.message,"error"); } finally { setLoading(false); }
-  };
-
-  // ── SAVE SEMESTER ──
-  const saveSemester = async (sem) => {
-    setLoadText("กำลังบันทึกภาคเรียน...");
-    setLoading(true);
-    try {
-      const updated = semesters.find(x=>x.id===sem.id)
-        ? semesters.map(x=>x.id===sem.id?sem:x)
-        : [...semesters, sem];
-      await gsWrite("semesters", updated.map(semesterToRow));
-      setSemesters(updated);
-      notify("บันทึกภาคเรียนสำเร็จ ✓");
-    } catch(e){ notify(e.message,"error"); } finally { setLoading(false); }
-  };
-
-  const createSemester = async (form) => {
-    const newSem = {
-      id:`${form.year}-${form.term}`,
-      year:form.year, term:form.term,
-      label:`ภาคเรียนที่ ${form.term} ปีการศึกษา ${form.year}`,
-      school:form.school, status:"draft",
-    };
-    await saveSemester(newSem);
-    notify("สร้างตารางสอนใหม่เป็นฉบับร่างแล้ว ✓");
-  };
-
-  const activateSemester = async (id) => {
-    setLoadText("กำลังนำไปใช้งาน...");
-    setLoading(true);
-    try {
-      const updated = semesters.map(s=>({
-        ...s,
-        status: s.id===id ? "active" : s.status==="active" ? "archived" : s.status,
-      }));
-      await gsWrite("semesters", updated.map(semesterToRow));
-      setSemesters(updated);
-      notify("นำตารางสอนไปใช้งานแล้ว ✓");
-    } catch(e){ notify(e.message,"error"); } finally { setLoading(false); }
-  };
-
-  const finalizeSemester = async (id) => {
-    const updated = semesters.map(s=>s.id===id?{...s,status:"final"}:s);
-    setLoadText("กำลังยืนยัน...");
-    setLoading(true);
-    try {
-      await gsWrite("semesters", updated.map(semesterToRow));
-      setSemesters(updated);
-      notify("ยืนยันตารางสอนสำเร็จ ✓");
-    } catch(e){ notify(e.message,"error"); } finally { setLoading(false); }
-  };
-
-  // ── SET TIMETABLE CELL ──
-  const setCell = async (semId, teacherId, day, timeId, value) => {
-    // Update map locally first (optimistic)
-    const newMap = JSON.parse(JSON.stringify(ttMap));
-    newMap[semId] = newMap[semId] || {};
-    newMap[semId][teacherId] = newMap[semId][teacherId] || {};
-    newMap[semId][teacherId][day] = newMap[semId][teacherId][day] || {};
-    if(value) newMap[semId][teacherId][day][timeId] = value;
-    else delete newMap[semId][teacherId][day][timeId];
-    setTTMap(newMap);
-
-    // Write to sheet
-    setLoadText("กำลังบันทึกตาราง...");
-    setLoading(true);
-    try {
-      const rows = flattenTTMap(newMap);
-      await gsWrite("timetable", rows);
-      setRawCells(rows.map(r=>({ semId:r[0],teacherId:r[1],day:r[2],timeId:r[3],subjectId:r[4],grade:r[5] })));
-      notify("บันทึกตารางสอนสำเร็จ ✓");
-    } catch(e){ notify(e.message,"error"); setTTMap(buildTTMap(rawCells)); }
-    finally { setLoading(false); }
-  };
-
-  // ── CONFLICT CHECK ──
-  const getConflicts = (semId) => {
-    const map = {};
-    const semTT = ttMap[semId] || {};
-    Object.entries(semTT).forEach(([tid,days])=>
-      Object.entries(days).forEach(([day,slots])=>
-        Object.entries(slots).forEach(([tsId,cell])=>{
-          const k=`${day}-${tsId}-${cell.grade}`;
-          map[k]=(map[k]||[]);
-          map[k].push({ tid, ...cell });
-        })
-      )
-    );
-    return Object.entries(map).filter(([,v])=>v.length>1).map(([k,v])=>({key:k,entries:v}));
-  };
-
-  // ── NAV ──
-  const navItems = [
-    { id:"dashboard", icon:"home",    label:"หน้าหลัก" },
-    { id:"timetable", icon:"grid",    label:"ตารางสอน" },
-    { id:"teachers",  icon:"user",    label:"จัดการครู" },
-    { id:"subjects",  icon:"book",    label:"จัดการวิชา" },
-    { id:"semesters", icon:"calendar",label:"ภาคเรียน" },
-  ];
-
-  const totalCells = Object.values(ttMap[activeSemester?.id]||{})
-    .flatMap(d=>Object.values(d)).flatMap(s=>Object.values(s)).length;
-  const conflicts = activeSemester ? getConflicts(activeSemester.id) : [];
-
-  return (
-    <div style={{ fontFamily:"'Sarabun','Noto Sans Thai',sans-serif", background:"#EEF2F7", minHeight:"100vh", display:"flex" }}>
-      {loading && <Loader text={loadText}/>}
-      {toast && <Toast {...toast}/>}
-
-      {/* ── SIDEBAR ── */}
-      <aside style={{ width:sideOpen?248:64, transition:"width 0.3s cubic-bezier(.4,0,.2,1)", background:"linear-gradient(175deg,#0F2340 0%,#1E3A5F 60%,#163354 100%)", color:"#fff", display:"flex", flexDirection:"column", minHeight:"100vh", flexShrink:0, boxShadow:"4px 0 20px rgba(0,0,0,0.15)" }}>
-        <div style={{ padding:"18px 16px 14px", borderBottom:"1px solid rgba(255,255,255,0.08)", display:"flex", alignItems:"center", gap:10 }}>
-          {sideOpen && (
-            <div style={{ flex:1 }}>
-              <div style={{ fontSize:15, fontWeight:800, letterSpacing:0.3 }}>ระบบตารางสอน</div>
-              <div style={{ fontSize:10, opacity:0.45, marginTop:1 }}>School Timetable System</div>
-            </div>
-          )}
-          <button onClick={()=>setSideOpen(o=>!o)} style={{ background:"rgba(255,255,255,0.1)", border:"none", color:"#fff", cursor:"pointer", borderRadius:7, padding:7, display:"flex" }}>
-            <Ic n="menu" s={17}/>
-          </button>
-        </div>
-
-        {sideOpen && activeSemester && (
-          <div style={{ padding:"10px 16px", background:"rgba(255,255,255,0.06)", borderBottom:"1px solid rgba(255,255,255,0.07)" }}>
-            <div style={{ fontSize:10, opacity:0.45, marginBottom:2 }}>ภาคเรียนที่ใช้งาน</div>
-            <div style={{ fontSize:12, fontWeight:700, color:"#93C5FD" }}>{activeSemester.label}</div>
-            <div style={{ fontSize:10, opacity:0.5 }}>{activeSemester.school}</div>
-          </div>
-        )}
-
-        <nav style={{ flex:1, padding:"10px 0" }}>
-          {navItems.map(item=>(
-            <button key={item.id} onClick={()=>setView(item.id)} style={{
-              display:"flex", alignItems:"center", gap:12,
-              width:"100%", padding:sideOpen?"10px 20px":"10px 20px",
-              background:view===item.id?"rgba(147,197,253,0.12)":"none",
-              border:"none", color:view===item.id?"#93C5FD":"rgba(255,255,255,0.55)",
-              borderLeft:view===item.id?"3px solid #93C5FD":"3px solid transparent",
-              cursor:"pointer", fontSize:14, fontWeight:view===item.id?700:400,
-              fontFamily:"inherit", textAlign:"left", transition:"all 0.18s",
-            }}>
-              <Ic n={item.icon} s={18}/>
-              {sideOpen && item.label}
-            </button>
-          ))}
-        </nav>
-
-        {sideOpen && (
-          <div style={{ padding:"12px 16px", borderTop:"1px solid rgba(255,255,255,0.08)" }}>
-            <button onClick={()=>loadAll()} style={{ display:"flex", alignItems:"center", gap:8, background:"rgba(255,255,255,0.08)", border:"none", color:"rgba(255,255,255,0.6)", borderRadius:8, padding:"8px 12px", cursor:"pointer", fontSize:12, fontFamily:"inherit", width:"100%" }}>
-              <Ic n="refresh" s={14}/> รีเฟรชข้อมูล
-            </button>
-            <div style={{ fontSize:10, opacity:0.3, marginTop:8, textAlign:"center" }}>
-              เชื่อมต่อ Google Sheets <Ic n="cloud" s={10} c="rgba(255,255,255,0.4)"/>
-            </div>
-          </div>
-        )}
-      </aside>
-
-      {/* ── MAIN ── */}
-      <main style={{ flex:1, overflow:"auto" }}>
-        {!initialized && (
-          <div style={{ padding:60, textAlign:"center", color:"#64748B" }}>
-            <Ic n="cloud" s={40} c="#CBD5E1"/><br/>
-            <div style={{ marginTop:12, fontSize:15 }}>กำลังเชื่อมต่อ Google Sheets...</div>
-          </div>
-        )}
-        {initialized && view==="dashboard" && (
-          <Dashboard semesters={semesters} activeSemester={activeSemester} teachers={teachers} subjects={subjects} totalCells={totalCells} conflicts={conflicts} setView={setView} onCreateSemester={()=>setModal("newSem")}/>
-        )}
-        {initialized && view==="timetable" && (
-          <TimetableView teachers={teachers} subjects={subjects} semester={currentSem||activeSemester} semesters={semesters} ttMap={ttMap} setCell={setCell} getConflicts={getConflicts} onSelectSem={(id)=>setSelSemId(id)}/>
-        )}
-        {initialized && view==="teachers" && (
-          <TeachersView teachers={teachers} subjects={subjects} onSave={saveTeacher} onDelete={deleteTeacher}/>
-        )}
-        {initialized && view==="subjects" && (
-          <SubjectsView subjects={subjects} onSave={saveSubject} onDelete={deleteSubject}/>
-        )}
-        {initialized && view==="semesters" && (
-          <SemestersView semesters={semesters} activeSemesterId={activeSemester?.id} ttMap={ttMap} teachers={teachers} onActivate={activateSemester} onFinalize={finalizeSemester} onCreate={()=>setModal("newSem")} onSelect={(id)=>{ setSelSemId(id); setView("timetable"); }}/>
-        )}
-      </main>
-
-      {/* ── MODAL NEW SEM ── */}
-      {modal==="newSem" && (
-        <NewSemModal school={activeSemester?.school||"โรงเรียนบ้านเขาหัวนา"} onSave={async(d)=>{ await createSemester(d); setModal(null); }} onClose={()=>setModal(null)}/>
-      )}
-    </div>
-  );
-}
-
-// ─────────────────────────────────────────────
+// ═══════════════════════════════════════════
 //  DASHBOARD
-// ─────────────────────────────────────────────
-function Dashboard({ semesters, activeSemester, teachers, subjects, totalCells, conflicts, setView, onCreateSemester }) {
-  return (
-    <div style={{ padding:32 }}>
-      <div style={{ marginBottom:28 }}>
-        <div style={{ display:"flex", alignItems:"center", gap:12, marginBottom:4 }}>
-          <div style={{ width:6, height:28, background:"linear-gradient(#1E3A5F,#3B82F6)", borderRadius:3 }}/>
-          <h1 style={{ margin:0, fontSize:24, fontWeight:900, color:"#0F172A" }}>หน้าหลัก</h1>
-        </div>
-        <p style={{ margin:0, color:"#64748B", fontSize:14, paddingLeft:18 }}>
-          {activeSemester ? `${activeSemester.label} — ${activeSemester.school}` : "ยังไม่มีภาคเรียนที่ใช้งาน"}
-        </p>
+// ═══════════════════════════════════════════
+function renderDashboard() {
+  const active=semesters.find(s=>s.status==='active')||semesters[0];
+  const totalCells = active ? Object.values(ttMap[active.id]||{}).flatMap(d=>Object.values(d)).flatMap(s=>Object.values(s)).length : 0;
+  const conflicts = active ? getConflicts(active.id) : [];
+
+  document.getElementById('stat-teachers').textContent=teachers.length;
+  document.getElementById('stat-subjects').textContent=subjects.length;
+  document.getElementById('stat-cells').textContent=totalCells;
+  document.getElementById('stat-conflicts').textContent=conflicts.length;
+
+  const ci=document.getElementById('stat-conflict-icon');
+  if(conflicts.length>0){ ci.style.background='#FEF2F2'; ci.style.color='#EF4444'; }
+  else { ci.style.background='#ECFDF5'; ci.style.color='#059669'; }
+
+  document.getElementById('dash-subtitle').textContent=active?`${active.label} — ${active.school}`:'ยังไม่มีภาคเรียนที่ใช้งาน';
+  document.getElementById('dash-sem-label').textContent=active?.label||'—';
+  document.getElementById('dash-sem-school').textContent=active?.school||'—';
+
+  // Recent semesters
+  const sl=document.getElementById('dash-sem-list');
+  sl.innerHTML=semesters.slice(-4).reverse().map(s=>`
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:9px 0;border-bottom:1px solid #F1F5F9">
+      <div><div style="font-size:13px;font-weight:600;color:#1E293B">${s.label}</div><div style="font-size:11px;color:#94A3B8">${s.school}</div></div>
+      ${badgeHtml(s.status)}
+    </div>`).join('');
+
+  // Conflicts
+  const dc=document.getElementById('dash-conflicts');
+  if(conflicts.length>0){
+    dc.innerHTML=`<div class="conflict-box">
+      <div style="display:flex;align-items:center;gap:8px;color:#EF4444;font-weight:800;margin-bottom:12px;font-size:15px">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 9v4M12 17h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/></svg>
+        พบความขัดแย้งในตารางสอน (${conflicts.length} รายการ)
       </div>
+      ${conflicts.slice(0,5).map(c=>`<div style="font-size:13px;color:#7F1D1D;padding:3px 0">• ${c.key.replace(/-/g,' | ')} — ครู ${c.entries.length} คนสอนห้องเดียวกันพร้อมกัน</div>`).join('')}
+    </div>`;
+  } else { dc.innerHTML=''; }
+}
 
-      {/* Stats */}
-      <div style={{ display:"grid", gridTemplateColumns:"repeat(4,1fr)", gap:16, marginBottom:24 }}>
-        {[
-          { label:"ครูทั้งหมด",    value:teachers.length,  icon:"user",    color:"#3B82F6", bg:"#EFF6FF" },
-          { label:"วิชาทั้งหมด",   value:subjects.length,  icon:"book",    color:"#8B5CF6", bg:"#F5F3FF" },
-          { label:"ช่องสอนที่จัด", value:totalCells,       icon:"grid",    color:"#059669", bg:"#ECFDF5" },
-          { label:"ความขัดแย้ง",   value:conflicts.length, icon:"warning", color:conflicts.length>0?"#EF4444":"#059669", bg:conflicts.length>0?"#FEF2F2":"#ECFDF5" },
-        ].map((s,i)=>(
-          <div key={i} style={{ background:"#fff", borderRadius:14, padding:"20px 24px", boxShadow:"0 1px 6px rgba(0,0,0,0.06)", display:"flex", alignItems:"center", gap:14 }}>
-            <div style={{ width:46, height:46, borderRadius:12, background:s.bg, display:"flex", alignItems:"center", justifyContent:"center", color:s.color, flexShrink:0 }}>
-              <Ic n={s.icon} s={22}/>
-            </div>
-            <div>
-              <div style={{ fontSize:28, fontWeight:900, color:"#0F172A", lineHeight:1 }}>{s.value}</div>
-              <div style={{ fontSize:12, color:"#64748B", marginTop:3 }}>{s.label}</div>
-            </div>
-          </div>
-        ))}
-      </div>
+function badgeHtml(status){
+  const m={draft:'badge-draft ฉบับร่าง',final:'badge-final ยืนยันแล้ว',active:'badge-active ใช้งานอยู่',archived:'badge-archived เก็บถาวร'};
+  const [cls,label]=(m[status]||m.draft).split(' ');
+  return `<span class="badge ${cls}">${label}</span>`;
+}
 
-      {/* Quick panel */}
-      <div style={{ display:"grid", gridTemplateColumns:"1.2fr 1fr", gap:16, marginBottom:24 }}>
-        <div style={{ background:"linear-gradient(135deg,#0F2340,#1E3A5F,#1a4575)", borderRadius:16, padding:28, color:"#fff" }}>
-          <div style={{ fontSize:12, opacity:0.5, marginBottom:6, textTransform:"uppercase", letterSpacing:1 }}>ภาคเรียนปัจจุบัน</div>
-          <div style={{ fontSize:18, fontWeight:800, marginBottom:4 }}>{activeSemester?.label || "—"}</div>
-          <div style={{ fontSize:13, opacity:0.6, marginBottom:20 }}>{activeSemester?.school}</div>
-          <div style={{ display:"flex", gap:10, flexWrap:"wrap" }}>
-            <button onClick={()=>setView("timetable")} style={{ background:"rgba(255,255,255,0.15)", border:"1px solid rgba(255,255,255,0.25)", color:"#fff", borderRadius:9, padding:"8px 16px", cursor:"pointer", fontSize:13, fontFamily:"inherit", display:"flex", alignItems:"center", gap:6 }}>
-              <Ic n="eye" s={14}/> ดูตาราง
-            </button>
-            <button onClick={onCreateSemester} style={{ background:"#fff", border:"none", color:"#1E3A5F", borderRadius:9, padding:"8px 16px", cursor:"pointer", fontSize:13, fontWeight:700, fontFamily:"inherit", display:"flex", alignItems:"center", gap:6 }}>
-              <Ic n="plus" s={14}/> สร้างตารางใหม่
-            </button>
-          </div>
-        </div>
+// ═══════════════════════════════════════════
+//  TIMETABLE
+// ═══════════════════════════════════════════
+function renderTimetable() {
+  // Semester select
+  const sel=document.getElementById('tt-sem-select');
+  sel.innerHTML=semesters.map(s=>`<option value="${s.id}" ${s.id===currentSemId?'selected':''}>${s.label}</option>`).join('');
 
-        <div style={{ background:"#fff", borderRadius:16, padding:24, boxShadow:"0 1px 6px rgba(0,0,0,0.06)" }}>
-          <div style={{ fontWeight:800, fontSize:14, color:"#1E293B", marginBottom:14 }}>ภาคเรียนล่าสุด</div>
-          {semesters.slice(-4).reverse().map(s=>(
-            <div key={s.id} style={{ display:"flex", alignItems:"center", justifyContent:"space-between", padding:"9px 0", borderBottom:"1px solid #F1F5F9" }}>
-              <div>
-                <div style={{ fontSize:13, fontWeight:600, color:"#1E293B" }}>{s.label}</div>
-                <div style={{ fontSize:11, color:"#94A3B8" }}>{s.school}</div>
-              </div>
-              <StatusBadge status={s.status}/>
-            </div>
-          ))}
-        </div>
-      </div>
+  const sem=semesters.find(s=>s.id===currentSemId)||semesters[0];
+  if(!sem) return;
+  document.getElementById('tt-subtitle').textContent=`${sem.label} — ${sem.school}`;
 
-      {/* Conflicts */}
-      {conflicts.length>0 && (
-        <div style={{ background:"#FEF2F2", border:"1px solid #FCA5A5", borderRadius:14, padding:20 }}>
-          <div style={{ display:"flex", alignItems:"center", gap:8, color:"#EF4444", fontWeight:800, marginBottom:12, fontSize:15 }}>
-            <Ic n="warning" s={18}/> พบความขัดแย้งในตารางสอน ({conflicts.length} รายการ)
-          </div>
-          {conflicts.slice(0,5).map((c,i)=>(
-            <div key={i} style={{ fontSize:13, color:"#7F1D1D", padding:"3px 0" }}>
-              • {c.key.replace(/-/g," | ")} — ครู {c.entries.length} คนสอนห้องเดียวกันพร้อมกัน
-            </div>
-          ))}
-        </div>
-      )}
+  // Teacher tabs
+  const tabs=document.getElementById('teacher-tabs');
+  tabs.innerHTML=teachers.map(t=>`
+    <button class="teacher-tab ${t.id===currentTeacherId?'active':''}" onclick="selectTeacher('${t.id}')">${t.name}</button>`).join('');
+
+  renderTTGrid();
+}
+
+function renderTTGrid() {
+  const sem=semesters.find(s=>s.id===currentSemId);
+  const teacher=teachers.find(t=>t.id===currentTeacherId);
+  if(!sem||!teacher){ document.getElementById('tt-wrap').innerHTML=''; return; }
+
+  const tt=(ttMap[sem.id]||{})[teacher.id]||{};
+  const subMap=Object.fromEntries(subjects.map(s=>[s.id,s]));
+  const conflicts=getConflicts(sem.id);
+  const editable=sem.status!=='archived';
+
+  let html=`<div style="padding:14px 20px;border-bottom:2px solid #F1F5F9;display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+    <div style="width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,#1E3A5F,#3B82F6);display:flex;align-items:center;justify-content:center;font-weight:900;color:#fff;font-size:16px;flex-shrink:0">${teacher.name[0]}</div>
+    <div><div style="font-weight:800;color:#1E293B">ครู${teacher.name}</div><div style="font-size:12px;color:#94A3B8">${teacher.title}</div></div>
+    <div style="margin-left:auto;display:flex;gap:6px;flex-wrap:wrap">
+      ${teacher.subjects.map(sid=>{const sub=subMap[sid];return sub?`<span style="background:${sub.color}22;color:${sub.color};font-size:11px;padding:2px 8px;border-radius:12px;font-weight:700">${sub.name}</span>`:''}).join('')}
     </div>
-  );
+  </div>
+  <table class="tt-table">
+    <thead><tr>
+      <th class="day-header">วัน / เวลา</th>
+      ${TIME_SLOTS.map(ts=>`<th ${ts.isLunch?'class="lunch-header"':''} style="min-width:${ts.isLunch?76:130}px">${ts.label}</th>`).join('')}
+    </tr></thead>
+    <tbody>`;
+
+  DAYS.forEach((day,di)=>{
+    html+=`<tr><td class="day-cell" style="color:${DAY_COLORS[di]}">${day}</td>`;
+    TIME_SLOTS.forEach(ts=>{
+      if(ts.isLunch){ html+=`<td class="lunch-cell"><span class="lunch-text">พักกลางวันและกิจกรรม</span></td>`; return; }
+      const cell=tt[day]?.[ts.id];
+      const sub=cell?subMap[cell.subjectId]:null;
+      const hasConflict=cell&&conflicts.some(c=>c.key===`${day}-${ts.id}-${cell.grade}`);
+      if(cell&&sub){
+        html+=`<td><div class="cell-card" style="background:${sub.color}20;border:2px solid ${hasConflict?'#EF4444':sub.color+'55'}" ${editable?`onclick="openCellModal('${day}','${ts.id}')"`:''}>`
+        if(hasConflict) html+=`<span style="position:absolute;top:3px;right:3px;color:#EF4444"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 9v4M12 17h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/></svg></span>`;
+        html+=`<div class="sub-name" style="color:${sub.color}">${sub.name}</div><div class="grade">${cell.grade}</div></div></td>`;
+      } else {
+        html+=`<td><div class="cell-empty" ${editable?`onclick="openCellModal('${day}','${ts.id}')"`:''}>${editable?'+':''}</div></td>`;
+      }
+    });
+    html+=`</tr>`;
+  });
+  html+=`</tbody></table>`;
+  document.getElementById('tt-wrap').innerHTML=html;
 }
 
-// ─────────────────────────────────────────────
-//  TIMETABLE VIEW
-// ─────────────────────────────────────────────
-function TimetableView({ teachers, subjects, semester, semesters, ttMap, setCell, getConflicts, onSelectSem }) {
-  const [selTeacher, setSelTeacher] = useState(teachers[0]?.id||null);
-  const [editCell,   setEditCell]   = useState(null);
-
-  const teacher = teachers.find(t=>t.id===selTeacher);
-  const tt = ttMap[semester?.id]?.[selTeacher] || {};
-  const conflicts = semester ? getConflicts(semester.id) : [];
-  const subMap = Object.fromEntries(subjects.map(s=>[s.id,s]));
-
-  const isConflict = (day, tsId) => {
-    const cell = tt[day]?.[tsId];
-    if(!cell) return false;
-    return conflicts.some(c=>c.key===`${day}-${tsId}-${cell.grade}`);
-  };
-
-  if(!semester) return <div style={{ padding:40, color:"#64748B" }}>ไม่มีภาคเรียนที่เลือก</div>;
-
-  return (
-    <div style={{ padding:24 }}>
-      <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", marginBottom:18, flexWrap:"wrap", gap:12 }}>
-        <div>
-          <div style={{ display:"flex", alignItems:"center", gap:10, marginBottom:4 }}>
-            <div style={{ width:5, height:24, background:"linear-gradient(#1E3A5F,#3B82F6)", borderRadius:3 }}/>
-            <h2 style={{ margin:0, fontSize:20, fontWeight:900, color:"#0F172A" }}>ตารางสอน</h2>
-            <StatusBadge status={semester.status}/>
-          </div>
-          <p style={{ margin:0, color:"#64748B", fontSize:13, paddingLeft:15 }}>{semester.label} — {semester.school}</p>
-        </div>
-        <div style={{ display:"flex", gap:10, alignItems:"center" }}>
-          <select value={semester.id} onChange={e=>onSelectSem(e.target.value)} style={{ ...inp, width:"auto", margin:0, fontSize:13 }}>
-            {semesters.map(s=><option key={s.id} value={s.id}>{s.label}</option>)}
-          </select>
-          {teacher && (
-            <button onClick={()=>printTeacherTimetable(teacher,semester,ttMap,subjects)} style={{ ...outBtn, borderColor:"#BFDBFE", color:"#1D4ED8" }}>
-              <Ic n="print" s={13}/> พิมพ์
-            </button>
-          )}
-        </div>
-      </div>
-
-      {/* Teacher tabs */}
-      <div style={{ display:"flex", gap:8, flexWrap:"wrap", marginBottom:18 }}>
-        {teachers.map(t=>(
-          <button key={t.id} onClick={()=>setSelTeacher(t.id)} style={{
-            padding:"7px 15px", borderRadius:8, border:"1.5px solid",
-            borderColor:selTeacher===t.id?"#1E3A5F":"#E2E8F0",
-            background:selTeacher===t.id?"#1E3A5F":"#fff",
-            color:selTeacher===t.id?"#fff":"#475569",
-            cursor:"pointer", fontSize:13, fontWeight:selTeacher===t.id?700:400, fontFamily:"inherit",
-          }}>{t.name}</button>
-        ))}
-      </div>
-
-      {teacher && (
-        <div style={{ background:"#fff", borderRadius:16, overflow:"auto", boxShadow:"0 2px 12px rgba(0,0,0,0.08)" }}>
-          <div style={{ padding:"14px 20px", borderBottom:"2px solid #F1F5F9", display:"flex", alignItems:"center", gap:12 }}>
-            <div style={{ width:38, height:38, borderRadius:"50%", background:"#EFF6FF", display:"flex", alignItems:"center", justifyContent:"center", fontWeight:800, color:"#1E3A5F", fontSize:16 }}>
-              {teacher.name[0]}
-            </div>
-            <div>
-              <div style={{ fontWeight:800, color:"#1E293B" }}>ครู{teacher.name}</div>
-              <div style={{ fontSize:12, color:"#94A3B8" }}>{teacher.title}</div>
-            </div>
-            <div style={{ marginLeft:"auto", display:"flex", gap:6 }}>
-              {teacher.subjects.map(sid=>{
-                const sub=subMap[sid];
-                return sub ? <span key={sid} style={{ background:sub.color+"22", color:sub.color, fontSize:11, padding:"2px 8px", borderRadius:12, fontWeight:700 }}>{sub.name}</span> : null;
-              })}
-            </div>
-          </div>
-
-          <table style={{ width:"100%", borderCollapse:"collapse", minWidth:900 }}>
-            <thead>
-              <tr>
-                <th style={{ padding:"11px 16px", textAlign:"left", fontSize:12, fontWeight:800, color:"#475569", background:"#F8FAFC", borderBottom:"1px solid #E2E8F0", minWidth:90 }}>วัน / เวลา</th>
-                {TIME_SLOTS.map(ts=>(
-                  <th key={ts.id} style={{ padding:"11px 8px", textAlign:"center", fontSize:11, fontWeight:700, color:ts.isLunch?"#A855F7":"#475569", background:ts.isLunch?"#FAF5FF":"#F8FAFC", borderBottom:"1px solid #E2E8F0", minWidth:ts.isLunch?76:130 }}>
-                    {ts.label}
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {DAYS.map((day,di)=>(
-                <tr key={day} style={{ background:di%2===0?"#fff":"#FAFBFF" }}>
-                  <td style={{ padding:"12px 16px", fontWeight:800, fontSize:14, color:["#F59E0B","#A78BFA","#34D399","#FB923C","#60A5FA"][di], borderBottom:"1px solid #F1F5F9", borderRight:"2px solid #F1F5F9", whiteSpace:"nowrap" }}>
-                    {day}
-                  </td>
-                  {TIME_SLOTS.map(ts=>{
-                    if(ts.isLunch) return (
-                      <td key={ts.id} style={{ background:"#FAF5FF", borderBottom:"1px solid #F1F5F9", padding:4, textAlign:"center" }}>
-                        <div style={{ writingMode:"vertical-rl", transform:"rotate(180deg)", fontSize:9, color:"#A855F7", whiteSpace:"nowrap", padding:"6px 0" }}>
-                          พักกลางวันและกิจกรรม
-                        </div>
-                      </td>
-                    );
-                    const cell = tt[day]?.[ts.id];
-                    const conflict = cell && isConflict(day,ts.id);
-                    const sub = cell ? subMap[cell.subjectId] : null;
-                    return (
-                      <td key={ts.id} onClick={()=> semester.status!=="archived" && setEditCell({day,timeId:ts.id})} style={{ padding:5, borderBottom:"1px solid #F1F5F9", borderRight:"1px solid #F8FAFC", cursor:semester.status!=="archived"?"pointer":"default" }}>
-                        {cell && sub ? (
-                          <div style={{ background:sub.color+"20", border:`2px solid ${conflict?"#EF4444":sub.color+"55"}`, borderRadius:8, padding:"6px 8px", minHeight:58, position:"relative" }}>
-                            {conflict && <span style={{ position:"absolute", top:3, right:3, color:"#EF4444" }}><Ic n="warning" s={11}/></span>}
-                            <div style={{ fontSize:12, fontWeight:800, color:sub.color, lineHeight:1.3 }}>{sub.name}</div>
-                            <div style={{ fontSize:11, color:"#64748B", marginTop:2 }}>{cell.grade}</div>
-                          </div>
-                        ) : (
-                          <div style={{ minHeight:58, borderRadius:8, border:"1.5px dashed #E2E8F0", display:"flex", alignItems:"center", justifyContent:"center", color:"#CBD5E1", fontSize:20, transition:"background 0.15s" }}>
-                            +
-                          </div>
-                        )}
-                      </td>
-                    );
-                  })}
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
-
-      {editCell && (
-        <CellModal
-          day={editCell.day} timeId={editCell.timeId}
-          current={tt[editCell.day]?.[editCell.timeId]}
-          subjects={subjects} grades={GRADES}
-          onSave={val=>{ setCell(semester.id,selTeacher,editCell.day,editCell.timeId,val); setEditCell(null); }}
-          onDelete={()=>{ setCell(semester.id,selTeacher,editCell.day,editCell.timeId,null); setEditCell(null); }}
-          onClose={()=>setEditCell(null)}
-        />
-      )}
-    </div>
-  );
+function selectTeacher(id){
+  currentTeacherId=id;
+  document.querySelectorAll('.teacher-tab').forEach(b=>b.classList.toggle('active',b.textContent.trim()===teachers.find(t=>t.id===id)?.name));
+  renderTTGrid();
 }
 
-function CellModal({ day, timeId, current, subjects, grades, onSave, onDelete, onClose }) {
-  const [subjectId, setSubjectId] = useState(current?.subjectId||"");
-  const [grade, setGrade] = useState(current?.grade||"ป.1");
-  const timeLabel = TIME_SLOTS.find(t=>t.id===timeId)?.label||"";
-  return (
-    <Modal onClose={onClose} title={`กำหนดการสอน — ${day} ${timeLabel}`}>
-      <div style={{ display:"flex", flexDirection:"column", gap:14 }}>
-        <div>
-          <label style={lbl}>วิชาที่สอน</label>
-          <select value={subjectId} onChange={e=>setSubjectId(e.target.value)} style={inp}>
-            <option value="">-- เลือกวิชา --</option>
-            {subjects.map(s=><option key={s.id} value={s.id}>{s.name} ({s.credits} หน่วยกิต)</option>)}
-          </select>
-        </div>
-        <div>
-          <label style={lbl}>ระดับชั้น</label>
-          <select value={grade} onChange={e=>setGrade(e.target.value)} style={inp}>
-            {grades.map(g=><option key={g} value={g}>{g}</option>)}
-          </select>
-        </div>
-        {subjectId && (
-          <div style={{ background: (subjects.find(s=>s.id===subjectId)?.color||"#ccc")+"15", borderRadius:10, padding:12, display:"flex", alignItems:"center", gap:10 }}>
-            <div style={{ width:16, height:16, borderRadius:4, background:subjects.find(s=>s.id===subjectId)?.color||"#ccc" }}/>
-            <span style={{ fontSize:13, fontWeight:700, color:"#1E293B" }}>{subjects.find(s=>s.id===subjectId)?.name}</span>
-            <span style={{ fontSize:12, color:"#64748B" }}>ชั้น {grade}</span>
-          </div>
-        )}
-        <div style={{ display:"flex", gap:10, marginTop:4 }}>
-          {current && <button onClick={onDelete} style={{ ...outBtn, color:"#EF4444", borderColor:"#FECACA" }}><Ic n="trash" s={13}/> ลบออก</button>}
-          <button onClick={()=>subjectId&&onSave({subjectId,grade})} disabled={!subjectId} style={{ ...primBtn, marginLeft:"auto", opacity:subjectId?1:0.5 }}><Ic n="save" s={13}/> บันทึก</button>
-        </div>
-      </div>
-    </Modal>
-  );
+function onSelectSem(id){
+  currentSemId=id;
+  renderTimetable();
 }
 
-// ─────────────────────────────────────────────
-//  TEACHERS VIEW
-// ─────────────────────────────────────────────
-function TeachersView({ teachers, subjects, onSave, onDelete }) {
-  const [editing, setEditing] = useState(null);
-  const [search, setSearch] = useState("");
-  const filtered = teachers.filter(t=>t.name.includes(search)||t.title.includes(search));
-  const subMap = Object.fromEntries(subjects.map(s=>[s.id,s]));
+// ─── CELL MODAL ───
+function openCellModal(day,timeId){
+  editingCell={day,timeId};
+  const sem=semesters.find(s=>s.id===currentSemId);
+  const tt=(ttMap[sem?.id]||{})[currentTeacherId]||{};
+  const current=tt[day]?.[timeId];
+  const tsLabel=TIME_SLOTS.find(t=>t.id===timeId)?.label||'';
 
-  return (
-    <div style={{ padding:32 }}>
-      <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", marginBottom:24, flexWrap:"wrap", gap:12 }}>
-        <div>
-          <div style={{ display:"flex", alignItems:"center", gap:10, marginBottom:4 }}>
-            <div style={{ width:5, height:24, background:"linear-gradient(#1E3A5F,#3B82F6)", borderRadius:3 }}/>
-            <h2 style={{ margin:0, fontSize:20, fontWeight:900, color:"#0F172A" }}>จัดการครู</h2>
-          </div>
-          <p style={{ margin:0, color:"#64748B", fontSize:13, paddingLeft:15 }}>ทั้งหมด {teachers.length} คน</p>
-        </div>
-        <div style={{ display:"flex", gap:10 }}>
-          <input value={search} onChange={e=>setSearch(e.target.value)} style={{ ...inp, width:200, margin:0 }} placeholder="ค้นหาชื่อครู..."/>
-          <button onClick={()=>setEditing({id:"",name:"",title:"ครู",subjects:[]})} style={primBtn}><Ic n="plus" s={14}/> เพิ่มครูใหม่</button>
-        </div>
-      </div>
+  document.getElementById('modal-cell-title').textContent=`กำหนดการสอน — ${day} ${tsLabel}`;
 
-      <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fill,minmax(290px,1fr))", gap:14 }}>
-        {filtered.map(t=>(
-          <div key={t.id} style={{ background:"#fff", borderRadius:14, padding:20, boxShadow:"0 1px 6px rgba(0,0,0,0.06)", transition:"box-shadow 0.2s" }}>
-            <div style={{ display:"flex", alignItems:"center", gap:12, marginBottom:12 }}>
-              <div style={{ width:44, height:44, borderRadius:"50%", background:"linear-gradient(135deg,#1E3A5F,#3B82F6)", display:"flex", alignItems:"center", justifyContent:"center", fontWeight:900, color:"#fff", fontSize:18 }}>
-                {t.name[0]}
-              </div>
-              <div>
-                <div style={{ fontWeight:800, color:"#1E293B", fontSize:15 }}>{t.name}</div>
-                <div style={{ fontSize:12, color:"#94A3B8" }}>{t.title}</div>
-              </div>
-            </div>
-            <div style={{ display:"flex", flexWrap:"wrap", gap:5, marginBottom:14, minHeight:28 }}>
-              {t.subjects.map(sid=>{
-                const sub=subMap[sid];
-                return sub ? <span key={sid} style={{ background:sub.color+"22", color:sub.color, fontSize:11, padding:"2px 8px", borderRadius:12, fontWeight:700 }}>{sub.name}</span> : null;
-              })}
-            </div>
-            <div style={{ display:"flex", gap:8 }}>
-              <button onClick={()=>setEditing(t)} style={outBtn}><Ic n="edit" s={13}/> แก้ไข</button>
-              <button onClick={()=>window.confirm(`ลบครู ${t.name}?`)&&onDelete(t.id)} style={{ ...outBtn, color:"#EF4444", borderColor:"#FECACA" }}><Ic n="trash" s={13}/> ลบ</button>
-            </div>
-          </div>
-        ))}
-      </div>
+  // Subject options
+  const sel=document.getElementById('cell-subject');
+  sel.innerHTML=`<option value="">-- เลือกวิชา --</option>`+subjects.map(s=>`<option value="${s.id}" ${current?.subjectId===s.id?'selected':''}>${s.name} (${s.credits} หน่วยกิต)</option>`).join('');
 
-      {editing && (
-        <TeacherModal teacher={editing} subjects={subjects} onSave={t=>{ onSave(t); setEditing(null); }} onClose={()=>setEditing(null)}/>
-      )}
-    </div>
-  );
+  document.getElementById('cell-grade').value=current?.grade||'ป.1';
+  document.getElementById('cell-delete-btn').style.display=current?'inline-flex':'none';
+  updateCellPreview();
+  openModal('modal-cell');
 }
 
-function TeacherModal({ teacher, subjects, onSave, onClose }) {
-  const [form, setForm] = useState(teacher);
-  const toggle = sid => setForm(f=>({ ...f, subjects: f.subjects.includes(sid)?f.subjects.filter(s=>s!==sid):[...f.subjects,sid] }));
-  return (
-    <Modal onClose={onClose} title={teacher.id?"แก้ไขข้อมูลครู":"เพิ่มครูใหม่"}>
-      <div style={{ display:"flex", flexDirection:"column", gap:14 }}>
-        <div><label style={lbl}>ชื่อ-นามสกุล</label><input value={form.name} onChange={e=>setForm(f=>({...f,name:e.target.value}))} style={inp} placeholder="ชื่อครู"/></div>
-        <div>
-          <label style={lbl}>ตำแหน่ง</label>
-          <select value={form.title} onChange={e=>setForm(f=>({...f,title:e.target.value}))} style={inp}>
-            {["ครู","ครูชำนาญการ","ครูชำนาญการพิเศษ","ครูเชี่ยวชาญ","ผู้ช่วยครู"].map(t=><option key={t}>{t}</option>)}
-          </select>
-        </div>
-        <div>
-          <label style={lbl}>วิชาที่สอน (เลือกได้หลายวิชา)</label>
-          <div style={{ display:"flex", flexWrap:"wrap", gap:7, maxHeight:170, overflowY:"auto", padding:10, background:"#F8FAFC", borderRadius:10, border:"1px solid #E2E8F0" }}>
-            {subjects.map(s=>(
-              <button key={s.id} onClick={()=>toggle(s.id)} style={{
-                padding:"4px 12px", borderRadius:20, border:"1.5px solid",
-                borderColor:form.subjects.includes(s.id)?s.color:"#E2E8F0",
-                background:form.subjects.includes(s.id)?s.color+"22":"#fff",
-                color:form.subjects.includes(s.id)?s.color:"#475569",
-                fontSize:12, cursor:"pointer", fontFamily:"inherit", fontWeight:form.subjects.includes(s.id)?700:400,
-              }}>{s.name}</button>
-            ))}
-          </div>
-        </div>
-        <button onClick={()=>form.name&&onSave(form)} disabled={!form.name} style={{ ...primBtn, marginTop:6, opacity:form.name?1:0.5 }}><Ic n="save" s={14}/> บันทึกลง Google Sheets</button>
-      </div>
-    </Modal>
-  );
+function updateCellPreview(){
+  const sid=document.getElementById('cell-subject').value;
+  const grade=document.getElementById('cell-grade').value;
+  const sub=subjects.find(s=>s.id===sid);
+  const prev=document.getElementById('cell-preview');
+  if(sub){
+    document.getElementById('cell-preview-dot').style.background=sub.color;
+    document.getElementById('cell-preview-text').textContent=`${sub.name} — ชั้น ${grade}`;
+    prev.style.display='flex';
+    prev.style.background=sub.color+'15';
+    prev.style.border=`1px solid ${sub.color}44`;
+  } else { prev.style.display='none'; }
 }
 
-// ─────────────────────────────────────────────
-//  SUBJECTS VIEW
-// ─────────────────────────────────────────────
-function SubjectsView({ subjects, onSave, onDelete }) {
-  const [editing, setEditing] = useState(null);
-  const [search, setSearch] = useState("");
-  const filtered = subjects.filter(s=>s.name.includes(search));
-  return (
-    <div style={{ padding:32 }}>
-      <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", marginBottom:24, flexWrap:"wrap", gap:12 }}>
-        <div>
-          <div style={{ display:"flex", alignItems:"center", gap:10, marginBottom:4 }}>
-            <div style={{ width:5, height:24, background:"linear-gradient(#1E3A5F,#3B82F6)", borderRadius:3 }}/>
-            <h2 style={{ margin:0, fontSize:20, fontWeight:900, color:"#0F172A" }}>จัดการวิชา</h2>
-          </div>
-          <p style={{ margin:0, color:"#64748B", fontSize:13, paddingLeft:15 }}>ทั้งหมด {subjects.length} วิชา</p>
-        </div>
-        <div style={{ display:"flex", gap:10 }}>
-          <input value={search} onChange={e=>setSearch(e.target.value)} style={{ ...inp, width:200, margin:0 }} placeholder="ค้นหาวิชา..."/>
-          <button onClick={()=>setEditing({id:"",name:"",credits:1,color:"#3B82F6"})} style={primBtn}><Ic n="plus" s={14}/> เพิ่มวิชาใหม่</button>
-        </div>
-      </div>
-      <div style={{ background:"#fff", borderRadius:16, overflow:"hidden", boxShadow:"0 1px 6px rgba(0,0,0,0.06)" }}>
-        <table style={{ width:"100%", borderCollapse:"collapse" }}>
-          <thead>
-            <tr style={{ background:"#F8FAFC" }}>
-              {["","ชื่อวิชา","หน่วยกิต","จัดการ"].map((h,i)=>(
-                <th key={i} style={{ padding:"12px 20px", textAlign:"left", fontSize:13, fontWeight:700, color:"#475569", borderBottom:"1px solid #E2E8F0" }}>{h}</th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {filtered.map((s,i)=>(
-              <tr key={s.id} style={{ background:i%2===0?"#fff":"#FAFBFF" }}>
-                <td style={{ padding:"10px 20px" }}><div style={{ width:28, height:28, borderRadius:8, background:s.color }}/></td>
-                <td style={{ padding:"10px 20px", fontWeight:700, color:"#1E293B" }}>{s.name}</td>
-                <td style={{ padding:"10px 20px" }}><span style={{ background:"#EFF6FF", color:"#3B82F6", padding:"2px 10px", borderRadius:12, fontSize:12, fontWeight:700 }}>{s.credits} หน่วยกิต</span></td>
-                <td style={{ padding:"10px 20px" }}>
-                  <div style={{ display:"flex", gap:8 }}>
-                    <button onClick={()=>setEditing(s)} style={outBtn}><Ic n="edit" s={13}/></button>
-                    <button onClick={()=>window.confirm(`ลบวิชา ${s.name}?`)&&onDelete(s.id)} style={{ ...outBtn, color:"#EF4444", borderColor:"#FECACA" }}><Ic n="trash" s={13}/></button>
-                  </div>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-      {editing && <SubjectModal subject={editing} onSave={s=>{ onSave(s); setEditing(null); }} onClose={()=>setEditing(null)}/>}
-    </div>
-  );
+async function saveCell(){
+  const sid=document.getElementById('cell-subject').value;
+  if(!sid){ notify('กรุณาเลือกวิชา','error'); return; }
+  const grade=document.getElementById('cell-grade').value;
+  const {day,timeId}=editingCell;
+  await writeCellToSheet(day,timeId,{subjectId:sid,grade});
+  closeModal('modal-cell');
 }
 
-function SubjectModal({ subject, onSave, onClose }) {
-  const [form, setForm] = useState(subject);
-  return (
-    <Modal onClose={onClose} title={subject.id?"แก้ไขวิชา":"เพิ่มวิชาใหม่"}>
-      <div style={{ display:"flex", flexDirection:"column", gap:14 }}>
-        <div><label style={lbl}>ชื่อวิชา</label><input value={form.name} onChange={e=>setForm(f=>({...f,name:e.target.value}))} style={inp}/></div>
-        <div><label style={lbl}>จำนวนหน่วยกิต</label><input type="number" min={0} max={10} value={form.credits} onChange={e=>setForm(f=>({...f,credits:parseInt(e.target.value)||0}))} style={inp}/></div>
-        <div>
-          <label style={lbl}>สีประจำวิชา</label>
-          <div style={{ display:"flex", flexWrap:"wrap", gap:8 }}>
-            {PRESET_COLORS.map(c=>(
-              <button key={c} onClick={()=>setForm(f=>({...f,color:c}))} style={{ width:34,height:34,borderRadius:9,background:c,border:form.color===c?"3px solid #1E3A5F":"2px solid #fff",cursor:"pointer",boxShadow:"0 2px 6px rgba(0,0,0,0.2)" }}/>
-            ))}
-          </div>
-        </div>
-        <button onClick={()=>form.name&&onSave(form)} disabled={!form.name} style={{ ...primBtn, marginTop:6, opacity:form.name?1:0.5 }}><Ic n="save" s={14}/> บันทึกลง Google Sheets</button>
-      </div>
-    </Modal>
-  );
+async function deleteCell(){
+  const {day,timeId}=editingCell;
+  await writeCellToSheet(day,timeId,null);
+  closeModal('modal-cell');
 }
 
-// ─────────────────────────────────────────────
-//  SEMESTERS VIEW
-// ─────────────────────────────────────────────
-function SemestersView({ semesters, activeSemesterId, ttMap, teachers, onActivate, onFinalize, onCreate, onSelect }) {
-  return (
-    <div style={{ padding:32 }}>
-      <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", marginBottom:24 }}>
-        <div>
-          <div style={{ display:"flex", alignItems:"center", gap:10, marginBottom:4 }}>
-            <div style={{ width:5, height:24, background:"linear-gradient(#1E3A5F,#3B82F6)", borderRadius:3 }}/>
-            <h2 style={{ margin:0, fontSize:20, fontWeight:900, color:"#0F172A" }}>จัดการภาคเรียน</h2>
-          </div>
-          <p style={{ margin:0, color:"#64748B", fontSize:13, paddingLeft:15 }}>ทั้งหมด {semesters.length} ภาคเรียน</p>
-        </div>
-        <button onClick={onCreate} style={primBtn}><Ic n="plus" s={14}/> สร้างตารางสอนใหม่</button>
-      </div>
-
-      <div style={{ display:"flex", flexDirection:"column", gap:12 }}>
-        {semesters.slice().reverse().map(s=>{
-          const cellCount = Object.values(ttMap[s.id]||{}).flatMap(d=>Object.values(d)).flatMap(x=>Object.values(x)).length;
-          const teacherCount = Object.keys(ttMap[s.id]||{}).length;
-          return (
-            <div key={s.id} style={{ background:"#fff", borderRadius:16, padding:22, boxShadow:s.id===activeSemesterId?"0 0 0 2.5px #1E3A5F,0 4px 16px rgba(30,58,95,0.12)":"0 1px 6px rgba(0,0,0,0.06)", display:"flex", alignItems:"center", gap:16, flexWrap:"wrap" }}>
-              <div style={{ flex:1, minWidth:200 }}>
-                <div style={{ display:"flex", alignItems:"center", gap:10, marginBottom:4 }}>
-                  <span style={{ fontWeight:900, fontSize:16, color:"#1E293B" }}>{s.label}</span>
-                  <StatusBadge status={s.status}/>
-                  {s.id===activeSemesterId && <span style={{ fontSize:11, background:"#DBEAFE", color:"#1E40AF", padding:"2px 8px", borderRadius:20, fontWeight:700 }}>★ กำลังใช้งาน</span>}
-                </div>
-                <div style={{ fontSize:13, color:"#64748B" }}>{s.school}</div>
-                <div style={{ fontSize:12, color:"#94A3B8", marginTop:4 }}>
-                  จัดสอน {teacherCount} ครู • {cellCount} ช่วงสอน
-                </div>
-              </div>
-              <div style={{ display:"flex", gap:8, flexWrap:"wrap" }}>
-                <button onClick={()=>onSelect(s.id)} style={outBtn}><Ic n="eye" s={13}/> ดูตาราง</button>
-                {s.status==="draft" && (
-                  <button onClick={()=>window.confirm("ยืนยันตารางสอนนี้?")&&onFinalize(s.id)} style={{ ...outBtn, borderColor:"#A7F3D0", color:"#059669" }}>
-                    <Ic n="check" s={13}/> ยืนยัน
-                  </button>
-                )}
-                {s.status!=="active" && s.status!=="archived" && (
-                  <button onClick={()=>window.confirm(`นำ "${s.label}" ไปใช้งาน? ภาคเรียนปัจจุบันจะถูกเก็บถาวร`)&&onActivate(s.id)} style={{ ...primBtn, fontSize:13 }}>
-                    <Ic n="rocket" s={13}/> นำไปใช้งาน
-                  </button>
-                )}
-              </div>
-            </div>
-          );
-        })}
-      </div>
-    </div>
-  );
+async function writeCellToSheet(day,timeId,value){
+  showLoader('กำลังบันทึกตาราง...');
+  try {
+    const newMap=JSON.parse(JSON.stringify(ttMap));
+    newMap[currentSemId]=newMap[currentSemId]||{};
+    newMap[currentSemId][currentTeacherId]=newMap[currentSemId][currentTeacherId]||{};
+    newMap[currentSemId][currentTeacherId][day]=newMap[currentSemId][currentTeacherId][day]||{};
+    if(value) newMap[currentSemId][currentTeacherId][day][timeId]=value;
+    else delete newMap[currentSemId][currentTeacherId][day][timeId];
+    await gsWrite('timetable',flattenTTMap(newMap));
+    ttMap=newMap;
+    renderTTGrid();
+    renderDashboard();
+    notify('บันทึกตารางสอนสำเร็จ ✓');
+  } catch(e){ notify(e.message,'error'); }
+  hideLoader();
 }
 
-// ─────────────────────────────────────────────
-//  NEW SEMESTER MODAL
-// ─────────────────────────────────────────────
-function NewSemModal({ school, onSave, onClose }) {
-  const [form, setForm] = useState({ year:"2569", term:"1", school });
-  return (
-    <Modal onClose={onClose} title="สร้างตารางสอนใหม่">
-      <div style={{ display:"flex", flexDirection:"column", gap:14 }}>
-        <div style={{ background:"#FFFBEB", border:"1px solid #FDE68A", borderRadius:10, padding:12, fontSize:13, color:"#92400E", display:"flex", gap:8 }}>
-          <Ic n="warning" s={16} c="#F59E0B"/>
-          <span>ตารางจะถูกบันทึกเป็น <strong>ฉบับร่าง</strong> และบันทึกใน Google Sheets ทันที</span>
-        </div>
-        <div><label style={lbl}>ปีการศึกษา (พ.ศ.)</label><input value={form.year} onChange={e=>setForm(f=>({...f,year:e.target.value}))} style={inp} placeholder="เช่น 2569"/></div>
-        <div>
-          <label style={lbl}>ภาคเรียน</label>
-          <select value={form.term} onChange={e=>setForm(f=>({...f,term:e.target.value}))} style={inp}>
-            <option value="1">ภาคเรียนที่ 1</option>
-            <option value="2">ภาคเรียนที่ 2</option>
-          </select>
-        </div>
-        <div><label style={lbl}>ชื่อโรงเรียน</label><input value={form.school} onChange={e=>setForm(f=>({...f,school:e.target.value}))} style={inp}/></div>
-        <button onClick={()=>form.year&&onSave(form)} style={{ ...primBtn, marginTop:6 }}><Ic n="save" s={14}/> สร้างและบันทึกใน Google Sheets</button>
-      </div>
-    </Modal>
-  );
+// ─── PRINT ───
+function printTimetable(){
+  const sem=semesters.find(s=>s.id===currentSemId);
+  const teacher=teachers.find(t=>t.id===currentTeacherId);
+  if(!sem||!teacher) return;
+  const tt=(ttMap[sem.id]||{})[teacher.id]||{};
+  const subMap=Object.fromEntries(subjects.map(s=>[s.id,s]));
+
+  let rows=DAYS.map((day,di)=>{
+    const cells=TIME_SLOTS.map(ts=>{
+      if(ts.isLunch) return `<td style="background:#F5F3FF;color:#7C3AED;font-size:9px;writing-mode:vertical-rl;transform:rotate(180deg);text-align:center;padding:4px;width:70px">พักกลางวันและกิจกรรม</td>`;
+      const c=tt[day]?.[ts.id]; const sub=c?subMap[c.subjectId]:null;
+      if(!c||!sub) return `<td style="padding:6px;border:1px solid #eee;width:120px"></td>`;
+      return `<td style="padding:6px;border:1px solid #eee;width:120px"><div style="background:${sub.color}22;border-left:3px solid ${sub.color};padding:4px 6px;border-radius:4px;font-size:12px;font-weight:700;color:${sub.color}">${sub.name}<br><span style="font-weight:400;font-size:11px;color:#475569">${c.grade}</span></div></td>`;
+    }).join('');
+    return `<tr><td style="padding:10px 14px;font-weight:700;color:${DAY_COLORS[di]};border:1px solid #eee;white-space:nowrap">${day}</td>${cells}</tr>`;
+  }).join('');
+
+  const ths=TIME_SLOTS.map(ts=>`<th style="padding:10px 8px;font-size:11px;background:#F8FAFC;border:1px solid #eee;width:${ts.isLunch?70:120}px">${ts.label}</th>`).join('');
+  const html=`<!DOCTYPE html><html><head><meta charset="utf-8">
+  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <style>body{font-family:'Sarabun',sans-serif;padding:24px}table{border-collapse:collapse;width:100%}@media print{.no-print{display:none}}</style>
+  </head><body>
+  <button class="no-print" onclick="window.print()" style="margin-bottom:16px;padding:8px 20px;background:#1E3A5F;color:#fff;border:none;border-radius:8px;cursor:pointer;font-size:14px">🖨️ พิมพ์</button>
+  <h2 style="margin:0 0 4px">ตารางสอนคุณครู${teacher.name}</h2>
+  <p style="margin:0 0 4px;color:#475569">${teacher.title}</p>
+  <p style="margin:0 0 16px;color:#94A3B8;font-size:13px">${sem.label} — ${sem.school}</p>
+  <table><thead><tr><th style="padding:10px 14px;background:#F8FAFC;border:1px solid #eee">วัน / เวลา</th>${ths}</tr></thead><tbody>${rows}</tbody></table>
+  </body></html>`;
+  const w=window.open('','_blank','width=1100,height=700');
+  w.document.write(html); w.document.close();
 }
+
+// ═══════════════════════════════════════════
+//  TEACHERS
+// ═══════════════════════════════════════════
+function renderTeachers(){
+  const q=(document.getElementById('teacher-search')?.value||'').trim();
+  const list=q?teachers.filter(t=>t.name.includes(q)||t.title.includes(q)):teachers;
+  document.getElementById('teachers-count').textContent=`ทั้งหมด ${teachers.length} คน`;
+  const subMap=Object.fromEntries(subjects.map(s=>[s.id,s]));
+  document.getElementById('teacher-grid').innerHTML=list.map(t=>`
+    <div class="teacher-card">
+      <div class="flex items-center gap-12" style="margin-bottom:12px">
+        <div class="teacher-avatar">${t.name[0]}</div>
+        <div><div style="font-weight:800;color:#1E293B;font-size:15px">${t.name}</div><div style="font-size:12px;color:#94A3B8">${t.title}</div></div>
+      </div>
+      <div class="subject-tags" style="margin-bottom:14px;min-height:24px">
+        ${t.subjects.map(sid=>{const s=subMap[sid];return s?`<span style="background:${s.color}22;color:${s.color};font-size:11px;padding:2px 10px;border-radius:12px;font-weight:700">${s.name}</span>`:''}).join('')}
+      </div>
+      <div class="flex gap-8">
+        <button onclick="openTeacherModal('${t.id}')" class="btn-outline"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg> แก้ไข</button>
+        <button onclick="deleteTeacher('${t.id}','${t.name}')" class="btn-danger"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6"/></svg> ลบ</button>
+      </div>
+    </div>`).join('');
+}
+
+function openTeacherModal(id){
+  const t=id?teachers.find(x=>x.id===id):{id:'',name:'',title:'ครู',subjects:[]};
+  document.getElementById('modal-teacher-title').textContent=id?'แก้ไขข้อมูลครู':'เพิ่มครูใหม่';
+  document.getElementById('teacher-id').value=t.id;
+  document.getElementById('teacher-name').value=t.name;
+  document.getElementById('teacher-title').value=t.title;
+  teacherSubjectsPick=[...t.subjects];
+  renderTeacherSubjectPick();
+  openModal('modal-teacher');
+}
+
+function renderTeacherSubjectPick(){
+  document.getElementById('teacher-subjects-pick').innerHTML=subjects.map(s=>{
+    const sel=teacherSubjectsPick.includes(s.id);
+    return `<span class="subject-tag" onclick="toggleTeacherSubject('${s.id}')" style="background:${sel?s.color+'22':'#fff'};color:${sel?s.color:'#475569'};border-color:${sel?s.color:'#E2E8F0'};font-weight:${sel?700:400}">${s.name}</span>`;
+  }).join('');
+}
+
+function toggleTeacherSubject(sid){
+  if(teacherSubjectsPick.includes(sid)) teacherSubjectsPick=teacherSubjectsPick.filter(s=>s!==sid);
+  else teacherSubjectsPick.push(sid);
+  renderTeacherSubjectPick();
+}
+
+async function saveTeacher(){
+  const name=document.getElementById('teacher-name').value.trim();
+  if(!name){ notify('กรุณากรอกชื่อครู','error'); return; }
+  const id=document.getElementById('teacher-id').value||'t'+Date.now();
+  const title=document.getElementById('teacher-title').value;
+  const t={id,name,title,subjects:teacherSubjectsPick};
+  showLoader('กำลังบันทึกครู...');
+  try{
+    const updated=teachers.find(x=>x.id===id)?teachers.map(x=>x.id===id?t:x):[...teachers,t];
+    await gsWrite('teachers',updated.map(t2r));
+    teachers=updated;
+    renderTeachers(); renderTimetable(); renderDashboard();
+    closeModal('modal-teacher');
+    notify('บันทึกข้อมูลครูสำเร็จ ✓');
+  }catch(e){notify(e.message,'error');}
+  hideLoader();
+}
+
+async function deleteTeacher(id,name){
+  if(!confirm(`ลบครู "${name}"?`)) return;
+  showLoader('กำลังลบ...');
+  try{
+    const updated=teachers.filter(t=>t.id!==id);
+    await gsWrite('teachers',updated.map(t2r));
+    teachers=updated;
+    if(currentTeacherId===id) currentTeacherId=teachers[0]?.id||null;
+    renderTeachers(); renderTimetable(); renderDashboard();
+    notify('ลบครูสำเร็จ');
+  }catch(e){notify(e.message,'error');}
+  hideLoader();
+}
+
+// ═══════════════════════════════════════════
+//  SUBJECTS
+// ═══════════════════════════════════════════
+function renderSubjects(){
+  const q=(document.getElementById('subject-search')?.value||'').trim();
+  const list=q?subjects.filter(s=>s.name.includes(q)):subjects;
+  document.getElementById('subjects-count').textContent=`ทั้งหมด ${subjects.length} วิชา`;
+  document.getElementById('subjects-tbody').innerHTML=list.map((s,i)=>`
+    <tr>
+      <td><div style="width:28px;height:28px;border-radius:8px;background:${s.color}"></div></td>
+      <td style="font-weight:700;color:#1E293B">${s.name}</td>
+      <td><span style="background:#EFF6FF;color:#3B82F6;padding:2px 10px;border-radius:12px;font-size:12px;font-weight:700">${s.credits} หน่วยกิต</span></td>
+      <td>
+        <div class="flex gap-8">
+          <button onclick="openSubjectModal('${s.id}')" class="btn-outline"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
+          <button onclick="deleteSubject('${s.id}','${s.name}')" class="btn-danger"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6"/></svg></button>
+        </div>
+      </td>
+    </tr>`).join('');
+}
+
+function openSubjectModal(id){
+  const s=id?subjects.find(x=>x.id===id):{id:'',name:'',credits:1,color:'#3B82F6'};
+  document.getElementById('modal-subject-title').textContent=id?'แก้ไขวิชา':'เพิ่มวิชาใหม่';
+  document.getElementById('subject-id').value=s.id;
+  document.getElementById('subject-name').value=s.name;
+  document.getElementById('subject-credits').value=s.credits;
+  selectedSubjectColor=s.color||'#3B82F6';
+  renderColorGrid();
+  openModal('modal-subject');
+}
+
+function renderColorGrid(){
+  document.getElementById('color-grid').innerHTML=PRESET_COLORS.map(c=>`
+    <div class="color-swatch ${c===selectedSubjectColor?'selected':''}" style="background:${c}" onclick="selectColor('${c}')"></div>`).join('');
+}
+
+function selectColor(c){
+  selectedSubjectColor=c;
+  renderColorGrid();
+}
+
+async function saveSubject(){
+  const name=document.getElementById('subject-name').value.trim();
+  if(!name){ notify('กรุณากรอกชื่อวิชา','error'); return; }
+  const id=document.getElementById('subject-id').value||'s'+Date.now();
+  const credits=parseInt(document.getElementById('subject-credits').value)||0;
+  const s={id,name,credits,color:selectedSubjectColor};
+  showLoader('กำลังบันทึกวิชา...');
+  try{
+    const updated=subjects.find(x=>x.id===id)?subjects.map(x=>x.id===id?s:x):[...subjects,s];
+    await gsWrite('subjects',updated.map(s2r));
+    subjects=updated;
+    renderSubjects(); renderTeachers(); renderTimetable();
+    closeModal('modal-subject');
+    notify('บันทึกวิชาสำเร็จ ✓');
+  }catch(e){notify(e.message,'error');}
+  hideLoader();
+}
+
+async function deleteSubject(id,name){
+  if(!confirm(`ลบวิชา "${name}"?`)) return;
+  showLoader('กำลังลบ...');
+  try{
+    const updated=subjects.filter(s=>s.id!==id);
+    await gsWrite('subjects',updated.map(s2r));
+    subjects=updated;
+    renderSubjects(); renderTimetable();
+    notify('ลบวิชาสำเร็จ');
+  }catch(e){notify(e.message,'error');}
+  hideLoader();
+}
+
+// ═══════════════════════════════════════════
+//  SEMESTERS
+// ═══════════════════════════════════════════
+function renderSemesters(){
+  document.getElementById('semesters-count').textContent=`ทั้งหมด ${semesters.length} ภาคเรียน`;
+  const active=semesters.find(s=>s.status==='active');
+  document.getElementById('sem-list').innerHTML=semesters.slice().reverse().map(s=>{
+    const cells=Object.values(ttMap[s.id]||{}).flatMap(d=>Object.values(d)).flatMap(x=>Object.values(x)).length;
+    const tCount=Object.keys(ttMap[s.id]||{}).length;
+    return `<div class="sem-card ${s.id===active?.id?'is-active':''}">
+      <div style="flex:1;min-width:200px">
+        <div class="flex items-center gap-10" style="margin-bottom:4px">
+          <span style="font-weight:900;font-size:16px;color:#1E293B">${s.label}</span>
+          ${badgeHtml(s.status)}
+          ${s.id===active?.id?'<span class="badge badge-active">★ กำลังใช้งาน</span>':''}
+        </div>
+        <div style="font-size:13px;color:#64748B">${s.school}</div>
+        <div style="font-size:12px;color:#94A3B8;margin-top:4px">จัดสอน ${tCount} ครู • ${cells} ช่วงสอน</div>
+      </div>
+      <div class="flex gap-8 flex-wrap">
+        <button onclick="goToSemTimetable('${s.id}')" class="btn-outline"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8zM12 9a3 3 0 100 6 3 3 0 000-6z"/></svg> ดูตาราง</button>
+        ${s.status==='draft'?`<button onclick="finalizeSemester('${s.id}')" class="btn-success"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg> ยืนยัน</button>`:''}
+        ${s.status!=='active'&&s.status!=='archived'?`<button onclick="activateSemester('${s.id}')" class="btn-primary"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 00-2.91-.09zM12 15l-3-3a22 22 0 012-3.95A12.88 12.88 0 0122 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 01-4 2z"/></svg> นำไปใช้งาน</button>`:''}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function goToSemTimetable(id){
+  currentSemId=id;
+  showPage('timetable');
+}
+
+async function activateSemester(id){
+  const sem=semesters.find(s=>s.id===id);
+  if(!confirm(`นำ "${sem?.label}" ไปใช้งาน?\nภาคเรียนปัจจุบันจะถูกเก็บถาวร`)) return;
+  showLoader('กำลังนำไปใช้งาน...');
+  try{
+    const updated=semesters.map(s=>({...s,status:s.id===id?'active':s.status==='active'?'archived':s.status}));
+    await gsWrite('semesters',updated.map(sem2r));
+    semesters=updated;
+    renderAll();
+    notify('นำตารางสอนไปใช้งานแล้ว ✓');
+  }catch(e){notify(e.message,'error');}
+  hideLoader();
+}
+
+async function finalizeSemester(id){
+  if(!confirm('ยืนยันตารางสอนนี้?')) return;
+  showLoader('กำลังยืนยัน...');
+  try{
+    const updated=semesters.map(s=>s.id===id?{...s,status:'final'}:s);
+    await gsWrite('semesters',updated.map(sem2r));
+    semesters=updated;
+    renderSemesters(); renderDashboard();
+    notify('ยืนยันตารางสอนสำเร็จ ✓');
+  }catch(e){notify(e.message,'error');}
+  hideLoader();
+}
+
+async function createSemester(){
+  const year=document.getElementById('new-sem-year').value.trim();
+  const term=document.getElementById('new-sem-term').value;
+  const school=document.getElementById('new-sem-school').value.trim();
+  if(!year){ notify('กรุณากรอกปีการศึกษา','error'); return; }
+  const s={id:`${year}-${term}`,year,term,label:`ภาคเรียนที่ ${term} ปีการศึกษา ${year}`,school,status:'draft'};
+  showLoader('กำลังสร้างภาคเรียนใหม่...');
+  try{
+    const updated=[...semesters,s];
+    await gsWrite('semesters',updated.map(sem2r));
+    semesters=updated;
+    renderSemesters(); renderDashboard(); renderTimetable();
+    closeModal('modal-new-sem');
+    notify('สร้างตารางสอนใหม่สำเร็จ (ฉบับร่าง) ✓');
+  }catch(e){notify(e.message,'error');}
+  hideLoader();
+}
+
+// ═══════════════════════════════════════════
+//  CONFLICT CHECK
+// ═══════════════════════════════════════════
+function getConflicts(semId){
+  const m={};
+  Object.entries(ttMap[semId]||{}).forEach(([tid,days])=>
+    Object.entries(days).forEach(([day,slots])=>
+      Object.entries(slots).forEach(([tsId,c])=>{
+        const k=`${day}-${tsId}-${c.grade}`;
+        m[k]=m[k]||[]; m[k].push({tid,...c});
+      })
+    )
+  );
+  return Object.entries(m).filter(([,v])=>v.length>1).map(([k,v])=>({key:k,entries:v}));
+}
+
+// ═══════════════════════════════════════════
+//  UI HELPERS
+// ═══════════════════════════════════════════
+function showPage(id){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('page-'+id)?.classList.add('active');
+  document.querySelector(`[data-page="${id}"]`)?.classList.add('active');
+}
+
+function toggleSidebar(){
+  document.getElementById('sidebar').classList.toggle('collapsed');
+}
+
+function openModal(id){ document.getElementById(id).classList.add('show'); }
+function closeModal(id){ document.getElementById(id).classList.remove('show'); }
+
+// Close modal on overlay click
+document.querySelectorAll('.modal-overlay').forEach(el=>{
+  el.addEventListener('click',e=>{ if(e.target===el) el.classList.remove('show'); });
+});
+
+let toastTimer;
+function notify(msg,type='success'){
+  const el=document.getElementById('toast');
+  const bg=type==='error'?'#EF4444':type==='warn'?'#F59E0B':'#22C55E';
+  el.style.background=bg;
+  el.textContent=msg;
+  el.style.display='flex';
+  clearTimeout(toastTimer);
+  toastTimer=setTimeout(()=>el.style.display='none',3500);
+}
+
+function showLoader(text='กำลังโหลด...'){
+  document.getElementById('loader-text').textContent=text;
+  document.getElementById('loader').classList.add('show');
+}
+function hideLoader(){ document.getElementById('loader').classList.remove('show'); }
+
+// ═══════════════════════════════════════════
+//  INIT
+// ═══════════════════════════════════════════
+loadAll();
+</script>
+</body>
+</html>
