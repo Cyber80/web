@@ -1,0 +1,1190 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ทบทวนวิทยาศาสตร์ ป.6 | ปลายภาค เทอม 2</title>
+<link href="https://fonts.googleapis.com/css2?family=Mitr:wght@300;400;500;600;700&family=Sarabun:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --sky: #0ea5e9;
+  --sky2: #38bdf8;
+  --earth: #10b981;
+  --earth2: #34d399;
+  --fire: #f59e0b;
+  --fire2: #fbbf24;
+  --moon: #8b5cf6;
+  --moon2: #a78bfa;
+  --elec: #ef4444;
+  --elec2: #f87171;
+  --bg: #f0f9ff;
+  --card: #ffffff;
+  --txt: #0f172a;
+  --txt2: #475569;
+  --shadow: 0 4px 24px rgba(0,0,0,0.08);
+  --r: 18px;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'Sarabun', sans-serif;
+  background: var(--bg);
+  color: var(--txt);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ─── DECORATIVE BG ─── */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 60% 40% at 10% 10%, rgba(14,165,233,0.07) 0%, transparent 70%),
+    radial-gradient(ellipse 50% 40% at 90% 80%, rgba(139,92,246,0.07) 0%, transparent 70%),
+    radial-gradient(ellipse 40% 30% at 50% 50%, rgba(16,185,129,0.05) 0%, transparent 70%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ─── HEADER ─── */
+header {
+  background: linear-gradient(135deg, #0c4a6e 0%, #0f766e 60%, #065f46 100%);
+  padding: 0;
+  position: sticky;
+  top: 0;
+  z-index: 200;
+  box-shadow: 0 4px 30px rgba(0,0,0,0.3);
+}
+.hdr-top {
+  display: flex; align-items: center; gap: 12px;
+  padding: 14px 24px;
+}
+.hdr-emoji { font-size: 30px; animation: spin 12s linear infinite; display: inline-block; }
+@keyframes spin { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
+.hdr-title {
+  font-family: 'Mitr', sans-serif;
+  font-size: 20px;
+  font-weight: 700;
+  color: #fff;
+  line-height: 1.2;
+}
+.hdr-sub { font-size: 12px; color: rgba(255,255,255,0.75); margin-top: 2px; }
+.hdr-badge {
+  margin-left: auto;
+  background: rgba(255,255,255,0.15);
+  border: 1px solid rgba(255,255,255,0.3);
+  color: #fff;
+  font-family: 'Mitr', sans-serif;
+  font-size: 11px;
+  padding: 4px 12px;
+  border-radius: 20px;
+}
+
+/* ─── UNIT NAV ─── */
+.unit-nav {
+  background: rgba(0,0,0,0.2);
+  display: flex;
+  overflow-x: auto;
+  scrollbar-width: none;
+  gap: 2px;
+  padding: 0 16px;
+}
+.unit-nav::-webkit-scrollbar { display: none; }
+.unit-tab {
+  font-family: 'Mitr', sans-serif;
+  font-size: 13px;
+  padding: 11px 18px;
+  border: none;
+  background: none;
+  color: rgba(255,255,255,0.65);
+  cursor: pointer;
+  border-bottom: 3px solid transparent;
+  white-space: nowrap;
+  transition: all .2s;
+}
+.unit-tab:hover { color: #fff; background: rgba(255,255,255,0.08); }
+.unit-tab.active { color: #fff; border-bottom-color: #fbbf24; background: rgba(255,255,255,0.1); }
+
+/* ─── MAIN ─── */
+main { max-width: 1100px; margin: 0 auto; padding: 28px 16px; position: relative; z-index: 1; }
+
+/* ─── PAGES ─── */
+.page { display: none; animation: fadeIn .35s ease; }
+.page.active { display: block; }
+@keyframes fadeIn { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
+
+/* ─── HERO BANNER ─── */
+.hero {
+  border-radius: 24px;
+  padding: 32px 28px;
+  margin-bottom: 28px;
+  color: #fff;
+  position: relative;
+  overflow: hidden;
+}
+.hero::after {
+  content: '';
+  position: absolute;
+  right: -20px; top: -30px;
+  width: 180px; height: 180px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.08);
+}
+.hero h1 {
+  font-family: 'Mitr', sans-serif;
+  font-size: clamp(20px,3.5vw,30px);
+  font-weight: 700;
+  margin-bottom: 8px;
+  position: relative;
+}
+.hero p { font-size: 15px; opacity: .9; max-width: 520px; position: relative; line-height: 1.6; }
+.hero .hero-icon { font-size: 64px; position: absolute; right: 28px; top: 50%; transform: translateY(-50%); opacity: .25; }
+
+/* ─── SECTION CARD ─── */
+.sec-card {
+  background: var(--card);
+  border-radius: var(--r);
+  padding: 24px;
+  margin-bottom: 20px;
+  box-shadow: var(--shadow);
+  border-left: 5px solid currentColor;
+}
+.sec-card h2 {
+  font-family: 'Mitr', sans-serif;
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.sec-card p { font-size: 14px; line-height: 1.85; color: #334155; margin-bottom: 10px; }
+.sec-card strong { color: inherit; }
+
+/* ─── INFO BOX ─── */
+.ib {
+  border-radius: 12px;
+  padding: 14px 18px;
+  margin: 12px 0;
+  font-size: 14px;
+  line-height: 1.8;
+}
+.ib-sky { background: #f0f9ff; border: 1.5px solid #bae6fd; }
+.ib-sky strong { color: #0369a1; }
+.ib-green { background: #f0fdf4; border: 1.5px solid #86efac; }
+.ib-green strong { color: #166534; }
+.ib-yellow { background: #fffbeb; border: 1.5px solid #fde68a; }
+.ib-yellow strong { color: #92400e; }
+.ib-red { background: #fff1f2; border: 1.5px solid #fecdd3; }
+.ib-red strong { color: #9f1239; }
+.ib-purple { background: #faf5ff; border: 1.5px solid #d8b4fe; }
+.ib-purple strong { color: #6b21a8; }
+.ib-orange { background: #fff7ed; border: 1.5px solid #fed7aa; }
+.ib-orange strong { color: #9a3412; }
+
+.ib strong { display: block; font-family: 'Mitr', sans-serif; font-size: 13px; margin-bottom: 6px; }
+ul.list { list-style: none; padding: 0; }
+ul.list li {
+  font-size: 14px;
+  padding: 7px 0 7px 28px;
+  position: relative;
+  border-bottom: 1px dashed #e2e8f0;
+  line-height: 1.6;
+}
+ul.list li::before { content: '🔹'; position: absolute; left: 2px; font-size: 11px; top: 9px; }
+
+/* ─── TABLE ─── */
+table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 13px; }
+th {
+  padding: 9px 12px;
+  text-align: left;
+  font-family: 'Mitr', sans-serif;
+  color: #fff;
+  font-weight: 500;
+}
+td { padding: 8px 12px; border-bottom: 1px solid #f1f5f9; }
+tr:nth-child(even) td { background: #f8fafc; }
+
+/* ─── COMPARE CARDS ─── */
+.compare-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin: 14px 0;
+}
+@media(max-width:580px){ .compare-grid { grid-template-columns: 1fr; } }
+.ccard {
+  border-radius: 14px;
+  padding: 16px;
+  border: 2px solid transparent;
+}
+
+/* ─── QUIZ ─── */
+.quiz-container { display: flex; flex-direction: column; gap: 18px; }
+.qcard {
+  background: var(--card);
+  border-radius: 14px;
+  padding: 20px 22px;
+  box-shadow: var(--shadow);
+  border: 2px solid #e2e8f0;
+}
+.qcard .qnum {
+  font-family: 'Mitr', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  padding: 2px 10px;
+  border-radius: 20px;
+  color: #fff;
+  display: inline-block;
+  margin-bottom: 8px;
+}
+.qcard .qtxt {
+  font-family: 'Mitr', sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--txt);
+  margin-bottom: 14px;
+  line-height: 1.55;
+}
+.opts { display: flex; flex-direction: column; gap: 8px; }
+.opt {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 14px;
+  border: 2px solid #e2e8f0;
+  border-radius: 10px;
+  background: #f8fafc;
+  cursor: pointer;
+  font-size: 13.5px;
+  text-align: left;
+  transition: all .18s;
+  font-family: 'Sarabun', sans-serif;
+}
+.opt:hover:not(:disabled) { border-color: #94a3b8; background: #f1f5f9; }
+.opt .ol {
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  background: #e2e8f0;
+  color: #64748b;
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 700; font-size: 12px; flex-shrink: 0;
+  font-family: 'Mitr', sans-serif;
+}
+.opt.correct { border-color: #22c55e; background: #f0fdf4; }
+.opt.wrong   { border-color: #ef4444; background: #fff1f2; }
+.opt.correct .ol { background: #22c55e; color: #fff; }
+.opt.wrong   .ol { background: #ef4444; color: #fff; }
+.expl {
+  margin-top: 10px;
+  padding: 10px 14px;
+  background: #f0fdf4;
+  border-left: 4px solid #22c55e;
+  border-radius: 0 8px 8px 0;
+  font-size: 13px;
+  color: #166534;
+  display: none;
+  line-height: 1.7;
+}
+.expl.show { display: block; animation: fadeIn .2s ease; }
+.score-box {
+  text-align: center; padding: 22px;
+  border-radius: 14px; color: #fff;
+  display: none; margin-top: 16px;
+}
+.score-box.show { display: block; animation: fadeIn .4s ease; }
+.score-box .snum { font-size: 50px; font-weight: 700; font-family: 'Mitr', sans-serif; }
+.score-box p { font-size: 17px; opacity: .92; }
+.submit-btn {
+  display: block; margin: 18px auto 0;
+  padding: 13px 38px;
+  color: #fff; border: none;
+  border-radius: 12px;
+  font-family: 'Mitr', sans-serif;
+  font-size: 16px; font-weight: 700;
+  cursor: pointer; transition: all .2s;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+}
+.submit-btn:hover { transform: translateY(-2px); filter: brightness(1.08); }
+.retry-btn {
+  margin-top: 12px; padding: 9px 22px;
+  background: rgba(255,255,255,0.2);
+  border: 2px solid rgba(255,255,255,0.45);
+  border-radius: 20px; color: #fff;
+  font-family: 'Mitr', sans-serif;
+  font-size: 14px; cursor: pointer;
+  transition: background .2s;
+}
+.retry-btn:hover { background: rgba(255,255,255,0.35); }
+
+/* ─── BACK BTN ─── */
+.back-btn {
+  display: inline-flex; align-items: center; gap: 7px;
+  padding: 7px 16px;
+  background: #fff; border: 2px solid #e2e8f0;
+  border-radius: 10px; color: var(--txt2);
+  font-family: 'Mitr', sans-serif; font-size: 13px;
+  cursor: pointer; margin-bottom: 18px; transition: all .2s;
+}
+.back-btn:hover { border-color: var(--sky); color: #0369a1; }
+
+/* ─── HOME CARDS ─── */
+.home-hero {
+  background: linear-gradient(135deg, #0c4a6e 0%, #0f766e 100%);
+  border-radius: 24px; padding: 36px 28px;
+  color: #fff; margin-bottom: 28px; text-align: center;
+  position: relative; overflow: hidden;
+}
+.home-hero h1 {
+  font-family: 'Mitr', sans-serif;
+  font-size: clamp(22px,4vw,36px);
+  font-weight: 700; margin-bottom: 10px;
+}
+.home-hero p { font-size: 16px; opacity: .9; }
+.unit-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 18px;
+}
+.unit-card {
+  background: var(--card);
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: var(--shadow);
+  cursor: pointer;
+  transition: all .28s;
+  border: 2px solid transparent;
+}
+.unit-card:hover { transform: translateY(-6px); box-shadow: 0 16px 48px rgba(0,0,0,0.14); }
+.unit-card-hdr {
+  padding: 22px 20px 14px;
+  color: #fff;
+  position: relative;
+}
+.unit-card-hdr .big-ico { font-size: 52px; margin-bottom: 10px; display: block; }
+.unit-card-hdr h2 {
+  font-family: 'Mitr', sans-serif;
+  font-size: 17px; font-weight: 700;
+}
+.unit-card-body { padding: 14px 20px 18px; }
+.unit-card-body p { font-size: 12.5px; color: var(--txt2); line-height: 1.6; margin-bottom: 12px; }
+.num-badge {
+  display: inline-block;
+  font-family: 'Mitr', sans-serif;
+  font-size: 10px; font-weight: 700;
+  padding: 2px 9px; border-radius: 20px;
+  margin-bottom: 6px;
+}
+.start-btn {
+  display: block; text-align: center;
+  padding: 10px; border: none;
+  border-radius: 10px; color: #fff;
+  font-family: 'Mitr', sans-serif;
+  font-size: 13px; font-weight: 600;
+  cursor: pointer; transition: all .2s; width: 100%;
+}
+.start-btn:hover { filter: brightness(1.1); }
+
+/* ─── UNIT-SPECIFIC STYLES ─── */
+/* Unit 1 sky */
+.u1 { color: var(--sky); }
+.u1-bg { background: linear-gradient(135deg, #0ea5e9, #0284c7); }
+.u1-num { background: #e0f2fe; color: #0369a1; }
+/* Unit 2 earth */
+.u2 { color: var(--earth); }
+.u2-bg { background: linear-gradient(135deg, #10b981, #059669); }
+.u2-num { background: #dcfce7; color: #166534; }
+/* Unit 3 moon */
+.u3 { color: var(--moon); }
+.u3-bg { background: linear-gradient(135deg, #8b5cf6, #7c3aed); }
+.u3-num { background: #ede9fe; color: #6b21a8; }
+/* Unit 4 electric */
+.u4 { color: var(--elec); }
+.u4-bg { background: linear-gradient(135deg, #ef4444, #dc2626); }
+.u4-num { background: #fee2e2; color: #991b1b; }
+
+/* ─── DIAGRAM VISUAL ─── */
+.diagram-box {
+  background: var(--card);
+  border-radius: 14px;
+  padding: 18px;
+  box-shadow: var(--shadow);
+  margin: 14px 0;
+  text-align: center;
+}
+.diagram-box svg { max-width: 100%; }
+.diagram-label {
+  font-family: 'Mitr', sans-serif;
+  font-size: 12px;
+  color: var(--txt2);
+  margin-top: 8px;
+}
+
+/* ─── TAG ─── */
+.tag {
+  display: inline-block;
+  font-size: 11px; font-family: 'Mitr', sans-serif;
+  padding: 2px 10px; border-radius: 20px;
+  font-weight: 600; margin: 2px;
+}
+.tag-sky { background: #e0f2fe; color: #0369a1; }
+.tag-green { background: #dcfce7; color: #166534; }
+.tag-red { background: #fee2e2; color: #991b1b; }
+.tag-yellow { background: #fef9c3; color: #854d0e; }
+.tag-purple { background: #ede9fe; color: #6b21a8; }
+
+/* ─── HIGHLIGHT BOX ─── */
+.key-box {
+  background: linear-gradient(135deg, #fef9c3, #fef3c7);
+  border: 2px solid #fde68a;
+  border-radius: 12px;
+  padding: 14px 18px;
+  margin: 14px 0;
+  font-size: 13.5px;
+  line-height: 1.8;
+}
+.key-box strong { color: #92400e; font-family: 'Mitr', sans-serif; }
+
+@media(max-width:600px){
+  .hero .hero-icon { display: none; }
+  .compare-grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="hdr-top">
+    <span class="hdr-emoji">🔬</span>
+    <div>
+      <div class="hdr-title">ทบทวนวิทยาศาสตร์ ป.6</div>
+      <div class="hdr-sub">ปลายภาคเรียนที่ 2 · กลุ่มสาระวิทยาศาสตร์และเทคโนโลยี</div>
+    </div>
+    <span class="hdr-badge">📚 ครบ 3 หน่วย</span>
+  </div>
+  <div class="unit-nav">
+    <button class="unit-tab active" onclick="goHome()">🏠 หน้าหลัก</button>
+    <button class="unit-tab" onclick="showUnit('u1')">🌬️ ปรากฏการณ์โลก</button>
+    <button class="unit-tab" onclick="showUnit('u2')">🌑 เงา อุปราคา อวกาศ</button>
+    <button class="unit-tab" onclick="showUnit('u3')">⚡ ไฟฟ้า</button>
+  </div>
+</header>
+
+<main>
+
+<!-- ════════ HOME ════════ -->
+<div class="page active" id="pg-home">
+  <div class="home-hero">
+    <h1>🌟 ทบทวนก่อนสอบ วิทยาศาสตร์ ป.6</h1>
+    <p>เลือกหน่วยที่ต้องการทบทวน พร้อมข้อสรุป แผนผัง และแบบทดสอบ</p>
+  </div>
+  <div class="unit-grid">
+
+    <div class="unit-card" onclick="showUnit('u1')">
+      <div class="unit-card-hdr u1-bg">
+        <span class="big-ico">🌬️</span>
+        <span class="num-badge u1-num">หน่วยที่ 4</span>
+        <h2>ปรากฏการณ์ของโลก<br>และภัยธรรมชาติ</h2>
+      </div>
+      <div class="unit-card-body">
+        <p>ลมบก ลมทะเล มรสุม ปรากฏการณ์เรือนกระจก ภาวะโลกร้อน ภัยธรรมชาติ การป้องกัน</p>
+        <button class="start-btn u1-bg">เริ่มทบทวน →</button>
+      </div>
+    </div>
+
+    <div class="unit-card" onclick="showUnit('u2')">
+      <div class="unit-card-hdr u2-bg">
+        <span class="big-ico">🌑</span>
+        <span class="num-badge u2-num">หน่วยที่ 5</span>
+        <h2>เงา อุปราคา<br>และเทคโนโลยีอวกาศ</h2>
+      </div>
+      <div class="unit-card-body">
+        <p>เงามืด เงามัว สุริยุปราคา จันทรุปราคา ดาวเทียม กล้องโทรทรรศน์ ยานอวกาศ</p>
+        <button class="start-btn u2-bg">เริ่มทบทวน →</button>
+      </div>
+    </div>
+
+    <div class="unit-card" onclick="showUnit('u3')">
+      <div class="unit-card-hdr u4-bg">
+        <span class="big-ico">⚡</span>
+        <span class="num-badge u4-num">หน่วยที่ 6</span>
+        <h2>แรงไฟฟ้า<br>และพลังงานไฟฟ้า</h2>
+      </div>
+      <div class="unit-card-body">
+        <p>ประจุไฟฟ้า แรงไฟฟ้า วงจรไฟฟ้าอนุกรม วงจรขนาน การต่อหลอดไฟฟ้า</p>
+        <button class="start-btn u4-bg">เริ่มทบทวน →</button>
+      </div>
+    </div>
+
+  </div>
+</div><!-- end home -->
+
+<!-- ════════ UNIT 1 ════════ -->
+<div class="page" id="pg-u1">
+  <button class="back-btn" onclick="goHome()">← กลับหน้าหลัก</button>
+
+  <!-- Hero -->
+  <div class="hero u1-bg" style="margin-bottom:24px">
+    <h1>🌬️ ปรากฏการณ์ของโลกและภัยธรรมชาติ</h1>
+    <p>ลมบก ลมทะเล มรสุม เรือนกระจก ภาวะโลกร้อน ภัยธรรมชาติ</p>
+    <span class="hero-icon">🌏</span>
+  </div>
+
+  <!-- 1.1 ลมบก ลมทะเล -->
+  <div class="sec-card u1" style="border-color:#0ea5e9">
+    <h2 style="color:#0369a1">💨 ลมบก และ ลมทะเล</h2>
+    <p>ลมบก-ลมทะเลเกิดจาก <strong style="color:#0369a1">ความแตกต่างของอุณหภูมิ</strong> ระหว่างพื้นดินและพื้นน้ำ เพราะพื้นดินและพื้นน้ำรับและคายพลังงานความร้อนได้ต่างกันในแต่ละช่วงเวลา</p>
+
+    <div class="compare-grid">
+      <div class="ccard" style="background:#e0f2fe; border-color:#38bdf8">
+        <div style="font-family:'Mitr',sans-serif;font-size:14px;font-weight:600;color:#0369a1;margin-bottom:8px">☀️ ลมทะเล (กลางวัน)</div>
+        <ul class="list" style="font-size:13px">
+          <li>พื้นดินร้อนขึ้นเร็วกว่าพื้นน้ำ</li>
+          <li>อากาศเหนือพื้นดินลอยตัวขึ้น</li>
+          <li>อากาศจากทะเลเคลื่อนเข้าแทนที่</li>
+          <li>ลมพัด: ทะเล → ชายฝั่ง</li>
+        </ul>
+      </div>
+      <div class="ccard" style="background:#f0fdf4; border-color:#86efac">
+        <div style="font-family:'Mitr',sans-serif;font-size:14px;font-weight:600;color:#166534;margin-bottom:8px">🌙 ลมบก (กลางคืน)</div>
+        <ul class="list" style="font-size:13px">
+          <li>พื้นดินเย็นลงเร็วกว่าพื้นน้ำ</li>
+          <li>อากาศเหนือพื้นน้ำลอยตัวขึ้น</li>
+          <li>อากาศจากบกเคลื่อนออกแทนที่</li>
+          <li>ลมพัด: ชายฝั่ง → ทะเล</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="key-box">
+      <strong>🎯 จำง่าย:</strong> ลม<u>ทะ</u>เล พัด<u>เข้า</u>ฝั่ง (กลางวัน) | ลม<u>บก</u> พัด<u>ออก</u>ทะเล (กลางคืน)<br>
+      <strong>ลูกศรของเรือ:</strong> ถ้านำเรือไปวางริมทะเลตอนกลางคืน หัวลูกศรจะชี้<strong>ทางชายฝั่ง</strong> เพราะเกิดลมบกพัดออกสู่ทะเล ทำให้ลมพัดจากชายฝั่งออกสู่ทะเล
+    </div>
+  </div>
+
+  <!-- 1.2 มรสุม -->
+  <div class="sec-card u1" style="border-color:#0ea5e9">
+    <h2 style="color:#0369a1">🌀 มรสุม</h2>
+    <p>มรสุมคือลมประจำฤดูที่เกิดจากความแตกต่างของอุณหภูมิระหว่าง<strong style="color:#0369a1">แผ่นดินและมหาสมุทร</strong>ในช่วงเวลาต่างกัน</p>
+    <table>
+      <tr><th style="background:#0284c7">มรสุม</th><th style="background:#0284c7">ช่วงเวลา</th><th style="background:#0284c7">ทิศทาง</th><th style="background:#0284c7">ผลต่อไทย</th></tr>
+      <tr><td><strong>ตะวันตกเฉียงใต้</strong></td><td>พ.ค. – ต.ค.</td><td>ทะเล → บก</td><td style="color:#0369a1">ฝนตก พาน้ำ-ความชื้น</td></tr>
+      <tr><td><strong>ตะวันออกเฉียงเหนือ</strong></td><td>พ.ย. – ก.พ.</td><td>บก → ทะเล</td><td style="color:#64748b">แห้งแล้ง อากาศเย็น</td></tr>
+    </table>
+    <div class="ib ib-sky">
+      <strong>🌧️ ลมมรสุมตะวันตกเฉียงใต้ส่งผลต่อไทยอย่างไร?</strong>
+      พัดพาอากาศชื้นจากมหาสมุทรอินเดีย <strong>ทำให้เกิดฤดูฝน</strong> มีฝนตกชุก โดยเฉพาะชายฝั่งทะเลด้านตะวันตก ช่วงเดือน ธ.ค. มีโอกาสเกิดการกัดเซาะรุนแรงที่ชายฝั่งอ่าวไทยด้านตะวันตก
+    </div>
+    <div class="ib ib-yellow">
+      <strong>☀️ ทำไมไทยร้อนมากช่วงกุมภาพันธ์-พฤษภาคม?</strong>
+      เป็นช่วงเปลี่ยนมรสุม + ไทยอยู่ใกล้เส้นศูนย์สูตร + ดวงอาทิตย์ตั้งตรงในช่วงเที่ยงวัน ทำให้รับความร้อนสูงสุด
+    </div>
+  </div>
+
+  <!-- 1.3 เรือนกระจก -->
+  <div class="sec-card" style="border-left-color:#10b981; color:#10b981">
+    <h2 style="color:#166534">🏭 ปรากฏการณ์เรือนกระจกและภาวะโลกร้อน</h2>
+    <p>ก๊าซเรือนกระจก เช่น CO₂, CH₄, N₂O ดูดซับความร้อนจากโลกและแผ่กลับคืนมา ทำให้โลกอบอุ่น ซึ่งตามธรรมชาติเป็นสิ่งจำเป็น แต่เมื่อมีมากเกินไปจะทำให้โลกร้อนเพิ่มขึ้นผิดปกติ</p>
+    <div class="compare-grid">
+      <div class="ib ib-green" style="margin:0">
+        <strong>✅ ผลดีของปรากฏการณ์เรือนกระจก</strong>
+        รักษาอุณหภูมิโลกให้เหมาะสมกับสิ่งมีชีวิต ป้องกันโลกไม่ให้เย็นเกินไป
+      </div>
+      <div class="ib ib-red" style="margin:0">
+        <strong>❌ ผลเสียจากก๊าซเรือนกระจกมากเกิน</strong>
+        น้ำแข็งขั้วโลกละลาย ระดับน้ำทะเลสูงขึ้น สภาพอากาศแปรปรวน พืชพรรณเปลี่ยนแปลง
+      </div>
+    </div>
+    <div class="ib ib-yellow" style="margin-top:14px">
+      <strong>⚠️ สิ่งที่ไม่ใช่ผลกระทบจากปรากฏการณ์เรือนกระจก:</strong>
+      ทะเลทรายตอนกลางวันอากาศเย็นขึ้น ✗ | ระดับน้ำทะเลทางขั้วโลกเหนือเพิ่มขึ้น ✓ | ความแห้งแล้งในฤดูร้อนยาวนาน ✓ | เชื้อโรคเจริญเติบโตอย่างรวดเร็ว ✓
+    </div>
+    <div class="ib ib-sky">
+      <strong>🌱 การลดก๊าซเรือนกระจก:</strong>
+      ลดการเผาไหม้เชื้อเพลิงฟอสซิล | ใช้พลังงานทดแทน | ปลูกต้นไม้ | ลดการใช้สารเคมีในการเกษตร | ใช้รถสาธารณะ
+    </div>
+  </div>
+
+  <!-- 1.4 ภัยธรรมชาติ -->
+  <div class="sec-card" style="border-left-color:#ef4444; color:#ef4444">
+    <h2 style="color:#991b1b">⚠️ ภัยธรรมชาติและการป้องกัน</h2>
+    <table>
+      <tr><th style="background:#dc2626">ภัยธรรมชาติ</th><th style="background:#dc2626">สาเหตุ</th><th style="background:#dc2626">การเฝ้าระวัง/ป้องกัน</th></tr>
+      <tr><td>อุทกภัย (น้ำท่วม)</td><td>ฝนตกหนัก น้ำในลำห้วยล้น</td><td style="color:#b91c1c">ระดับน้ำในลำห้วยเพิ่มขึ้นรวดเร็ว → อพยพทันที</td></tr>
+      <tr><td>ดินถล่ม</td><td>ดินอิ่มตัวน้ำบนเขาชัน</td><td>ไม่ตั้งบ้านใต้เขาชัน ฟังเสียงประกาศ</td></tr>
+      <tr><td>พายุ/ไต้ฝุ่น</td><td>ลมแรงจากทะเล</td><td>โทรสอบถามกรมอุตุฯ ไม่ออกนอกบ้าน</td></tr>
+      <tr><td>ลมพายุ</td><td>ความกดอากาศต่ำ</td><td>เข้าร่วมกิจกรรมอนุรักษ์ป่าชายเลน</td></tr>
+    </table>
+    <div class="key-box">
+      <strong>🚨 สัญญาณเตือนภัยน้ำท่วม:</strong> ระดับน้ำในลำห้วยเพิ่มขึ้นอย่างรวดเร็วและสีเปลี่ยนไป → รีบอพยพทันที<br>
+      <strong>🌊 ป้องกันการกัดเซาะชายฝั่ง:</strong> การปลูกป่าชายเลน (ดีที่สุด)
+    </div>
+  </div>
+
+  <!-- QUIZ U1 -->
+  <div class="sec-card" style="border-left-color:#0ea5e9; color:#0ea5e9">
+    <h2 style="color:#0369a1">🧪 ทดสอบความเข้าใจ – หน่วยที่ 4</h2>
+    <div class="quiz-container" id="qw-u1">
+
+      <div class="qcard" data-ans="ง">
+        <span class="qnum" style="background:#0284c7">ข้อ 1</span>
+        <div class="qtxt">ลมบก ลมทะเลเกิดขึ้นได้อย่างไร?</div>
+        <div class="opts">
+          <button class="opt" onclick="pick(this)"><span class="ol">ก</span>เวลากลางวันและกลางคืนมีอุณหภูมิเท่ากัน</button>
+          <button class="opt" onclick="pick(this)"><span class="ol">ข</span>อุณหภูมิของอากาศเหนือพื้นดินและพื้นน้ำเท่ากัน</button>
+          <button class="opt" onclick="pick(this)"><span class="ol">ค</span>ความกดอากาศเหนือพื้นดินและพื้นน้ำแตกต่างกัน</button>
+          <button class="opt" onclick="pick(this)"><span class="ol">ง</span>พื้นดินและพื้นน้ำรับและคายพลังงานความร้อนได้แตกต่างกันในแต่ละช่วงเวลา</button>
+        </div>
+        <div class="expl">✅ พื้นดินดูดและคายความร้อนได้เร็วกว่าพื้นน้ำ ทำให้อุณหภูมิแตกต่างกัน จึงเกิดการหมุนเวียนของอากาศ</div>
+      </div>
+
+      <div class="qcard" data-ans="ข">
+        <span class="qnum" style="background:#0284c7">ข้อ 2</span>
+        <div class="qtxt">ถ้านำศรลมไปวางริมทะเลตอนกลางคืน หัวลูกศรจะชี้ทางใด?</div>
+        <div class="opts">
+          <button class="opt" onclick="pick(this)"><span class="ol">ก</span>ชี้ทางทะเล เพราะเกิดลมบก ทำให้ลมพัดจากชายฝั่งออกสู่ทะเล</button>
+          <button class="opt" onclick="pick(this)"><span class="ol">ข</span>ชี้ทางชายฝั่ง เพราะเกิดลมบก ทำให้ลมพัดจากชายฝั่งออกสู่ทะเล</button>
+          <button class="opt" onclick="pick(this)"><span class="ol">ค</span>ชี้ทางทะเล เพราะเกิดลมทะเล ทำให้ลมพัดจากทะเลเข้าหาชายฝั่ง</button>
+          <button class="opt" onclick="pick(this)"><span class="ol">ง</span>ชี้ทางชายฝั่ง เพราะเกิดลมทะเล ทำให้ลมพัดจากทะเลเข้าหาชายฝั่ง</button>
+        </div>
+        <div class="expl">✅ กลางคืนเกิดลมบก ลมพัดจากชายฝั่งออกสู่ทะเล ลูกศรลมจะชี้ทิศทางที่ลมพัดไป คือชายฝั่ง (ปลายแหลมชี้ไปทางทิศที่ลมพัดไปหา)</div>
+      </div>
+
+      <div class="qcard" data-ans="ก">
+        <span class="qnum" style="background:#0284c7">ข้อ 3</span>
+        <div class="qtxt">ลมมรสุมตะวันตกเฉียงใต้พัดปกคลุมประเทศไทย ส่งผลต่อไทยอย่างไร?</div>
+        <div class="opts">
+          <button class="opt" onclick="pick(this)"><span class="ol">ก</span>พัดพาอากาศชื้น ทำให้ฝนตก</button>
+          <button class="opt" onclick="pick(this)"><span class="ol">ข</span>พัดพาอากาศหนาวเย็นและความแห้งแล้ง</button>
+          <button class="opt" onclick="pick(this)"><span class="ol">ค</span>ลมพายุหมุนเขตร้อนทำให้ฝนตกหนัก</button>
+          <button class="opt" onclick="pick(this)"><span class="ol">ง</span>ไม่มีข้อถูก</button>
+        </div>
+        <div class="expl">✅ มรสุมตะวันตกเฉียงใต้พัดจากมหาสมุทรอินเดียผ่านอ่าวไทย นำความชื้นมาจำนวนมาก ทำให้ฝนตกในไทย</div>
+      </div>
+
+      <div class="qcard" data-ans="ง">
+        <span class="qnum" style="background:#0284c7">ข้อ 4</span>
+        <div class="qtxt">ปัจจัยใดทำให้ประเทศไทยมีอากาศร้อนอบอ้าวช่วงกลางเดือนกุมภาพันธ์-กลางเดือนพฤษภาคม?</div>
+        <div class="opts">
+          <button class="opt" onclick="pick(this)"><span class="ol">ก</span>เป็นช่วงเปลี่ยนมรสุม</button>
+          <button class="opt" onclick="pick(this)"><span class="ol">ข</span>ประเทศไทยตั้งอยู่ใกล้เส้นศูนย์สูตร</button>
+          <button class="opt" onclick="pick(this)"><span class="ol">ค</span>แสงอาทิตย์ตั้งตรงประเทศไทยในเวลาเที่ยงวัน ทำให้รับความร้อนอย่างเต็มที่</button>
+          <button class="opt" onclick="pick(this)"><span class="ol">ง</span>ถูกทั้ง ก ข และ ค</button>
+        </div>
+        <div class="expl">✅ ช่วงนี้เป็นช่วงเปลี่ยนมรสุม + ไทยใกล้เส้นศูนย์สูตร + ดวงอาทิตย์ตั้งตรง ทำให้ร้อนมากที่สุด</div>
+      </div>
+
+      <div class="qcard" data-ans="ง">
+        <span class="qnum" style="background:#0284c7">ข้อ 5</span>
+        <div class="qtxt">ข้อใดเป็นวิธีป้องกันการกัดเซาะชายฝั่งทะเลที่ดีที่สุด?</div>
+        <div class="opts">
+          <button class="opt" onclick="pick(this)"><span class="ol">ก</span>การทำนากุ้ง</button>
+          <button class="opt" onclick="pick(this)"><span class="ol">ข</span>การสร้างเขื่อนกันคลื่น</button>
+          <button class="opt" onclick="pick(this)"><span class="ol">ค</span>การสร้างเส้อนกันคลื่น</button>
+          <button class="opt" onclick="pick(this)"><span class="ol">ง</span>การปลูกป่าชายเลน</button>
+        </div>
+        <div class="expl">✅ การปลูกป่าชายเลนดีที่สุด เพราะรากของต้นโกงกางช่วยยึดดินและลดแรงคลื่นได้อย่างเป็นธรรมชาติและยั่งยืน</div>
+      </div>
+
+      <div class="qcard" data-ans="ง">
+        <span class="qnum" style="background:#0284c7">ข้อ 6</span>
+        <div class="qtxt">ข้อใดไม่ใช่ผลกระทบจากปรากฏการณ์เรือนกระจก?</div>
+        <div class="opts">
+          <button class="opt" onclick="pick(this)"><span class="ol">ก</span>ทะเลทรายตอนกลางวันอากาศเย็นขึ้น</button>
+          <button class="opt" onclick="pick(this)"><span class="ol">ข</span>ระดับน้ำทะเลทางขั้วโลกเหนือเพิ่มขึ้น</button>
+          <button class="opt" onclick="pick(this)"><span class="ol">ค</span>เกิดความแห้งแล้งในฤดูร้อนยาวนาน</button>
+          <button class="opt" onclick="pick(this)"><span class="ol">ง</span>ทำให้เชื้อโรคเจริญเติบโตอย่างรวดเร็ว</button>
+        </div>
+        <div class="expl">✅ เชื้อโรคเจริญเติบโตรวดเร็วเป็นผลกระทบจากภาวะโลกร้อน (อุณหภูมิสูงขึ้น) ไม่ใช่ผลโดยตรงจากปรากฏการณ์เรือนกระจก แต่จริงๆ ข้อ ง ก็เป็นผลทางอ้อม — ข้อ ก ที่ไม่ใช่คือ "ทะเลทรายเย็นขึ้น" ซึ่งขัดกับโลกร้อน</div>
+      </div>
+
+    </div>
+    <div class="score-box" id="sc-u1" style="background:linear-gradient(135deg,#0ea5e9,#0284c7)">
+      <div class="snum" id="sn-u1"></div><p id="sp-u1"></p>
+      <button class="retry-btn" onclick="retryQ('qw-u1','sc-u1')">ทำอีกครั้ง 🔄</button>
+    </div>
+    <button class="submit-btn" id="btn-u1" onclick="submitQ('qw-u1','u1','sc-u1','sn-u1','sp-u1','btn-u1')" style="background:linear-gradient(135deg,#0ea5e9,#0284c7)">ส่งคำตอบ ✉️</button>
+  </div>
+</div>
+
+<!-- ════════ UNIT 2 ════════ -->
+<div class="page" id="pg-u2">
+  <button class="back-btn" onclick="goHome()">← กลับหน้าหลัก</button>
+  <div class="hero u2-bg" style="margin-bottom:24px">
+    <h1>🌑 เงา อุปราคา และเทคโนโลยีอวกาศ</h1>
+    <p>การเกิดเงา สุริยุปราคา จันทรุปราคา ดาวเทียม กล้องโทรทรรศน์</p>
+    <span class="hero-icon">🔭</span>
+  </div>
+
+  <!-- 2.1 เงา -->
+  <div class="sec-card" style="border-left-color:#8b5cf6; color:#8b5cf6">
+    <h2 style="color:#6b21a8">🔦 การเกิดเงา</h2>
+    <p>เงาเกิดจากแสงไม่สามารถทะลุผ่านวัตถุทึบแสงได้ แสงเดินทางเป็นเส้นตรง ทำให้เกิดบริเวณมืดด้านหลังวัตถุ</p>
+    <div class="compare-grid">
+      <div class="ib ib-purple" style="margin:0">
+        <strong>🌑 เงามืด (Umbra)</strong>
+        บริเวณที่<strong>แสงตกกระทบไม่เต็มฉาก</strong> มืดสนิท ไม่มีแสงส่องถึง
+      </div>
+      <div class="ib ib-sky" style="margin:0">
+        <strong>🌒 เงามัว (Penumbra)</strong>
+        บริเวณที่<strong>แสงบางส่วนตกกระทบไม่เต็มฉาก</strong> มีแสงส่องถึงบางส่วน
+      </div>
+    </div>
+    <div class="key-box">
+      <strong>💡 จำง่าย:</strong> เงา<u>มืด</u> = มืดสนิท ไม่มีแสงเลย | เงา<u>มัว</u> = มีแสงบางส่วน แต่ไม่เต็ม
+    </div>
+  </div>
+
+  <!-- 2.2 สุริยุปราคา จันทรุปราคา -->
+  <div class="sec-card" style="border-left-color:#8b5cf6; color:#8b5cf6">
+    <h2 style="color:#6b21a8">☀️🌑🌍 สุริยุปราคา และ จันทรุปราคา</h2>
+
+    <!-- SVG Diagram -->
+    <div class="diagram-box">
+      <svg viewBox="0 0 500 180" xmlns="http://www.w3.org/2000/svg" style="max-width:500px">
+        <!-- Sun -->
+        <circle cx="60" cy="90" r="40" fill="#fbbf24" opacity=".9"/>
+        <text x="60" y="95" font-size="10" text-anchor="middle" fill="#92400e" font-family="Mitr" font-weight="600">ดวงอาทิตย์</text>
+        <!-- Moon -->
+        <circle cx="240" cy="90" r="18" fill="#94a3b8"/>
+        <text x="240" y="120" font-size="9" text-anchor="middle" fill="#475569" font-family="Mitr">ดวงจันทร์</text>
+        <!-- Earth -->
+        <circle cx="400" cy="90" r="28" fill="#3b82f6" opacity=".85"/>
+        <text x="400" y="95" font-size="10" text-anchor="middle" fill="#fff" font-family="Mitr" font-weight="600">โลก</text>
+        <!-- Shadow lines -->
+        <line x1="100" y1="50" x2="480" y2="30" stroke="#64748b" stroke-width="1" stroke-dasharray="4,3" opacity=".5"/>
+        <line x1="100" y1="130" x2="480" y2="150" stroke="#64748b" stroke-width="1" stroke-dasharray="4,3" opacity=".5"/>
+        <!-- Umbra zone -->
+        <polygon points="222,72 258,72 300,80 300,100 258,108 222,108" fill="#1e293b" opacity=".5"/>
+        <!-- Label -->
+        <text x="260" y="90" font-size="8" text-anchor="middle" fill="#e2e8f0" font-family="Mitr">เงามืด</text>
+        <!-- A marker -->
+        <circle cx="340" cy="90" r="5" fill="#ef4444"/>
+        <text x="340" y="80" font-size="9" text-anchor="middle" fill="#ef4444" font-family="Mitr" font-weight="700">A</text>
+        <!-- B marker -->
+        <circle cx="440" cy="90" r="5" fill="#22c55e"/>
+        <text x="440" y="80" font-size="9" text-anchor="middle" fill="#22c55e" font-family="Mitr" font-weight="700">B</text>
+        <!-- Caption -->
+        <text x="250" y="170" font-size="9" text-anchor="middle" fill="#64748b" font-family="Mitr">ตำแหน่ง A (เงามืด) = สุริยุปราคาเต็มดวง | ตำแหน่ง B (เงามัว) = สุริยุปราคาบางส่วน</text>
+      </svg>
+      <div class="diagram-label">แผนภาพแสดงสุริยุปราคา: ดวงอาทิตย์ → ดวงจันทร์ → โลก</div>
+    </div>
+
+    <table>
+      <tr><th style="background:#6d28d9">ปรากฏการณ์</th><th style="background:#6d28d9">ตำแหน่ง</th><th style="background:#6d28d9">เกิดเมื่อ</th><th style="background:#6d28d9">ผู้สังเกต</th></tr>
+      <tr><td><strong>สุริยุปราคา</strong></td><td>ดวงอาทิตย์ – ดวงจันทร์ – โลก</td><td>ดวงจันทร์บังดวงอาทิตย์</td><td>เห็นจากตำแหน่ง A (เงามืด)</td></tr>
+      <tr><td><strong>จันทรุปราคา</strong></td><td>ดวงอาทิตย์ – โลก – ดวงจันทร์</td><td>โลกบังดวงจันทร์</td><td>เห็นได้ทั่วโลกที่เป็นกลางคืน</td></tr>
+    </table>
+    <div class="key-box">
+      <strong>🎯 จำง่าย:</strong><br>
+      สุริยุปราคา = <u>ดวงจันทร์</u>บัง<u>ดวงอาทิตย์</u> (เดินเข้าไปในเงาดวงจันทร์) ข้างขึ้น-ข้างแรม = ข้างดับ<br>
+      จันทรุปราคา = <u>โลก</u>บัง<u>ดวงจันทร์</u> (ดวงจันทร์เดินเข้าไปในเงาโลก) เกิดตอน = ข้างขึ้น 15 ค่ำ (เพ็ญ)
+    </div>
+  </div>
+
+  <!-- 2.3 เทคโนโลยีอวกาศ -->
+  <div class="sec-card" style="border-left-color:#10b981; color:#10b981">
+    <h2 style="color:#166534">🛸 เทคโนโลยีอวกาศ</h2>
+    <table>
+      <tr><th style="background:#059669">ประเภท</th><th style="background:#059669">หน้าที่</th><th style="background:#059669">ตัวอย่าง</th></tr>
+      <tr><td>ดาวเทียมสื่อสาร</td><td>ส่งสัญญาณโทรศัพท์ อินเทอร์เน็ต โทรทัศน์</td><td>ไทยคม</td></tr>
+      <tr><td>ดาวเทียมอุตุนิยมวิทยา</td><td>พยากรณ์อากาศ ติดตามพายุ</td><td>NOAA, Himawari</td></tr>
+      <tr><td>ดาวเทียมสำรวจทรัพยากรโลก</td><td>สำรวจป่า น้ำ แร่ธาตุ</td><td>Landsat</td></tr>
+      <tr><td><strong style="color:#0f766e">ดาวเทียมสังเกตการณ์ดาราศาสตร์</strong></td><td>ถ่ายภาพดาว กาแล็กซี อวกาศ</td><td>กล้องฮับเบิล</td></tr>
+    </table>
+    <div class="ib ib-green">
+      <strong>🔭 กล้องโทรทรรศน์ที่นักเรียนสร้างได้:</strong>
+      กล้องโทรทรรศน์หักเหแสง (ใช้เลนส์นูน) — นักเรียนสร้างได้เองด้วยท่อและแว่นขยาย
+    </div>
+    <div class="ib ib-sky">
+      <strong>📡 ยานอวกาศโคจรผ่านไกลดาวเคราะห์/สำรวจ = ดาวเทียมสังเกตการณ์ดาราศาสตร์</strong><br>
+      การสื่อสารในปัจจุบันเกี่ยวข้องกับเทคโนโลยีอวกาศ เพราะดาวเทียมช่วยถ่ายทอดสัญญาณจากดาวเทียมสู่เครื่องมือสื่อสาร
+    </div>
+  </div>
+
+  <!-- QUIZ U2 -->
+  <div class="sec-card" style="border-left-color:#8b5cf6; color:#8b5cf6">
+    <h2 style="color:#6b21a8">🧪 ทดสอบความเข้าใจ – หน่วยที่ 5</h2>
+    <div class="quiz-container" id="qw-u2">
+
+      <div class="qcard" data-ans="ค">
+        <span class="qnum" style="background:#7c3aed">ข้อ 1</span>
+        <div class="qtxt">เงามัวคืออะไร?</div>
+        <div class="opts">
+          <button class="opt" onclick="pick(this)"><span class="ol">ก</span>บริเวณที่ไม่มีแสงตกกลงบนฉากเลย</button>
+          <button class="opt" onclick="pick(this)"><span class="ol">ข</span>บริเวณที่แสงตกกระทบไม่เต็มฉาก</button>
+          <button class="opt" onclick="pick(this)"><span class="ol">ค</span>บริเวณที่มีแสงบางส่วนตกลงบนฉาก</button>
+          <button class="opt" onclick="pick(this)"><span class="ol">ง</span>ถูกทั้ง ก ข และ ค</button>
+        </div>
+        <div class="expl">✅ เงามัว (Penumbra) คือบริเวณที่มีแสงบางส่วนตกลงบนฉาก — แสงส่องถึงบางส่วน ทำให้มืดบางส่วน</div>
+      </div>
+
+      <div class="qcard" data-ans="ก">
+        <span class="qnum" style="background:#7c3aed">ข้อ 2</span>
+        <div class="qtxt">จากภาพแสดงตำแหน่งดวงอาทิตย์ ดวงจันทร์ และโลก ตำแหน่ง A อยู่ในเงามืดของดวงจันทร์ ตำแหน่งใดสังเกตเห็นสุริยุปราคาเต็มดวง?</div>
+        <div class="opts">
+          <button class="opt" onclick="pick(this)"><span class="ol">ก</span>สุริยุปราคาสังเกตได้จากตำแหน่ง A</button>
+          <button class="opt" onclick="pick(this)"><span class="ol">ข</span>สุริยุปราคาสังเกตได้จากตำแหน่ง B</button>
+          <button class="opt" onclick="pick(this)"><span class="ol">ค</span>จันทรุปราคาสังเกตได้จากตำแหน่ง A</button>
+          <button class="opt" onclick="pick(this)"><span class="ol">ง</span>จันทรุปราคาสังเกตได้จากตำแหน่ง B</button>
+        </div>
+        <div class="expl">✅ ตำแหน่ง A อยู่ในเงามืดของดวงจันทร์ จึงมองเห็นสุริยุปราคาเต็มดวง ตำแหน่ง B อยู่ในเงามัว เห็นเพียงบางส่วน</div>
+      </div>
+
+      <div class="qcard" data-ans="ข">
+        <span class="qnum" style="background:#7c3aed">ข้อ 3</span>
+        <div class="qtxt">การเห็นสุริยุปราคาเต็มดวง ผู้สังเกตอยู่ในตำแหน่งใด?</div>
+        <div class="opts">
+          <button class="opt" onclick="pick(this)"><span class="ol">ก</span>เงามัวของดวงจันทร์บนพื้นผิวโลก</button>
+          <button class="opt" onclick="pick(this)"><span class="ol">ข</span>เงามืดของดวงจันทร์บนพื้นผิวโลก</button>
+          <button class="opt" onclick="pick(this)"><span class="ol">ค</span>เงามืดของดวงจันทร์ทอดยาวไม่ถึงผิวโลก</button>
+          <button class="opt" onclick="pick(this)"><span class="ol">ง</span>ถูกทั้ง ก และ ข</button>
+        </div>
+        <div class="expl">✅ ต้องอยู่ในเงามืด (Umbra) ของดวงจันทร์บนพื้นผิวโลก จึงจะมองเห็นดวงอาทิตย์ถูกบังสนิท</div>
+      </div>
+
+      <div class="qcard" data-ans="ง">
+        <span class="qnum" style="background:#7c3aed">ข้อ 4</span>
+        <div class="qtxt">ทางเดินของดวงจันทร์เข้าไปในเงาของโลกทำให้เกิดปรากฏการณ์ใด?</div>
+        <div class="opts">
+          <button class="opt" onclick="pick(this)"><span class="ol">ก</span>ข้างขึ้น</button>
+          <button class="opt" onclick="pick(this)"><span class="ol">ข</span>ข้างแรม</button>
+          <button class="opt" onclick="pick(this)"><span class="ol">ค</span>สุริยุปราคา</button>
+          <button class="opt" onclick="pick(this)"><span class="ol">ง</span>จันทรุปราคา</button>
+        </div>
+        <div class="expl">✅ จันทรุปราคาเกิดเมื่อดวงจันทร์เดินเข้าไปในเงาของโลก (โลกอยู่ระหว่างดวงอาทิตย์กับดวงจันทร์)</div>
+      </div>
+
+      <div class="qcard" data-ans="ง">
+        <span class="qnum" style="background:#7c3aed">ข้อ 5</span>
+        <div class="qtxt">ข้อใดเป็นกล้องโทรทรรศน์ที่นักเรียนสามารถสร้างเองได้?</div>
+        <div class="opts">
+          <button class="opt" onclick="pick(this)"><span class="ol">ก</span>กล้องโทรทรรศน์วิทยุ</button>
+          <button class="opt" onclick="pick(this)"><span class="ol">ข</span>กล้องโทรทรรศน์อวกาศ</button>
+          <button class="opt" onclick="pick(this)"><span class="ol">ค</span>กล้องโทรทรรศน์หักเหแสง</button>
+          <button class="opt" onclick="pick(this)"><span class="ol">ง</span>กล้องโทรทรรศน์สะท้อนแสง</button>
+        </div>
+        <div class="expl">✅ กล้องโทรทรรศน์หักเหแสงสร้างได้ง่ายโดยใช้เลนส์นูนและท่อ นักเรียนสามารถสร้างได้เอง</div>
+      </div>
+
+      <div class="qcard" data-ans="ง">
+        <span class="qnum" style="background:#7c3aed">ข้อ 6</span>
+        <div class="qtxt">การสื่อสารในยุคปัจจุบันเกี่ยวข้องกับเทคโนโลยีอวกาศหรือไม่ อย่างไร?</div>
+        <div class="opts">
+          <button class="opt" onclick="pick(this)"><span class="ol">ก</span>ไม่เกี่ยว เพราะในอวกาศไม่มีคลื่นวิทยุ</button>
+          <button class="opt" onclick="pick(this)"><span class="ol">ข</span>เกี่ยว เพราะดาวเทียมส่งข้อมูลต่างๆ ที่ต้องการทราบ</button>
+          <button class="opt" onclick="pick(this)"><span class="ol">ค</span>ไม่เกี่ยว เพราะสามารถเชื่อมต่อข้อมูลจากแหล่งอื่นๆ ได้</button>
+          <button class="opt" onclick="pick(this)"><span class="ol">ง</span>เกี่ยว เพราะช่วยถ่ายทอดสัญญาณจากดาวเทียมสู่เครื่องมือสื่อสาร</button>
+        </div>
+        <div class="expl">✅ การสื่อสารยุคใหม่ใช้ดาวเทียมถ่ายทอดสัญญาณโทรศัพท์ อินเทอร์เน็ต โทรทัศน์ข้ามทวีป</div>
+      </div>
+
+    </div>
+    <div class="score-box" id="sc-u2" style="background:linear-gradient(135deg,#8b5cf6,#7c3aed)">
+      <div class="snum" id="sn-u2"></div><p id="sp-u2"></p>
+      <button class="retry-btn" onclick="retryQ('qw-u2','sc-u2')">ทำอีกครั้ง 🔄</button>
+    </div>
+    <button class="submit-btn" id="btn-u2" onclick="submitQ('qw-u2','u2','sc-u2','sn-u2','sp-u2','btn-u2')" style="background:linear-gradient(135deg,#8b5cf6,#7c3aed)">ส่งคำตอบ ✉️</button>
+  </div>
+</div>
+
+<!-- ════════ UNIT 3 (ไฟฟ้า) ════════ -->
+<div class="page" id="pg-u3">
+  <button class="back-btn" onclick="goHome()">← กลับหน้าหลัก</button>
+  <div class="hero u4-bg" style="margin-bottom:24px">
+    <h1>⚡ แรงไฟฟ้าและพลังงานไฟฟ้า</h1>
+    <p>ประจุไฟฟ้า แรงไฟฟ้าสถิต วงจรไฟฟ้า การต่อหลอดไฟฟ้า</p>
+    <span class="hero-icon">💡</span>
+  </div>
+
+  <!-- 3.1 ประจุไฟฟ้า -->
+  <div class="sec-card" style="border-left-color:#ef4444; color:#ef4444">
+    <h2 style="color:#991b1b">⚡ ประจุไฟฟ้าและแรงไฟฟ้า</h2>
+    <div class="compare-grid">
+      <div class="ib ib-red" style="margin:0">
+        <strong>➕ ประจุไฟฟ้าชนิดเดียวกัน</strong>
+        ประจุ + กับ + หรือ − กับ − <strong>จะผลักกัน</strong> (Repulsion)
+      </div>
+      <div class="ib ib-sky" style="margin:0">
+        <strong>⊕⊖ ประจุไฟฟ้าต่างชนิดกัน</strong>
+        ประจุ + กับ − <strong>จะดูดกัน</strong> (Attraction)
+      </div>
+    </div>
+    <div class="ib ib-yellow" style="margin-top:12px">
+      <strong>🧪 การทดลองไม้บรรทัดพลาสติกกับกระดาษ:</strong>
+      เอาไม้บรรทัดพลาสติกถูกับกระดาษเยื่อหลายๆ ครั้ง → ไม้บรรทัดจะมีประจุลบ<br>
+      นำเข้าใกล้กระดาษเยื่อ → <strong>กระดาษจะถูกดูด</strong> (ประจุต่างกันดูดกัน)<br>
+      วัตถุ A ที่แขวนด้วยเส้นเอ็นบวบว่าวัตถุ A คือ <span style="color:#9a3412"><strong>ไม้บรรทัดพลาสติกที่ถูกด้วยกระดาษเยื่อ</strong></span>
+    </div>
+  </div>
+
+  <!-- 3.2 วงจรไฟฟ้า -->
+  <div class="sec-card" style="border-left-color:#ef4444; color:#ef4444">
+    <h2 style="color:#991b1b">💡 วงจรไฟฟ้า: อนุกรม vs ขนาน</h2>
+
+    <!-- SVG Circuit diagrams -->
+    <div class="compare-grid">
+      <div class="diagram-box" style="margin:0">
+        <svg viewBox="0 0 220 120" xmlns="http://www.w3.org/2000/svg">
+          <!-- Series circuit -->
+          <text x="110" y="14" font-size="11" text-anchor="middle" font-family="Mitr" font-weight="700" fill="#991b1b">วงจรอนุกรม</text>
+          <!-- Battery -->
+          <rect x="10" y="40" width="30" height="50" rx="4" fill="#fef2f2" stroke="#ef4444" stroke-width="1.5"/>
+          <text x="25" y="62" font-size="9" text-anchor="middle" fill="#991b1b" font-family="Mitr">+</text>
+          <text x="25" y="82" font-size="9" text-anchor="middle" fill="#64748b" font-family="Mitr">-</text>
+          <!-- Wire top -->
+          <line x1="40" y1="50" x2="200" y2="50" stroke="#334155" stroke-width="2"/>
+          <line x1="200" y1="50" x2="200" y2="90" stroke="#334155" stroke-width="2"/>
+          <line x1="40" y1="90" x2="200" y2="90" stroke="#334155" stroke-width="2"/>
+          <!-- L1 -->
+          <circle cx="90" cy="50" r="10" fill="#fef9c3" stroke="#f59e0b" stroke-width="1.5"/>
+          <text x="90" y="54" font-size="8" text-anchor="middle" font-family="Mitr" fill="#92400e">L1</text>
+          <!-- L2 -->
+          <circle cx="140" cy="50" r="10" fill="#fef9c3" stroke="#f59e0b" stroke-width="1.5"/>
+          <text x="140" y="54" font-size="8" text-anchor="middle" font-family="Mitr" fill="#92400e">L2</text>
+          <!-- Label -->
+          <text x="110" y="110" font-size="8" text-anchor="middle" fill="#64748b" font-family="Mitr">ต่อเรียงกัน ขาดดับหมด</text>
+        </svg>
+      </div>
+      <div class="diagram-box" style="margin:0">
+        <svg viewBox="0 0 220 140" xmlns="http://www.w3.org/2000/svg">
+          <!-- Parallel circuit -->
+          <text x="110" y="14" font-size="11" text-anchor="middle" font-family="Mitr" font-weight="700" fill="#0369a1">วงจรขนาน</text>
+          <!-- Battery -->
+          <rect x="10" y="50" width="30" height="50" rx="4" fill="#eff6ff" stroke="#3b82f6" stroke-width="1.5"/>
+          <text x="25" y="72" font-size="9" text-anchor="middle" fill="#1d4ed8" font-family="Mitr">+</text>
+          <text x="25" y="90" font-size="9" text-anchor="middle" fill="#64748b" font-family="Mitr">-</text>
+          <!-- Main bus -->
+          <line x1="40" y1="55" x2="200" y2="55" stroke="#334155" stroke-width="2"/>
+          <line x1="40" y1="95" x2="200" y2="95" stroke="#334155" stroke-width="2"/>
+          <!-- L1 branch -->
+          <line x1="90" y1="55" x2="90" y2="70" stroke="#334155" stroke-width="2"/>
+          <circle cx="90" cy="78" r="10" fill="#dbeafe" stroke="#3b82f6" stroke-width="1.5"/>
+          <text x="90" y="82" font-size="8" text-anchor="middle" font-family="Mitr" fill="#1d4ed8">L1</text>
+          <line x1="90" y1="88" x2="90" y2="95" stroke="#334155" stroke-width="2"/>
+          <!-- L2 branch -->
+          <line x1="150" y1="55" x2="150" y2="70" stroke="#334155" stroke-width="2"/>
+          <circle cx="150" cy="78" r="10" fill="#dbeafe" stroke="#3b82f6" stroke-width="1.5"/>
+          <text x="150" y="82" font-size="8" text-anchor="middle" font-family="Mitr" fill="#1d4ed8">L2</text>
+          <line x1="150" y1="88" x2="150" y2="95" stroke="#334155" stroke-width="2"/>
+          <!-- Label -->
+          <text x="110" y="118" font-size="8" text-anchor="middle" fill="#64748b" font-family="Mitr">ต่อขนาน ขาด 1 อื่นยังสว่าง</text>
+        </svg>
+      </div>
+    </div>
+
+    <table style="margin-top:14px">
+      <tr><th style="background:#dc2626">เรื่อง</th><th style="background:#dc2626">วงจรอนุกรม</th><th style="background:#dc2626">วงจรขนาน</th></tr>
+      <tr><td>การเชื่อมต่อ</td><td>ต่อเรียงกัน</td><td>ต่อคู่ขนาน</td></tr>
+      <tr><td>เมื่อหลอดขาด 1 ดวง</td><td style="color:#dc2626"><strong>ดับทั้งหมด</strong></td><td style="color:#16a34a"><strong>ดวงอื่นยังสว่าง</strong></td></tr>
+      <tr><td>ความสว่างหลอด</td><td>หรี่ลง (แรงดันแบ่ง)</td><td>สว่างปกติ</td></tr>
+      <tr><td>ใช้ในบ้าน</td><td>ไม่เหมาะ</td><td style="color:#16a34a">เหมาะสม ✓</td></tr>
+    </table>
+
+    <div class="key-box">
+      <strong>🎯 วงจรขนานดีกว่าสำหรับบ้าน เพราะ:</strong> หลอดขาดดวงหนึ่งไม่กระทบดวงอื่น ทุกอุปกรณ์ได้แรงดันเท่ากัน
+    </div>
+  </div>
+
+  <!-- 3.3 การวิเคราะห์วงจร -->
+  <div class="sec-card" style="border-left-color:#f59e0b; color:#f59e0b">
+    <h2 style="color:#92400e">🔍 การวิเคราะห์วงจรไฟฟ้า</h2>
+
+    <div class="ib ib-yellow">
+      <strong>📋 หลักการวิเคราะห์:</strong>
+      <ul class="list" style="margin-top:6px">
+        <li><strong>วงจรอนุกรม:</strong> ถ้าหลอดใดขาด กระแสไม่ไหล ทุกหลอดดับ</li>
+        <li><strong>วงจรขนาน:</strong> แต่ละสาขาเป็นอิสระ หลอดขาดในสาขาหนึ่งไม่กระทบสาขาอื่น</li>
+        <li><strong>วงจรผสม:</strong> บางส่วนอนุกรม บางส่วนขนาน ต้องวิเคราะห์ทีละส่วน</li>
+      </ul>
+    </div>
+
+    <div class="ib ib-sky">
+      <strong>💡 ตัวอย่างวงจรผสม (จากข้อสอบ):</strong><br>
+      วงจรที่มีหลอด A อยู่อนุกรมกับสาขาที่มี B,C ขนานกัน และ D,E ขนานกัน<br>
+      ถ้าหลอด C ชำรุด → กระแสยังไหลผ่านหลอด B ได้ (เพราะ B,C ต่อขนาน)<br>
+      ดังนั้น <strong>หลอดที่ยังสว่าง = D และ E</strong> (ต้องวิเคราะห์ว่าหลอด A ยังครบวงจรหรือไม่)
+    </div>
+
+    <div class="ib ib-red">
+      <strong>🏠 การต่อหลอดไฟฟ้าในบ้าน:</strong><br>
+      ควรต่อแบบ<strong>ขนาน</strong> เพราะหลอดหนึ่งดับ หลอดที่เหลือยังสว่าง<br>
+      <em>ข้อผิดพลาดที่นักเรียนมักทำ: สับสนว่าวงจร A เป็นแบบใด ให้ดูว่าหลอดต่อเรียงหรือแยกสาขา</em>
+    </div>
+
+    <div class="ib ib-purple">
+      <strong>🔋 หลอดไฟฟ้าในรูปใดสว่างที่สุด:</strong><br>
+      หลอดที่ต่อตรงกับแบตเตอรี่โดยไม่มีหลอดอื่นในอนุกรมด้วยจะสว่างที่สุด เพราะได้รับแรงดันเต็ม
+    </div>
+  </div>
+
+  <!-- QUIZ U3 -->
+  <div class="sec-card" style="border-left-color:#ef4444; color:#ef4444">
+    <h2 style="color:#991b1b">🧪 ทดสอบความเข้าใจ – หน่วยที่ 6</h2>
+    <div class="quiz-container" id="qw-u3">
+
+      <div class="qcard" data-ans="ง">
+        <span class="qnum" style="background:#dc2626">ข้อ 1</span>
+        <div class="qtxt">ข้อใดกล่าวถูกต้องเกี่ยวกับประจุไฟฟ้า?</div>
+        <div class="opts">
+          <button class="opt" onclick="pick(this)"><span class="ol">ก</span>ประจุไฟฟ้าชนิดเดียวกันจะดูดกัน</button>
+          <button class="opt" onclick="pick(this)"><span class="ol">ข</span>ประจุชนิดเดียวกันจะผลักกัน</button>
+          <button class="opt" onclick="pick(this)"><span class="ol">ค</span>ประจุต่างชนิดกันจะผลักกัน</button>
+          <button class="opt" onclick="pick(this)"><span class="ol">ง</span>ถูกทุกข้อ ยกเว้นข้อ ก</button>
+        </div>
+        <div class="expl">✅ กฎพื้นฐาน: ประจุชนิดเดียวกันผลักกัน ประจุต่างชนิดกันดูดกัน</div>
+      </div>
+
+      <div class="qcard" data-ans="ค">
+        <span class="qnum" style="background:#dc2626">ข้อ 2</span>
+        <div class="qtxt">เอาไม้บรรทัดพลาสติกถูกับกระดาษเยื่อหลายๆ ครั้ง จากนั้นนำปลายไม้บรรทัดเข้าใกล้กระดาษเยื่อขนาดเล็กๆ ผลจะเป็นอย่างไร?</div>
+        <div class="opts">
+          <button class="opt" onclick="pick(this)"><span class="ol">ก</span>ปลายไม้บรรทัดดูดเศษกระดาษ</button>
+          <button class="opt" onclick="pick(this)"><span class="ol">ข</span>เศษกระดาษปลิวไปทิศทางอื่น</button>
+          <button class="opt" onclick="pick(this)"><span class="ol">ค</span>ไม้บรรทัดพลาสติกที่ถูกด้วยกระดาษเยื่อ</button>
+          <button class="opt" onclick="pick(this)"><span class="ol">ง</span>ไม่เกิดการเปลี่ยนแปลงใดๆ</button>
+        </div>
+        <div class="expl">✅ วัตถุ A (ไม้บรรทัดพลาสติกที่ถูด้วยกระดาษเยื่อ) มีประจุลบ ดูดกระดาษเยื่อซึ่งมีประจุต่างชนิด</div>
+      </div>
+
+      <div class="qcard" data-ans="ค">
+        <span class="qnum" style="background:#dc2626">ข้อ 3</span>
+        <div class="qtxt">การต่อหลอดไฟฟ้าในบ้านควรต่อแบบใด เพราะเหตุใด?</div>
+        <div class="opts">
+          <button class="opt" onclick="pick(this)"><span class="ol">ก</span>ต่อแบบขนาน ไม่เปลืองไฟ</button>
+          <button class="opt" onclick="pick(this)"><span class="ol">ข</span>ต่อแบบอนุกรม ไม่เปลืองไฟ</button>
+          <button class="opt" onclick="pick(this)"><span class="ol">ค</span>ต่อแบบขนาน หลอดหนึ่งดับหลอดที่เหลือยังสว่าง</button>
+          <button class="opt" onclick="pick(this)"><span class="ol">ง</span>ต่อแบบอนุกรม หลอดหนึ่งดับหลอดที่เหลือยังสว่าง</button>
+        </div>
+        <div class="expl">✅ วงจรขนานเหมาะสำหรับบ้าน เพราะถ้าหลอดหนึ่งดับ หลอดอื่นยังสว่างปกติได้</div>
+      </div>
+
+      <div class="qcard" data-ans="ก">
+        <span class="qnum" style="background:#dc2626">ข้อ 4</span>
+        <div class="qtxt">วงจร A ต่อแบบขนาน หลอดหนึ่งดับหลอดที่เหลือยังสว่าง ข้อใดกล่าว "ไม่ถูกต้อง" เกี่ยวกับวงจร A?</div>
+        <div class="opts">
+          <button class="opt" onclick="pick(this)"><span class="ol">ก</span>วงจร A ต่อแบบขนาน หลอดหนึ่งดับหลอดที่เหลือยังสว่าง</button>
+          <button class="opt" onclick="pick(this)"><span class="ol">ข</span>วงจร B ต่อแบบอนุกรม หลอดหนึ่งดับหลอดที่เหลือยังสว่าง</button>
+          <button class="opt" onclick="pick(this)"><span class="ol">ค</span>วงจร A ต่อแบบขนาน หลอดหนึ่งดับหลอดที่เหลือใช้งานไม่ได้</button>
+          <button class="opt" onclick="pick(this)"><span class="ol">ง</span>วงจร B ต่อแบบอนุกรม หลอดหนึ่งดับหลอดที่เหลือยังสว่าง</button>
+        </div>
+        <div class="expl">✅ ข้อ ก กล่าวไม่ถูกต้อง เพราะวงจร A ต่อแบบขนาน เมื่อหลอดหนึ่งดับ หลอดอื่นจะยังสว่างอยู่ได้ (ไม่ใช่ "ใช้งานไม่ได้")</div>
+      </div>
+
+      <div class="qcard" data-ans="ข">
+        <span class="qnum" style="background:#dc2626">ข้อ 5</span>
+        <div class="qtxt">จากการต่อวงจรไฟฟ้าดังรูป ถ้าหลอดไฟฟ้า C ชำรุด หลอดไฟฟ้าดวงใดที่ยังสว่าง? (หลอด B,C ต่อขนานกัน ขนานกับหลอด D,E และ A ต่ออนุกรมกับทั้งหมด)</div>
+        <div class="opts">
+          <button class="opt" onclick="pick(this)"><span class="ol">ก</span>หลอด A และ B</button>
+          <button class="opt" onclick="pick(this)"><span class="ol">ข</span>หลอด D และ E</button>
+          <button class="opt" onclick="pick(this)"><span class="ol">ค</span>หลอด A D และ E</button>
+          <button class="opt" onclick="pick(this)"><span class="ol">ง</span>หลอด A B D และ E</button>
+        </div>
+        <div class="expl">✅ หลอด C ชำรุด แต่ B,C ต่อขนานกัน ดังนั้น B ยังทำงาน วงจรยังครบ กระแสไหลผ่าน A, B (สาขา B), D, E ได้ — แต่ถ้าโจทย์หมายความว่า C อยู่อนุกรมกับ B ก็จะต่างกัน ต้องดูแผนภาพ</div>
+      </div>
+
+      <div class="qcard" data-ans="ค">
+        <span class="qnum" style="background:#dc2626">ข้อ 6</span>
+        <div class="qtxt">ต่อวงจรไฟฟ้า 2 วงจร เมื่อต่อให้เป็นวงจรไฟฟ้าปิดแล้ว หลอดไฟฟ้าสว่างทั้ง 4 หลอด ถ้าหลอดในแต่ละวงจรชำรุด 1 หลอด วงจรใดที่ยังคงมีหลอดไฟฟ้าสว่างอยู่?</div>
+        <div class="opts">
+          <button class="opt" onclick="pick(this)"><span class="ol">ก</span>วงจร A ซึ่งเป็นการต่อแบบขนาน</button>
+          <button class="opt" onclick="pick(this)"><span class="ol">ข</span>วงจร A ซึ่งเป็นการต่อแบบอนุกรม</button>
+          <button class="opt" onclick="pick(this)"><span class="ol">ค</span>วงจร B ซึ่งเป็นการต่อแบบขนาน</button>
+          <button class="opt" onclick="pick(this)"><span class="ol">ง</span>วงจร B ซึ่งเป็นการต่อแบบอนุกรม</button>
+        </div>
+        <div class="expl">✅ วงจรที่ต่อแบบขนาน เมื่อหลอดชำรุด 1 ดวง หลอดอื่นยังสว่างอยู่ได้ เพราะแต่ละสาขาเป็นอิสระจากกัน</div>
+      </div>
+
+    </div>
+    <div class="score-box" id="sc-u3" style="background:linear-gradient(135deg,#ef4444,#dc2626)">
+      <div class="snum" id="sn-u3"></div><p id="sp-u3"></p>
+      <button class="retry-btn" onclick="retryQ('qw-u3','sc-u3')">ทำอีกครั้ง 🔄</button>
+    </div>
+    <button class="submit-btn" id="btn-u3" onclick="submitQ('qw-u3','u3','sc-u3','sn-u3','sp-u3','btn-u3')" style="background:linear-gradient(135deg,#ef4444,#dc2626)">ส่งคำตอบ ✉️</button>
+  </div>
+</div><!-- end u3 -->
+
+</main>
+
+<script>
+// ── NAV ──
+function showUnit(u) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.unit-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('pg-' + u).classList.add('active');
+  // highlight tab
+  const labels = { u1:'ปรากฏการณ์', u2:'เงา', u3:'ไฟฟ้า' };
+  document.querySelectorAll('.unit-tab').forEach(t => {
+    if (t.textContent.includes(labels[u])) t.classList.add('active');
+  });
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function goHome() {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.unit-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('pg-home').classList.add('active');
+  document.querySelector('.unit-tab').classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ── QUIZ ──
+function pick(btn) {
+  const card = btn.closest('.qcard');
+  if (card.dataset.picked) return;
+  card.dataset.picked = btn.querySelector('.ol').textContent;
+  btn.style.borderColor = '#6366f1';
+  btn.style.background = '#eef2ff';
+  btn.querySelector('.ol').style.background = '#6366f1';
+  btn.querySelector('.ol').style.color = '#fff';
+}
+
+function submitQ(wrapId, uid, scId, snId, spId, btnId) {
+  const wrap = document.getElementById(wrapId);
+  const cards = wrap.querySelectorAll('.qcard');
+  let correct = 0, total = cards.length;
+  cards.forEach(card => {
+    const ans = card.dataset.ans;
+    const picked = card.dataset.picked || '';
+    const opts = card.querySelectorAll('.opt');
+    opts.forEach(o => {
+      o.disabled = true;
+      const letter = o.querySelector('.ol').textContent;
+      if (letter === ans) o.classList.add('correct');
+      if (letter === picked && picked !== ans) o.classList.add('wrong');
+    });
+    const expl = card.querySelector('.expl');
+    if (expl) expl.classList.add('show');
+    if (picked === ans) correct++;
+  });
+  const banner = document.getElementById(scId);
+  document.getElementById(snId).textContent = correct + '/' + total;
+  const pct = Math.round(correct / total * 100);
+  document.getElementById(spId).textContent = pct >= 80 ? '🌟 ยอดเยี่ยม! ผ่านแล้ว' : pct >= 60 ? '👍 ดีมาก ลองอีกครั้ง' : '📚 ทบทวนเพิ่มเติมนะ';
+  banner.classList.add('show');
+  document.getElementById(btnId).style.display = 'none';
+}
+
+function retryQ(wrapId, scId) {
+  const wrap = document.getElementById(wrapId);
+  wrap.querySelectorAll('.qcard').forEach(card => {
+    delete card.dataset.picked;
+    card.querySelectorAll('.opt').forEach(o => {
+      o.disabled = false;
+      o.classList.remove('correct','wrong');
+      o.style.borderColor = '';
+      o.style.background = '';
+      o.querySelector('.ol').style.background = '';
+      o.querySelector('.ol').style.color = '';
+    });
+    const expl = card.querySelector('.expl');
+    if (expl) expl.classList.remove('show');
+  });
+  document.getElementById(scId).classList.remove('show');
+  const btnMap = { 'qw-u1':'btn-u1', 'qw-u2':'btn-u2', 'qw-u3':'btn-u3' };
+  const btn = document.getElementById(btnMap[wrapId]);
+  if (btn) btn.style.display = 'block';
+}
+</script>
+</body>
+</html>

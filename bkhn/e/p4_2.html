@@ -1,0 +1,1877 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>วิทยาศาสตร์ ป.4 เล่ม 2</title>
+<link href="https://fonts.googleapis.com/css2?family=Mitr:wght@300;400;500;600;700&family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --sky: #0ea5e9;
+  --sky-dark: #0284c7;
+  --sky-light: #e0f2fe;
+  --amber: #f59e0b;
+  --amber-light: #fef3c7;
+  --emerald: #10b981;
+  --emerald-light: #d1fae5;
+  --violet: #8b5cf6;
+  --violet-light: #ede9fe;
+  --rose: #f43f5e;
+  --rose-light: #ffe4e6;
+  --navy: #1e3a5f;
+  --bg: #f0f9ff;
+  --card: #ffffff;
+  --text: #1e293b;
+  --text-light: #64748b;
+  --border: #e2e8f0;
+  --radius: 16px;
+  --shadow: 0 4px 24px rgba(14,165,233,0.10);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Sarabun', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+}
+
+/* ── HEADER ── */
+.site-header {
+  background: linear-gradient(135deg, var(--navy) 0%, #1a6091 100%);
+  color: white;
+  padding: 0;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 2px 20px rgba(0,0,0,0.3);
+}
+
+.header-inner {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 14px 20px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.header-icon {
+  font-size: 2.2rem;
+  flex-shrink: 0;
+}
+
+.header-titles h1 {
+  font-family: 'Mitr', sans-serif;
+  font-size: 1.3rem;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.header-titles p {
+  font-size: 0.82rem;
+  opacity: 0.8;
+  font-weight: 300;
+}
+
+/* ── NAV TABS ── */
+.nav-tabs {
+  background: rgba(255,255,255,0.08);
+  border-top: 1px solid rgba(255,255,255,0.15);
+}
+
+.nav-tabs-inner {
+  max-width: 1100px;
+  margin: 0 auto;
+  display: flex;
+  gap: 2px;
+  padding: 0 20px;
+  overflow-x: auto;
+}
+
+.nav-tab {
+  padding: 10px 18px;
+  font-family: 'Mitr', sans-serif;
+  font-size: 0.88rem;
+  font-weight: 500;
+  color: rgba(255,255,255,0.7);
+  background: none;
+  border: none;
+  cursor: pointer;
+  border-bottom: 3px solid transparent;
+  transition: all 0.2s;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.nav-tab:hover { color: white; background: rgba(255,255,255,0.08); }
+.nav-tab.active { color: white; border-bottom-color: #38bdf8; background: rgba(255,255,255,0.1); }
+
+/* ── MAIN ── */
+.main-content {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 28px 20px 60px;
+}
+
+/* ── SECTION CARDS ── */
+.section-panel {
+  display: none;
+  animation: fadeIn 0.3s ease;
+}
+.section-panel.active { display: block; }
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ── UNIT HERO ── */
+.unit-hero {
+  background: linear-gradient(135deg, var(--navy) 0%, #1a6091 60%, #0ea5e9 100%);
+  border-radius: var(--radius);
+  padding: 32px;
+  margin-bottom: 28px;
+  color: white;
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+.unit-hero-icon { font-size: 4rem; }
+
+.unit-hero h2 {
+  font-family: 'Mitr', sans-serif;
+  font-size: 1.7rem;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+
+.unit-hero p { opacity: 0.85; font-size: 1rem; line-height: 1.6; }
+
+/* ── GRID ── */
+.content-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
+@media (max-width: 680px) {
+  .content-grid { grid-template-columns: 1fr; }
+  .unit-hero { flex-direction: column; text-align: center; }
+}
+
+/* ── CARD ── */
+.card {
+  background: var(--card);
+  border-radius: var(--radius);
+  padding: 22px;
+  box-shadow: var(--shadow);
+  border: 1px solid var(--border);
+}
+
+.card-full { grid-column: 1 / -1; }
+
+.card-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.card-header-icon {
+  width: 40px; height: 40px;
+  border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.25rem;
+  flex-shrink: 0;
+}
+
+.icon-sky    { background: var(--sky-light); color: var(--sky-dark); }
+.icon-amber  { background: var(--amber-light); color: #b45309; }
+.icon-emerald{ background: var(--emerald-light); color: #047857; }
+.icon-violet { background: var(--violet-light); color: #6d28d9; }
+.icon-rose   { background: var(--rose-light); color: #be123c; }
+.icon-navy   { background: #e0f0ff; color: var(--navy); }
+
+.card-header h3 {
+  font-family: 'Mitr', sans-serif;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text);
+}
+
+/* ── TOPIC LIST ── */
+.topic-list { list-style: none; }
+
+.topic-item {
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 0.92rem;
+  line-height: 1.6;
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+}
+
+.topic-item:last-child { border-bottom: none; }
+
+.topic-bullet {
+  width: 22px; height: 22px;
+  border-radius: 50%;
+  background: var(--sky-light);
+  color: var(--sky-dark);
+  font-size: 0.72rem;
+  font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.topic-content strong { color: var(--navy); display: block; font-size: 0.93rem; }
+.topic-content span { color: var(--text-light); font-size: 0.85rem; }
+
+/* ── VOCAB CARDS ── */
+.vocab-strip {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+}
+
+.vocab-card {
+  border-radius: 10px;
+  padding: 10px 14px;
+  font-size: 0.88rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.vocab-card .thai { font-weight: 700; font-size: 0.93rem; }
+.vocab-card .meaning { font-size: 0.78rem; opacity: 0.8; }
+
+.vc-easy  { background: var(--emerald-light); border: 1px solid #6ee7b7; }
+.vc-mid   { background: var(--amber-light); border: 1px solid #fcd34d; }
+.vc-hard  { background: var(--rose-light); border: 1px solid #fca5a5; }
+
+.vocab-level-header {
+  font-family: 'Mitr', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 600;
+  padding: 6px 12px;
+  border-radius: 20px;
+  margin: 10px 0 8px;
+  display: inline-block;
+}
+
+.vh-easy  { background: var(--emerald-light); color: #047857; }
+.vh-mid   { background: var(--amber-light); color: #b45309; }
+.vh-hard  { background: var(--rose-light); color: #be123c; }
+
+/* ── EXERCISES ── */
+.exercise-list { list-style: none; counter-reset: ex; }
+
+.exercise-item {
+  counter-increment: ex;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 0.9rem;
+  line-height: 1.7;
+  display: flex;
+  gap: 10px;
+}
+
+.exercise-item:last-child { border-bottom: none; }
+
+.exercise-item::before {
+  content: counter(ex);
+  width: 24px; height: 24px;
+  background: var(--navy);
+  color: white;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.72rem;
+  font-weight: 700;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.answer-reveal {
+  margin-top: 6px;
+}
+
+.answer-btn {
+  background: none;
+  border: 1px solid var(--sky);
+  color: var(--sky-dark);
+  border-radius: 20px;
+  padding: 3px 12px;
+  font-size: 0.78rem;
+  font-family: 'Sarabun', sans-serif;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.answer-btn:hover { background: var(--sky-light); }
+
+.answer-box {
+  display: none;
+  margin-top: 6px;
+  background: var(--sky-light);
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-size: 0.85rem;
+  color: var(--sky-dark);
+  font-weight: 500;
+}
+
+.answer-box.show { display: block; }
+
+/* ── QUIZ SECTION ── */
+.quiz-wrapper { max-width: 800px; margin: 0 auto; }
+
+.quiz-intro {
+  background: linear-gradient(135deg, var(--navy), #1a6091);
+  color: white;
+  border-radius: var(--radius);
+  padding: 28px;
+  text-align: center;
+  margin-bottom: 28px;
+}
+
+.quiz-intro h2 { font-family: 'Mitr', sans-serif; font-size: 1.5rem; margin-bottom: 8px; }
+.quiz-intro p { opacity: 0.85; margin-bottom: 20px; }
+
+.quiz-btn {
+  background: white;
+  color: var(--navy);
+  border: none;
+  border-radius: 30px;
+  padding: 10px 28px;
+  font-family: 'Mitr', sans-serif;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.2);
+}
+
+.quiz-btn:hover { transform: translateY(-1px); box-shadow: 0 4px 16px rgba(0,0,0,0.3); }
+
+.quiz-area { display: none; }
+.quiz-area.active { display: block; }
+
+.quiz-progress {
+  background: var(--card);
+  border-radius: var(--radius);
+  padding: 16px 22px;
+  margin-bottom: 20px;
+  box-shadow: var(--shadow);
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.progress-bar-outer {
+  flex: 1;
+  height: 10px;
+  background: var(--border);
+  border-radius: 5px;
+  overflow: hidden;
+}
+
+.progress-bar-inner {
+  height: 100%;
+  background: linear-gradient(90deg, var(--sky), var(--emerald));
+  border-radius: 5px;
+  transition: width 0.4s ease;
+}
+
+.progress-label {
+  font-family: 'Mitr', sans-serif;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--navy);
+  white-space: nowrap;
+}
+
+.quiz-q-card {
+  background: var(--card);
+  border-radius: var(--radius);
+  padding: 24px;
+  box-shadow: var(--shadow);
+  margin-bottom: 16px;
+}
+
+.quiz-q-num {
+  font-size: 0.8rem;
+  color: var(--text-light);
+  font-family: 'Mitr', sans-serif;
+  font-weight: 500;
+  margin-bottom: 10px;
+}
+
+.quiz-q-text {
+  font-size: 1.02rem;
+  font-weight: 600;
+  line-height: 1.7;
+  color: var(--text);
+  margin-bottom: 18px;
+}
+
+.quiz-options { display: flex; flex-direction: column; gap: 10px; }
+
+.quiz-opt {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 12px 16px;
+  border-radius: 12px;
+  border: 2px solid var(--border);
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 0.92rem;
+  line-height: 1.5;
+  background: #fafafa;
+}
+
+.quiz-opt:hover { border-color: var(--sky); background: var(--sky-light); }
+.quiz-opt.selected { border-color: var(--sky-dark); background: var(--sky-light); }
+.quiz-opt.correct  { border-color: var(--emerald); background: var(--emerald-light) !important; }
+.quiz-opt.wrong    { border-color: var(--rose); background: var(--rose-light) !important; }
+
+.opt-letter {
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  background: var(--border);
+  font-family: 'Mitr', sans-serif;
+  font-weight: 700;
+  font-size: 0.82rem;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  color: var(--text-light);
+}
+
+.quiz-opt.selected .opt-letter { background: var(--sky-dark); color: white; }
+.quiz-opt.correct .opt-letter  { background: var(--emerald); color: white; }
+.quiz-opt.wrong .opt-letter    { background: var(--rose); color: white; }
+
+.quiz-feedback {
+  padding: 10px 16px;
+  border-radius: 10px;
+  font-size: 0.88rem;
+  font-weight: 600;
+  margin-top: 12px;
+  display: none;
+}
+
+.quiz-feedback.show { display: block; }
+.quiz-feedback.correct-fb { background: var(--emerald-light); color: #047857; }
+.quiz-feedback.wrong-fb   { background: var(--rose-light); color: #be123c; }
+
+.quiz-nav {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.q-btn {
+  padding: 10px 24px;
+  border-radius: 30px;
+  font-family: 'Mitr', sans-serif;
+  font-size: 0.92rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: none;
+}
+
+.q-btn-primary { background: var(--navy); color: white; }
+.q-btn-primary:hover { background: #2d5a8e; transform: translateY(-1px); }
+.q-btn-secondary { background: var(--border); color: var(--text); }
+.q-btn-secondary:hover { background: #cbd5e1; }
+.q-btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+
+/* ── RESULTS ── */
+.quiz-result {
+  display: none;
+  text-align: center;
+  background: var(--card);
+  border-radius: var(--radius);
+  padding: 40px 28px;
+  box-shadow: var(--shadow);
+}
+
+.quiz-result.show { display: block; }
+
+.result-score {
+  font-family: 'Mitr', sans-serif;
+  font-size: 4rem;
+  font-weight: 700;
+  line-height: 1;
+  margin: 16px 0 8px;
+}
+
+.result-msg { font-size: 1.05rem; color: var(--text-light); margin-bottom: 24px; }
+
+.result-grade {
+  width: 110px; height: 110px;
+  border-radius: 50%;
+  margin: 0 auto 16px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 2.5rem;
+}
+
+/* ── MIND MAP ── */
+.mindmap-container {
+  background: linear-gradient(135deg, #f8faff 0%, #e8f4ff 100%);
+  border-radius: var(--radius);
+  padding: 28px;
+  border: 1px solid #bde0ff;
+}
+
+.mm-center {
+  background: var(--navy);
+  color: white;
+  border-radius: 50px;
+  padding: 14px 28px;
+  font-family: 'Mitr', sans-serif;
+  font-size: 1.1rem;
+  font-weight: 600;
+  text-align: center;
+  margin: 0 auto 28px;
+  max-width: 280px;
+}
+
+.mm-branches {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+}
+
+.mm-branch {
+  border-radius: 12px;
+  padding: 14px;
+  position: relative;
+}
+
+.mm-branch-title {
+  font-family: 'Mitr', sans-serif;
+  font-size: 0.92rem;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.mm-leaf {
+  font-size: 0.82rem;
+  line-height: 1.7;
+  padding-left: 12px;
+  border-left: 2px solid;
+  margin-top: 4px;
+}
+
+.mm-sky { background: var(--sky-light); border: 1px solid #7dd3fc; }
+.mm-sky .mm-branch-title { color: var(--sky-dark); }
+.mm-sky .mm-leaf { border-color: var(--sky); color: #0369a1; }
+
+.mm-amber { background: var(--amber-light); border: 1px solid #fcd34d; }
+.mm-amber .mm-branch-title { color: #b45309; }
+.mm-amber .mm-leaf { border-color: var(--amber); color: #92400e; }
+
+.mm-emerald { background: var(--emerald-light); border: 1px solid #6ee7b7; }
+.mm-emerald .mm-branch-title { color: #047857; }
+.mm-emerald .mm-leaf { border-color: var(--emerald); color: #065f46; }
+
+.mm-violet { background: var(--violet-light); border: 1px solid #c4b5fd; }
+.mm-violet .mm-branch-title { color: #6d28d9; }
+.mm-violet .mm-leaf { border-color: var(--violet); color: #4c1d95; }
+
+.mm-rose { background: var(--rose-light); border: 1px solid #fca5a5; }
+.mm-rose .mm-branch-title { color: #be123c; }
+.mm-rose .mm-leaf { border-color: var(--rose); color: #9f1239; }
+
+.mm-navy2 { background: #dbeafe; border: 1px solid #93c5fd; }
+.mm-navy2 .mm-branch-title { color: #1d4ed8; }
+.mm-navy2 .mm-leaf { border-color: #3b82f6; color: #1e40af; }
+
+/* ── TABLE ── */
+.compare-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.88rem;
+}
+
+.compare-table th {
+  background: var(--navy);
+  color: white;
+  padding: 10px 12px;
+  text-align: center;
+  font-family: 'Mitr', sans-serif;
+  font-weight: 500;
+  font-size: 0.85rem;
+}
+
+.compare-table td {
+  padding: 9px 12px;
+  border: 1px solid var(--border);
+  text-align: center;
+  vertical-align: middle;
+  line-height: 1.5;
+}
+
+.compare-table tr:nth-child(even) td { background: #f8faff; }
+
+.badge {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: 20px;
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+
+.badge-yes { background: var(--emerald-light); color: #047857; }
+.badge-no  { background: var(--rose-light); color: #be123c; }
+.badge-any { background: var(--amber-light); color: #b45309; }
+
+/* ── PLANET CARDS ── */
+.planet-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+}
+
+@media (max-width: 600px) {
+  .planet-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+.planet-card {
+  background: linear-gradient(135deg, #f8faff, #e8f4ff);
+  border-radius: 12px;
+  padding: 12px;
+  text-align: center;
+  border: 1px solid #c7dff0;
+  transition: transform 0.2s;
+}
+
+.planet-card:hover { transform: translateY(-3px); }
+
+.planet-emoji { font-size: 2rem; margin-bottom: 6px; }
+.planet-name  { font-family: 'Mitr', sans-serif; font-size: 0.88rem; font-weight: 600; color: var(--navy); }
+.planet-info  { font-size: 0.75rem; color: var(--text-light); margin-top: 3px; line-height: 1.5; }
+
+/* ── UNIT SELECTOR ── */
+.unit-selector {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+}
+
+.unit-btn {
+  padding: 8px 20px;
+  border-radius: 30px;
+  border: 2px solid var(--border);
+  background: white;
+  font-family: 'Mitr', sans-serif;
+  font-size: 0.88rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  color: var(--text-light);
+}
+
+.unit-btn.active {
+  border-color: var(--navy);
+  background: var(--navy);
+  color: white;
+}
+
+.unit-content { display: none; }
+.unit-content.active { display: block; }
+
+/* ── SECTION TITLE ── */
+.section-title {
+  font-family: 'Mitr', sans-serif;
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: var(--navy);
+  margin-bottom: 16px;
+  padding-bottom: 10px;
+  border-bottom: 2px solid var(--sky-light);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.section-title span { font-size: 1.2rem; }
+
+/* ── INFO BOX ── */
+.info-box {
+  border-radius: 12px;
+  padding: 14px 16px;
+  margin-bottom: 12px;
+  font-size: 0.9rem;
+  line-height: 1.7;
+}
+
+.ib-sky { background: var(--sky-light); border-left: 4px solid var(--sky); }
+.ib-amber { background: var(--amber-light); border-left: 4px solid var(--amber); }
+.ib-emerald { background: var(--emerald-light); border-left: 4px solid var(--emerald); }
+.ib-violet { background: var(--violet-light); border-left: 4px solid var(--violet); }
+.ib-rose { background: var(--rose-light); border-left: 4px solid var(--rose); }
+
+.ib-title {
+  font-family: 'Mitr', sans-serif;
+  font-weight: 600;
+  font-size: 0.95rem;
+  margin-bottom: 4px;
+}
+
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="header-inner">
+    <div class="header-icon">🔬</div>
+    <div class="header-titles">
+      <h1>วิทยาศาสตร์และเทคโนโลยี ชั้นประถมศึกษาปีที่ 4 เล่ม 2</h1>
+      <p>หน่วยที่ 4 วัสดุและสสาร · หน่วยที่ 5 โลกและอวกาศ · โรงเรียนบ้านเขาหัวนา</p>
+    </div>
+  </div>
+  <nav class="nav-tabs">
+    <div class="nav-tabs-inner">
+      <button class="nav-tab active" onclick="showTab('content')">📖 เนื้อหา</button>
+      <button class="nav-tab" onclick="showTab('pre-quiz')">📝 แบบทดสอบก่อนเรียน</button>
+      <button class="nav-tab" onclick="showTab('exercises')">✏️ แบบฝึกหัด</button>
+      <button class="nav-tab" onclick="showTab('vocab')">🃏 บัตรคำ</button>
+      <button class="nav-tab" onclick="showTab('mindmap')">🗺️ Mind Map</button>
+      <button class="nav-tab" onclick="showTab('post-quiz')">🎯 แบบทดสอบหลังเรียน</button>
+    </div>
+  </nav>
+</header>
+
+<div class="main-content">
+
+  <!-- ══════════════════════════════════════
+       SECTION: เนื้อหา
+  ══════════════════════════════════════ -->
+  <section id="content" class="section-panel active">
+    <div class="unit-selector">
+      <button class="unit-btn active" onclick="showUnit('u4')">🧪 หน่วยที่ 4 วัสดุและสสาร</button>
+      <button class="unit-btn" onclick="showUnit('u5')">🌍 หน่วยที่ 5 โลกและอวกาศ</button>
+    </div>
+
+    <!-- ───── Unit 4 ───── -->
+    <div id="u4" class="unit-content active">
+      <div class="unit-hero">
+        <div class="unit-hero-icon">🧪</div>
+        <div>
+          <h2>หน่วยที่ 4: วัสดุและสสาร</h2>
+          <p>เรียนรู้สมบัติทางกายภาพของวัสดุ ได้แก่ ความแข็ง สภาพยืดหยุ่น การนำความร้อน และการนำไฟฟ้า พร้อมทั้งศึกษาสถานะของสสารทั้ง 3 สถานะ</p>
+        </div>
+      </div>
+
+      <h3 class="section-title"><span>📘</span> บทที่ 1: สมบัติทางกายภาพของวัสดุ</h3>
+
+      <div class="content-grid">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-header-icon icon-sky">💎</div>
+            <h3>เรื่องที่ 1: ความแข็งของวัสดุ</h3>
+          </div>
+          <div class="info-box ib-sky">
+            <div class="ib-title">ความแข็ง คืออะไร?</div>
+            ความทนทานต่อการขูดขีดของวัสดุ หรือความยากต่อการเกิดรอยเมื่อมีแรงมากระทำ
+          </div>
+          <ul class="topic-list">
+            <li class="topic-item">
+              <span class="topic-bullet">1</span>
+              <div class="topic-content">
+                <strong>วิธีทดสอบความแข็ง</strong>
+                <span>นำวัสดุ 2 ชนิดมาขูดขีดกัน วัสดุที่เกิดรอยมีความแข็งน้อยกว่า</span>
+              </div>
+            </li>
+            <li class="topic-item">
+              <span class="topic-bullet">2</span>
+              <div class="topic-content">
+                <strong>ลำดับความแข็ง (มาก → น้อย)</strong>
+                <span>กระจก → เหล็ก → อะลูมิเนียม → พลาสติก → ไม้</span>
+              </div>
+            </li>
+            <li class="topic-item">
+              <span class="topic-bullet">3</span>
+              <div class="topic-content">
+                <strong>ประโยชน์ของความแข็ง</strong>
+                <span>มีดตัดกระจกทำจากเพชร, อุปกรณ์แกะสลักหินต้องแข็งกว่าหิน, กระเบื้องปูพื้น</span>
+              </div>
+            </li>
+          </ul>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <div class="card-header-icon icon-amber">🌀</div>
+            <h3>เรื่องที่ 2: สภาพยืดหยุ่น</h3>
+          </div>
+          <div class="info-box ib-amber">
+            <div class="ib-title">สภาพยืดหยุ่น คืออะไร?</div>
+            สภาพที่วัสดุเปลี่ยนแปลงรูปร่างเมื่อได้รับแรงกระทำ แล้วกลับคืนสู่รูปร่างเดิมได้เมื่อหยุดออกแรง
+          </div>
+          <ul class="topic-list">
+            <li class="topic-item">
+              <span class="topic-bullet">1</span>
+              <div class="topic-content">
+                <strong>วัสดุที่มีสภาพยืดหยุ่น</strong>
+                <span>ยาง, ฟองน้ำ, ลวดสปริง, เส้นเอ็นยืด</span>
+              </div>
+            </li>
+            <li class="topic-item">
+              <span class="topic-bullet">2</span>
+              <div class="topic-content">
+                <strong>วัสดุที่ไม่มีสภาพยืดหยุ่น</strong>
+                <span>ดินน้ำมัน (เมื่อรับแรงแล้วไม่กลับสภาพเดิม)</span>
+              </div>
+            </li>
+            <li class="topic-item">
+              <span class="topic-bullet">3</span>
+              <div class="topic-content">
+                <strong>ประโยชน์ในชีวิตประจำวัน</strong>
+                <span>ลูกบอล, ยางรถยนต์, รองเท้า, โซฟา, ยางรัดของ</span>
+              </div>
+            </li>
+            <li class="topic-item">
+              <span class="topic-bullet">4</span>
+              <div class="topic-content">
+                <strong>"หมดสภาพยืดหยุ่น" หมายถึง</strong>
+                <span>วัสดุที่เคยยืดได้แต่ถูกแรงมากเกินจนไม่กลับสภาพเดิมอีกต่อไป</span>
+              </div>
+            </li>
+          </ul>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <div class="card-header-icon icon-rose">🌡️</div>
+            <h3>เรื่องที่ 3: การนำความร้อน</h3>
+          </div>
+          <div class="info-box ib-rose">
+            <div class="ib-title">การนำความร้อน คืออะไร?</div>
+            การถ่ายโอนความร้อนผ่านอนุภาคของวัสดุ จากบริเวณที่มีอุณหภูมิสูงไปยังบริเวณที่มีอุณหภูมิต่ำกว่า
+          </div>
+          <ul class="topic-list">
+            <li class="topic-item">
+              <span class="topic-bullet">1</span>
+              <div class="topic-content">
+                <strong>วัสดุนำความร้อนได้ดี (โลหะ)</strong>
+                <span>เหล็ก อะลูมิเนียม ทองแดง → ร้อนเร็ว เย็นเร็ว</span>
+              </div>
+            </li>
+            <li class="topic-item">
+              <span class="topic-bullet">2</span>
+              <div class="topic-content">
+                <strong>วัสดุนำความร้อนได้ไม่ดี</strong>
+                <span>ไม้ พลาสติก ยาง แก้ว → เหมาะทำด้ามจับกระทะ แก้วชา</span>
+              </div>
+            </li>
+            <li class="topic-item">
+              <span class="topic-bullet">3</span>
+              <div class="topic-content">
+                <strong>ตัวอย่างในชีวิตประจำวัน</strong>
+                <span>กระทะเหล็กทำอาหาร, ด้ามหม้อไม้/พลาสติกไม่ร้อน, กระติกน้ำร้อน</span>
+              </div>
+            </li>
+          </ul>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <div class="card-header-icon icon-emerald">⚡</div>
+            <h3>เรื่องที่ 4: การนำไฟฟ้า</h3>
+          </div>
+          <div class="info-box ib-emerald">
+            <div class="ib-title">การนำไฟฟ้า คืออะไร?</div>
+            ความสามารถของวัสดุในการให้กระแสไฟฟ้าไหลผ่านได้ ทดสอบโดยใช้วงจรไฟฟ้าอย่างง่าย
+          </div>
+          <ul class="topic-list">
+            <li class="topic-item">
+              <span class="topic-bullet">1</span>
+              <div class="topic-content">
+                <strong>วัสดุนำไฟฟ้าได้ (โลหะส่วนใหญ่)</strong>
+                <span>เหล็ก ทองแดง อะลูมิเนียม ทอง เงิน → หลอดไฟติด</span>
+              </div>
+            </li>
+            <li class="topic-item">
+              <span class="topic-bullet">2</span>
+              <div class="topic-content">
+                <strong>วัสดุไม่นำไฟฟ้า (ฉนวนไฟฟ้า)</strong>
+                <span>ไม้ ยาง พลาสติก แก้ว เซรามิก → หลอดไฟไม่ติด</span>
+              </div>
+            </li>
+            <li class="topic-item">
+              <span class="topic-bullet">3</span>
+              <div class="topic-content">
+                <strong>ประโยชน์ในชีวิตประจำวัน</strong>
+                <span>สายไฟใช้ทองแดง (นำไฟฟ้า) หุ้มด้วยพลาสติก (ฉนวน) เพื่อความปลอดภัย</span>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Summary Table Unit 4 Batt 1 -->
+      <div class="card card-full" style="margin-bottom:20px;">
+        <div class="card-header">
+          <div class="card-header-icon icon-navy">📊</div>
+          <h3>ตารางสรุปสมบัติทางกายภาพของวัสดุ</h3>
+        </div>
+        <div style="overflow-x:auto;">
+          <table class="compare-table">
+            <thead>
+              <tr>
+                <th>วัสดุ</th>
+                <th>ความแข็ง</th>
+                <th>สภาพยืดหยุ่น</th>
+                <th>นำความร้อน</th>
+                <th>นำไฟฟ้า</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td>เหล็ก</td><td>⭐⭐⭐⭐</td><td><span class="badge badge-no">ไม่มี</span></td><td><span class="badge badge-yes">ดีมาก</span></td><td><span class="badge badge-yes">ได้</span></td></tr>
+              <tr><td>ไม้</td><td>⭐⭐</td><td><span class="badge badge-no">ไม่มี</span></td><td><span class="badge badge-no">ไม่ดี</span></td><td><span class="badge badge-no">ไม่ได้</span></td></tr>
+              <tr><td>พลาสติก</td><td>⭐⭐⭐</td><td><span class="badge badge-no">ไม่มี</span></td><td><span class="badge badge-no">ไม่ดี</span></td><td><span class="badge badge-no">ไม่ได้</span></td></tr>
+              <tr><td>ยาง</td><td>⭐</td><td><span class="badge badge-yes">มี</span></td><td><span class="badge badge-no">ไม่ดี</span></td><td><span class="badge badge-no">ไม่ได้</span></td></tr>
+              <tr><td>แก้ว</td><td>⭐⭐⭐⭐</td><td><span class="badge badge-no">ไม่มี</span></td><td><span class="badge badge-any">ปานกลาง</span></td><td><span class="badge badge-no">ไม่ได้</span></td></tr>
+              <tr><td>อะลูมิเนียม</td><td>⭐⭐⭐</td><td><span class="badge badge-no">ไม่มี</span></td><td><span class="badge badge-yes">ดีมาก</span></td><td><span class="badge badge-yes">ได้</span></td></tr>
+              <tr><td>ฟองน้ำ</td><td>⭐</td><td><span class="badge badge-yes">มีสูง</span></td><td><span class="badge badge-no">ไม่ดี</span></td><td><span class="badge badge-no">ไม่ได้</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- บทที่ 2 -->
+      <h3 class="section-title"><span>📗</span> บทที่ 2: สถานะของสสาร</h3>
+
+      <div class="content-grid">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-header-icon icon-sky">🧊</div>
+            <h3>ของแข็ง (Solid)</h3>
+          </div>
+          <ul class="topic-list">
+            <li class="topic-item"><span class="topic-bullet">✓</span><div class="topic-content"><strong>มีมวล</strong><span>ชั่งน้ำหนักได้</span></div></li>
+            <li class="topic-item"><span class="topic-bullet">✓</span><div class="topic-content"><strong>ต้องการที่อยู่</strong><span>มีปริมาตรเป็นของตนเอง</span></div></li>
+            <li class="topic-item"><span class="topic-bullet">✓</span><div class="topic-content"><strong>รูปร่างคงที่</strong><span>ไม่เปลี่ยนแปลงตามภาชนะ</span></div></li>
+            <li class="topic-item"><span class="topic-bullet">✓</span><div class="topic-content"><strong>ปริมาตรคงที่</strong><span>ไม่ว่าจะวางที่ไหนก็มีขนาดเท่าเดิม</span></div></li>
+            <li class="topic-item"><span class="topic-bullet">📌</span><div class="topic-content"><strong>ตัวอย่าง</strong><span>ก้อนหิน เหล็ก ไม้ กระจก น้ำแข็ง</span></div></li>
+          </ul>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <div class="card-header-icon icon-amber">💧</div>
+            <h3>ของเหลว (Liquid)</h3>
+          </div>
+          <ul class="topic-list">
+            <li class="topic-item"><span class="topic-bullet">✓</span><div class="topic-content"><strong>มีมวล</strong><span>ชั่งน้ำหนักได้</span></div></li>
+            <li class="topic-item"><span class="topic-bullet">✓</span><div class="topic-content"><strong>ต้องการที่อยู่</strong><span>มีปริมาตรเป็นของตนเอง</span></div></li>
+            <li class="topic-item"><span class="topic-bullet">✗</span><div class="topic-content"><strong>รูปร่างไม่คงที่</strong><span>เปลี่ยนแปลงตามภาชนะที่บรรจุ</span></div></li>
+            <li class="topic-item"><span class="topic-bullet">✓</span><div class="topic-content"><strong>ปริมาตรคงที่</strong><span>ผิวหน้าของเหลวจะรักษาระดับสม่ำเสมอ</span></div></li>
+            <li class="topic-item"><span class="topic-bullet">📌</span><div class="topic-content"><strong>ตัวอย่าง</strong><span>น้ำ น้ำมัน นม น้ำผึ้ง ปรอท</span></div></li>
+          </ul>
+        </div>
+
+        <div class="card card-full">
+          <div class="card-header">
+            <div class="card-header-icon icon-violet">💨</div>
+            <h3>แก๊ส (Gas)</h3>
+          </div>
+          <div class="content-grid" style="margin:0;">
+            <ul class="topic-list">
+              <li class="topic-item"><span class="topic-bullet">✓</span><div class="topic-content"><strong>มีมวล</strong><span>แม้มองไม่เห็น แต่ชั่งน้ำหนักได้</span></div></li>
+              <li class="topic-item"><span class="topic-bullet">✓</span><div class="topic-content"><strong>ต้องการที่อยู่</strong><span>กินพื้นที่ตามภาชนะที่บรรจุ</span></div></li>
+              <li class="topic-item"><span class="topic-bullet">✗</span><div class="topic-content"><strong>รูปร่างไม่คงที่</strong><span>เปลี่ยนตามภาชนะที่บรรจุ</span></div></li>
+              <li class="topic-item"><span class="topic-bullet">✗</span><div class="topic-content"><strong>ปริมาตรไม่คงที่</strong><span>กระจายเต็มภาชนะที่บรรจุ</span></div></li>
+            </ul>
+            <div>
+              <div class="info-box ib-violet">
+                <div class="ib-title">💡 ตัวอย่างแก๊ส</div>
+                อากาศ, ออกซิเจน, คาร์บอนไดออกไซด์, ไอน้ำ, แก๊สหุงต้ม, ฮีเลียมในลูกโป่ง
+              </div>
+              <div class="info-box ib-sky" style="margin-top:8px;">
+                <div class="ib-title">🔎 ข้อสังเกต</div>
+                เมื่อสูบลมเข้าลูกโป่ง ลูกโป่งจะขยายใหญ่ขึ้น แสดงว่าแก๊สต้องการที่อยู่และมีมวล (ลูกโป่งที่มีอากาศหนักกว่าลูกโป่งที่ไม่มีอากาศ)
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ตารางเปรียบเทียบ 3 สถานะ -->
+      <div class="card" style="margin-bottom:20px;">
+        <div class="card-header">
+          <div class="card-header-icon icon-navy">📊</div>
+          <h3>ตารางเปรียบเทียบ 3 สถานะของสสาร</h3>
+        </div>
+        <div style="overflow-x:auto;">
+          <table class="compare-table">
+            <thead>
+              <tr><th>สมบัติ</th><th>🧊 ของแข็ง</th><th>💧 ของเหลว</th><th>💨 แก๊ส</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>มีมวล</td><td><span class="badge badge-yes">มี ✓</span></td><td><span class="badge badge-yes">มี ✓</span></td><td><span class="badge badge-yes">มี ✓</span></td></tr>
+              <tr><td>ต้องการที่อยู่</td><td><span class="badge badge-yes">ใช่ ✓</span></td><td><span class="badge badge-yes">ใช่ ✓</span></td><td><span class="badge badge-yes">ใช่ ✓</span></td></tr>
+              <tr><td>รูปร่างคงที่</td><td><span class="badge badge-yes">คงที่</span></td><td><span class="badge badge-no">ไม่คงที่</span></td><td><span class="badge badge-no">ไม่คงที่</span></td></tr>
+              <tr><td>ปริมาตรคงที่</td><td><span class="badge badge-yes">คงที่</span></td><td><span class="badge badge-yes">คงที่</span></td><td><span class="badge badge-no">ไม่คงที่</span></td></tr>
+              <tr><td>ผิวหน้ารักษาระดับ</td><td><span class="badge badge-no">ไม่มี</span></td><td><span class="badge badge-yes">มี</span></td><td><span class="badge badge-no">ไม่มี</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div><!-- /u4 -->
+
+    <!-- ───── Unit 5 ───── -->
+    <div id="u5" class="unit-content">
+      <div class="unit-hero" style="background: linear-gradient(135deg, #1a1a2e 0%, #16213e 60%, #0f3460 100%);">
+        <div class="unit-hero-icon">🌌</div>
+        <div>
+          <h2>หน่วยที่ 5: โลกและอวกาศ</h2>
+          <p>สำรวจปรากฏการณ์การขึ้นและตกของดวงจันทร์ การเปลี่ยนแปลงรูปร่างของดวงจันทร์ และระบบสุริยะที่มีดาวเคราะห์ 8 ดวง</p>
+        </div>
+      </div>
+
+      <h3 class="section-title"><span>🌙</span> บทที่ 1: ดวงจันทร์ของเรา</h3>
+
+      <div class="content-grid">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-header-icon icon-sky">🌙</div>
+            <h3>การขึ้นและตกของดวงจันทร์</h3>
+          </div>
+          <div class="info-box ib-sky">
+            <div class="ib-title">เกิดขึ้นได้อย่างไร?</div>
+            เกิดจาก <strong>โลกหมุนรอบตัวเองจากทิศตะวันตกไปทิศตะวันออก</strong> ทำให้คนบนโลกมองเห็นดวงจันทร์เหมือนเคลื่อนที่บนท้องฟ้า
+          </div>
+          <ul class="topic-list">
+            <li class="topic-item"><span class="topic-bullet">☀️</span><div class="topic-content"><strong>ขึ้นทาง</strong><span>ทิศตะวันออก</span></div></li>
+            <li class="topic-item"><span class="topic-bullet">🌅</span><div class="topic-content"><strong>ตกทาง</strong><span>ทิศตะวันตก</span></div></li>
+            <li class="topic-item"><span class="topic-bullet">🔄</span><div class="topic-content"><strong>แบบรูป</strong><span>เกิดซ้ำทุกวันอย่างสม่ำเสมอเป็นวัฏจักร</span></div></li>
+            <li class="topic-item"><span class="topic-bullet">🌟</span><div class="topic-content"><strong>เหมือนดวงอาทิตย์</strong><span>ปรากฏการณ์เดียวกัน แต่เวลาต่างกัน ดาวอื่นๆ ก็เช่นกัน</span></div></li>
+          </ul>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <div class="card-header-icon icon-amber">🌘</div>
+            <h3>การเปลี่ยนแปลงรูปร่างดวงจันทร์</h3>
+          </div>
+          <ul class="topic-list">
+            <li class="topic-item"><span class="topic-bullet">1</span><div class="topic-content"><strong>รูปร่างปรากฏ</strong><span>รูปร่างที่เรามองเห็นจากโลก ไม่ใช่รูปร่างจริงของดวงจันทร์</span></div></li>
+            <li class="topic-item"><span class="topic-bullet">2</span><div class="topic-content"><strong>ดวงจันทร์จริงๆ</strong><span>เป็นทรงกลม มีพื้นผิวเป็นหลุมบ่อจำนวนมาก ไม่มีแสงในตัวเอง</span></div></li>
+            <li class="topic-item"><span class="topic-bullet">3</span><div class="topic-content"><strong>วัฏจักรหนึ่งรอบ</strong><span>ประมาณ 29.5 วัน (ประมาณ 1 เดือน)</span></div></li>
+            <li class="topic-item"><span class="topic-bullet">4</span><div class="topic-content"><strong>วันขึ้น 15 ค่ำ</strong><span>เห็นดวงจันทร์เต็มดวง ท้องฟ้าสว่างที่สุด</span></div></li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Moon phases table -->
+      <div class="card" style="margin-bottom:20px;">
+        <div class="card-header">
+          <div class="card-header-icon icon-navy">🌑</div>
+          <h3>วัฏจักรการเปลี่ยนรูปร่างของดวงจันทร์</h3>
+        </div>
+        <div style="overflow-x:auto;">
+          <table class="compare-table">
+            <thead>
+              <tr><th>วันข้างขึ้น/แรม</th><th>รูปร่าง</th><th>ลักษณะที่เห็น</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>แรม 15 ค่ำ (เดือนดับ)</td><td>🌑</td><td>มองไม่เห็นดวงจันทร์</td></tr>
+              <tr><td>ขึ้น 5 ค่ำ</td><td>🌒</td><td>เสี้ยวเล็กทางขวา</td></tr>
+              <tr><td>ขึ้น 8 ค่ำ</td><td>🌓</td><td>ครึ่งดวงทางขวา</td></tr>
+              <tr><td>ขึ้น 10 ค่ำ</td><td>🌔</td><td>ใกล้เต็มดวง ค้างอยู่ขวา</td></tr>
+              <tr><td>ขึ้น 15 ค่ำ (วันเพ็ญ)</td><td>🌕</td><td>เต็มดวง สว่างที่สุด</td></tr>
+              <tr><td>แรม 5 ค่ำ</td><td>🌖</td><td>ใกล้เต็มดวง ค้างอยู่ซ้าย</td></tr>
+              <tr><td>แรม 8 ค่ำ</td><td>🌗</td><td>ครึ่งดวงทางซ้าย</td></tr>
+              <tr><td>แรม 10 ค่ำ</td><td>🌘</td><td>เสี้ยวเล็กทางซ้าย</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Solar system -->
+      <h3 class="section-title"><span>☀️</span> บทที่ 2: ระบบสุริยะของเรา</h3>
+
+      <div class="card" style="margin-bottom:20px;">
+        <div class="card-header">
+          <div class="card-header-icon icon-amber">☀️</div>
+          <h3>ระบบสุริยะ คืออะไร?</h3>
+        </div>
+        <div class="info-box ib-amber" style="margin-bottom:14px;">
+          <div class="ib-title">ระบบสุริยะ (Solar System)</div>
+          ระบบที่มี <strong>ดวงอาทิตย์เป็นศูนยกลาง</strong> มีดาวเคราะห์ 8 ดวง และบริวารต่างๆ โคจรรอบอยู่ ดาวเคราะห์ที่อยู่ไกลจากดวงอาทิตย์จะใช้เวลาโคจร (คาบการโคจร) มากกว่า
+        </div>
+        <div class="planet-grid">
+          <div class="planet-card">
+            <div class="planet-emoji">☿</div>
+            <div class="planet-name">ดาวพุธ</div>
+            <div class="planet-info">ใกล้ดวงอาทิตย์ที่สุด<br>คาบ: 88 วัน</div>
+          </div>
+          <div class="planet-card">
+            <div class="planet-emoji">♀</div>
+            <div class="planet-name">ดาวศุกร์</div>
+            <div class="planet-info">ร้อนที่สุด<br>คาบ: 225 วัน</div>
+          </div>
+          <div class="planet-card">
+            <div class="planet-emoji">🌍</div>
+            <div class="planet-name">โลก</div>
+            <div class="planet-info">มีสิ่งมีชีวิต<br>คาบ: 365 วัน</div>
+          </div>
+          <div class="planet-card">
+            <div class="planet-emoji">♂</div>
+            <div class="planet-name">ดาวอังคาร</div>
+            <div class="planet-info">ดาวแดง<br>คาบ: 687 วัน</div>
+          </div>
+          <div class="planet-card">
+            <div class="planet-emoji">♃</div>
+            <div class="planet-name">ดาวพฤหัสบดี</div>
+            <div class="planet-info">ใหญ่ที่สุด<br>คาบ: 12 ปี</div>
+          </div>
+          <div class="planet-card">
+            <div class="planet-emoji">♄</div>
+            <div class="planet-name">ดาวเสาร์</div>
+            <div class="planet-info">มีวงแหวน<br>คาบ: 29 ปี</div>
+          </div>
+          <div class="planet-card">
+            <div class="planet-emoji">♅</div>
+            <div class="planet-name">ดาวยูเรนัส</div>
+            <div class="planet-info">หมุนตะแคง<br>คาบ: 84 ปี</div>
+          </div>
+          <div class="planet-card">
+            <div class="planet-emoji">♆</div>
+            <div class="planet-name">ดาวเนปจูน</div>
+            <div class="planet-info">ไกลที่สุด<br>คาบ: 165 ปี</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="content-grid">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-header-icon icon-sky">🔭</div>
+            <h3>ดาวเคราะห์ vs ดาวฤกษ์</h3>
+          </div>
+          <ul class="topic-list">
+            <li class="topic-item"><span class="topic-bullet">1</span><div class="topic-content"><strong>ดาวฤกษ์ (เช่น ดวงอาทิตย์)</strong><span>มีแสงสว่างในตัวเอง เป็นก้อนพลังงานมหาศาล</span></div></li>
+            <li class="topic-item"><span class="topic-bullet">2</span><div class="topic-content"><strong>ดาวเคราะห์ (เช่น โลก)</strong><span>ไม่มีแสงในตัวเอง สะท้อนแสงจากดวงอาทิตย์ โคจรรอบดวงอาทิตย์</span></div></li>
+            <li class="topic-item"><span class="topic-bullet">3</span><div class="topic-content"><strong>ดาวเคราะห์แคระ</strong><span>เช่น พลูโต มีขนาดเล็กกว่าดาวเคราะห์ทั่วไป</span></div></li>
+            <li class="topic-item"><span class="topic-bullet">4</span><div class="topic-content"><strong>ดาวหาง</strong><span>มีหาง เป็นก้อนน้ำแข็งและฝุ่น โคจรรอบดวงอาทิตย์</span></div></li>
+          </ul>
+        </div>
+        <div class="card">
+          <div class="card-header">
+            <div class="card-header-icon icon-violet">🪐</div>
+            <h3>คาบการโคจร (Period)</h3>
+          </div>
+          <div class="info-box ib-violet">
+            <div class="ib-title">คาบการโคจร คือ</div>
+            เวลาที่ดาวเคราะห์ใช้ในการโคจรรอบดวงอาทิตย์ครบ 1 รอบ
+          </div>
+          <ul class="topic-list">
+            <li class="topic-item"><span class="topic-bullet">📏</span><div class="topic-content"><strong>ยิ่งไกลดวงอาทิตย์</strong><span>ยิ่งใช้เวลานานขึ้น เพราะเส้นทางยาวกว่าและเคลื่อนที่ช้ากว่า</span></div></li>
+            <li class="topic-item"><span class="topic-bullet">⚡</span><div class="topic-content"><strong>ดาวพุธเร็วที่สุด</strong><span>88 วันต่อรอบ ใกล้ดวงอาทิตย์มากที่สุด</span></div></li>
+            <li class="topic-item"><span class="topic-bullet">🐢</span><div class="topic-content"><strong>ดาวเนปจูนช้าที่สุด</strong><span>165 ปีต่อรอบ ไกลดวงอาทิตย์มากที่สุด</span></div></li>
+          </ul>
+        </div>
+      </div>
+    </div><!-- /u5 -->
+  </section>
+
+  <!-- ══════════════════════════════════════
+       SECTION: แบบทดสอบก่อนเรียน (20 ข้อ)
+  ══════════════════════════════════════ -->
+  <section id="pre-quiz" class="section-panel">
+    <div class="quiz-wrapper">
+      <div class="quiz-intro">
+        <div style="font-size:2.5rem;margin-bottom:8px;">📝</div>
+        <h2>แบบทดสอบก่อนเรียน</h2>
+        <p>หน่วยที่ 4-5 · จำนวน 20 ข้อ · ไม่มีเวลาจำกัด<br>ทำเพื่อประเมินความรู้เดิมของตนเอง</p>
+        <button class="quiz-btn" onclick="startQuiz('pre')">เริ่มทำแบบทดสอบ ›</button>
+      </div>
+      <div id="pre-quiz-area" class="quiz-area">
+        <div class="quiz-progress">
+          <div class="progress-bar-outer"><div id="pre-prog-bar" class="progress-bar-inner" style="width:5%"></div></div>
+          <span id="pre-prog-label" class="progress-label">ข้อ 1/20</span>
+        </div>
+        <div id="pre-q-card" class="quiz-q-card"></div>
+        <div class="quiz-nav">
+          <button id="pre-check-btn" class="q-btn q-btn-primary" onclick="checkAnswer('pre')">ตรวจคำตอบ</button>
+          <button id="pre-next-btn" class="q-btn q-btn-secondary" onclick="nextQ('pre')" disabled>ต่อไป ›</button>
+        </div>
+      </div>
+      <div id="pre-result" class="quiz-result"></div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════
+       SECTION: แบบฝึกหัด
+  ══════════════════════════════════════ -->
+  <section id="exercises" class="section-panel">
+    <div class="unit-selector">
+      <button class="unit-btn active" onclick="showExUnit('ex4')">🧪 หน่วยที่ 4</button>
+      <button class="unit-btn" onclick="showExUnit('ex5')">🌍 หน่วยที่ 5</button>
+    </div>
+
+    <div id="ex4" class="unit-content active">
+      <div class="card" style="margin-bottom:20px;">
+        <div class="card-header">
+          <div class="card-header-icon icon-sky">📝</div>
+          <h3>แบบฝึกหัด: สมบัติทางกายภาพของวัสดุ</h3>
+        </div>
+        <ol class="exercise-list">
+          <li class="exercise-item">
+            <div>
+              จงเรียงลำดับวัสดุต่อไปนี้จากความแข็งมากไปน้อย: ไม้ กระจก เหล็ก พลาสติก อะลูมิเนียม
+              <div class="answer-reveal">
+                <button class="answer-btn" onclick="toggleAnswer(this)">แสดงคำตอบ</button>
+                <div class="answer-box">กระจก → เหล็ก → อะลูมิเนียม → พลาสติก → ไม้</div>
+              </div>
+            </div>
+          </li>
+          <li class="exercise-item">
+            <div>
+              วัสดุชนิดใดมีสภาพยืดหยุ่น และวัสดุชนิดใดไม่มี จงให้ตัวอย่างอย่างละ 3 ชนิด
+              <div class="answer-reveal">
+                <button class="answer-btn" onclick="toggleAnswer(this)">แสดงคำตอบ</button>
+                <div class="answer-box">มีสภาพยืดหยุ่น: ยาง, ฟองน้ำ, ลวดสปริง | ไม่มีสภาพยืดหยุ่น: ไม้, เหล็ก, ดินน้ำมัน</div>
+              </div>
+            </div>
+          </li>
+          <li class="exercise-item">
+            <div>
+              เหตุใดด้ามหม้อจึงมักทำจากพลาสติกหรือไม้ ไม่ทำจากเหล็ก?
+              <div class="answer-reveal">
+                <button class="answer-btn" onclick="toggleAnswer(this)">แสดงคำตอบ</button>
+                <div class="answer-box">พลาสติกและไม้นำความร้อนได้ไม่ดี ทำให้จับแล้วไม่ร้อน ปลอดภัยกว่าเหล็กซึ่งนำความร้อนได้ดี</div>
+              </div>
+            </div>
+          </li>
+          <li class="exercise-item">
+            <div>
+              สายไฟในบ้านทำจากทองแดงหุ้มด้วยพลาสติก เพราะเหตุใด?
+              <div class="answer-reveal">
+                <button class="answer-btn" onclick="toggleAnswer(this)">แสดงคำตอบ</button>
+                <div class="answer-box">ทองแดงนำไฟฟ้าได้ดี จึงใช้ส่งกระแสไฟฟ้า พลาสติกเป็นฉนวนไม่นำไฟฟ้า ป้องกันไฟฟ้าดูดและไฟรั่ว</div>
+              </div>
+            </div>
+          </li>
+          <li class="exercise-item">
+            <div>
+              ถ้านำแผ่นอะลูมิเนียมมาขูดขีดกับแผ่นพลาสติก วัสดุชนิดใดจะเกิดรอย เพราะเหตุใด?
+              <div class="answer-reveal">
+                <button class="answer-btn" onclick="toggleAnswer(this)">แสดงคำตอบ</button>
+                <div class="answer-box">พลาสติกจะเกิดรอย เพราะอะลูมิเนียมมีความแข็งมากกว่าพลาสติก วัสดุที่แข็งน้อยกว่าจะเกิดรอย</div>
+              </div>
+            </div>
+          </li>
+        </ol>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-header-icon icon-amber">📝</div>
+          <h3>แบบฝึกหัด: สถานะของสสาร</h3>
+        </div>
+        <ol class="exercise-list">
+          <li class="exercise-item">
+            <div>
+              จงระบุว่าสิ่งต่อไปนี้อยู่ในสถานะใด: อากาศ / น้ำแข็ง / น้ำมันพืช / ลูกหิน / ไอน้ำ
+              <div class="answer-reveal">
+                <button class="answer-btn" onclick="toggleAnswer(this)">แสดงคำตอบ</button>
+                <div class="answer-box">อากาศ=แก๊ส / น้ำแข็ง=ของแข็ง / น้ำมันพืช=ของเหลว / ลูกหิน=ของแข็ง / ไอน้ำ=แก๊ส</div>
+              </div>
+            </div>
+          </li>
+          <li class="exercise-item">
+            <div>
+              ทำไมของเหลวจึงรักษาระดับผิวหน้าสม่ำเสมอเสมอ แม้จะเอียงภาชนะ?
+              <div class="answer-reveal">
+                <button class="answer-btn" onclick="toggleAnswer(this)">แสดงคำตอบ</button>
+                <div class="answer-box">เพราะของเหลวไม่มีรูปร่างคงที่ จะเปลี่ยนรูปตามภาชนะเสมอ และแรงโน้มถ่วงดึงของเหลวให้ระดับเสมอกัน</div>
+              </div>
+            </div>
+          </li>
+          <li class="exercise-item">
+            <div>
+              เมื่อเป่าลมเข้าลูกโป่ง ลูกโป่งจะขยายตัว แสดงให้เห็นสมบัติข้อใดของแก๊ส?
+              <div class="answer-reveal">
+                <button class="answer-btn" onclick="toggleAnswer(this)">แสดงคำตอบ</button>
+                <div class="answer-box">แก๊สต้องการที่อยู่ (มีปริมาตร) และแก๊สไม่มีรูปร่างคงที่ จะแผ่กระจายเต็มภาชนะที่บรรจุ</div>
+              </div>
+            </div>
+          </li>
+          <li class="exercise-item">
+            <div>
+              ของแข็ง ของเหลว และแก๊ส มีสมบัติที่เหมือนกันอย่างไรบ้าง?
+              <div class="answer-reveal">
+                <button class="answer-btn" onclick="toggleAnswer(this)">แสดงคำตอบ</button>
+                <div class="answer-box">ทั้ง 3 สถานะมีมวล (ชั่งน้ำหนักได้) และต้องการที่อยู่ (มีปริมาตร)</div>
+              </div>
+            </div>
+          </li>
+          <li class="exercise-item">
+            <div>
+              จงยกตัวอย่างสสารที่เราพบในชีวิตประจำวันที่มีทั้ง 3 สถานะ และบอกว่าแต่ละสถานะเกิดขึ้นในสถานการณ์ใด
+              <div class="answer-reveal">
+                <button class="answer-btn" onclick="toggleAnswer(this)">แสดงคำตอบ</button>
+                <div class="answer-box">น้ำ: ของแข็ง=น้ำแข็ง (อุณหภูมิต่ำกว่า 0°C), ของเหลว=น้ำธรรมดา, แก๊ส=ไอน้ำ (เมื่อน้ำเดือดที่ 100°C)</div>
+              </div>
+            </div>
+          </li>
+        </ol>
+      </div>
+    </div>
+
+    <div id="ex5" class="unit-content">
+      <div class="card" style="margin-bottom:20px;">
+        <div class="card-header">
+          <div class="card-header-icon icon-sky">📝</div>
+          <h3>แบบฝึกหัด: ดวงจันทร์ของเรา</h3>
+        </div>
+        <ol class="exercise-list">
+          <li class="exercise-item">
+            <div>
+              ปรากฏการณ์การขึ้นและตกของดวงจันทร์เกิดขึ้นเพราะเหตุใด?
+              <div class="answer-reveal">
+                <button class="answer-btn" onclick="toggleAnswer(this)">แสดงคำตอบ</button>
+                <div class="answer-box">เกิดจากโลกหมุนรอบตัวเองจากทิศตะวันตกไปทิศตะวันออก ทำให้คนบนโลกมองเห็นดวงจันทร์เหมือนเคลื่อนที่บนท้องฟ้า โดยขึ้นทางทิศตะวันออกและตกทางทิศตะวันตก</div>
+              </div>
+            </div>
+          </li>
+          <li class="exercise-item">
+            <div>
+              ในวันขึ้น 15 ค่ำ ดวงจันทร์มีรูปร่างปรากฏเป็นอย่างไร เพราะเหตุใดจึงสว่างที่สุด?
+              <div class="answer-reveal">
+                <button class="answer-btn" onclick="toggleAnswer(this)">แสดงคำตอบ</button>
+                <div class="answer-box">วันขึ้น 15 ค่ำ ดวงจันทร์มีรูปร่างเต็มดวง เพราะในตำแหน่งนี้ด้านที่หันเข้าหาโลกได้รับแสงจากดวงอาทิตย์เต็มพื้นที่ สว่างที่สุด</div>
+              </div>
+            </div>
+          </li>
+          <li class="exercise-item">
+            <div>
+              ดวงจันทร์มีรูปร่างจริงๆ เป็นอย่างไร แล้วทำไมรูปร่างที่เรามองเห็นถึงเปลี่ยนแปลงทุกวัน?
+              <div class="answer-reveal">
+                <button class="answer-btn" onclick="toggleAnswer(this)">แสดงคำตอบ</button>
+                <div class="answer-box">ดวงจันทร์มีรูปร่างเป็นทรงกลม รูปร่างที่เปลี่ยนไปเป็นรูปร่างปรากฏ เกิดจากการที่ดวงจันทร์โคจรรอบโลก ทำให้พื้นที่ที่ได้รับแสงจากดวงอาทิตย์ที่มองเห็นจากโลกเปลี่ยนแปลงไปทุกวัน</div>
+              </div>
+            </div>
+          </li>
+          <li class="exercise-item">
+            <div>
+              หนึ่งวัฏจักรของการเปลี่ยนแปลงรูปร่างดวงจันทร์ใช้เวลาประมาณกี่วัน?
+              <div class="answer-reveal">
+                <button class="answer-btn" onclick="toggleAnswer(this)">แสดงคำตอบ</button>
+                <div class="answer-box">ประมาณ 29.5 วัน (ประมาณ 1 เดือน)</div>
+              </div>
+            </div>
+          </li>
+          <li class="exercise-item">
+            <div>
+              ถ้าต้องการสังเกตดาวบนท้องฟ้าให้ชัดเจน ควรเลือกสังเกตในวันใด เพราะเหตุใด?
+              <div class="answer-reveal">
+                <button class="answer-btn" onclick="toggleAnswer(this)">แสดงคำตอบ</button>
+                <div class="answer-box">ควรสังเกตในวันแรมที่ดวงจันทร์มีขนาดเล็กหรือมองไม่เห็น (เดือนมืด) เพราะท้องฟ้ามืดกว่า ดาวจึงเห็นชัดขึ้น</div>
+              </div>
+            </div>
+          </li>
+        </ol>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-header-icon icon-amber">📝</div>
+          <h3>แบบฝึกหัด: ระบบสุริยะ</h3>
+        </div>
+        <ol class="exercise-list">
+          <li class="exercise-item">
+            <div>
+              ระบบสุริยะประกอบด้วยอะไรบ้าง? ดาวเคราะห์มีทั้งหมดกี่ดวง อะไรบ้าง?
+              <div class="answer-reveal">
+                <button class="answer-btn" onclick="toggleAnswer(this)">แสดงคำตอบ</button>
+                <div class="answer-box">ประกอบด้วย ดวงอาทิตย์ (ศูนยกลาง) ดาวเคราะห์ 8 ดวง (ดาวพุธ ดาวศุกร์ โลก ดาวอังคาร ดาวพฤหัสบดี ดาวเสาร์ ดาวยูเรนัส ดาวเนปจูน) พร้อมดวงจันทร์บริวาร ดาวเคราะห์แคระ ดาวเคราะห์น้อย และดาวหาง</div>
+              </div>
+            </div>
+          </li>
+          <li class="exercise-item">
+            <div>
+              ดาวเคราะห์กับดาวฤกษ์ต่างกันอย่างไร?
+              <div class="answer-reveal">
+                <button class="answer-btn" onclick="toggleAnswer(this)">แสดงคำตอบ</button>
+                <div class="answer-box">ดาวฤกษ์มีแสงสว่างในตัวเอง (เช่น ดวงอาทิตย์) ส่วนดาวเคราะห์ไม่มีแสงในตัวเอง แต่สะท้อนแสงจากดวงอาทิตย์ และโคจรรอบดวงอาทิตย์</div>
+              </div>
+            </div>
+          </li>
+          <li class="exercise-item">
+            <div>
+              เพราะเหตุใดดาวเนปจูนจึงใช้เวลาโคจรรอบดวงอาทิตย์นานกว่าโลกมาก?
+              <div class="answer-reveal">
+                <button class="answer-btn" onclick="toggleAnswer(this)">แสดงคำตอบ</button>
+                <div class="answer-box">เพราะดาวเนปจูนอยู่ไกลจากดวงอาทิตย์มากกว่าโลก ทำให้วงโคจรยาวกว่า อีกทั้งยังเคลื่อนที่ช้ากว่าโลก ดังนั้นจึงใช้เวลา 165 ปีต่อ 1 รอบ</div>
+              </div>
+            </div>
+          </li>
+          <li class="exercise-item">
+            <div>
+              จงเรียงลำดับดาวเคราะห์จากใกล้ดวงอาทิตย์ที่สุดไปไกลที่สุด
+              <div class="answer-reveal">
+                <button class="answer-btn" onclick="toggleAnswer(this)">แสดงคำตอบ</button>
+                <div class="answer-box">ดาวพุธ → ดาวศุกร์ → โลก → ดาวอังคาร → ดาวพฤหัสบดี → ดาวเสาร์ → ดาวยูเรนัส → ดาวเนปจูน</div>
+              </div>
+            </div>
+          </li>
+          <li class="exercise-item">
+            <div>
+              ดาวพฤหัสบดีมีขนาดใหญ่ที่สุดในระบบสุริยะหรือไม่? วัตถุใดในระบบสุริยะที่ใหญ่ที่สุด?
+              <div class="answer-reveal">
+                <button class="answer-btn" onclick="toggleAnswer(this)">แสดงคำตอบ</button>
+                <div class="answer-box">ดาวพฤหัสบดีเป็นดาวเคราะห์ที่ใหญ่ที่สุด แต่วัตถุที่ใหญ่ที่สุดในระบบสุริยะคือดวงอาทิตย์ ซึ่งมีมวลมากที่สุด</div>
+              </div>
+            </div>
+          </li>
+        </ol>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════
+       SECTION: บัตรคำ
+  ══════════════════════════════════════ -->
+  <section id="vocab" class="section-panel">
+    <div class="unit-selector">
+      <button class="unit-btn active" onclick="showVocabUnit('vc4')">🧪 หน่วยที่ 4</button>
+      <button class="unit-btn" onclick="showVocabUnit('vc5')">🌍 หน่วยที่ 5</button>
+    </div>
+
+    <div id="vc4" class="unit-content active">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-header-icon icon-sky">🃏</div>
+          <h3>บัตรคำ หน่วยที่ 4: วัสดุและสสาร</h3>
+        </div>
+
+        <div class="vocab-level-header vh-easy">🟢 แถบที่ 1: ง่าย</div>
+        <div class="vocab-strip">
+          <div class="vocab-card vc-easy"><span class="thai">วัสดุ (Material)</span><span class="meaning">สิ่งที่นำมาทำเป็นวัตถุหรือสิ่งของต่างๆ</span></div>
+          <div class="vocab-card vc-easy"><span class="thai">ของแข็ง (Solid)</span><span class="meaning">สสารที่มีรูปร่างและปริมาตรคงที่</span></div>
+          <div class="vocab-card vc-easy"><span class="thai">ของเหลว (Liquid)</span><span class="meaning">สสารที่มีปริมาตรคงที่แต่รูปร่างไม่คงที่</span></div>
+          <div class="vocab-card vc-easy"><span class="thai">แก๊ส (Gas)</span><span class="meaning">สสารที่ไม่มีรูปร่างและปริมาตรคงที่</span></div>
+          <div class="vocab-card vc-easy"><span class="thai">มวล (Mass)</span><span class="meaning">ปริมาณของสสารในวัตถุ ชั่งน้ำหนักได้</span></div>
+          <div class="vocab-card vc-easy"><span class="thai">ปริมาตร (Volume)</span><span class="meaning">พื้นที่ที่วัตถุหรือสสารครอบครอง</span></div>
+          <div class="vocab-card vc-easy"><span class="thai">สมบัติ (Property)</span><span class="meaning">ลักษณะเฉพาะตัวของสิ่ง ใช้บ่งบอกชนิดได้</span></div>
+          <div class="vocab-card vc-easy"><span class="thai">ความแข็ง (Hardness)</span><span class="meaning">ความทนทานต่อการขูดขีดของวัสดุ</span></div>
+          <div class="vocab-card vc-easy"><span class="thai">ฉนวนไฟฟ้า (Insulator)</span><span class="meaning">วัสดุที่ไม่ยอมให้กระแสไฟฟ้าไหลผ่าน</span></div>
+          <div class="vocab-card vc-easy"><span class="thai">ตัวนำไฟฟ้า (Conductor)</span><span class="meaning">วัสดุที่ยอมให้กระแสไฟฟ้าไหลผ่านได้</span></div>
+        </div>
+
+        <div class="vocab-level-header vh-mid">🟡 แถบที่ 2: กลาง</div>
+        <div class="vocab-strip">
+          <div class="vocab-card vc-mid"><span class="thai">สภาพยืดหยุ่น (Elasticity)</span><span class="meaning">ความสามารถของวัสดุในการคืนรูปร่างเดิมหลังได้รับแรง</span></div>
+          <div class="vocab-card vc-mid"><span class="thai">การนำความร้อน (Thermal Conductivity)</span><span class="meaning">ความสามารถในการถ่ายโอนความร้อนผ่านวัสดุ</span></div>
+          <div class="vocab-card vc-mid"><span class="thai">การถ่ายโอนความร้อน (Heat Transfer)</span><span class="meaning">การเคลื่อนที่ของพลังงานความร้อนจากที่ร้อนไปที่เย็น</span></div>
+          <div class="vocab-card vc-mid"><span class="thai">หมดสภาพยืดหยุ่น (Plastic deformation)</span><span class="meaning">เมื่อวัสดุได้รับแรงมากเกินจนไม่กลับรูปเดิม</span></div>
+          <div class="vocab-card vc-mid"><span class="thai">สถานะ (State)</span><span class="meaning">รูปแบบการดำรงอยู่ของสสาร มี 3 สถานะ</span></div>
+          <div class="vocab-card vc-mid"><span class="thai">อุณหภูมิ (Temperature)</span><span class="meaning">ระดับความร้อนของวัตถุ วัดด้วยเทอร์โมมิเตอร์</span></div>
+          <div class="vocab-card vc-mid"><span class="thai">ผิวหน้าของเหลว (Surface Level)</span><span class="meaning">ระดับบนสุดของของเหลวที่รักษาตัวเองให้เสมอกัน</span></div>
+          <div class="vocab-card vc-mid"><span class="thai">สสาร (Matter)</span><span class="meaning">สิ่งที่มีมวลและต้องการที่อยู่ ประกอบด้วยอนุภาค</span></div>
+          <div class="vocab-card vc-mid"><span class="thai">การขูดขีด (Scratching)</span><span class="meaning">วิธีทดสอบความแข็งของวัสดุโดยนำมาขูดกัน</span></div>
+          <div class="vocab-card vc-mid"><span class="thai">แรงกระทำ (Applied Force)</span><span class="meaning">แรงที่ออกแรงกระทำต่อวัตถุ ทำให้เปลี่ยนแปลง</span></div>
+        </div>
+
+        <div class="vocab-level-header vh-hard">🔴 แถบที่ 3: ยาก</div>
+        <div class="vocab-strip">
+          <div class="vocab-card vc-hard"><span class="thai">สมบัติทางกายภาพ (Physical Property)</span><span class="meaning">สมบัติที่สังเกตหรือวัดได้โดยไม่เปลี่ยนแปลงเนื้อสาร</span></div>
+          <div class="vocab-card vc-hard"><span class="thai">Moh's Scale</span><span class="meaning">มาตรวัดความแข็งของแร่ที่พัฒนาโดย Friedrich Mohs</span></div>
+          <div class="vocab-card vc-hard"><span class="thai">การพาความร้อน (Convection)</span><span class="meaning">การถ่ายโอนความร้อนผ่านของเหลวหรือแก๊สที่เคลื่อนที่</span></div>
+          <div class="vocab-card vc-hard"><span class="thai">การแผ่รังสีความร้อน (Radiation)</span><span class="meaning">การถ่ายโอนความร้อนในรูปคลื่นแม่เหล็กไฟฟ้า ไม่ต้องอาศัยตัวกลาง</span></div>
+          <div class="vocab-card vc-hard"><span class="thai">ตัวแปรต้น (Independent Variable)</span><span class="meaning">ตัวแปรที่เปลี่ยนแปลงในการทดลอง</span></div>
+          <div class="vocab-card vc-hard"><span class="thai">ตัวแปรตาม (Dependent Variable)</span><span class="meaning">ตัวแปรที่เกิดการเปลี่ยนแปลงตามตัวแปรต้น</span></div>
+          <div class="vocab-card vc-hard"><span class="thai">ตัวแปรควบคุม (Controlled Variable)</span><span class="meaning">ตัวแปรที่ต้องทำให้คงที่ในการทดลอง</span></div>
+          <div class="vocab-card vc-hard"><span class="thai">สมมติฐาน (Hypothesis)</span><span class="meaning">คำตอบที่คาดเดาล่วงหน้าก่อนทำการทดลอง</span></div>
+          <div class="vocab-card vc-hard"><span class="thai">หลักฐานเชิงประจักษ์ (Empirical Evidence)</span><span class="meaning">ข้อมูลที่ได้จากการสังเกตหรือทดลองจริง</span></div>
+          <div class="vocab-card vc-hard"><span class="thai">กระบวนการทางวิทยาศาสตร์ (Scientific Process)</span><span class="meaning">ขั้นตอนการสืบเสาะหาความรู้อย่างเป็นระบบ</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div id="vc5" class="unit-content">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-header-icon icon-sky">🃏</div>
+          <h3>บัตรคำ หน่วยที่ 5: โลกและอวกาศ</h3>
+        </div>
+
+        <div class="vocab-level-header vh-easy">🟢 แถบที่ 1: ง่าย</div>
+        <div class="vocab-strip">
+          <div class="vocab-card vc-easy"><span class="thai">ดวงจันทร์ (Moon)</span><span class="meaning">บริวารของโลก โคจรรอบโลก</span></div>
+          <div class="vocab-card vc-easy"><span class="thai">ดวงอาทิตย์ (Sun)</span><span class="meaning">ดาวฤกษ์ศูนยกลางของระบบสุริยะ</span></div>
+          <div class="vocab-card vc-easy"><span class="thai">ดาวเคราะห์ (Planet)</span><span class="meaning">ดาวที่โคจรรอบดวงอาทิตย์ ไม่มีแสงในตัวเอง</span></div>
+          <div class="vocab-card vc-easy"><span class="thai">โคจร (Orbit)</span><span class="meaning">การเคลื่อนที่รอบวัตถุอื่นเป็นวงรี</span></div>
+          <div class="vocab-card vc-easy"><span class="thai">ระบบสุริยะ (Solar System)</span><span class="meaning">ระบบที่มีดวงอาทิตย์เป็นศูนยกลาง</span></div>
+          <div class="vocab-card vc-easy"><span class="thai">วันขึ้น 15 ค่ำ (Full Moon)</span><span class="meaning">วันที่มองเห็นดวงจันทร์เต็มดวง</span></div>
+          <div class="vocab-card vc-easy"><span class="thai">ทิศตะวันออก (East)</span><span class="meaning">ทิศที่ดวงอาทิตย์และดวงจันทร์ขึ้น</span></div>
+          <div class="vocab-card vc-easy"><span class="thai">ทิศตะวันตก (West)</span><span class="meaning">ทิศที่ดวงอาทิตย์และดวงจันทร์ตก</span></div>
+          <div class="vocab-card vc-easy"><span class="thai">ดาวฤกษ์ (Star)</span><span class="meaning">ดาวที่มีแสงสว่างในตัวเอง เช่น ดวงอาทิตย์</span></div>
+          <div class="vocab-card vc-easy"><span class="thai">อวกาศ (Space)</span><span class="meaning">บริเวณที่อยู่นอกชั้นบรรยากาศโลก</span></div>
+        </div>
+
+        <div class="vocab-level-header vh-mid">🟡 แถบที่ 2: กลาง</div>
+        <div class="vocab-strip">
+          <div class="vocab-card vc-mid"><span class="thai">รูปร่างปรากฏ (Apparent Shape)</span><span class="meaning">รูปร่างที่เรามองเห็นจากโลก ไม่ใช่รูปร่างจริง</span></div>
+          <div class="vocab-card vc-mid"><span class="thai">วัฏจักร (Cycle)</span><span class="meaning">การเปลี่ยนแปลงที่เกิดซ้ำในรูปแบบเดิม</span></div>
+          <div class="vocab-card vc-mid"><span class="thai">คาบการโคจร (Orbital Period)</span><span class="meaning">เวลาที่ดาวเคราะห์ใช้โคจรรอบดวงอาทิตย์ครบ 1 รอบ</span></div>
+          <div class="vocab-card vc-mid"><span class="thai">ปรากฏการณ์ (Phenomenon)</span><span class="meaning">สิ่งที่สำแดงหรือแสดงออกมาให้เห็นได้</span></div>
+          <div class="vocab-card vc-mid"><span class="thai">การหมุนรอบตัวเอง (Rotation)</span><span class="meaning">การที่โลกหมุนรอบแกนของตัวเองใช้เวลา 24 ชั่วโมง</span></div>
+          <div class="vocab-card vc-mid"><span class="thai">แบบรูป (Pattern)</span><span class="meaning">การเปลี่ยนแปลงที่เกิดซ้ำในรูปแบบที่คาดเดาได้</span></div>
+          <div class="vocab-card vc-mid"><span class="thai">วงโคจร (Orbit Path)</span><span class="meaning">เส้นทางที่ดาวเคราะห์โคจรรอบดวงอาทิตย์ เป็นวงรี</span></div>
+          <div class="vocab-card vc-mid"><span class="thai">ดาวเคราะห์แคระ (Dwarf Planet)</span><span class="meaning">วัตถุขนาดเล็กที่โคจรรอบดวงอาทิตย์ เช่น พลูโต</span></div>
+          <div class="vocab-card vc-mid"><span class="thai">ดาวหาง (Comet)</span><span class="meaning">ก้อนน้ำแข็งและฝุ่นที่โคจรรอบดวงอาทิตย์ มีหาง</span></div>
+          <div class="vocab-card vc-mid"><span class="thai">บริวาร (Satellite)</span><span class="meaning">วัตถุที่โคจรรอบดาวเคราะห์ เช่น ดวงจันทร์โคจรรอบโลก</span></div>
+        </div>
+
+        <div class="vocab-level-header vh-hard">🔴 แถบที่ 3: ยาก</div>
+        <div class="vocab-strip">
+          <div class="vocab-card vc-hard"><span class="thai">ดาราศาสตร์ (Astronomy)</span><span class="meaning">วิทยาศาสตร์ที่ศึกษาเกี่ยวกับวัตถุในอวกาศ</span></div>
+          <div class="vocab-card vc-hard"><span class="thai">กาแล็กซี (Galaxy)</span><span class="meaning">กลุ่มดาวฤกษ์หลายพันล้านดวงรวมกัน เช่น ทางช้างเผือก</span></div>
+          <div class="vocab-card vc-hard"><span class="thai">ทางช้างเผือก (Milky Way)</span><span class="meaning">กาแล็กซีที่ระบบสุริยะของเราตั้งอยู่</span></div>
+          <div class="vocab-card vc-hard"><span class="thai">แบบจำลอง (Model)</span><span class="meaning">การแสดงแทนสิ่งที่ซับซ้อนหรือมองไม่เห็น</span></div>
+          <div class="vocab-card vc-hard"><span class="thai">ดาวเคราะห์น้อย (Asteroid)</span><span class="meaning">วัตถุหินขนาดเล็กที่โคจรรอบดวงอาทิตย์</span></div>
+          <div class="vocab-card vc-hard"><span class="thai">การโคจรรอบดวงอาทิตย์ (Revolution)</span><span class="meaning">การเคลื่อนที่ของโลกรอบดวงอาทิตย์ใช้เวลา 365 วัน</span></div>
+          <div class="vocab-card vc-hard"><span class="thai">พยากรณ์ (Predict)</span><span class="meaning">การคาดเดาเหตุการณ์ในอนาคตจากข้อมูลที่มี</span></div>
+          <div class="vocab-card vc-hard"><span class="thai">หลักฐานเชิงประจักษ์ (Empirical Evidence)</span><span class="meaning">ข้อมูลที่ได้จากการสังเกตหรือทดลองของจริง</span></div>
+          <div class="vocab-card vc-hard"><span class="thai">ตัวแปร (Variable)</span><span class="meaning">สิ่งที่สามารถเปลี่ยนแปลงได้ในการทดลอง</span></div>
+          <div class="vocab-card vc-hard"><span class="thai">วิทยาศาสตร์กระบวนการ (Process Science)</span><span class="meaning">กระบวนการสืบเสาะหาความรู้อย่างมีระบบของนักวิทยาศาสตร์</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════
+       SECTION: Mind Map
+  ══════════════════════════════════════ -->
+  <section id="mindmap" class="section-panel">
+    <div class="unit-selector">
+      <button class="unit-btn active" onclick="showMMUnit('mm4')">🧪 หน่วยที่ 4</button>
+      <button class="unit-btn" onclick="showMMUnit('mm5')">🌍 หน่วยที่ 5</button>
+    </div>
+
+    <div id="mm4" class="unit-content active">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-header-icon icon-sky">🗺️</div>
+          <h3>Mind Map: หน่วยที่ 4 วัสดุและสสาร</h3>
+        </div>
+        <div class="mindmap-container">
+          <div class="mm-center">📦 วัสดุและสสาร</div>
+          <div class="mm-branches">
+            <div class="mm-branch mm-sky">
+              <div class="mm-branch-title">💎 ความแข็ง</div>
+              <div class="mm-leaf">• ความทนทานต่อการขูดขีด<br>• ทดสอบโดยขูดขีดกัน<br>• กระจก > เหล็ก > อะลูมิเนียม<br>• > พลาสติก > ไม้<br>• ประโยชน์: มีดตัดกระจก (เพชร)</div>
+            </div>
+            <div class="mm-branch mm-amber">
+              <div class="mm-branch-title">🌀 สภาพยืดหยุ่น</div>
+              <div class="mm-leaf">• เปลี่ยนรูปเมื่อรับแรง กลับเดิมเมื่อหยุด<br>• มี: ยาง ฟองน้ำ สปริง<br>• ไม่มี: ไม้ เหล็ก ดินน้ำมัน<br>• หมดสภาพยืดหยุ่น: รับแรงมากเกินไป<br>• ประโยชน์: ลูกบอล ยางรถยนต์</div>
+            </div>
+            <div class="mm-branch mm-rose">
+              <div class="mm-branch-title">🌡️ การนำความร้อน</div>
+              <div class="mm-leaf">• ถ่ายโอนความร้อนผ่านอนุภาค<br>• นำได้ดี: โลหะ (เหล็ก ทองแดง)<br>• นำได้ไม่ดี: ไม้ พลาสติก ยาง<br>• ประโยชน์: กระทะ ด้ามหม้อ<br>• การถ่ายโอน 3 แบบ: นำ พา แผ่</div>
+            </div>
+            <div class="mm-branch mm-emerald">
+              <div class="mm-branch-title">⚡ การนำไฟฟ้า</div>
+              <div class="mm-leaf">• นำได้: โลหะส่วนใหญ่<br>• นำไม่ได้ (ฉนวน): ยาง พลาสติก<br>• ทดสอบ: วงจรไฟฟ้าอย่างง่าย<br>• สายไฟ: ทองแดง + พลาสติก<br>• ประโยชน์: ปลั๊กไฟ สวิทช์</div>
+            </div>
+            <div class="mm-branch mm-violet">
+              <div class="mm-branch-title">🧊 ของแข็ง</div>
+              <div class="mm-leaf">• มีมวล ต้องการที่อยู่<br>• รูปร่างคงที่ ปริมาตรคงที่<br>• ตัวอย่าง: หิน เหล็ก น้ำแข็ง<br>• อนุภาคอยู่ชิดกัน สั่นได้</div>
+            </div>
+            <div class="mm-branch mm-navy2">
+              <div class="mm-branch-title">💧 ของเหลว & แก๊ส</div>
+              <div class="mm-leaf">• ของเหลว: รูปร่างไม่คงที่ ปริมาตรคงที่<br>• แก๊ส: รูปร่างไม่คงที่ ปริมาตรไม่คงที่<br>• ทั้ง 3 สถานะ: มีมวล + ต้องการที่อยู่<br>• น้ำ: ของแข็ง → เหลว → แก๊สได้</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="mm5" class="unit-content">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-header-icon icon-sky">🗺️</div>
+          <h3>Mind Map: หน่วยที่ 5 โลกและอวกาศ</h3>
+        </div>
+        <div class="mindmap-container" style="background: linear-gradient(135deg, #f0f4ff 0%, #e0e8ff 100%); border-color: #a5b4fc;">
+          <div class="mm-center" style="background: #1a1a2e;">🌌 โลกและอวกาศ</div>
+          <div class="mm-branches">
+            <div class="mm-branch mm-sky">
+              <div class="mm-branch-title">🌙 การขึ้นตกของดวงจันทร์</div>
+              <div class="mm-leaf">• เกิดจากโลกหมุนรอบตัวเอง<br>• ขึ้น: ทิศตะวันออก<br>• ตก: ทิศตะวันตก<br>• เหมือนกับดวงอาทิตย์<br>• เป็นแบบรูปซ้ำทุกวัน</div>
+            </div>
+            <div class="mm-branch mm-amber">
+              <div class="mm-branch-title">🌘 รูปร่างดวงจันทร์</div>
+              <div class="mm-leaf">• รูปร่างจริง: ทรงกลม<br>• รูปร่างปรากฏ: เปลี่ยนทุกวัน<br>• วัฏจักร 1 รอบ ≈ 29.5 วัน<br>• ขึ้น 15 ค่ำ = เต็มดวง สว่างสุด<br>• แรม 15 ค่ำ = มืด มองไม่เห็น</div>
+            </div>
+            <div class="mm-branch mm-violet">
+              <div class="mm-branch-title">☀️ ระบบสุริยะ</div>
+              <div class="mm-leaf">• ดวงอาทิตย์เป็นศูนย์กลาง<br>• ดาวเคราะห์ 8 ดวง<br>• วงโคจรเป็นวงรี<br>• ยิ่งไกล คาบยิ่งนาน<br>• มีดาวหาง ดาวเคราะห์น้อยด้วย</div>
+            </div>
+            <div class="mm-branch mm-emerald">
+              <div class="mm-branch-title">🌍 ดาวเคราะห์ 8 ดวง</div>
+              <div class="mm-leaf">• พุธ ศุกร์ โลก อังคาร (ในวง)<br>• พฤหัสบดี เสาร์ ยูเรนัส เนปจูน (นอกวง)<br>• พฤหัสบดี: ใหญ่สุด<br>• เนปจูน: ไกลสุด คาบ 165 ปี<br>• พุธ: ใกล้สุด คาบ 88 วัน</div>
+            </div>
+            <div class="mm-branch mm-rose">
+              <div class="mm-branch-title">⭐ ดาวฤกษ์ vs ดาวเคราะห์</div>
+              <div class="mm-leaf">• ดาวฤกษ์: มีแสงเอง (ดวงอาทิตย์)<br>• ดาวเคราะห์: สะท้อนแสง<br>• ดาวเคราะห์แคระ: พลูโต<br>• ดาวหาง: น้ำแข็ง+ฝุ่น มีหาง</div>
+            </div>
+            <div class="mm-branch mm-navy2">
+              <div class="mm-branch-title">🔭 คาบการโคจร</div>
+              <div class="mm-leaf">• เวลาโคจรรอบดวงอาทิตย์ 1 รอบ<br>• ไกลกว่า = คาบนานกว่า<br>• โลก = 365 วัน<br>• กาแล็กซี ทางช้างเผือก<br>• ระบบสุริยะ ⊂ กาแล็กซี ⊂ อวกาศ</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════
+       SECTION: แบบทดสอบหลังเรียน (20 ข้อ)
+  ══════════════════════════════════════ -->
+  <section id="post-quiz" class="section-panel">
+    <div class="quiz-wrapper">
+      <div class="quiz-intro" style="background: linear-gradient(135deg, #1a1a2e, #0f3460);">
+        <div style="font-size:2.5rem;margin-bottom:8px;">🎯</div>
+        <h2>แบบทดสอบหลังเรียน</h2>
+        <p>หน่วยที่ 4-5 · จำนวน 20 ข้อ · ข้อสอบคู่ขนานกับก่อนเรียน<br>ทำเพื่อวัดผลการเรียนรู้หลังจากศึกษาเนื้อหาแล้ว</p>
+        <button class="quiz-btn" onclick="startQuiz('post')">เริ่มทำแบบทดสอบ ›</button>
+      </div>
+      <div id="post-quiz-area" class="quiz-area">
+        <div class="quiz-progress">
+          <div class="progress-bar-outer"><div id="post-prog-bar" class="progress-bar-inner" style="width:5%"></div></div>
+          <span id="post-prog-label" class="progress-label">ข้อ 1/20</span>
+        </div>
+        <div id="post-q-card" class="quiz-q-card"></div>
+        <div class="quiz-nav">
+          <button id="post-check-btn" class="q-btn q-btn-primary" onclick="checkAnswer('post')">ตรวจคำตอบ</button>
+          <button id="post-next-btn" class="q-btn q-btn-secondary" onclick="nextQ('post')" disabled>ต่อไป ›</button>
+        </div>
+      </div>
+      <div id="post-result" class="quiz-result"></div>
+    </div>
+  </section>
+
+</div><!-- /main-content -->
+
+<script>
+// ── TAB NAVIGATION ──
+function showTab(id) {
+  document.querySelectorAll('.section-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  event.target.classList.add('active');
+}
+
+function showUnit(id) {
+  const parent = event.target.closest('.section-panel');
+  parent.querySelectorAll('.unit-content').forEach(u => u.classList.remove('active'));
+  parent.querySelectorAll('.unit-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  event.target.classList.add('active');
+}
+
+function showExUnit(id) { showGenUnit(id, 'ex4,ex5'.split(',')); }
+function showVocabUnit(id) { showGenUnit(id, 'vc4,vc5'.split(',')); }
+function showMMUnit(id) { showGenUnit(id, 'mm4,mm5'.split(',')); }
+
+function showGenUnit(id, ids) {
+  ids.forEach(i => { const el=document.getElementById(i); if(el) el.classList.remove('active'); });
+  const el = document.getElementById(id);
+  if(el) el.classList.add('active');
+  event.target.closest('.section-panel').querySelectorAll('.unit-btn').forEach(b => b.classList.remove('active'));
+  event.target.classList.add('active');
+}
+
+// ── EXERCISE ANSWERS ──
+function toggleAnswer(btn) {
+  const box = btn.nextElementSibling;
+  box.classList.toggle('show');
+  btn.textContent = box.classList.contains('show') ? 'ซ่อนคำตอบ' : 'แสดงคำตอบ';
+}
+
+// ══════════════════════════════════════
+// QUIZ DATA
+// ══════════════════════════════════════
+const preQuestions = [
+  // หน่วย 4 (ข้อ 1-10)
+  { q: "วัสดุชนิดใดมีความแข็งมากที่สุดในบรรดาวัสดุเหล่านี้?", opts: ["ไม้", "พลาสติก", "กระจก", "อะลูมิเนียม"], ans: 2, exp: "กระจกมีความแข็งมากที่สุดในบรรดาวัสดุที่ยกมา เรียงลำดับ: กระจก > อะลูมิเนียม > พลาสติก > ไม้" },
+  { q: "สภาพยืดหยุ่นหมายถึงข้อใด?", opts: ["วัสดุที่ยืดได้มากที่สุด", "วัสดุที่เมื่อรับแรงแล้วกลับสู่รูปเดิมได้", "วัสดุที่แข็งแกร่ง", "วัสดุที่มีน้ำหนักมาก"], ans: 1, exp: "สภาพยืดหยุ่น คือ สมบัติของวัสดุที่เมื่อได้รับแรงกระทำแล้วเปลี่ยนรูปร่าง และกลับคืนสู่รูปร่างเดิมได้เมื่อหยุดแรงกระทำ" },
+  { q: "วัสดุชนิดใดนำความร้อนได้ดีที่สุด?", opts: ["ไม้", "พลาสติก", "เหล็ก", "ยาง"], ans: 2, exp: "เหล็กเป็นโลหะ โลหะส่วนใหญ่นำความร้อนได้ดี เพราะอนุภาคอยู่ชิดกันและสั่นถ่ายโอนพลังงานได้เร็ว" },
+  { q: "วัสดุชนิดใดไม่นำไฟฟ้า?", opts: ["เหล็ก", "ทองแดง", "อะลูมิเนียม", "ยาง"], ans: 3, exp: "ยางเป็นฉนวนไฟฟ้า ไม่ยอมให้กระแสไฟฟ้าไหลผ่าน จึงใช้หุ้มสายไฟเพื่อความปลอดภัย" },
+  { q: "สสารในสถานะใดที่มีรูปร่างและปริมาตรคงที่?", opts: ["ของเหลว", "แก๊ส", "ของแข็ง", "ทุกสถานะ"], ans: 2, exp: "ของแข็งมีทั้งรูปร่างและปริมาตรคงที่ ไม่เปลี่ยนแปลงตามภาชนะ" },
+  { q: "เพราะเหตุใดจึงใช้พลาสติกทำด้ามหม้อ?", opts: ["แข็งแกร่ง", "นำความร้อนได้ไม่ดี", "นำไฟฟ้าได้ดี", "มีสภาพยืดหยุ่น"], ans: 1, exp: "พลาสติกนำความร้อนได้ไม่ดี จึงเหมาะทำด้ามหม้อ เพราะจับแล้วไม่ร้อน ปลอดภัย" },
+  { q: "ถ้าสุมลูกโป่งเข้าไปในห้องเล็กๆ แก๊สจะเป็นอย่างไร?", opts: ["รวมตัวเป็นก้อน", "กระจายเต็มห้อง", "ลงไปอยู่ที่พื้น", "ขึ้นไปอยู่บนเพดาน"], ans: 1, exp: "แก๊สไม่มีรูปร่างและปริมาตรคงที่ จะกระจายตัวเต็มภาชนะหรือพื้นที่ที่บรรจุ" },
+  { q: "วัสดุชนิดใดไม่มีสภาพยืดหยุ่น?", opts: ["ฟองน้ำ", "เส้นยางยืด", "ดินน้ำมัน", "ลวดสปริง"], ans: 2, exp: "ดินน้ำมันไม่มีสภาพยืดหยุ่น เมื่อรับแรงจะเปลี่ยนรูปและไม่กลับสู่สภาพเดิม" },
+  { q: "สิ่งใดต่อไปนี้เป็นของเหลว?", opts: ["น้ำแข็ง", "ไอน้ำ", "น้ำมันพืช", "แก้วน้ำ"], ans: 2, exp: "น้ำมันพืชเป็นของเหลว มีมวลและปริมาตรคงที่ แต่รูปร่างเปลี่ยนตามภาชนะ" },
+  { q: "การทดสอบความแข็งของวัสดุทำโดยวิธีใด?", opts: ["ชั่งน้ำหนัก", "วัดอุณหภูมิ", "ขูดขีดกัน", "ต้มในน้ำร้อน"], ans: 2, exp: "ทดสอบความแข็งโดยนำวัสดุมาขูดขีดกัน วัสดุที่แข็งน้อยกว่าจะเกิดรอย" },
+  // หน่วย 5 (ข้อ 11-20)
+  { q: "ดวงจันทร์ขึ้นทางทิศใด?", opts: ["ทิศเหนือ", "ทิศใต้", "ทิศตะวันตก", "ทิศตะวันออก"], ans: 3, exp: "ดวงจันทร์ขึ้นทางทิศตะวันออกเช่นเดียวกับดวงอาทิตย์ เนื่องจากโลกหมุนรอบตัวเองจากทิศตะวันตกไปทิศตะวันออก" },
+  { q: "เหตุใดดวงจันทร์จึงมีปรากฏการณ์ขึ้นและตก?", opts: ["ดวงจันทร์โคจรรอบโลก", "โลกหมุนรอบตัวเอง", "ดวงอาทิตย์โคจรรอบโลก", "ดวงจันทร์หมุนรอบตัวเอง"], ans: 1, exp: "ปรากฏการณ์ขึ้นและตกของดวงจันทร์เกิดจากโลกหมุนรอบตัวเอง ทำให้คนบนโลกมองเห็นดวงจันทร์เคลื่อนที่บนท้องฟ้า" },
+  { q: "รูปร่างที่แท้จริงของดวงจันทร์เป็นอย่างไร?", opts: ["แบนเหมือนจาน", "เป็นทรงกลม", "เป็นรูปเสี้ยว", "เปลี่ยนแปลงได้"], ans: 1, exp: "ดวงจันทร์มีรูปร่างจริงๆ เป็นทรงกลม รูปร่างที่เปลี่ยนไปเป็นเพียงรูปร่างปรากฏ" },
+  { q: "ในวันขึ้น 15 ค่ำ ดวงจันทร์มีรูปร่างปรากฏเป็นอย่างไร?", opts: ["เสี้ยวเล็ก", "ครึ่งดวง", "เต็มดวง", "มองไม่เห็น"], ans: 2, exp: "วันขึ้น 15 ค่ำหรือวันเพ็ญ มองเห็นดวงจันทร์เต็มดวง สว่างที่สุด" },
+  { q: "ระบบสุริยะมีดาวเคราะห์กี่ดวง?", opts: ["7 ดวง", "8 ดวง", "9 ดวง", "10 ดวง"], ans: 1, exp: "ระบบสุริยะมีดาวเคราะห์ 8 ดวง ได้แก่ ดาวพุธ ดาวศุกร์ โลก ดาวอังคาร ดาวพฤหัสบดี ดาวเสาร์ ดาวยูเรนัส ดาวเนปจูน (พลูโตถูกจัดเป็นดาวเคราะห์แคระ)" },
+  { q: "ดาวเคราะห์ดวงใดอยู่ใกล้ดวงอาทิตย์มากที่สุด?", opts: ["โลก", "ดาวศุกร์", "ดาวพุธ", "ดาวอังคาร"], ans: 2, exp: "ดาวพุธอยู่ใกล้ดวงอาทิตย์มากที่สุด มีคาบการโคจรสั้นที่สุดประมาณ 88 วัน" },
+  { q: "ดาวเคราะห์ดวงใดมีขนาดใหญ่ที่สุด?", opts: ["ดาวเสาร์", "โลก", "ดาวพฤหัสบดี", "ดาวเนปจูน"], ans: 2, exp: "ดาวพฤหัสบดีเป็นดาวเคราะห์ที่ใหญ่ที่สุดในระบบสุริยะ" },
+  { q: "คาบการโคจรของดาวเคราะห์หมายถึงอะไร?", opts: ["เวลาหมุนรอบตัวเอง 1 รอบ", "เวลาโคจรรอบดวงอาทิตย์ 1 รอบ", "ระยะห่างจากดวงอาทิตย์", "ขนาดของดาวเคราะห์"], ans: 1, exp: "คาบการโคจร คือเวลาที่ดาวเคราะห์ใช้ในการโคจรรอบดวงอาทิตย์ครบ 1 รอบ" },
+  { q: "ดาวชนิดใดมีแสงสว่างในตัวเอง?", opts: ["ดาวเคราะห์", "ดาวฤกษ์", "ดาวเคราะห์แคระ", "ดาวบริวาร"], ans: 1, exp: "ดาวฤกษ์มีแสงสว่างในตัวเอง เช่น ดวงอาทิตย์ ส่วนดาวเคราะห์สะท้อนแสงจากดวงอาทิตย์เท่านั้น" },
+  { q: "หนึ่งวัฏจักรของการเปลี่ยนแปลงรูปร่างดวงจันทร์ใช้เวลาประมาณกี่วัน?", opts: ["7 วัน", "14 วัน", "29.5 วัน", "365 วัน"], ans: 2, exp: "วัฏจักรหนึ่งรอบของการเปลี่ยนแปลงรูปร่างดวงจันทร์ใช้เวลาประมาณ 29.5 วัน หรือประมาณ 1 เดือน" }
+];
+
+const postQuestions = [
+  // หน่วย 4 คู่ขนาน (ข้อ 1-10)
+  { q: "วัสดุชนิดใดมีความแข็งน้อยที่สุดในบรรดาวัสดุเหล่านี้?", opts: ["กระจก", "อะลูมิเนียม", "เหล็ก", "ไม้"], ans: 3, exp: "ไม้มีความแข็งน้อยที่สุด ลำดับความแข็งจากมากไปน้อย: กระจก > เหล็ก > อะลูมิเนียม > พลาสติก > ไม้" },
+  { q: "ข้อใดกล่าวถูกต้องเกี่ยวกับสภาพยืดหยุ่น?", opts: ["ยิ่งยืดได้มาก ยิ่งมีสภาพยืดหยุ่นมาก", "วัสดุที่แข็งมักมีสภาพยืดหยุ่นสูง", "วัสดุที่มีสภาพยืดหยุ่นจะกลับสู่รูปเดิมเมื่อหยุดแรง", "สภาพยืดหยุ่นวัดได้จากน้ำหนักวัสดุ"], ans: 2, exp: "วัสดุที่มีสภาพยืดหยุ่นจะเปลี่ยนรูปร่างเมื่อรับแรง และกลับสู่รูปร่างเดิมได้เมื่อหยุดออกแรงกระทำ" },
+  { q: "วัสดุชนิดใดนำความร้อนได้ไม่ดี?", opts: ["ทองแดง", "อะลูมิเนียม", "ไม้", "เหล็ก"], ans: 2, exp: "ไม้นำความร้อนได้ไม่ดี จึงเหมาะใช้ทำด้ามจับเครื่องครัว เพราะไม่ถ่ายโอนความร้อนมายังมือ" },
+  { q: "วัสดุชนิดใดนำไฟฟ้าได้?", opts: ["แก้ว", "ไม้", "เหล็ก", "พลาสติก"], ans: 2, exp: "เหล็กเป็นโลหะซึ่งนำไฟฟ้าได้ดี สามารถให้กระแสไฟฟ้าไหลผ่านได้" },
+  { q: "ของเหลวแตกต่างจากของแข็งอย่างไร?", opts: ["ของเหลวมีมวล ของแข็งไม่มี", "ของเหลวไม่มีปริมาตรคงที่ ของแข็งมี", "ของเหลวรูปร่างไม่คงที่ ของแข็งรูปร่างคงที่", "ของเหลวนำไฟฟ้าได้ ของแข็งไม่ได้"], ans: 2, exp: "ของเหลวมีรูปร่างไม่คงที่ เปลี่ยนตามภาชนะ แต่ปริมาตรคงที่ ส่วนของแข็งมีทั้งรูปร่างและปริมาตรคงที่" },
+  { q: "สายไฟฟ้าในบ้านทำจากทองแดงหุ้มด้วยพลาสติก เพราะเหตุใด?", opts: ["ทองแดงแข็ง พลาสติกอ่อน", "ทองแดงนำไฟฟ้า พลาสติกเป็นฉนวน", "ทองแดงถูกกว่า พลาสติกแพงกว่า", "ทองแดงเบา พลาสติกหนัก"], ans: 1, exp: "ทองแดงนำไฟฟ้าได้ดี ใช้ส่งกระแสไฟฟ้า พลาสติกเป็นฉนวนไม่นำไฟฟ้า ป้องกันอันตรายจากไฟฟ้า" },
+  { q: "แก๊สต่างจากของเหลวและของแข็งอย่างไร?", opts: ["แก๊สไม่มีมวล", "แก๊สไม่มีรูปร่างและปริมาตรคงที่", "แก๊สมองไม่เห็นจึงไม่ต้องการที่อยู่", "แก๊สทุกชนิดมีกลิ่น"], ans: 1, exp: "แก๊สไม่มีรูปร่างและปริมาตรคงที่ แตกต่างจากของเหลวที่มีปริมาตรคงที่ และของแข็งที่มีทั้งรูปร่างและปริมาตรคงที่" },
+  { q: "ฟองน้ำมีสมบัติใด?", opts: ["ความแข็งสูง", "สภาพยืดหยุ่น", "นำความร้อนได้ดี", "นำไฟฟ้าได้ดี"], ans: 1, exp: "ฟองน้ำมีสภาพยืดหยุ่น เมื่อบีบแล้วปล่อย จะกลับสู่รูปร่างเดิม" },
+  { q: "น้ำแข็งจัดเป็นสสารสถานะใด?", opts: ["ของเหลว", "แก๊ส", "ของแข็ง", "ไม่มีสถานะ"], ans: 2, exp: "น้ำแข็งเป็นน้ำในสถานะของแข็ง มีรูปร่างและปริมาตรคงที่" },
+  { q: "ลวดสปริงมีสมบัติพิเศษอะไรที่แตกต่างจากเหล็กทั่วไป?", opts: ["แข็งกว่า", "นำความร้อนได้ดีกว่า", "มีสภาพยืดหยุ่น", "เบากว่า"], ans: 2, exp: "ลวดสปริงมีสภาพยืดหยุ่น เมื่อดึงหรือกดแล้วกลับสู่รูปร่างเดิม ใช้ในที่นั่งรถ โซฟา นาฬิกา" },
+  // หน่วย 5 คู่ขนาน (ข้อ 11-20)
+  { q: "ดวงจันทร์ตกทางทิศใด?", opts: ["ทิศเหนือ", "ทิศใต้", "ทิศตะวันออก", "ทิศตะวันตก"], ans: 3, exp: "ดวงจันทร์ตกทางทิศตะวันตก เช่นเดียวกับดวงอาทิตย์ เพราะโลกหมุนรอบตัวเอง" },
+  { q: "ปรากฏการณ์ใดเกิดขึ้นเพราะโลกหมุนรอบตัวเอง?", opts: ["การเปลี่ยนฤดูกาล", "การเปลี่ยนรูปร่างดวงจันทร์", "การขึ้นตกของดวงอาทิตย์", "การเกิดสุริยุปราคา"], ans: 2, exp: "การขึ้นและตกของดวงอาทิตย์เกิดจากโลกหมุนรอบตัวเองจากทิศตะวันตกไปทิศตะวันออก" },
+  { q: "ดวงจันทร์มีแสงสว่างได้เพราะเหตุใด?", opts: ["มีแกนร้อนภายใน", "สะท้อนแสงจากดวงอาทิตย์", "เกิดปฏิกิริยานิวเคลียร์", "มีกาซที่ลุกไหม้"], ans: 1, exp: "ดวงจันทร์ไม่มีแสงในตัวเอง แต่สะท้อนแสงจากดวงอาทิตย์ จึงเห็นสว่างบนท้องฟ้า" },
+  { q: "ในวันแรม 15 ค่ำ ดวงจันทร์มีลักษณะอย่างไร?", opts: ["เต็มดวง", "ครึ่งดวง", "มองไม่เห็น", "เสี้ยวเล็ก"], ans: 2, exp: "วันแรม 15 ค่ำหรือวันเดือนดับ มองไม่เห็นดวงจันทร์ เพราะด้านที่หันมาหาโลกไม่ได้รับแสงจากดวงอาทิตย์" },
+  { q: "ดาวเคราะห์ดวงใดอยู่ถัดจากโลกออกไปทางนอก?", opts: ["ดาวศุกร์", "ดาวพุธ", "ดาวอังคาร", "ดาวพฤหัสบดี"], ans: 2, exp: "ดาวอังคารอยู่ถัดจากโลกออกไป เรียง: พุธ ศุกร์ โลก อังคาร..." },
+  { q: "ดาวเคราะห์ดวงใดมีวงแหวนที่สังเกตเห็นได้ชัดเจนที่สุด?", opts: ["ดาวยูเรนัส", "ดาวพฤหัสบดี", "ดาวเสาร์", "ดาวเนปจูน"], ans: 2, exp: "ดาวเสาร์มีวงแหวนที่สังเกตเห็นได้ชัดเจนที่สุดในระบบสุริยะ ประกอบด้วยน้ำแข็งและหินก้อนเล็กๆ" },
+  { q: "ดาวเคราะห์ดวงใดใช้เวลาโคจรนานที่สุด?", opts: ["ดาวยูเรนัส", "ดาวเสาร์", "ดาวพฤหัสบดี", "ดาวเนปจูน"], ans: 3, exp: "ดาวเนปจูนอยู่ไกลที่สุด ใช้เวลาโคจรนานที่สุดประมาณ 165 ปี" },
+  { q: "สิ่งใดไม่ใช่องค์ประกอบของระบบสุริยะ?", opts: ["ดาวหาง", "ดาวเคราะห์น้อย", "กาแล็กซีทางช้างเผือก", "ดาวเคราะห์แคระ"], ans: 2, exp: "กาแล็กซีทางช้างเผือกเป็นสิ่งที่ใหญ่กว่า ระบบสุริยะของเราเป็นส่วนหนึ่งของกาแล็กซีทางช้างเผือก ไม่ใช่องค์ประกอบในระบบสุริยะ" },
+  { q: "ดวงอาทิตย์จัดเป็นดาวชนิดใด?", opts: ["ดาวเคราะห์", "ดาวบริวาร", "ดาวฤกษ์", "ดาวเคราะห์แคระ"], ans: 2, exp: "ดวงอาทิตย์เป็นดาวฤกษ์ที่มีแสงสว่างในตัวเอง เป็นดาวฤกษ์เพียงดวงเดียวในระบบสุริยะ" },
+  { q: "ข้อใดอธิบายความสัมพันธ์ระหว่างคาบการโคจรและระยะห่างจากดวงอาทิตย์ได้ถูกต้อง?", opts: ["ยิ่งไกล คาบยิ่งสั้น", "ยิ่งไกล คาบยิ่งนาน", "ระยะห่างไม่มีผลต่อคาบ", "ทุกดาวมีคาบเท่ากัน"], ans: 1, exp: "ดาวเคราะห์ที่อยู่ไกลจากดวงอาทิตย์มากกว่าจะมีคาบการโคจรนานกว่า เพราะวงโคจรยาวกว่าและเคลื่อนที่ช้ากว่า" }
+];
+
+// ══════════════════════════════════════
+// QUIZ ENGINE
+// ══════════════════════════════════════
+const quizState = {};
+
+function startQuiz(type) {
+  const questions = type === 'pre' ? preQuestions : postQuestions;
+  quizState[type] = { current: 0, score: 0, answered: false, questions };
+  document.querySelector(`#${type}-quiz .quiz-intro`).style.display = 'none';
+  document.getElementById(`${type}-quiz-area`).classList.add('active');
+  renderQ(type);
+}
+
+function renderQ(type) {
+  const state = quizState[type];
+  const q = state.questions[state.current];
+  const total = state.questions.length;
+  const pct = ((state.current) / total * 100) + 5;
+
+  document.getElementById(`${type}-prog-bar`).style.width = pct + '%';
+  document.getElementById(`${type}-prog-label`).textContent = `ข้อ ${state.current+1}/${total}`;
+
+  const letters = ['ก', 'ข', 'ค', 'ง'];
+  let html = `<div class="quiz-q-num">ข้อที่ ${state.current+1} จาก ${total}</div>
+    <div class="quiz-q-text">${q.q}</div>
+    <div class="quiz-options">`;
+  q.opts.forEach((opt, i) => {
+    html += `<div class="quiz-opt" onclick="selectOpt(this,'${type}',${i})">
+      <div class="opt-letter">${letters[i]}</div>
+      <div>${opt}</div>
+    </div>`;
+  });
+  html += `</div>
+    <div id="${type}-feedback" class="quiz-feedback"></div>`;
+  document.getElementById(`${type}-q-card`).innerHTML = html;
+
+  state.answered = false;
+  document.getElementById(`${type}-check-btn`).disabled = true;
+  document.getElementById(`${type}-next-btn`).disabled = true;
+}
+
+function selectOpt(el, type, idx) {
+  if (quizState[type].answered) return;
+  el.closest('.quiz-options').querySelectorAll('.quiz-opt').forEach(o => o.classList.remove('selected'));
+  el.classList.add('selected');
+  quizState[type].selected = idx;
+  document.getElementById(`${type}-check-btn`).disabled = false;
+}
+
+function checkAnswer(type) {
+  const state = quizState[type];
+  if (state.answered || state.selected === undefined) return;
+  state.answered = true;
+
+  const q = state.questions[state.current];
+  const opts = document.querySelectorAll(`#${type}-q-card .quiz-opt`);
+  const fb = document.getElementById(`${type}-feedback`);
+  const letters = ['ก', 'ข', 'ค', 'ง'];
+
+  opts[q.ans].classList.add('correct');
+  if (state.selected !== q.ans) {
+    opts[state.selected].classList.add('wrong');
+    fb.className = 'quiz-feedback show wrong-fb';
+    fb.textContent = `❌ ไม่ถูก ตอบ${letters[q.ans]} ถูก: ${q.exp}`;
+  } else {
+    state.score++;
+    fb.className = 'quiz-feedback show correct-fb';
+    fb.textContent = `✅ ถูกต้อง! ${q.exp}`;
+  }
+  document.getElementById(`${type}-check-btn`).disabled = true;
+  document.getElementById(`${type}-next-btn`).disabled = false;
+}
+
+function nextQ(type) {
+  const state = quizState[type];
+  state.current++;
+  state.selected = undefined;
+  if (state.current >= state.questions.length) {
+    showResult(type);
+  } else {
+    renderQ(type);
+  }
+}
+
+function showResult(type) {
+  document.getElementById(`${type}-quiz-area`).classList.remove('active');
+  const resultEl = document.getElementById(`${type}-result`);
+  const score = quizState[type].score;
+  const total = quizState[type].questions.length;
+  const pct = Math.round(score/total*100);
+
+  let grade, gradeColor, emoji;
+  if (pct >= 80) { grade = 'ยอดเยี่ยม! 🎉'; gradeColor = '#10b981'; emoji = '🏆'; }
+  else if (pct >= 60) { grade = 'ผ่าน 👍'; gradeColor = '#f59e0b'; emoji = '⭐'; }
+  else { grade = 'ต้องฝึกเพิ่ม 📚'; gradeColor = '#f43f5e'; emoji = '💪'; }
+
+  resultEl.innerHTML = `
+    <div class="result-grade" style="background:${gradeColor}20; border: 3px solid ${gradeColor};">${emoji}</div>
+    <div class="result-score" style="color:${gradeColor}">${score}/${total}</div>
+    <div style="font-size:1.1rem; font-weight:600; color:${gradeColor}; margin-bottom:6px;">${grade}</div>
+    <div class="result-msg">คะแนน ${pct}% · ${score} ข้อถูกจาก ${total} ข้อ</div>
+    <button class="quiz-btn" style="background:var(--navy);color:white;" onclick="retryQuiz('${type}')">ทำใหม่อีกครั้ง</button>
+  `;
+  resultEl.classList.add('show');
+}
+
+function retryQuiz(type) {
+  document.getElementById(`${type}-result`).classList.remove('show');
+  document.querySelector(`#${type}-quiz .quiz-intro`).style.display = 'block';
+  delete quizState[type];
+}
+</script>
+</body>
+</html>
