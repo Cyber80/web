@@ -1,0 +1,989 @@
+import { useState, useEffect, useCallback } from "react";
+
+// ==================== DATA ====================
+const DAYS = ["จันทร์", "อังคาร", "พุธ", "พฤหัสบดี", "ศุกร์"];
+const TIME_SLOTS = [
+  { id: "t1", label: "08.30-09.30" },
+  { id: "t2", label: "09.30-10.30" },
+  { id: "t3", label: "10.30-11.30" },
+  { id: "t4", label: "11.30-12.30", isLunch: true },
+  { id: "t5", label: "12.30-13.30" },
+  { id: "t6", label: "13.30-14.30" },
+  { id: "t7", label: "14.30-15.30" },
+];
+
+const SPECIAL_SLOTS = [
+  { label: "พักกลางวันและกิจกรรม", time: "11.30-12.30" },
+];
+
+const GRADES = ["ป.1", "ป.2", "ป.3", "ป.4", "ป.5", "ป.6"];
+
+const INITIAL_SUBJECTS = [
+  { id: "s1", name: "วิทยาศาสตร์", credits: 3, color: "#4A90E2" },
+  { id: "s2", name: "คณิตศาสตร์", credits: 3, color: "#E2844A" },
+  { id: "s3", name: "ภาษาไทย", credits: 3, color: "#50C878" },
+  { id: "s4", name: "ภาษาอังกฤษ", credits: 3, color: "#9B59B6" },
+  { id: "s5", name: "สังคมศึกษา", credits: 2, color: "#E74C3C" },
+  { id: "s6", name: "ประวัติศาสตร์", credits: 1, color: "#F39C12" },
+  { id: "s7", name: "ศิลปะ", credits: 1, color: "#1ABC9C" },
+  { id: "s8", name: "ดนตรี", credits: 1, color: "#3498DB" },
+  { id: "s9", name: "สุขศึกษา/พลศึกษา", credits: 1, color: "#E91E63" },
+  { id: "s10", name: "การงานอาชีพ", credits: 1, color: "#795548" },
+  { id: "s11", name: "เศรษฐกิจและการเงิน", credits: 1, color: "#607D8B" },
+  { id: "s12", name: "วิทยาการคำนวณ", credits: 1, color: "#009688" },
+  { id: "s13", name: "ด้านทุจริตศึกษา", credits: 1, color: "#FF5722" },
+  { id: "s14", name: "ซ่อมเสริม อ่านเขียน", credits: 1, color: "#8BC34A" },
+  { id: "s15", name: "ซ่อมเสริม คำนวณ", credits: 1, color: "#CDDC39" },
+  { id: "s16", name: "ยกระดับผลสัมฤทธิ์", credits: 1, color: "#FFC107" },
+  { id: "s17", name: "ลดเวลาเรียน", credits: 0, color: "#9E9E9E" },
+  { id: "s18", name: "ลูกเสือ", credits: 0, color: "#4CAF50" },
+  { id: "s19", name: "ชุมนุม", credits: 0, color: "#2196F3" },
+  { id: "s20", name: "ประชุม", credits: 0, color: "#673AB7" },
+  { id: "s21", name: "แนะแนว", credits: 0, color: "#00BCD4" },
+  { id: "s22", name: "พละ", credits: 1, color: "#FF9800" },
+  { id: "s23", name: "สังคม", credits: 2, color: "#F44336" },
+];
+
+const INITIAL_TEACHERS = [
+  { id: "t1", name: "ศิรินญา เลิศณรงค์", title: "ครู", subjects: ["s1", "s12"] },
+  { id: "t2", name: "วิไลรัตน์ ใบศรี", title: "ครู", subjects: ["s3", "s2"] },
+  { id: "t3", name: "พัชรินทร์ บรรดาเทา", title: "ครู", subjects: ["s4"] },
+  { id: "t4", name: "จตุรวิทย์ กลิ่นจันทน์", title: "ครู", subjects: ["s2", "s3", "s9"] },
+  { id: "t5", name: "เทพรัตน์ ยอดแก้ว", title: "ครู", subjects: ["s7", "s8", "s10"] },
+  { id: "t6", name: "อรวรรณ ขุนชนะ", title: "ครู", subjects: ["s3", "s4", "s2"] },
+  { id: "t7", name: "ณัฐฐ์ณรัณ พระเพ็ชร", title: "ครู", subjects: ["s3", "s5"] },
+  { id: "t8", name: "ทศพร สังประกุล", title: "ครู", subjects: ["s2", "s5"] },
+];
+
+const INITIAL_SEMESTER = {
+  id: "2568-2",
+  year: "2568",
+  term: "2",
+  label: "ภาคเรียนที่ 2 ปีการศึกษา 2568",
+  school: "โรงเรียนบ้านเขาหัวนา",
+  status: "active",
+  timetables: {},
+};
+
+// ==================== STORAGE ====================
+const STORAGE_KEY = "school_timetable_v1";
+
+function loadData() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) return JSON.parse(raw);
+  } catch {}
+  return {
+    subjects: INITIAL_SUBJECTS,
+    teachers: INITIAL_TEACHERS,
+    semesters: [INITIAL_SEMESTER],
+    activeSemesterId: "2568-2",
+  };
+}
+
+function saveData(data) {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+  } catch {}
+}
+
+// ==================== ICONS ====================
+const Icon = ({ name, size = 16 }) => {
+  const icons = {
+    plus: "M12 5v14M5 12h14",
+    edit: "M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z",
+    trash: "M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6",
+    save: "M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2zM17 21v-8H7v8M7 3v5h8",
+    check: "M20 6L9 17l-5-5",
+    x: "M18 6L6 18M6 6l12 12",
+    calendar: "M3 4h18v18H3zM16 2v4M8 2v4M3 10h18",
+    user: "M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2M12 11a4 4 0 100-8 4 4 0 000 8z",
+    book: "M4 19.5A2.5 2.5 0 016.5 17H20M4 19.5V5A2.5 2.5 0 016.5 2.5H20v17",
+    grid: "M3 3h7v7H3zM14 3h7v7h-7zM14 14h7v7h-7zM3 14h7v7H3z",
+    menu: "M4 6h16M4 12h16M4 18h16",
+    arrow: "M19 12H5M12 5l-7 7 7 7",
+    copy: "M8 4H6a2 2 0 00-2 2v14a2 2 0 002 2h12a2 2 0 002-2V8l-6-6zM14 2v6h6",
+    eye: "M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8zM12 9a3 3 0 100 6 3 3 0 000-6z",
+    rocket: "M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 00-2.91-.09zM12 15l-3-3a22 22 0 012-3.95A12.88 12.88 0 0122 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 01-4 2zM9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0M15 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5",
+    warning: "M12 9v4M12 17h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z",
+    chevron: "M9 18l6-6-6-6",
+    home: "M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6",
+  };
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d={icons[name] || ""} />
+    </svg>
+  );
+};
+
+// ==================== COLOR PICKER ====================
+const PRESET_COLORS = [
+  "#4A90E2","#E2844A","#50C878","#9B59B6","#E74C3C",
+  "#F39C12","#1ABC9C","#3498DB","#E91E63","#795548",
+  "#607D8B","#009688","#FF5722","#8BC34A","#FF9800",
+  "#CDDC39","#FFC107","#9E9E9E","#4CAF50","#2196F3",
+];
+
+// ==================== MAIN APP ====================
+export default function App() {
+  const [data, setData] = useState(loadData);
+  const [view, setView] = useState("dashboard");
+  const [selectedTeacherId, setSelectedTeacherId] = useState(null);
+  const [selectedSemesterId, setSelectedSemesterId] = useState(null);
+  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [modal, setModal] = useState(null);
+  const [notification, setNotification] = useState(null);
+
+  useEffect(() => { saveData(data); }, [data]);
+
+  const notify = (msg, type = "success") => {
+    setNotification({ msg, type });
+    setTimeout(() => setNotification(null), 3000);
+  };
+
+  const activeSemester = data.semesters.find(s => s.id === data.activeSemesterId);
+
+  // ==================== SUBJECT CRUD ====================
+  const saveSubject = (subject) => {
+    setData(d => {
+      const existing = d.subjects.find(s => s.id === subject.id);
+      return {
+        ...d,
+        subjects: existing
+          ? d.subjects.map(s => s.id === subject.id ? subject : s)
+          : [...d.subjects, { ...subject, id: "s" + Date.now() }],
+      };
+    });
+    notify("บันทึกวิชาสำเร็จ");
+  };
+
+  const deleteSubject = (id) => {
+    setData(d => ({ ...d, subjects: d.subjects.filter(s => s.id !== id) }));
+    notify("ลบวิชาสำเร็จ");
+  };
+
+  // ==================== TEACHER CRUD ====================
+  const saveTeacher = (teacher) => {
+    setData(d => {
+      const existing = d.teachers.find(t => t.id === teacher.id);
+      return {
+        ...d,
+        teachers: existing
+          ? d.teachers.map(t => t.id === teacher.id ? teacher : t)
+          : [...d.teachers, { ...teacher, id: "t" + Date.now() }],
+      };
+    });
+    notify("บันทึกครูสำเร็จ");
+  };
+
+  const deleteTeacher = (id) => {
+    setData(d => ({ ...d, teachers: d.teachers.filter(t => t.id !== id) }));
+    notify("ลบครูสำเร็จ");
+  };
+
+  // ==================== SEMESTER ====================
+  const createSemester = (semData) => {
+    const newSem = {
+      ...semData,
+      id: `${semData.year}-${semData.term}`,
+      label: `ภาคเรียนที่ ${semData.term} ปีการศึกษา ${semData.year}`,
+      status: "draft",
+      timetables: {},
+    };
+    setData(d => ({ ...d, semesters: [...d.semesters, newSem] }));
+    notify("สร้างตารางสอนใหม่สำเร็จ (ฉบับร่าง)");
+  };
+
+  const activateSemester = (id) => {
+    setData(d => ({
+      ...d,
+      activeSemesterId: id,
+      semesters: d.semesters.map(s => ({
+        ...s,
+        status: s.id === id ? "active" : s.status === "active" ? "archived" : s.status,
+      })),
+    }));
+    notify("นำตารางสอนไปใช้งานสำเร็จ", "success");
+  };
+
+  const finalizeDraft = (id) => {
+    setData(d => ({
+      ...d,
+      semesters: d.semesters.map(s => s.id === id ? { ...s, status: "final" } : s),
+    }));
+    notify("ยืนยันตารางสอนสำเร็จ");
+  };
+
+  // ==================== TIMETABLE CRUD ====================
+  const setCell = (semId, teacherId, day, timeId, value) => {
+    setData(d => {
+      const sems = d.semesters.map(s => {
+        if (s.id !== semId) return s;
+        const tt = { ...(s.timetables || {}) };
+        const key = teacherId;
+        const teacherTT = { ...(tt[key] || {}) };
+        const daySlots = { ...(teacherTT[day] || {}) };
+        if (value) daySlots[timeId] = value;
+        else delete daySlots[timeId];
+        teacherTT[day] = daySlots;
+        tt[key] = teacherTT;
+        return { ...s, timetables: tt };
+      });
+      return { ...d, semesters: sems };
+    });
+  };
+
+  // ==================== CONFLICT CHECK ====================
+  const getConflicts = (semId) => {
+    const sem = data.semesters.find(s => s.id === semId);
+    if (!sem) return [];
+    const conflicts = [];
+    const slotMap = {};
+    Object.entries(sem.timetables || {}).forEach(([teacherId, days]) => {
+      Object.entries(days).forEach(([day, slots]) => {
+        Object.entries(slots).forEach(([timeId, cell]) => {
+          const key = `${day}-${timeId}-${cell.grade}`;
+          if (!slotMap[key]) slotMap[key] = [];
+          slotMap[key].push({ teacherId, subjectId: cell.subjectId });
+        });
+      });
+    });
+    Object.entries(slotMap).forEach(([key, entries]) => {
+      if (entries.length > 1) conflicts.push({ key, entries });
+    });
+    return conflicts;
+  };
+
+  // ==================== RENDER ====================
+  const currentSem = selectedSemesterId
+    ? data.semesters.find(s => s.id === selectedSemesterId)
+    : activeSemester;
+
+  return (
+    <div style={{ fontFamily: "'Sarabun', 'Noto Sans Thai', sans-serif", background: "#F0F4F8", minHeight: "100vh", display: "flex" }}>
+      {/* Notification */}
+      {notification && (
+        <div style={{
+          position: "fixed", top: 20, right: 20, zIndex: 9999,
+          background: notification.type === "success" ? "#22C55E" : "#EF4444",
+          color: "#fff", padding: "12px 20px", borderRadius: 10,
+          boxShadow: "0 4px 20px rgba(0,0,0,0.15)", fontWeight: 600, fontSize: 14,
+          display: "flex", alignItems: "center", gap: 8,
+        }}>
+          <Icon name={notification.type === "success" ? "check" : "warning"} size={16} />
+          {notification.msg}
+        </div>
+      )}
+
+      {/* Sidebar */}
+      <aside style={{
+        width: sidebarOpen ? 240 : 60, transition: "width 0.3s",
+        background: "linear-gradient(180deg, #1E3A5F 0%, #0F2340 100%)",
+        color: "#fff", display: "flex", flexDirection: "column",
+        minHeight: "100vh", flexShrink: 0,
+      }}>
+        <div style={{ padding: "20px 16px", borderBottom: "1px solid rgba(255,255,255,0.1)", display: "flex", alignItems: "center", gap: 12 }}>
+          {sidebarOpen && (
+            <div>
+              <div style={{ fontSize: 15, fontWeight: 700 }}>ระบบตารางสอน</div>
+              <div style={{ fontSize: 11, opacity: 0.6, marginTop: 2 }}>School Timetable</div>
+            </div>
+          )}
+          <button onClick={() => setSidebarOpen(o => !o)} style={{ marginLeft: "auto", background: "none", border: "none", color: "#fff", cursor: "pointer", opacity: 0.7 }}>
+            <Icon name="menu" size={18} />
+          </button>
+        </div>
+
+        {activeSemester && sidebarOpen && (
+          <div style={{ padding: "10px 16px", background: "rgba(255,255,255,0.05)", fontSize: 11, borderBottom: "1px solid rgba(255,255,255,0.08)" }}>
+            <div style={{ opacity: 0.5, marginBottom: 2 }}>ภาคเรียนที่ใช้งาน</div>
+            <div style={{ fontWeight: 600, color: "#7DD3FC" }}>{activeSemester.label}</div>
+            <div style={{ opacity: 0.5, fontSize: 10 }}>{activeSemester.school}</div>
+          </div>
+        )}
+
+        <nav style={{ flex: 1, padding: "12px 0" }}>
+          {[
+            { id: "dashboard", icon: "home", label: "หน้าหลัก" },
+            { id: "timetable", icon: "grid", label: "ตารางสอน" },
+            { id: "teachers", icon: "user", label: "จัดการครู" },
+            { id: "subjects", icon: "book", label: "จัดการวิชา" },
+            { id: "semesters", icon: "calendar", label: "จัดการภาคเรียน" },
+          ].map(item => (
+            <button key={item.id} onClick={() => setView(item.id)} style={{
+              display: "flex", alignItems: "center", gap: 12,
+              width: "100%", padding: sidebarOpen ? "10px 20px" : "10px 18px",
+              background: view === item.id ? "rgba(125,211,252,0.15)" : "none",
+              border: "none", color: view === item.id ? "#7DD3FC" : "rgba(255,255,255,0.6)",
+              borderLeft: view === item.id ? "3px solid #7DD3FC" : "3px solid transparent",
+              cursor: "pointer", fontSize: 14, fontWeight: view === item.id ? 600 : 400,
+              fontFamily: "inherit", textAlign: "left",
+              transition: "all 0.2s",
+            }}>
+              <Icon name={item.icon} size={18} />
+              {sidebarOpen && item.label}
+            </button>
+          ))}
+        </nav>
+      </aside>
+
+      {/* Main */}
+      <main style={{ flex: 1, overflow: "auto" }}>
+        {view === "dashboard" && <Dashboard data={data} activeSemester={activeSemester} setView={setView} getConflicts={getConflicts} onCreateSemester={() => setModal("newSemester")} />}
+        {view === "timetable" && <TimetableView data={data} semester={currentSem || activeSemester} setCell={setCell} getConflicts={getConflicts} />}
+        {view === "teachers" && <TeachersView teachers={data.teachers} subjects={data.subjects} onSave={saveTeacher} onDelete={deleteTeacher} notify={notify} />}
+        {view === "subjects" && <SubjectsView subjects={data.subjects} onSave={saveSubject} onDelete={deleteSubject} notify={notify} />}
+        {view === "semesters" && <SemestersView semesters={data.semesters} activeSemesterId={data.activeSemesterId} onActivate={activateSemester} onFinalize={finalizeDraft} onCreate={() => setModal("newSemester")} onSelect={(id) => { setSelectedSemesterId(id); setView("timetable"); }} />}
+      </main>
+
+      {/* Modal: New Semester */}
+      {modal === "newSemester" && (
+        <NewSemesterModal
+          school={activeSemester?.school || "โรงเรียนบ้านเขาหัวนา"}
+          onSave={(d) => { createSemester(d); setModal(null); }}
+          onClose={() => setModal(null)}
+        />
+      )}
+    </div>
+  );
+}
+
+// ==================== DASHBOARD ====================
+function Dashboard({ data, activeSemester, setView, getConflicts, onCreateSemester }) {
+  const conflicts = activeSemester ? getConflicts(activeSemester.id) : [];
+  const totalSlots = Object.values(activeSemester?.timetables || {})
+    .flatMap(d => Object.values(d))
+    .flatMap(s => Object.values(s)).length;
+
+  return (
+    <div style={{ padding: 32 }}>
+      <div style={{ marginBottom: 28 }}>
+        <h1 style={{ fontSize: 26, fontWeight: 800, color: "#1E3A5F", margin: 0 }}>
+          ระบบจัดการตารางสอน
+        </h1>
+        <p style={{ color: "#64748B", marginTop: 4, fontSize: 14 }}>
+          {activeSemester ? `${activeSemester.label} — ${activeSemester.school}` : "ยังไม่มีภาคเรียนที่ใช้งาน"}
+        </p>
+      </div>
+
+      {/* Stats */}
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 16, marginBottom: 28 }}>
+        {[
+          { label: "ครูทั้งหมด", value: data.teachers.length, icon: "user", color: "#3B82F6", bg: "#EFF6FF" },
+          { label: "วิชาทั้งหมด", value: data.subjects.length, icon: "book", color: "#8B5CF6", bg: "#F5F3FF" },
+          { label: "ช่องสอนที่จัด", value: totalSlots, icon: "grid", color: "#059669", bg: "#ECFDF5" },
+          { label: "ความขัดแย้ง", value: conflicts.length, icon: "warning", color: conflicts.length > 0 ? "#EF4444" : "#059669", bg: conflicts.length > 0 ? "#FEF2F2" : "#ECFDF5" },
+        ].map((stat, i) => (
+          <div key={i} style={{ background: "#fff", borderRadius: 14, padding: "20px 24px", boxShadow: "0 1px 4px rgba(0,0,0,0.06)", display: "flex", alignItems: "center", gap: 16 }}>
+            <div style={{ width: 48, height: 48, borderRadius: 12, background: stat.bg, display: "flex", alignItems: "center", justifyContent: "center", color: stat.color }}>
+              <Icon name={stat.icon} size={22} />
+            </div>
+            <div>
+              <div style={{ fontSize: 26, fontWeight: 800, color: "#1E293B" }}>{stat.value}</div>
+              <div style={{ fontSize: 12, color: "#64748B" }}>{stat.label}</div>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Quick Actions */}
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, marginBottom: 28 }}>
+        <div style={{ background: "linear-gradient(135deg, #1E3A5F, #2563EB)", borderRadius: 14, padding: 24, color: "#fff" }}>
+          <h3 style={{ margin: "0 0 8px", fontSize: 16 }}>ตารางสอนที่ใช้งาน</h3>
+          <p style={{ margin: "0 0 16px", opacity: 0.8, fontSize: 13 }}>
+            {activeSemester ? activeSemester.label : "ยังไม่มีภาคเรียน"}
+          </p>
+          <div style={{ display: "flex", gap: 10 }}>
+            <button onClick={() => setView("timetable")} style={{
+              background: "rgba(255,255,255,0.2)", border: "1px solid rgba(255,255,255,0.3)",
+              color: "#fff", borderRadius: 8, padding: "8px 16px", cursor: "pointer", fontSize: 13, fontFamily: "inherit"
+            }}>
+              <Icon name="eye" size={14} /> ดูตาราง
+            </button>
+            <button onClick={onCreateSemester} style={{
+              background: "#fff", border: "none", color: "#1E3A5F",
+              borderRadius: 8, padding: "8px 16px", cursor: "pointer", fontSize: 13, fontWeight: 600, fontFamily: "inherit",
+              display: "flex", alignItems: "center", gap: 6
+            }}>
+              <Icon name="plus" size={14} /> สร้างตารางใหม่
+            </button>
+          </div>
+        </div>
+
+        <div style={{ background: "#fff", borderRadius: 14, padding: 24, boxShadow: "0 1px 4px rgba(0,0,0,0.06)" }}>
+          <h3 style={{ margin: "0 0 12px", fontSize: 16, color: "#1E293B" }}>ภาคเรียนล่าสุด</h3>
+          {data.semesters.slice(-3).reverse().map(s => (
+            <div key={s.id} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "8px 0", borderBottom: "1px solid #F1F5F9" }}>
+              <div>
+                <div style={{ fontSize: 13, fontWeight: 600, color: "#1E293B" }}>{s.label}</div>
+                <div style={{ fontSize: 11, color: "#94A3B8" }}>{s.school}</div>
+              </div>
+              <StatusBadge status={s.status} />
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Conflicts */}
+      {conflicts.length > 0 && (
+        <div style={{ background: "#FEF2F2", border: "1px solid #FECACA", borderRadius: 14, padding: 20 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 8, color: "#EF4444", fontWeight: 700, marginBottom: 12 }}>
+            <Icon name="warning" size={18} /> พบความขัดแย้งในตาราง ({conflicts.length} รายการ)
+          </div>
+          {conflicts.slice(0, 3).map((c, i) => (
+            <div key={i} style={{ fontSize: 13, color: "#7F1D1D", padding: "4px 0" }}>
+              • {c.key} — ครู {c.entries.length} คนสอนชั้นเดียวกันพร้อมกัน
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function StatusBadge({ status }) {
+  const map = {
+    draft: { label: "ร่าง", bg: "#FEF9C3", color: "#854D0E" },
+    final: { label: "ยืนยัน", bg: "#DCFCE7", color: "#166534" },
+    active: { label: "ใช้งาน", bg: "#DBEAFE", color: "#1E40AF" },
+    archived: { label: "เก็บถาวร", bg: "#F1F5F9", color: "#475569" },
+  };
+  const s = map[status] || map.draft;
+  return <span style={{ background: s.bg, color: s.color, padding: "2px 10px", borderRadius: 20, fontSize: 11, fontWeight: 600 }}>{s.label}</span>;
+}
+
+// ==================== TIMETABLE VIEW ====================
+function TimetableView({ data, semester, setCell, getConflicts }) {
+  const [selectedTeacher, setSelectedTeacher] = useState(data.teachers[0]?.id || null);
+  const [editCell, setEditCell] = useState(null); // {day, timeId}
+
+  if (!semester) return <div style={{ padding: 40, color: "#64748B" }}>ไม่มีภาคเรียนที่เลือก</div>;
+
+  const teacher = data.teachers.find(t => t.id === selectedTeacher);
+  const teacherTT = semester.timetables?.[selectedTeacher] || {};
+  const conflicts = getConflicts(semester.id);
+
+  const getCellConflict = (day, timeId) => {
+    const cell = teacherTT[day]?.[timeId];
+    if (!cell) return false;
+    return conflicts.some(c => c.key === `${day}-${timeId}-${cell.grade}`);
+  };
+
+  const handleCellClick = (day, timeId) => {
+    if (semester.status === "archived") return;
+    setEditCell({ day, timeId });
+  };
+
+  return (
+    <div style={{ padding: 24 }}>
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 20 }}>
+        <div>
+          <h2 style={{ margin: 0, fontSize: 20, fontWeight: 800, color: "#1E3A5F" }}>ตารางสอน</h2>
+          <p style={{ margin: "4px 0 0", color: "#64748B", fontSize: 13 }}>{semester.label} — {semester.school}</p>
+        </div>
+        <StatusBadge status={semester.status} />
+      </div>
+
+      {/* Teacher Tabs */}
+      <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginBottom: 20 }}>
+        {data.teachers.map(t => (
+          <button key={t.id} onClick={() => setSelectedTeacher(t.id)} style={{
+            padding: "8px 16px", borderRadius: 8, border: "1px solid",
+            borderColor: selectedTeacher === t.id ? "#2563EB" : "#E2E8F0",
+            background: selectedTeacher === t.id ? "#EFF6FF" : "#fff",
+            color: selectedTeacher === t.id ? "#2563EB" : "#475569",
+            cursor: "pointer", fontSize: 13, fontWeight: selectedTeacher === t.id ? 700 : 400,
+            fontFamily: "inherit",
+          }}>
+            {t.name}
+          </button>
+        ))}
+      </div>
+
+      {teacher && (
+        <div style={{ background: "#fff", borderRadius: 14, overflow: "auto", boxShadow: "0 1px 6px rgba(0,0,0,0.08)" }}>
+          <div style={{ padding: "16px 20px", borderBottom: "2px solid #F1F5F9", display: "flex", alignItems: "center", gap: 10 }}>
+            <div style={{ width: 36, height: 36, borderRadius: "50%", background: "#EFF6FF", display: "flex", alignItems: "center", justifyContent: "center", color: "#2563EB" }}>
+              <Icon name="user" size={18} />
+            </div>
+            <div>
+              <div style={{ fontWeight: 700, color: "#1E293B" }}>ครู{teacher.name}</div>
+              <div style={{ fontSize: 12, color: "#94A3B8" }}>ตำแหน่ง: {teacher.title}</div>
+            </div>
+          </div>
+
+          <table style={{ width: "100%", borderCollapse: "collapse", minWidth: 900 }}>
+            <thead>
+              <tr style={{ background: "#F8FAFC" }}>
+                <th style={{ padding: "12px 16px", textAlign: "left", fontSize: 13, fontWeight: 700, color: "#475569", borderBottom: "1px solid #E2E8F0", minWidth: 90 }}>วัน / เวลา</th>
+                {TIME_SLOTS.map(ts => (
+                  <th key={ts.id} style={{
+                    padding: "12px 8px", textAlign: "center", fontSize: 12, fontWeight: 700,
+                    color: ts.isLunch ? "#94A3B8" : "#475569",
+                    borderBottom: "1px solid #E2E8F0",
+                    background: ts.isLunch ? "#F8F0FF" : "#F8FAFC",
+                    minWidth: ts.isLunch ? 80 : 130,
+                  }}>
+                    {ts.label}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {DAYS.map((day, di) => (
+                <tr key={day} style={{ background: di % 2 === 0 ? "#fff" : "#FAFBFF" }}>
+                  <td style={{
+                    padding: "14px 16px", fontWeight: 700, fontSize: 14,
+                    color: ["#F59E0B", "#A78BFA", "#34D399", "#FB923C", "#60A5FA"][di],
+                    borderBottom: "1px solid #F1F5F9", borderRight: "2px solid #F1F5F9",
+                  }}>
+                    {day}
+                  </td>
+                  {TIME_SLOTS.map(ts => {
+                    const cell = teacherTT[day]?.[ts.id];
+                    const isConflict = cell && getCellConflict(day, ts.id);
+                    if (ts.isLunch) {
+                      return (
+                        <td key={ts.id} style={{
+                          padding: 8, textAlign: "center", fontSize: 10, color: "#A855F7",
+                          background: "#F5F3FF", borderBottom: "1px solid #F1F5F9",
+                          writingMode: "vertical-rl", transform: "rotate(180deg)", height: 80,
+                        }}>
+                          พักกลางวันและกิจกรรม
+                        </td>
+                      );
+                    }
+                    return (
+                      <td key={ts.id} onClick={() => handleCellClick(day, ts.id)} style={{
+                        padding: 6, borderBottom: "1px solid #F1F5F9", borderRight: "1px solid #F8FAFC",
+                        cursor: semester.status !== "archived" ? "pointer" : "default",
+                        transition: "background 0.15s",
+                      }}>
+                        {cell ? (
+                          <CellCard
+                            cell={cell}
+                            subjects={data.teachers.find ? undefined : []}
+                            subjectName={data.subjects.find(s => s.id === cell.subjectId)?.name || ""}
+                            subjectColor={data.subjects.find(s => s.id === cell.subjectId)?.color || "#ccc"}
+                            isConflict={isConflict}
+                          />
+                        ) : (
+                          <div style={{
+                            height: 64, borderRadius: 8, border: "1.5px dashed #E2E8F0",
+                            display: "flex", alignItems: "center", justifyContent: "center",
+                            color: "#CBD5E1", fontSize: 18,
+                          }}>+</div>
+                        )}
+                      </td>
+                    );
+                  })}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+
+      {/* Edit Cell Modal */}
+      {editCell && (
+        <CellEditModal
+          day={editCell.day}
+          timeId={editCell.timeId}
+          current={teacherTT[editCell.day]?.[editCell.timeId]}
+          subjects={data.subjects}
+          grades={GRADES}
+          onSave={(val) => {
+            setCell(semester.id, selectedTeacher, editCell.day, editCell.timeId, val);
+            setEditCell(null);
+          }}
+          onDelete={() => {
+            setCell(semester.id, selectedTeacher, editCell.day, editCell.timeId, null);
+            setEditCell(null);
+          }}
+          onClose={() => setEditCell(null)}
+        />
+      )}
+    </div>
+  );
+}
+
+function CellCard({ cell, subjectName, subjectColor, isConflict }) {
+  return (
+    <div style={{
+      background: subjectColor + "22",
+      border: `2px solid ${isConflict ? "#EF4444" : subjectColor + "66"}`,
+      borderRadius: 8, padding: "6px 8px", minHeight: 60,
+      position: "relative",
+    }}>
+      {isConflict && (
+        <div style={{ position: "absolute", top: 4, right: 4, color: "#EF4444" }}>
+          <Icon name="warning" size={12} />
+        </div>
+      )}
+      <div style={{ fontSize: 12, fontWeight: 700, color: subjectColor, lineHeight: 1.3 }}>{subjectName}</div>
+      <div style={{ fontSize: 11, color: "#475569", marginTop: 2 }}>{cell.grade}</div>
+    </div>
+  );
+}
+
+// ==================== CELL EDIT MODAL ====================
+function CellEditModal({ day, timeId, current, subjects, grades, onSave, onDelete, onClose }) {
+  const [subjectId, setSubjectId] = useState(current?.subjectId || "");
+  const [grade, setGrade] = useState(current?.grade || "ป.1");
+
+  const timeLabel = TIME_SLOTS.find(t => t.id === timeId)?.label || "";
+
+  return (
+    <ModalWrapper onClose={onClose} title={`กำหนดการสอน — ${day} ${timeLabel}`}>
+      <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+        <div>
+          <label style={labelStyle}>วิชา</label>
+          <select value={subjectId} onChange={e => setSubjectId(e.target.value)} style={inputStyle}>
+            <option value="">-- เลือกวิชา --</option>
+            {subjects.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
+          </select>
+        </div>
+        <div>
+          <label style={labelStyle}>ระดับชั้น</label>
+          <select value={grade} onChange={e => setGrade(e.target.value)} style={inputStyle}>
+            {grades.map(g => <option key={g} value={g}>{g}</option>)}
+          </select>
+        </div>
+        <div style={{ display: "flex", gap: 10, marginTop: 8 }}>
+          {current && (
+            <button onClick={onDelete} style={{ ...btnStyle, background: "#FEF2F2", color: "#EF4444", border: "1px solid #FECACA" }}>
+              ลบออก
+            </button>
+          )}
+          <button onClick={() => subjectId && onSave({ subjectId, grade })} style={{ ...btnStyle, background: "#2563EB", color: "#fff", marginLeft: "auto" }} disabled={!subjectId}>
+            บันทึก
+          </button>
+        </div>
+      </div>
+    </ModalWrapper>
+  );
+}
+
+// ==================== TEACHERS VIEW ====================
+function TeachersView({ teachers, subjects, onSave, onDelete, notify }) {
+  const [editing, setEditing] = useState(null);
+
+  return (
+    <div style={{ padding: 32 }}>
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 24 }}>
+        <div>
+          <h2 style={{ margin: 0, fontSize: 20, fontWeight: 800, color: "#1E3A5F" }}>จัดการครู</h2>
+          <p style={{ margin: "4px 0 0", color: "#64748B", fontSize: 13 }}>ทั้งหมด {teachers.length} คน</p>
+        </div>
+        <button onClick={() => setEditing({ id: "", name: "", title: "ครู", subjects: [] })} style={primaryBtn}>
+          <Icon name="plus" size={14} /> เพิ่มครูใหม่
+        </button>
+      </div>
+
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: 16 }}>
+        {teachers.map(t => (
+          <div key={t.id} style={{ background: "#fff", borderRadius: 14, padding: 20, boxShadow: "0 1px 4px rgba(0,0,0,0.06)" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 12 }}>
+              <div style={{ width: 44, height: 44, borderRadius: "50%", background: "#EFF6FF", display: "flex", alignItems: "center", justifyContent: "center", color: "#2563EB", fontSize: 18, fontWeight: 700 }}>
+                {t.name[0]}
+              </div>
+              <div>
+                <div style={{ fontWeight: 700, color: "#1E293B", fontSize: 15 }}>{t.name}</div>
+                <div style={{ fontSize: 12, color: "#94A3B8" }}>{t.title}</div>
+              </div>
+            </div>
+            <div style={{ display: "flex", flexWrap: "wrap", gap: 6, marginBottom: 14 }}>
+              {t.subjects.map(sid => {
+                const sub = subjects.find(s => s.id === sid);
+                return sub ? (
+                  <span key={sid} style={{ background: sub.color + "22", color: sub.color, fontSize: 11, padding: "2px 8px", borderRadius: 12, fontWeight: 600 }}>
+                    {sub.name}
+                  </span>
+                ) : null;
+              })}
+            </div>
+            <div style={{ display: "flex", gap: 8 }}>
+              <button onClick={() => setEditing(t)} style={outlineBtn}><Icon name="edit" size={13} /> แก้ไข</button>
+              <button onClick={() => onDelete(t.id)} style={{ ...outlineBtn, color: "#EF4444", borderColor: "#FECACA" }}><Icon name="trash" size={13} /> ลบ</button>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {editing && (
+        <TeacherModal
+          teacher={editing}
+          subjects={subjects}
+          onSave={(t) => { onSave(t); setEditing(null); }}
+          onClose={() => setEditing(null)}
+        />
+      )}
+    </div>
+  );
+}
+
+function TeacherModal({ teacher, subjects, onSave, onClose }) {
+  const [form, setForm] = useState(teacher);
+  const toggleSubject = (sid) => {
+    setForm(f => ({
+      ...f,
+      subjects: f.subjects.includes(sid)
+        ? f.subjects.filter(s => s !== sid)
+        : [...f.subjects, sid],
+    }));
+  };
+  return (
+    <ModalWrapper onClose={onClose} title={teacher.id ? "แก้ไขข้อมูลครู" : "เพิ่มครูใหม่"}>
+      <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+        <div>
+          <label style={labelStyle}>ชื่อ-นามสกุล</label>
+          <input value={form.name} onChange={e => setForm(f => ({ ...f, name: e.target.value }))} style={inputStyle} placeholder="ชื่อครู" />
+        </div>
+        <div>
+          <label style={labelStyle}>ตำแหน่ง</label>
+          <select value={form.title} onChange={e => setForm(f => ({ ...f, title: e.target.value }))} style={inputStyle}>
+            {["ครู", "ครูชำนาญการ", "ครูชำนาญการพิเศษ", "ครูเชี่ยวชาญ", "ผู้ช่วยครู"].map(t => <option key={t}>{t}</option>)}
+          </select>
+        </div>
+        <div>
+          <label style={labelStyle}>วิชาที่สอน (เลือกได้หลายวิชา)</label>
+          <div style={{ display: "flex", flexWrap: "wrap", gap: 8, maxHeight: 160, overflowY: "auto", padding: 8, background: "#F8FAFC", borderRadius: 8 }}>
+            {subjects.map(s => (
+              <button key={s.id} onClick={() => toggleSubject(s.id)} style={{
+                padding: "4px 12px", borderRadius: 20, border: "1.5px solid",
+                borderColor: form.subjects.includes(s.id) ? s.color : "#E2E8F0",
+                background: form.subjects.includes(s.id) ? s.color + "22" : "#fff",
+                color: form.subjects.includes(s.id) ? s.color : "#475569",
+                fontSize: 12, cursor: "pointer", fontFamily: "inherit", fontWeight: form.subjects.includes(s.id) ? 700 : 400,
+              }}>{s.name}</button>
+            ))}
+          </div>
+        </div>
+        <button onClick={() => form.name && onSave(form)} style={{ ...primaryBtn, marginTop: 8 }} disabled={!form.name}>
+          บันทึก
+        </button>
+      </div>
+    </ModalWrapper>
+  );
+}
+
+// ==================== SUBJECTS VIEW ====================
+function SubjectsView({ subjects, onSave, onDelete, notify }) {
+  const [editing, setEditing] = useState(null);
+  const [search, setSearch] = useState("");
+  const filtered = subjects.filter(s => s.name.includes(search));
+
+  return (
+    <div style={{ padding: 32 }}>
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 24 }}>
+        <div>
+          <h2 style={{ margin: 0, fontSize: 20, fontWeight: 800, color: "#1E3A5F" }}>จัดการวิชา</h2>
+          <p style={{ margin: "4px 0 0", color: "#64748B", fontSize: 13 }}>ทั้งหมด {subjects.length} วิชา</p>
+        </div>
+        <div style={{ display: "flex", gap: 10 }}>
+          <input value={search} onChange={e => setSearch(e.target.value)} style={{ ...inputStyle, width: 200, margin: 0 }} placeholder="ค้นหาวิชา..." />
+          <button onClick={() => setEditing({ id: "", name: "", credits: 1, color: "#4A90E2" })} style={primaryBtn}>
+            <Icon name="plus" size={14} /> เพิ่มวิชาใหม่
+          </button>
+        </div>
+      </div>
+
+      <div style={{ background: "#fff", borderRadius: 14, overflow: "hidden", boxShadow: "0 1px 4px rgba(0,0,0,0.06)" }}>
+        <table style={{ width: "100%", borderCollapse: "collapse" }}>
+          <thead>
+            <tr style={{ background: "#F8FAFC" }}>
+              {["สี", "ชื่อวิชา", "หน่วยกิต", "จัดการ"].map(h => (
+                <th key={h} style={{ padding: "12px 20px", textAlign: "left", fontSize: 13, fontWeight: 700, color: "#475569", borderBottom: "1px solid #E2E8F0" }}>{h}</th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {filtered.map((s, i) => (
+              <tr key={s.id} style={{ background: i % 2 === 0 ? "#fff" : "#FAFBFF" }}>
+                <td style={{ padding: "12px 20px" }}>
+                  <div style={{ width: 28, height: 28, borderRadius: 8, background: s.color }} />
+                </td>
+                <td style={{ padding: "12px 20px", fontWeight: 600, color: "#1E293B" }}>{s.name}</td>
+                <td style={{ padding: "12px 20px", color: "#64748B" }}>{s.credits}</td>
+                <td style={{ padding: "12px 20px" }}>
+                  <div style={{ display: "flex", gap: 8 }}>
+                    <button onClick={() => setEditing(s)} style={outlineBtn}><Icon name="edit" size={13} /></button>
+                    <button onClick={() => onDelete(s.id)} style={{ ...outlineBtn, color: "#EF4444", borderColor: "#FECACA" }}><Icon name="trash" size={13} /></button>
+                  </div>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      {editing && (
+        <SubjectModal
+          subject={editing}
+          onSave={(s) => { onSave(s); setEditing(null); }}
+          onClose={() => setEditing(null)}
+        />
+      )}
+    </div>
+  );
+}
+
+function SubjectModal({ subject, onSave, onClose }) {
+  const [form, setForm] = useState(subject);
+  return (
+    <ModalWrapper onClose={onClose} title={subject.id ? "แก้ไขวิชา" : "เพิ่มวิชาใหม่"}>
+      <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+        <div>
+          <label style={labelStyle}>ชื่อวิชา</label>
+          <input value={form.name} onChange={e => setForm(f => ({ ...f, name: e.target.value }))} style={inputStyle} />
+        </div>
+        <div>
+          <label style={labelStyle}>จำนวนหน่วยกิต</label>
+          <input type="number" min={0} max={10} value={form.credits} onChange={e => setForm(f => ({ ...f, credits: parseInt(e.target.value) || 0 }))} style={inputStyle} />
+        </div>
+        <div>
+          <label style={labelStyle}>สีประจำวิชา</label>
+          <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
+            {PRESET_COLORS.map(c => (
+              <button key={c} onClick={() => setForm(f => ({ ...f, color: c }))} style={{
+                width: 32, height: 32, borderRadius: 8, background: c, border: form.color === c ? "3px solid #1E3A5F" : "2px solid #fff",
+                cursor: "pointer", boxShadow: "0 1px 4px rgba(0,0,0,0.2)",
+              }} />
+            ))}
+          </div>
+        </div>
+        <button onClick={() => form.name && onSave(form)} style={{ ...primaryBtn, marginTop: 8 }}>บันทึก</button>
+      </div>
+    </ModalWrapper>
+  );
+}
+
+// ==================== SEMESTERS VIEW ====================
+function SemestersView({ semesters, activeSemesterId, onActivate, onFinalize, onCreate, onSelect }) {
+  return (
+    <div style={{ padding: 32 }}>
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 24 }}>
+        <div>
+          <h2 style={{ margin: 0, fontSize: 20, fontWeight: 800, color: "#1E3A5F" }}>จัดการภาคเรียน</h2>
+          <p style={{ margin: "4px 0 0", color: "#64748B", fontSize: 13 }}>ทั้งหมด {semesters.length} ภาคเรียน</p>
+        </div>
+        <button onClick={onCreate} style={primaryBtn}>
+          <Icon name="plus" size={14} /> สร้างตารางสอนใหม่
+        </button>
+      </div>
+
+      <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+        {semesters.slice().reverse().map(s => (
+          <div key={s.id} style={{
+            background: "#fff", borderRadius: 14, padding: 20,
+            boxShadow: s.id === activeSemesterId ? "0 0 0 2px #2563EB, 0 4px 12px rgba(37,99,235,0.1)" : "0 1px 4px rgba(0,0,0,0.06)",
+            display: "flex", alignItems: "center", gap: 16,
+          }}>
+            <div style={{ flex: 1 }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 4 }}>
+                <span style={{ fontWeight: 800, fontSize: 16, color: "#1E293B" }}>{s.label}</span>
+                <StatusBadge status={s.status} />
+                {s.id === activeSemesterId && <span style={{ fontSize: 11, background: "#DBEAFE", color: "#1E40AF", padding: "2px 8px", borderRadius: 20, fontWeight: 600 }}>กำลังใช้งาน</span>}
+              </div>
+              <div style={{ fontSize: 13, color: "#64748B" }}>{s.school}</div>
+              <div style={{ fontSize: 12, color: "#94A3B8", marginTop: 2 }}>
+                จัดสอน {Object.keys(s.timetables || {}).length} ครู
+              </div>
+            </div>
+            <div style={{ display: "flex", gap: 8 }}>
+              <button onClick={() => onSelect(s.id)} style={outlineBtn}>
+                <Icon name="eye" size={13} /> ดูตาราง
+              </button>
+              {s.status === "draft" && (
+                <button onClick={() => onFinalize(s.id)} style={{ ...outlineBtn, borderColor: "#A7F3D0", color: "#059669" }}>
+                  <Icon name="check" size={13} /> ยืนยัน
+                </button>
+              )}
+              {s.status !== "active" && s.status !== "archived" && (
+                <button onClick={() => onActivate(s.id)} style={{ ...primaryBtn }}>
+                  <Icon name="rocket" size={13} /> นำไปใช้งาน
+                </button>
+              )}
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// ==================== NEW SEMESTER MODAL ====================
+function NewSemesterModal({ school, onSave, onClose }) {
+  const [form, setForm] = useState({ year: "2569", term: "1", school });
+  return (
+    <ModalWrapper onClose={onClose} title="สร้างตารางสอนใหม่ (ฉบับร่าง)">
+      <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+        <div style={{ background: "#FEF9C3", border: "1px solid #FDE047", borderRadius: 8, padding: 12, fontSize: 13, color: "#854D0E" }}>
+          ตารางใหม่จะถูกบันทึกเป็น <strong>ฉบับร่าง</strong> จนกว่าจะกด "นำไปใช้งาน"
+        </div>
+        <div>
+          <label style={labelStyle}>ปีการศึกษา (พ.ศ.)</label>
+          <input value={form.year} onChange={e => setForm(f => ({ ...f, year: e.target.value }))} style={inputStyle} placeholder="เช่น 2569" />
+        </div>
+        <div>
+          <label style={labelStyle}>ภาคเรียน</label>
+          <select value={form.term} onChange={e => setForm(f => ({ ...f, term: e.target.value }))} style={inputStyle}>
+            <option value="1">ภาคเรียนที่ 1</option>
+            <option value="2">ภาคเรียนที่ 2</option>
+          </select>
+        </div>
+        <div>
+          <label style={labelStyle}>ชื่อโรงเรียน</label>
+          <input value={form.school} onChange={e => setForm(f => ({ ...f, school: e.target.value }))} style={inputStyle} />
+        </div>
+        <button onClick={() => form.year && onSave(form)} style={{ ...primaryBtn, marginTop: 8 }}>
+          สร้างตารางสอนใหม่
+        </button>
+      </div>
+    </ModalWrapper>
+  );
+}
+
+// ==================== MODAL WRAPPER ====================
+function ModalWrapper({ onClose, title, children }) {
+  return (
+    <div style={{
+      position: "fixed", inset: 0, background: "rgba(15,35,64,0.5)",
+      display: "flex", alignItems: "center", justifyContent: "center", zIndex: 1000, padding: 20,
+    }}>
+      <div style={{ background: "#fff", borderRadius: 18, padding: 28, width: "100%", maxWidth: 480, boxShadow: "0 20px 60px rgba(0,0,0,0.2)", maxHeight: "90vh", overflowY: "auto" }}>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 20 }}>
+          <h3 style={{ margin: 0, fontSize: 18, fontWeight: 800, color: "#1E3A5F" }}>{title}</h3>
+          <button onClick={onClose} style={{ background: "#F1F5F9", border: "none", borderRadius: 8, padding: 6, cursor: "pointer", color: "#475569" }}>
+            <Icon name="x" size={16} />
+          </button>
+        </div>
+        {children}
+      </div>
+    </div>
+  );
+}
+
+// ==================== SHARED STYLES ====================
+const inputStyle = {
+  width: "100%", padding: "10px 14px", borderRadius: 8, border: "1.5px solid #E2E8F0",
+  fontSize: 14, color: "#1E293B", fontFamily: "inherit", outline: "none",
+  background: "#F8FAFC", boxSizing: "border-box",
+};
+const labelStyle = {
+  display: "block", marginBottom: 6, fontSize: 13, fontWeight: 600, color: "#475569",
+};
+const primaryBtn = {
+  background: "#2563EB", color: "#fff", border: "none", borderRadius: 9,
+  padding: "9px 18px", cursor: "pointer", fontSize: 13, fontWeight: 700,
+  fontFamily: "inherit", display: "inline-flex", alignItems: "center", gap: 6,
+};
+const outlineBtn = {
+  background: "#fff", color: "#475569", border: "1.5px solid #E2E8F0",
+  borderRadius: 8, padding: "7px 14px", cursor: "pointer", fontSize: 12,
+  fontFamily: "inherit", display: "inline-flex", alignItems: "center", gap: 5,
+};
+const btnStyle = {
+  padding: "8px 16px", borderRadius: 8, cursor: "pointer", fontSize: 13,
+  fontFamily: "inherit", border: "1px solid #E2E8F0", background: "#F8FAFC",
+};
