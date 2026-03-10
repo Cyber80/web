@@ -41,19 +41,36 @@
   .container { max-width:960px; margin:0 auto; padding:40px 24px 60px; }
 
   .unit-tabs { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:32px; }
+  .unit-tabs-button { display:flex; justify-content:center; gap:8px; flex-wrap:wrap; margin-bottom:32px; }
   .unit-tab {
     padding:8px 20px; border-radius:999px; border:2px solid #f0d0b8;
     background:#fff; font-size:13px; font-weight:600; cursor:pointer;
     color:#a0683a; transition:all .18s;
   }
+  .unit-tab-button {
+    padding:8px 20px; border-radius:999px; border:2px solid #f0d0b8;
+    background:#fff; font-size:13px; font-weight:600; cursor:pointer;
+    color:#1565c0; transition:all .18s;
+  }
+  .start-btn {
+  display: block; text-align: center;
+  padding: 10px; border: none;
+  border-radius: 10px; color: blue;
+  font-family: 'Mitr', sans-serif;
+  font-size: 13px; font-weight: 600;
+  cursor: pointer; transition: all .2s;
+  }
+
   .unit-tab:hover { border-color:var(--c2); color:var(--c2); }
   .unit-tab.active { background:var(--c1); color:#fff; border-color:var(--c1); }
+  .unit-tab-button.active { background:var(--c1); color:#ef4444; border-color:var(--c1); }
 
   .unit-section { display:none; animation:fadeIn .3s ease; }
   .unit-section.active { display:block; }
   @keyframes fadeIn { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
 
-  .lbl { font-size:10px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:var(--c2); margin-bottom:6px; }
+  .lbl { font-size:18px; font-weight:700; letter-spacing:0px; text-transform:uppercase; color:var(--c2); margin-bottom:6px; }
+  .lbl1 { font-family:'Mitr',sans-serif; font-size:clamp(20px,3vw,26px); font-weight:600; color:var(--c1); margin-bottom:24px; }
   .ttl { font-family:'Mitr',sans-serif; font-size:clamp(20px,3vw,26px); font-weight:600; color:var(--c1); margin-bottom:24px; }
 
   .ch-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:20px; margin-bottom:36px; }
@@ -165,6 +182,13 @@
     <button class="unit-tab" onclick="switchUnit('u3',this)">⚡ หน่วยที่ 6: แรงไฟฟ้าและพลังงานไฟฟ้า</button>
   </div>
 
+
+    <div style="display:flex; justify-content:center;">
+      <a href="p6_0.html"><button class="unit-tab-button">ทบทวนก่อนสอบปลายภาค</button></a> 
+    </div>
+     
+
+
   <!-- ═══ UNIT 4 ─── -->
   <div id="u1" class="unit-section active">
     <div class="lbl">หน่วยที่ 4</div>
@@ -222,23 +246,16 @@
 
     <hr boder="1">
     <br>
-    <div>
-      <div class="ch-grid">
-      <div class="ch-card" onclick="openPanel('ch1')">
-        <div class="ch-top" style="background:linear-gradient(135deg,#1565c0,#42a5f5);">
-          <div class="ch-num">6</div>
-          <div class="ch-label">กิจกรรมและแบบทดสอบหลังเรียน ป.6</div>
-        </div>
-        <div class="ch-body">
-          <ul class="topic-list">
-            <li><a href="p6_0.html">ทบทวนก่อนสอบ</a></li>
-            <li><a href="p6_5.html">แบบจำลองวงจรไฟฟ้า</a></li>
-            <li><a href="p6_1.html">แบบทดสอบหลังเรียน</a></li>
-          </ul>
-         </div>
+      <div class="unit-tabs-button">
+        
+        <button class="unit-tab-button">❓ <s>แบบทดสอบก่อนเรียน</s></button>
+        <button class="unit-tab-button">✏️ <s>แบบฝึกหัด</s></button>
+        <button class="unit-tab-button">🃏 <s>บัตรคำ</s></button>
+        <button class="unit-tab-button">🧠 <s>สรุปบทเรียน</s></button>
+        
+        <a href="p6_1.html"><button class="unit-tab-button">✔️ แบบทดสอบหลังเรียน</button></a>
       </div>
-    </div>
-    </div>
+
     
     <!-- PANEL 1: ลมบก-ลมทะเล -->
     <div class="panel" id="ch1">
@@ -509,6 +526,39 @@
           <div class="ch-footer"><span></span><div class="ch-btn" style="color:#5c6bc0;">อ่านเพิ่ม <span class="arr">→</span></div></div>
         </div>
       </div>
+    </div>
+
+    <!-- PANEL แบบฝึกหัดแต่ละบท -->
+    <hr boder="1">
+    <br>
+      <div class="unit-tabs-button">
+        
+        <button class="unit-tab-button">❓ <s>แบบทดสอบก่อนเรียน</s></button>
+        <button class="unit-tab-button">✏️ <s>แบบฝึกหัด</s></button>
+        <button class="unit-tab-button">🃏 <s>บัตรคำ</s></button>
+        <a href="p6_5.html"><button class="unit-tab-button">แบบจำลองวงจรไฟฟ้า</button></a>
+        <button class="unit-tab-button">🧠 <s>สรุปบทเรียน</s></button>
+        
+        <a href="#"><button class="unit-tab-button">✔️ <s>แบบทดสอบหลังเรียน</s></button></a>
+      </div>
+
+    <br>
+    <div>
+      <div class="ch-grid">
+      <div class="ch-card" onclick="openPanel('ch1')">
+        <div class="ch-top" style="background:linear-gradient(135deg,#1565c0,#42a5f5);">
+          <div class="ch-num">6</div>
+          <div class="ch-label">กิจกรรมและแบบทดสอบหลังเรียน ป.6</div>
+        </div>
+        <div class="ch-body">
+          <ul class="topic-list">
+            <li><a href="p6_0.html">ทบทวนก่อนสอบ</a></li>
+            <li><a href="p6_5.html">แบบจำลองวงจรไฟฟ้า</a></li>
+            <li><a href="p6_1.html">แบบทดสอบหลังเรียน</a></li>
+          </ul>
+         </div>
+      </div>
+    </div>
     </div>
 
     <!-- PANEL แรงไฟฟ้า -->
