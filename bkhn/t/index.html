@@ -1121,7 +1121,8 @@ function renderSems(){
         <button onclick="editSem('${s.id}')" class="bo">แก้ไขชื่อ</button>
         <button onclick="copySem('${s.id}')" class="bo">คัดลอก</button>
         ${s.status==='draft'?`<button onclick="finSem('${s.id}')" class="bs">✓ ยืนยัน</button>`:''}
-        ${s.status!=='active'&&s.status!=='archived'?`<button onclick="actSem('${s.id}')" class="bp">🚀 นำไปใช้ (Active)</button>`:''}
+        ${s.status!=='active'?`<button onclick="actSem('${s.id}')" class="bp">🚀 นำไปใช้ (Active)</button>`:''}
+        <button onclick="delSem('${s.id}')" class="bd"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6"/></svg> ลบ</button>
       </div></div>`;
   }).join('');
 }
@@ -1180,6 +1181,48 @@ async function createSem(){
       showL('...');try{const u=[...semesters,s];await gsWrite('semesters',u.map(sem2r));semesters=u;renderSems();renderDash();renderTT();popSemSel('as-semsel',curSemId);closeM('m-newsem');notify('สร้างสำเร็จ ✓');}catch(e){notify(e.message,'error');}hideL();
   }
 }
+async function delSem(id){
+  const s = semesters.find(x=>x.id===id);
+  if(!s) return;
+  if(s.status === 'active'){
+    notify('ไม่สามารถลบภาคเรียนที่กำลังใช้งาน (Active) อยู่ได้ กรุณาเปลี่ยนไปใช้งานภาคเรียนอื่นก่อน','error');
+    return;
+  }
+  if(!confirm(`⚠️ ยืนยันการลบ "${s.label}" ใช่หรือไม่?\n\nข้อมูลตารางสอนทั้งหมดของภาคเรียนนี้จะถูกลบออกจากฐานข้อมูลและไม่สามารถกู้คืนได้`)) return;
+  
+  showL('กำลังลบข้อมูล...');
+  try {
+    // 1. ลบออกจากตารางภาคเรียน
+    const u = semesters.filter(x=>x.id!==id);
+    await gsWrite('semesters', u.map(sem2r));
+    semesters = u;
+    
+    // 2. ลบตารางสอนออกจาก ttMap และบันทึกทับใน Google Sheets
+    if(ttMap[id]){
+      delete ttMap[id];
+      await gsWrite('timetable', flatMap(ttMap));
+      ttMapSaved = JSON.parse(JSON.stringify(ttMap));
+    }
+    
+    // 3. เคลียร์ Local Storage ข้อมูลบัตรงานสอน/ช่องตายตัวที่ค้างอยู่ (ถ้ามี)
+    localStorage.removeItem(ASGN_PRE + id);
+    localStorage.removeItem(PL_PRE + id);
+    
+    // 4. รีเซ็ตค่า curSemId หากบังเอิญเปิดดูของอันที่ลบอยู่
+    if(curSemId === id) {
+       const act=semesters.find(x=>x.status==='active')||semesters[0];
+       curSemId = act ? act.id : null;
+    }
+    
+    renderAll();
+    notify('ลบภาคเรียนสำเร็จ ✓');
+  } catch(e) {
+    notify(e.message, 'error');
+  }
+  hideL();
+}
+
+
 
 // ══ ASSIGNMENTS ══
 function renderAssignments(){
