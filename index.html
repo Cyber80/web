@@ -106,13 +106,58 @@
             box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
         }
 
+        /* Curriculum Navigation */
+        .curriculum-nav {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            margin-top: 30px;
+            flex-wrap: wrap;
+        }
+
+        .curriculum-nav a {
+            color: rgba(255, 255, 255, 0.9);
+            text-decoration: none;
+            font-size: 1.1rem;
+            font-weight: 500;
+            padding: 10px 20px;
+            border-radius: 25px;
+            background: rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .curriculum-nav a:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+
         /* Main Content */
         .main-content {
             margin: 50px auto;
+            padding: 0 20px;
+        }
+
+        .curriculum-section {
+            margin-bottom: 60px;
+        }
+
+        .curriculum-section h2 {
+            text-align: center;
+            font-size: 2.5rem;
+            color: rgba(255, 255, 255, 0.9);
+            margin-bottom: 30px;
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .course-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
             gap: 30px;
-            padding: 0 20px;
         }
 
         .course-card {
@@ -299,6 +344,12 @@
                 <div class="tech-icon">⚡</div>
                 <div class="tech-icon">🚀</div>
             </div>
+            <nav class="curriculum-nav">
+                <a href="#elementary">ประถมศึกษา</a>
+                <a href="#secondary">มัธยมศึกษา</a>
+                <a href="#vocational">อาชีวศึกษา</a>
+                <a href="#advanced">ขั้นสูง</a>
+            </nav>
         </header>
 
         <!-- Main Content with Course Cards -->
