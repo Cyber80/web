@@ -1,0 +1,916 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>ระบบสร้างบัตรงานสอน</title>
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:ital,wght@0,300;0,400;0,600;0,700;0,800;0,900;1,400&family=IBM+Plex+Sans+Thai:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#0D1B2A;--ink2:#2C3E50;--ink3:#64748B;--ink4:#94A3B8;
+  --paper:#F7F9FC;--white:#FFFFFF;
+  --blue:#1A56DB;--blue-l:#EFF6FF;--blue-m:#BFDBFE;
+  --green:#059669;--green-l:#ECFDF5;
+  --amber:#D97706;--amber-l:#FFFBEB;
+  --red:#DC2626;--red-l:#FEF2F2;
+  --purple:#7C3AED;--purple-l:#F5F3FF;
+  --border:#E2E8F0;--border2:#CBD5E1;
+  --r:12px;--r-sm:8px;--r-xs:5px;
+  --shadow:0 2px 8px rgba(0,0,0,.08);
+  --shadow-md:0 4px 20px rgba(0,0,0,.12);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Sarabun',sans-serif;background:var(--paper);color:var(--ink);min-height:100vh}
+/* ── HEADER ── */
+.header{background:linear-gradient(135deg,#0D1B2A 0%,#1A3A5C 60%,#1A56DB 100%);padding:28px 40px;display:flex;align-items:center;gap:20px;position:relative;overflow:hidden}
+.header::before{content:'';position:absolute;right:-60px;top:-60px;width:280px;height:280px;border-radius:50%;background:rgba(255,255,255,.04);pointer-events:none}
+.header::after{content:'';position:absolute;right:80px;bottom:-80px;width:200px;height:200px;border-radius:50%;background:rgba(26,86,219,.3);pointer-events:none}
+.hico{width:52px;height:52px;background:rgba(255,255,255,.12);border-radius:var(--r);display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0;backdrop-filter:blur(4px);border:1px solid rgba(255,255,255,.15)}
+.htxt h1{font-family:'IBM Plex Sans Thai',sans-serif;font-size:22px;font-weight:700;color:#fff;line-height:1.2}
+.htxt p{font-size:12px;color:rgba(255,255,255,.55);margin-top:3px}
+.hbadge{margin-left:auto;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);color:rgba(255,255,255,.8);padding:5px 14px;border-radius:20px;font-size:11px;font-weight:600;backdrop-filter:blur(4px)}
+/* ── UPLOAD ZONE ── */
+.wrap{max-width:1200px;margin:0 auto;padding:32px 28px}
+.upload-zone{border:2.5px dashed var(--blue-m);border-radius:18px;padding:52px 32px;text-align:center;cursor:pointer;transition:all .2s;position:relative;background:linear-gradient(135deg,var(--blue-l),#fff);margin-bottom:28px}
+.upload-zone:hover,.upload-zone.drag{border-color:var(--blue);background:linear-gradient(135deg,#DBEAFE,#EFF6FF)}
+.upload-zone.drag{transform:scale(1.01);box-shadow:0 0 0 4px rgba(26,86,219,.12)}
+.upload-zone .ico{font-size:48px;margin-bottom:14px;line-height:1}
+.upload-zone h2{font-size:18px;font-weight:800;color:var(--ink);margin-bottom:6px}
+.upload-zone p{font-size:13px;color:var(--ink3);margin-bottom:18px}
+.upload-zone input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+.btn{display:inline-flex;align-items:center;gap:7px;padding:10px 22px;border-radius:var(--r-sm);border:none;cursor:pointer;font-family:inherit;font-size:13px;font-weight:700;transition:all .15s}
+.btn-primary{background:var(--blue);color:#fff}.btn-primary:hover{background:#1648C7;transform:translateY(-1px);box-shadow:0 4px 14px rgba(26,86,219,.3)}
+.btn-outline{background:#fff;color:var(--ink2);border:1.5px solid var(--border2)}.btn-outline:hover{background:var(--paper);border-color:var(--blue);color:var(--blue)}
+.btn-green{background:var(--green);color:#fff}.btn-green:hover{background:#047857;transform:translateY(-1px)}
+.btn-amber{background:var(--amber);color:#fff}.btn-amber:hover{background:#B45309;transform:translateY(-1px)}
+.btn-sm{padding:6px 14px;font-size:12px}
+/* ── PILLS / TAGS ── */
+.pill{display:inline-flex;align-items:center;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700}
+/* ── STATUS BAR ── */
+.status-bar{background:#fff;border-radius:var(--r);border:1px solid var(--border);padding:18px 22px;display:flex;align-items:center;gap:16px;margin-bottom:24px;box-shadow:var(--shadow)}
+.st-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.st-dot.ok{background:var(--green)}
+.st-dot.warn{background:var(--amber);animation:pulse 1.5s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.st-info{flex:1}
+.st-info strong{font-size:14px;color:var(--ink)}
+.st-info small{display:block;font-size:11px;color:var(--ink4);margin-top:2px}
+/* ── STATS GRID ── */
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:24px}
+.stat-card{background:#fff;border-radius:var(--r);padding:18px 20px;box-shadow:var(--shadow);border:1px solid var(--border)}
+.stat-card .num{font-size:30px;font-weight:900;line-height:1;color:var(--ink)}
+.stat-card .lbl{font-size:11px;color:var(--ink3);margin-top:4px}
+.stat-card .ico2{font-size:22px;margin-bottom:8px}
+/* ── SECTION ── */
+.section{background:#fff;border-radius:var(--r);border:1px solid var(--border);overflow:hidden;margin-bottom:20px;box-shadow:var(--shadow)}
+.sec-head{padding:16px 22px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:12px}
+.sec-head h3{font-size:15px;font-weight:800;color:var(--ink);display:flex;align-items:center;gap:8px}
+.sec-body{padding:22px}
+/* ── SUMMARY TABLE ── */
+.sum-table{width:100%;border-collapse:collapse;font-size:13px}
+.sum-table th{padding:10px 14px;text-align:left;font-size:11px;font-weight:700;color:var(--ink3);background:var(--paper);border-bottom:2px solid var(--border);white-space:nowrap}
+.sum-table td{padding:10px 14px;border-bottom:1px solid #F1F5F9;vertical-align:middle}
+.sum-table tr:last-child td{border-bottom:none}
+.sum-table tr:hover td{background:#FAFBFF}
+.sum-table .teacher-row td:first-child{font-weight:800;color:var(--ink)}
+.sum-table td.num-cell{text-align:right;font-weight:800;font-size:15px}
+.sum-table td.total-cell{font-weight:900;font-size:17px;text-align:right;color:var(--blue)}
+.teacher-group{background:var(--paper);font-weight:700}
+.teacher-group td{padding:8px 14px;color:var(--ink2);font-size:13px}
+/* ── AVATAR ── */
+.av{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#1A3A5C,var(--blue));color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;flex-shrink:0}
+/* ── CARDS GRID ── */
+.cards-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:16px}
+/* ── PRINT PREVIEW ── */
+#print-area{display:none}
+/* ── PRINT STYLES ── */
+@media print{
+  body{background:#fff}
+  .no-print{display:none!important}
+  #print-area{display:block}
+  .screen-only{display:none!important}
+  .print-card{
+    page-break-after:always;
+    page-break-inside:avoid;
+    padding:16mm;
+    border:none!important;
+    box-shadow:none!important;
+    font-size:11pt;
+  }
+  .print-card:last-child{page-break-after:auto}
+  @page{size:A4;margin:8mm}
+}
+/* ── LOADING ── */
+#loader{display:none;position:fixed;inset:0;background:rgba(13,27,42,.5);z-index:9999;align-items:center;justify-content:center;backdrop-filter:blur(3px)}
+#loader.show{display:flex}
+.loader-box{background:#fff;border-radius:16px;padding:32px 48px;text-align:center;box-shadow:0 24px 64px rgba(0,0,0,.25)}
+.spin{width:40px;height:40px;border:3px solid var(--border);border-top-color:var(--blue);border-radius:50%;animation:spin .7s linear infinite;margin:0 auto 14px}
+@keyframes spin{to{transform:rotate(360deg)}}
+/* ── TOAST ── */
+#toast{position:fixed;top:20px;right:20px;z-index:9999;padding:12px 20px;border-radius:10px;color:#fff;font-weight:700;font-size:13px;display:none;align-items:center;gap:8px;box-shadow:0 4px 20px rgba(0,0,0,.2);animation:slideIn .3s ease}
+@keyframes slideIn{from{transform:translateX(100%);opacity:0}to{transform:translateX(0);opacity:1}}
+/* ── DAY SCHEDULE GRID ── */
+.day-grid{display:grid;grid-template-columns:80px repeat(6,1fr);gap:0;border:1px solid var(--border);border-radius:var(--r-sm);overflow:hidden;font-size:11px}
+.day-grid .gh{background:var(--paper);padding:6px;text-align:center;font-weight:700;color:var(--ink3);border-bottom:1px solid var(--border);font-size:10px}
+.day-grid .gc{padding:5px;min-height:40px;border-bottom:1px solid #F8FAFC;border-right:1px solid #F8FAFC;display:flex;align-items:center;justify-content:center;text-align:center}
+.day-grid .dl{padding:6px 10px;font-weight:700;font-size:11px;background:var(--paper);border-right:1px solid var(--border)}
+/* ── PRINT CARD ── */
+.print-card-wrap{background:#fff;border:1.5px solid var(--border);border-radius:var(--r);padding:20px;box-shadow:var(--shadow)}
+.pc-header{border-bottom:2px solid var(--ink);padding-bottom:12px;margin-bottom:14px}
+.pc-school{font-size:11px;color:var(--ink3);margin-bottom:3px}
+.pc-title{font-size:16px;font-weight:900;color:var(--ink)}
+.pc-teacher{display:flex;align-items:center;gap:12px;padding:12px;background:var(--paper);border-radius:var(--r-sm);margin-bottom:14px}
+.pc-teacher-name{font-size:15px;font-weight:800;color:var(--ink)}
+.pc-teacher-pos{font-size:11px;color:var(--ink3);margin-top:2px}
+.pc-section-title{font-size:11px;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;display:flex;align-items:center;gap:6px}
+.pc-section-title::after{content:'';flex:1;height:1px;background:var(--border)}
+.pc-table{width:100%;border-collapse:collapse;font-size:11px;margin-bottom:14px}
+.pc-table th{background:var(--ink);color:#fff;padding:7px 10px;text-align:left;font-size:10px;font-weight:700}
+.pc-table td{padding:6px 10px;border-bottom:1px solid var(--border);vertical-align:middle}
+.pc-table tr:last-child td{border-bottom:none}
+.pc-table .total-row td{background:var(--blue-l);font-weight:800;color:var(--blue);border-top:2px solid var(--blue-m)}
+.pc-slot-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:4px;margin-bottom:14px}
+.pc-slot{border-radius:4px;padding:4px;min-height:36px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;font-size:9px;border:1px solid transparent}
+.pc-slot .day-label{font-size:8px;font-weight:700;color:var(--ink3);margin-bottom:2px}
+.pc-slot .time-label{font-size:7px;color:var(--ink4)}
+.pc-slot.has-class{border-color:rgba(0,0,0,.12)}
+.pc-slot.empty{background:#F8FAFC;border:1px dashed var(--border)}
+.pc-footer{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-top:14px;border-top:1px solid var(--border);padding-top:14px}
+.pc-sign{text-align:center}
+.pc-sign .sign-line{border-top:1px solid var(--ink);margin-top:28px;padding-top:6px;font-size:10px;color:var(--ink3)}
+/* ── FILTER BAR ── */
+.filter-bar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:16px}
+.filter-btn{padding:6px 14px;border-radius:20px;border:1.5px solid var(--border);background:#fff;color:var(--ink3);cursor:pointer;font-size:12px;font-family:inherit;font-weight:600;transition:all .15s}
+.filter-btn.active{background:var(--blue);color:#fff;border-color:var(--blue)}
+.filter-btn:hover:not(.active){border-color:var(--blue-m);color:var(--blue)}
+/* ── TABS ── */
+.tabs{display:flex;gap:0;border-bottom:2px solid var(--border);margin-bottom:24px}
+.tab{padding:12px 24px;border:none;background:none;cursor:pointer;font-family:inherit;font-size:14px;font-weight:600;color:var(--ink3);border-bottom:2px solid transparent;margin-bottom:-2px;transition:all .15s}
+.tab.active{color:var(--blue);border-bottom-color:var(--blue)}
+.tab:hover:not(.active){color:var(--ink)}
+/* ── EMPTY STATE ── */
+.empty{text-align:center;padding:64px 32px;color:var(--ink4)}
+.empty .e-ico{font-size:52px;margin-bottom:14px}
+.empty h3{font-size:16px;font-weight:700;color:var(--ink3);margin-bottom:6px}
+.empty p{font-size:13px}
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:var(--paper)}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px}
+/* ── RESPONSIVE ── */
+@media(max-width:768px){
+  .stats-grid{grid-template-columns:repeat(2,1fr)}
+  .header{padding:20px}
+  .wrap{padding:20px 16px}
+  .htxt h1{font-size:17px}
+}
+</style>
+</head>
+<body>
+
+<div id="loader"><div class="loader-box"><div class="spin"></div><div style="font-size:14px;font-weight:700;color:var(--ink)">กำลังประมวลผล...</div></div></div>
+<div id="toast"></div>
+
+<!-- HEADER -->
+<header class="header no-print">
+  <div class="hico">📋</div>
+  <div class="htxt">
+    <h1>ระบบสร้างบัตรงานสอน</h1>
+    <p>อัปโหลดไฟล์ตารางสอน → ดูสรุป → พิมพ์บัตรงานสอนทันที</p>
+  </div>
+  <div class="hbadge">v1.0 • โรงเรียนประถม</div>
+</header>
+
+<!-- MAIN -->
+<div class="wrap">
+
+  <!-- UPLOAD -->
+  <div id="upload-section" class="screen-only">
+    <div class="upload-zone" id="dropzone" ondragover="onDrag(event,true)" ondragleave="onDrag(event,false)" ondrop="onDrop(event)">
+      <div class="ico">📂</div>
+      <h2>อัปโหลดไฟล์ตารางสอน</h2>
+      <p>ลากวางไฟล์ <strong>.html</strong> ของระบบตารางสอน หรือคลิกเพื่อเลือกไฟล์</p>
+      <span class="btn btn-primary" style="pointer-events:none">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>
+        เลือกไฟล์
+      </span>
+      <p style="margin-top:12px;margin-bottom:0;font-size:11px;color:var(--ink4)">รองรับเฉพาะไฟล์ .html จากระบบตารางสอนเท่านั้น</p>
+      <input type="file" accept=".html" onchange="loadFile(this.files[0])">
+    </div>
+
+    <!-- DEMO -->
+    <div style="text-align:center;margin-top:-12px;margin-bottom:20px">
+      <button class="btn btn-outline" onclick="loadDemo()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+        ทดลองด้วยข้อมูลตัวอย่าง
+      </button>
+    </div>
+  </div>
+
+  <!-- STATUS BAR -->
+  <div id="status-bar" class="status-bar no-print" style="display:none">
+    <div class="st-dot ok" id="st-dot"></div>
+    <div class="st-info">
+      <strong id="st-title">โหลดข้อมูลสำเร็จ</strong>
+      <small id="st-sub">—</small>
+    </div>
+    <div style="display:flex;gap:8px">
+      <button class="btn btn-outline btn-sm" onclick="resetAll()">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 109-9M3 3v6h6"/></svg>
+        เปลี่ยนไฟล์
+      </button>
+      <button class="btn btn-green btn-sm" onclick="printAll()">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9V2h12v7M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2M6 14h12v8H6z"/></svg>
+        พิมพ์ทั้งหมด
+      </button>
+      <button class="btn btn-amber btn-sm" onclick="exportExcel()">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8zM14 2v6h6M8 13h8M8 17h8M8 9h2"/></svg>
+        Export Excel
+      </button>
+    </div>
+  </div>
+
+  <!-- STATS -->
+  <div id="stats-section" style="display:none" class="no-print">
+    <div class="stats-grid" id="stats-grid"></div>
+  </div>
+
+  <!-- TABS -->
+  <div id="main-section" style="display:none">
+    <div class="tabs no-print">
+      <button class="tab active" onclick="switchTab('summary',this)">📊 ตารางสรุปภาพรวม</button>
+      <button class="tab" onclick="switchTab('cards',this)">📋 บัตรงานสอน</button>
+    </div>
+
+    <!-- TAB: SUMMARY -->
+    <div id="tab-summary">
+      <div class="section">
+        <div class="sec-head">
+          <h3>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+            ตารางสรุป: ครูแต่ละคนสอนวิชาอะไร กี่คาบ
+          </h3>
+          <div style="display:flex;gap:8px">
+            <span id="sem-label" class="pill" style="background:var(--blue-l);color:var(--blue)"></span>
+          </div>
+        </div>
+        <div class="sec-body" style="padding:0;overflow-x:auto">
+          <table class="sum-table" id="sum-table"></table>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB: CARDS -->
+    <div id="tab-cards" style="display:none">
+      <div class="filter-bar no-print" id="filter-bar"></div>
+      <div id="cards-container"></div>
+    </div>
+  </div>
+
+</div><!-- /wrap -->
+
+<!-- PRINT AREA -->
+<div id="print-area"></div>
+
+<script>
+// ════ DATA ════
+const DAYS = ['จันทร์','อังคาร','พุธ','พฤหัสบดี','ศุกร์'];
+const TS = [
+  {id:'t1',l:'08.30-09.30',s:'08.30'},
+  {id:'t2',l:'09.30-10.30',s:'09.30'},
+  {id:'t3',l:'10.30-11.30',s:'10.30'},
+  {id:'t5',l:'12.30-13.30',s:'12.30'},
+  {id:'t6',l:'13.30-14.30',s:'13.30'},
+  {id:'t7',l:'14.30-15.30',s:'14.30'}
+];
+const CAT_L = {core:'วิชาพื้นฐาน',elective:'วิชาเพิ่มเติม',activity:'กิจกรรม'};
+const CAT_C = {core:'#1A56DB',elective:'#7C3AED',activity:'#059669'};
+const DAY_C = ['#E11D48','#D97706','#059669','#1A56DB','#7C3AED'];
+
+let appState = {
+  teachers: [], subjects: [], semesters: [], ttMap: {},
+  semId: null, school: '', semLabel: ''
+};
+let activeTeacherFilter = 'all';
+
+// ════ DRAG & DROP ════
+function onDrag(e, enter) {
+  e.preventDefault();
+  document.getElementById('dropzone').classList.toggle('drag', enter);
+}
+function onDrop(e) {
+  e.preventDefault();
+  document.getElementById('dropzone').classList.remove('drag');
+  const file = e.dataTransfer.files[0];
+  if (file) loadFile(file);
+}
+
+// ════ FILE LOAD ════
+function loadFile(file) {
+  if (!file || !file.name.endsWith('.html')) {
+    toast('กรุณาเลือกไฟล์ .html เท่านั้น', 'error'); return;
+  }
+  showLoader();
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    try { parseHTML(e.target.result); } 
+    catch(err) { toast('ไม่สามารถอ่านข้อมูลจากไฟล์นี้ได้: ' + err.message, 'error'); }
+    hideLoader();
+  };
+  reader.readAsText(file, 'UTF-8');
+}
+
+// ════ PARSE HTML ════
+function parseHTML(html) {
+  // Extract JS variables from script
+  const scriptMatch = html.match(/<script[^>]*>([\s\S]*?)<\/script>/gi);
+  let jsCode = '';
+  if (scriptMatch) jsCode = scriptMatch.map(s => s.replace(/<\/?script[^>]*>/gi,'')).join('\n');
+
+  // Extract DT (teachers), DS (subjects), DSEM (semesters)
+  const teachers = extractArray(jsCode, 'DT');
+  const subjects = extractArray(jsCode, 'DS');
+  const semesters = extractArray(jsCode, 'DSEM');
+
+  if (!teachers.length || !subjects.length) {
+    throw new Error('ไม่พบข้อมูลครู/วิชาในไฟล์ กรุณาตรวจสอบว่าเป็นไฟล์ถูกต้อง');
+  }
+
+  // Extract ttMap from localStorage simulation or inline
+  // Since this is a static export, we try to find embedded timetable data
+  const ttMap = extractTTMap(jsCode, html);
+
+  const sem = semesters.find(s => s.status === 'active') || semesters[0] || {id:'2568-2',label:'ภาคเรียนที่ 2/2568',school:'โรงเรียน'};
+
+  appState = {
+    teachers, subjects, semesters,
+    ttMap,
+    semId: sem.id,
+    school: sem.school || 'โรงเรียนบ้านเขาหัวนา',
+    semLabel: sem.label || 'ภาคเรียนที่ 2/2568'
+  };
+
+  renderAll();
+  toast(`โหลดสำเร็จ! พบครู ${teachers.length} คน, วิชา ${subjects.length} วิชา`);
+}
+
+function extractArray(code, varName) {
+  // Match: const DT=[...]; or let DT=[...];
+  const re = new RegExp(`(?:const|let|var)\\s+${varName}\\s*=\\s*(\\[(?:[^\\[\\]]|\\[(?:[^\\[\\]])*\\])*\\])`, 's');
+  const m = code.match(re);
+  if (!m) return [];
+  try { return eval(m[1]); } catch(e) { return []; }
+}
+
+function extractTTMap(jsCode, html) {
+  // Try to extract ttMap data - look for buildMap calls or embedded data
+  // For the known structure: ttMap[semId][teacherId][day][slot] = {subjectId, grade}
+  const ttMap = {};
+
+  // Try to find inline schedule data in HTML (rendered cells)
+  // Look for the ttt table rendered HTML
+  const parser = new DOMParser();
+  const doc = parser.parseFromString(html, 'text/html');
+
+  // Check if there's an embedded schedule in the HTML (rendered state)
+  const cells = doc.querySelectorAll('.cc');
+  if (cells.length > 0) {
+    // Try to parse from rendered timetable - this is a fallback
+    // The real data comes from Google Sheets at runtime
+  }
+
+  // For demo/testing, return empty - real data needs GSheets
+  return ttMap;
+}
+
+// ════ DEMO DATA ════
+function loadDemo() {
+  showLoader();
+  setTimeout(() => {
+    const teachers = [
+      {id:'t1',name:'ศิรินญา เลิศณรงค์',type:'teacher',position:'ครู',academic:'ครูชำนาญการ',subjects:['s1','s12']},
+      {id:'t2',name:'วิไลรัตน์ ใบศรี',type:'teacher',position:'ครู',academic:'',subjects:['s3','s2']},
+      {id:'t3',name:'พัชรินทร์ บรรดาเทา',type:'teacher',position:'ครู',academic:'',subjects:['s4']},
+      {id:'t4',name:'จตุรวิทย์ กลิ่นจันทน์',type:'teacher',position:'ครู',academic:'ครูชำนาญการ',subjects:['s2','s3','s9']},
+      {id:'t5',name:'เทพรัตน์ ยอดแก้ว',type:'teacher',position:'ครู',academic:'',subjects:['s7','s8','s10']},
+      {id:'t6',name:'อรวรรณ ขุนชนะ',type:'teacher',position:'ครู',academic:'',subjects:['s3','s4','s2']},
+      {id:'t7',name:'ณัฐฐ์ณรัณ พระเพ็ชร',type:'teacher',position:'ครู',academic:'',subjects:['s3','s5']},
+      {id:'t8',name:'ทศพร สังประกุล',type:'teacher',position:'ครู',academic:'',subjects:['s2','s5']},
+    ];
+    const subjects = [
+      {id:'s1',code:'ว11101',name:'วิทยาศาสตร์',credits:3,color:'#3B82F6',cat:'core'},
+      {id:'s2',code:'ค11101',name:'คณิตศาสตร์',credits:3,color:'#EF4444',cat:'core'},
+      {id:'s3',code:'ท11101',name:'ภาษาไทย',credits:3,color:'#10B981',cat:'core'},
+      {id:'s4',code:'อ11101',name:'ภาษาอังกฤษ',credits:3,color:'#8B5CF6',cat:'core'},
+      {id:'s5',code:'ส11101',name:'สังคมศึกษา',credits:2,color:'#F59E0B',cat:'core'},
+      {id:'s7',code:'ศ11101',name:'ศิลปะ',credits:1,color:'#06B6D4',cat:'core'},
+      {id:'s8',code:'ศ11102',name:'ดนตรี',credits:1,color:'#0EA5E9',cat:'core'},
+      {id:'s9',code:'พ11101',name:'สุขศึกษา/พลศึกษา',credits:1,color:'#84CC16',cat:'core'},
+      {id:'s10',code:'ง11101',name:'การงานอาชีพ',credits:1,color:'#D97706',cat:'core'},
+      {id:'s12',code:'ว11201',name:'วิทยาการคำนวณ',credits:1,color:'#14B8A6',cat:'elective'},
+      {id:'s14',code:'ก11901',name:'ซ่อมเสริม อ่านเขียน',credits:1,color:'#059669',cat:'activity'},
+      {id:'s17',code:'ก11904',name:'ลดเวลาเรียน',credits:0,color:'#9CA3AF',cat:'activity'},
+      {id:'s18',code:'ก11905',name:'ลูกเสือ',credits:0,color:'#15803D',cat:'activity'},
+    ];
+
+    // Generate realistic timetable
+    const ttMap = {};
+    const semId = '2568-2';
+    ttMap[semId] = {};
+
+    const assignments = [
+      // t1: ศิรินญา - วิทยาศาสตร์ ป.1-ป.3, วิทยาการคำนวณ ป.4-6
+      {tid:'t1',sub:'s1',grade:'ป.1',day:'จันทร์',slot:'t1'},
+      {tid:'t1',sub:'s1',grade:'ป.1',day:'พุธ',slot:'t2'},
+      {tid:'t1',sub:'s1',grade:'ป.2',day:'อังคาร',slot:'t1'},
+      {tid:'t1',sub:'s1',grade:'ป.2',day:'พฤหัสบดี',slot:'t2'},
+      {tid:'t1',sub:'s1',grade:'ป.3',day:'จันทร์',slot:'t3'},
+      {tid:'t1',sub:'s1',grade:'ป.3',day:'ศุกร์',slot:'t1'},
+      {tid:'t1',sub:'s12',grade:'ป.4',day:'อังคาร',slot:'t5'},
+      {tid:'t1',sub:'s12',grade:'ป.5',day:'พุธ',slot:'t6'},
+      {tid:'t1',sub:'s12',grade:'ป.6',day:'พฤหัสบดี',slot:'t5'},
+      // t2: วิไลรัตน์ - ภาษาไทย ป.1-2, คณิตศาสตร์ ป.1
+      {tid:'t2',sub:'s3',grade:'ป.1',day:'จันทร์',slot:'t2'},
+      {tid:'t2',sub:'s3',grade:'ป.1',day:'อังคาร',slot:'t2'},
+      {tid:'t2',sub:'s3',grade:'ป.1',day:'พุธ',slot:'t1'},
+      {tid:'t2',sub:'s3',grade:'ป.1',day:'พฤหัสบดี',slot:'t1'},
+      {tid:'t2',sub:'s3',grade:'ป.2',day:'จันทร์',slot:'t5'},
+      {tid:'t2',sub:'s3',grade:'ป.2',day:'อังคาร',slot:'t5'},
+      {tid:'t2',sub:'s3',grade:'ป.2',day:'พุธ',slot:'t5'},
+      {tid:'t2',sub:'s2',grade:'ป.1',day:'ศุกร์',slot:'t2'},
+      {tid:'t2',sub:'s2',grade:'ป.1',day:'ศุกร์',slot:'t3'},
+      // t3: พัชรินทร์ - ภาษาอังกฤษ ทุกชั้น
+      {tid:'t3',sub:'s4',grade:'ป.1',day:'อังคาร',slot:'t3'},
+      {tid:'t3',sub:'s4',grade:'ป.2',day:'จันทร์',slot:'t3'},
+      {tid:'t3',sub:'s4',grade:'ป.3',day:'อังคาร',slot:'t6'},
+      {tid:'t3',sub:'s4',grade:'ป.4',day:'พุธ',slot:'t3'},
+      {tid:'t3',sub:'s4',grade:'ป.5',day:'พฤหัสบดี',slot:'t3'},
+      {tid:'t3',sub:'s4',grade:'ป.6',day:'ศุกร์',slot:'t5'},
+      // t4: จตุรวิทย์ - คณิตศาสตร์ ป.2-4, พละ
+      {tid:'t4',sub:'s2',grade:'ป.2',day:'จันทร์',slot:'t6'},
+      {tid:'t4',sub:'s2',grade:'ป.2',day:'พุธ',slot:'t6'},
+      {tid:'t4',sub:'s2',grade:'ป.3',day:'อังคาร',slot:'t7'},
+      {tid:'t4',sub:'s2',grade:'ป.3',day:'พฤหัสบดี',slot:'t6'},
+      {tid:'t4',sub:'s2',grade:'ป.4',day:'จันทร์',slot:'t7'},
+      {tid:'t4',sub:'s2',grade:'ป.4',day:'พุธ',slot:'t7'},
+      {tid:'t4',sub:'s3',grade:'ป.3',day:'ศุกร์',slot:'t2'},
+      {tid:'t4',sub:'s9',grade:'ป.5',day:'ศุกร์',slot:'t6'},
+      {tid:'t4',sub:'s9',grade:'ป.6',day:'ศุกร์',slot:'t7'},
+      // t5: เทพรัตน์ - ศิลปะ ดนตรี การงาน
+      {tid:'t5',sub:'s7',grade:'ป.1',day:'พฤหัสบดี',slot:'t7'},
+      {tid:'t5',sub:'s7',grade:'ป.2',day:'ศุกร์',slot:'t6'},
+      {tid:'t5',sub:'s7',grade:'ป.3',day:'พฤหัสบดี',slot:'t5'},
+      {tid:'t5',sub:'s8',grade:'ป.4',day:'จันทร์',slot:'t5'},
+      {tid:'t5',sub:'s8',grade:'ป.5',day:'อังคาร',slot:'t7'},
+      {tid:'t5',sub:'s10',grade:'ป.5',day:'พุธ',slot:'t7'},
+      {tid:'t5',sub:'s10',grade:'ป.6',day:'พฤหัสบดี',slot:'t7'},
+      // t6: อรวรรณ - ภาษาไทย ป.4-6
+      {tid:'t6',sub:'s3',grade:'ป.4',day:'จันทร์',slot:'t2'},
+      {tid:'t6',sub:'s3',grade:'ป.4',day:'พุธ',slot:'t2'},
+      {tid:'t6',sub:'s3',grade:'ป.4',day:'ศุกร์',slot:'t3'},
+      {tid:'t6',sub:'s3',grade:'ป.5',day:'อังคาร',slot:'t3'},
+      {tid:'t6',sub:'s3',grade:'ป.5',day:'พฤหัสบดี',slot:'t3'},
+      {tid:'t6',sub:'s3',grade:'ป.6',day:'จันทร์',slot:'t6'},
+      {tid:'t6',sub:'s3',grade:'ป.6',day:'พุธ',slot:'t5'},
+      {tid:'t6',sub:'s2',grade:'ป.5',day:'ศุกร์',slot:'t1'},
+      {tid:'t6',sub:'s4',grade:'ป.3',day:'อังคาร',slot:'t2'},
+      // t7: ณัฐฐ์ณรัณ - ภาษาไทย ป.3, สังคม
+      {tid:'t7',sub:'s3',grade:'ป.3',day:'จันทร์',slot:'t1'},
+      {tid:'t7',sub:'s3',grade:'ป.3',day:'พุธ',slot:'t3'},
+      {tid:'t7',sub:'s5',grade:'ป.4',day:'อังคาร',slot:'t6'},
+      {tid:'t7',sub:'s5',grade:'ป.5',day:'พุธ',slot:'t1'},
+      {tid:'t7',sub:'s5',grade:'ป.6',day:'จันทร์',slot:'t3'},
+      {tid:'t7',sub:'s5',grade:'ป.6',day:'พฤหัสบดี',slot:'t6'},
+      // t8: ทศพร - คณิตศาสตร์ ป.5-6, สังคม
+      {tid:'t8',sub:'s2',grade:'ป.5',day:'อังคาร',slot:'t1'},
+      {tid:'t8',sub:'s2',grade:'ป.5',day:'พฤหัสบดี',slot:'t1'},
+      {tid:'t8',sub:'s2',grade:'ป.6',day:'จันทร์',slot:'t1'},
+      {tid:'t8',sub:'s2',grade:'ป.6',day:'อังคาร',slot:'t2'},
+      {tid:'t8',sub:'s2',grade:'ป.6',day:'พฤหัสบดี',slot:'t2'},
+      {tid:'t8',sub:'s5',grade:'ป.1',day:'พุธ',slot:'t7'},
+      {tid:'t8',sub:'s5',grade:'ป.2',day:'พฤหัสบดี',slot:'t7'},
+      {tid:'t8',sub:'s14',grade:'ป.1',day:'ศุกร์',slot:'t7'},
+      {tid:'t8',sub:'s17',grade:'ป.6',day:'ศุกร์',slot:'t7'},
+    ];
+
+    assignments.forEach(a => {
+      if (!ttMap[semId][a.tid]) ttMap[semId][a.tid] = {};
+      if (!ttMap[semId][a.tid][a.day]) ttMap[semId][a.tid][a.day] = {};
+      ttMap[semId][a.tid][a.day][a.slot] = {subjectId: a.sub, grade: a.grade};
+    });
+
+    appState = {
+      teachers, subjects,
+      semesters: [{id:'2568-2',year:'2568',term:'2',label:'ภาคเรียนที่ 2 ปีการศึกษา 2568',school:'โรงเรียนบ้านเขาหัวนา',status:'active'}],
+      ttMap,
+      semId: '2568-2',
+      school: 'โรงเรียนบ้านเขาหัวนา',
+      semLabel: 'ภาคเรียนที่ 2 ปีการศึกษา 2568'
+    };
+
+    renderAll();
+    toast('โหลดข้อมูลตัวอย่างสำเร็จ! ✓');
+    hideLoader();
+  }, 600);
+}
+
+// ════ AGGREGATE DATA ════
+function buildTeacherSummary() {
+  const {teachers, subjects, ttMap, semId} = appState;
+  const sm = Object.fromEntries(subjects.map(s => [s.id, s]));
+  const result = [];
+
+  teachers.forEach(t => {
+    const tCells = [];
+    const tSlots = (ttMap[semId] || {})[t.id] || {};
+    Object.entries(tSlots).forEach(([day, slots]) => {
+      Object.entries(slots).forEach(([tsId, cell]) => {
+        tCells.push({day, tsId, subjectId: cell.subjectId, grade: cell.grade});
+      });
+    });
+
+    if (!tCells.length) return; // skip teachers with no schedule
+
+    // Group by subject + grade
+    const subGradeMap = {};
+    tCells.forEach(c => {
+      const key = `${c.subjectId}__${c.grade}`;
+      if (!subGradeMap[key]) subGradeMap[key] = {
+        subjectId: c.subjectId, grade: c.grade,
+        slots: [], days: new Set()
+      };
+      subGradeMap[key].slots.push({day: c.day, tsId: c.tsId});
+      subGradeMap[key].days.add(c.day);
+    });
+
+    const rows = Object.values(subGradeMap).map(r => ({
+      ...r,
+      subject: sm[r.subjectId],
+      count: r.slots.length,
+      daysArr: [...r.days]
+    })).filter(r => r.subject).sort((a,b) => {
+      if (a.grade < b.grade) return -1;
+      if (a.grade > b.grade) return 1;
+      return (a.subject?.name||'').localeCompare(b.subject?.name||'', 'th');
+    });
+
+    result.push({
+      teacher: t,
+      rows,
+      total: tCells.length,
+      uniqueSubjects: [...new Set(tCells.map(c => c.subjectId))].length,
+      slots: tCells  // full slot list for schedule grid
+    });
+  });
+
+  return result;
+}
+
+// ════ RENDER ════
+function renderAll() {
+  const {teachers, semLabel, school} = appState;
+  const summary = buildTeacherSummary();
+  const totalPeriods = summary.reduce((s, t) => s + t.total, 0);
+
+  // Show sections
+  document.getElementById('upload-section').style.display = 'none';
+  document.getElementById('status-bar').style.display = 'flex';
+  document.getElementById('stats-section').style.display = 'block';
+  document.getElementById('main-section').style.display = 'block';
+
+  // Status
+  document.getElementById('st-title').textContent = `โหลดข้อมูลสำเร็จ — ${semLabel}`;
+  document.getElementById('st-sub').textContent = `${school} • พบครูที่มีตาราง ${summary.length} คน จาก ${teachers.length} คน`;
+
+  // Sem label
+  document.getElementById('sem-label').textContent = semLabel;
+
+  // Stats
+  document.getElementById('stats-grid').innerHTML = [
+    {ico:'👨‍🏫', num: summary.length, lbl: 'ครูที่มีตารางสอน'},
+    {ico:'📚', num: totalPeriods, lbl: 'คาบรวมทั้งหมด/สัปดาห์'},
+    {ico:'🏫', num: [...new Set(summary.flatMap(t => t.rows.map(r => r.grade)))].length, lbl: 'ชั้นที่จัดตาราง'},
+    {ico:'📖', num: [...new Set(summary.flatMap(t => t.rows.map(r => r.subjectId)))].length, lbl: 'วิชาที่ปรากฏ'},
+  ].map(s => `
+    <div class="stat-card">
+      <div class="ico2">${s.ico}</div>
+      <div class="num">${s.num}</div>
+      <div class="lbl">${s.lbl}</div>
+    </div>
+  `).join('');
+
+  renderSummaryTable(summary);
+  renderCards(summary);
+  renderFilterBar(summary);
+}
+
+function renderSummaryTable(summary) {
+  const table = document.getElementById('sum-table');
+  let html = `<thead><tr>
+    <th style="min-width:160px">ครูผู้สอน</th>
+    <th>วิชา</th>
+    <th>รหัส</th>
+    <th>ชั้น</th>
+    <th>หมวด</th>
+    <th style="text-align:right">จ</th>
+    <th style="text-align:right">อ</th>
+    <th style="text-align:right">พ</th>
+    <th style="text-align:right">พฤ</th>
+    <th style="text-align:right">ศ</th>
+    <th style="text-align:right">คาบ</th>
+    <th style="text-align:right">รวม</th>
+  </tr></thead><tbody>`;
+
+  summary.forEach(({teacher: t, rows, total}) => {
+    rows.forEach((row, i) => {
+      const dayCount = ['จันทร์','อังคาร','พุธ','พฤหัสบดี','ศุกร์'].map(d =>
+        row.slots.filter(s => s.day === d).length
+      );
+      html += `<tr>
+        ${i === 0 ? `<td rowspan="${rows.length}" style="border-right:3px solid ${rows[0]?.subject?.color||'#ccc'}">
+          <div style="display:flex;align-items:center;gap:10px">
+            <div class="av">${t.name[0]}</div>
+            <div>
+              <div style="font-weight:800;font-size:13px">${t.name}</div>
+              <div style="font-size:10px;color:var(--ink4)">${t.position||'ครู'}${t.academic?' · '+t.academic:''}</div>
+            </div>
+          </div>
+        </td>` : ''}
+        <td>
+          <div style="display:flex;align-items:center;gap:6px">
+            <div style="width:8px;height:8px;border-radius:50%;background:${row.subject?.color||'#ccc'};flex-shrink:0"></div>
+            <span style="font-weight:600;color:${row.subject?.color||'var(--ink)'}">${row.subject?.name||'—'}</span>
+          </div>
+        </td>
+        <td style="font-size:11px;color:var(--ink3);font-family:monospace">${row.subject?.code||'—'}</td>
+        <td><span style="background:#EFF6FF;color:var(--blue);padding:2px 8px;border-radius:10px;font-size:11px;font-weight:700">${row.grade}</span></td>
+        <td><span style="background:${CAT_C[row.subject?.cat]||'#ccc'}18;color:${CAT_C[row.subject?.cat]||'#666'};padding:2px 8px;border-radius:10px;font-size:10px;font-weight:700">${CAT_L[row.subject?.cat]||'—'}</span></td>
+        ${dayCount.map(n => `<td style="text-align:right;font-weight:${n>0?700:400};color:${n>0?'var(--ink)':'var(--ink4)'}">${n>0?n:'—'}</td>`).join('')}
+        <td class="num-cell">${row.count}</td>
+        ${i === 0 ? `<td class="total-cell" rowspan="${rows.length}" style="background:var(--blue-l);border-left:2px solid var(--blue-m)">${total}</td>` : ''}
+      </tr>`;
+    });
+  });
+
+  // Grand total row
+  const grandTotal = summary.reduce((s, t) => s + t.total, 0);
+  html += `<tr style="background:var(--paper)">
+    <td colspan="10" style="font-weight:800;color:var(--ink2);font-size:13px;padding:12px 14px">รวมทั้งหมด</td>
+    <td colspan="2" class="total-cell" style="font-size:18px;background:var(--blue-l)">${grandTotal}</td>
+  </tr>`;
+
+  html += '</tbody>';
+  table.innerHTML = html;
+}
+
+// ════ FILTER BAR ════
+function renderFilterBar(summary) {
+  const bar = document.getElementById('filter-bar');
+  const total = summary.reduce((s,t)=>s+t.total,0);
+  let html = `<button class="filter-btn ${activeTeacherFilter==='all'?'active':''}" onclick="filterCards('all')">ทุกคน (${summary.length})</button>`;
+  summary.forEach(({teacher: t, total: cnt}) => {
+    html += `<button class="filter-btn ${activeTeacherFilter===t.id?'active':''}" onclick="filterCards('${t.id}')">${t.name} <span style="opacity:.65">(${cnt})</span></button>`;
+  });
+  bar.innerHTML = html;
+}
+
+function filterCards(tid) {
+  activeTeacherFilter = tid;
+  const summary = buildTeacherSummary();
+  renderFilterBar(summary);
+  renderCards(summary);
+}
+
+// ════ RENDER CARDS ════
+function renderCards(summary) {
+  const container = document.getElementById('cards-container');
+  const filtered = activeTeacherFilter === 'all' ? summary : summary.filter(s => s.teacher.id === activeTeacherFilter);
+
+  if (!filtered.length) {
+    container.innerHTML = `<div class="empty"><div class="e-ico">📋</div><h3>ไม่พบบัตรงานสอน</h3><p>ยังไม่มีการจัดตารางสำหรับครูท่านนี้</p></div>`;
+    return;
+  }
+
+  container.innerHTML = `<div class="cards-grid">${filtered.map(s => buildCard(s)).join('')}</div>`;
+}
+
+function buildCard({teacher: t, rows, total, slots}) {
+  const sm = Object.fromEntries(appState.subjects.map(s => [s.id, s]));
+  const {semLabel, school} = appState;
+
+  // Subject rows
+  const subjectRows = rows.map(row => `
+    <tr>
+      <td>
+        <div style="display:flex;align-items:center;gap:6px">
+          <div style="width:7px;height:7px;border-radius:50%;background:${row.subject?.color};flex-shrink:0"></div>
+          <span style="font-weight:600;font-size:12px">${row.subject?.name||'—'}</span>
+        </div>
+      </td>
+      <td style="font-size:10px;color:var(--ink3);font-family:monospace">${row.subject?.code||'—'}</td>
+      <td style="text-align:center"><span style="background:#EFF6FF;color:var(--blue);padding:1px 7px;border-radius:10px;font-size:11px;font-weight:700">${row.grade}</span></td>
+      <td style="text-align:center;font-weight:800;color:var(--blue)">${row.count}</td>
+    </tr>
+  `).join('');
+
+  // Slot grid (days × timeslots)
+  const slotMap = {};
+  slots.forEach(s => { slotMap[`${s.day}__${s.tsId}`] = {subjectId: s.subjectId, grade: s.grade}; });
+
+  const slotGrid = `
+    <div style="overflow-x:auto">
+    <table style="width:100%;border-collapse:collapse;font-size:10px;min-width:360px">
+      <thead><tr>
+        <th style="padding:5px 8px;background:var(--paper);border-bottom:1px solid var(--border);text-align:left;width:72px;color:var(--ink3);font-size:10px">วัน</th>
+        ${TS.map(ts => `<th style="padding:5px 4px;background:var(--paper);border-bottom:1px solid var(--border);text-align:center;font-size:9px;color:var(--ink3)">${ts.s}</th>`).join('')}
+      </tr></thead>
+      <tbody>
+        ${DAYS.map((day, di) => {
+          const cells = TS.map(ts => {
+            const cell = slotMap[`${day}__${ts.id}`];
+            if (!cell) return `<td style="padding:3px;border-bottom:1px solid #F8FAFC"><div style="min-height:32px;background:#F8FAFC;border-radius:4px"></div></td>`;
+            const sub = sm[cell.subjectId];
+            return `<td style="padding:3px;border-bottom:1px solid #F8FAFC">
+              <div style="min-height:32px;background:${sub?.color||'#ccc'}18;border-left:2px solid ${sub?.color||'#ccc'};border-radius:4px;padding:3px 5px;display:flex;flex-direction:column;justify-content:center">
+                <div style="font-size:9px;font-weight:800;color:${sub?.color||'#333'};line-height:1.2">${sub?.name||'?'}</div>
+                <div style="font-size:8px;color:var(--ink4)">${cell.grade}</div>
+              </div>
+            </td>`;
+          }).join('');
+          return `<tr><td style="padding:5px 8px;border-bottom:1px solid #F8FAFC;font-weight:700;color:${DAY_C[di]};font-size:10px;white-space:nowrap">${day.substring(0,3)}</td>${cells}</tr>`;
+        }).join('')}
+      </tbody>
+    </table>
+    </div>
+  `;
+
+  const coreC = rows.filter(r => r.subject?.cat==='core').reduce((s,r)=>s+r.count,0);
+  const elC = rows.filter(r => r.subject?.cat==='elective').reduce((s,r)=>s+r.count,0);
+  const acC = rows.filter(r => r.subject?.cat==='activity').reduce((s,r)=>s+r.count,0);
+
+  return `
+    <div class="print-card-wrap" id="card-${t.id}">
+      <div class="pc-header">
+        <div class="pc-school">${school} • ${semLabel}</div>
+        <div class="pc-title">บัตรงานสอน</div>
+      </div>
+
+      <div class="pc-teacher">
+        <div class="av" style="width:40px;height:40px;font-size:16px">${t.name[0]}</div>
+        <div style="flex:1">
+          <div class="pc-teacher-name">${t.name}</div>
+          <div class="pc-teacher-pos">${t.position||'ครู'}${t.academic?' • '+t.academic:''}</div>
+        </div>
+        <div style="text-align:right">
+          <div style="font-size:26px;font-weight:900;color:var(--blue)">${total}</div>
+          <div style="font-size:10px;color:var(--ink4)">คาบ/สัปดาห์</div>
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px;text-align:center">
+        <div style="background:var(--blue-l);border-radius:8px;padding:8px"><div style="font-size:18px;font-weight:900;color:var(--blue)">${coreC}</div><div style="font-size:10px;color:var(--ink3)">พื้นฐาน</div></div>
+        <div style="background:var(--purple-l);border-radius:8px;padding:8px"><div style="font-size:18px;font-weight:900;color:var(--purple)">${elC}</div><div style="font-size:10px;color:var(--ink3)">เพิ่มเติม</div></div>
+        <div style="background:var(--green-l);border-radius:8px;padding:8px"><div style="font-size:18px;font-weight:900;color:var(--green)">${acC}</div><div style="font-size:10px;color:var(--ink3)">กิจกรรม</div></div>
+      </div>
+
+      <div class="pc-section-title">รายวิชาที่รับผิดชอบ</div>
+      <table class="pc-table" style="margin-bottom:14px">
+        <thead><tr>
+          <th>วิชา</th><th>รหัส</th><th style="text-align:center">ชั้น</th><th style="text-align:center">คาบ/สัปดาห์</th>
+        </tr></thead>
+        <tbody>
+          ${subjectRows}
+          <tr class="total-row"><td colspan="3" style="font-weight:800">รวมทั้งสิ้น</td><td style="text-align:center;font-size:16px;font-weight:900">${total}</td></tr>
+        </tbody>
+      </table>
+
+      <div class="pc-section-title">ตารางสอนรายสัปดาห์</div>
+      ${slotGrid}
+
+      <div class="pc-footer">
+        <div class="pc-sign"><div class="sign-line">ครูผู้สอน</div></div>
+        <div class="pc-sign"><div class="sign-line">หัวหน้ากลุ่มสาระ</div></div>
+        <div class="pc-sign"><div class="sign-line">ผู้อำนวยการ</div></div>
+      </div>
+    </div>
+  `;
+}
+
+// ════ TABS ════
+function switchTab(tab, btn) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('tab-summary').style.display = tab === 'summary' ? 'block' : 'none';
+  document.getElementById('tab-cards').style.display = tab === 'cards' ? 'block' : 'none';
+}
+
+// ════ PRINT ════
+function printAll() {
+  const summary = buildTeacherSummary();
+  const {semLabel, school} = appState;
+  const sm = Object.fromEntries(appState.subjects.map(s => [s.id, s]));
+
+  const cardsHTML = summary.map(s => `
+    <div class="print-card" style="padding:16mm;border:none;page-break-after:always">
+      ${buildCard(s)}
+    </div>
+  `).join('');
+
+  const w = window.open('', '_blank', 'width=900,height=700');
+  w.document.write(`<!DOCTYPE html><html lang="th"><head>
+    <meta charset="UTF-8">
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+      *{box-sizing:border-box;margin:0;padding:0}
+      body{font-family:'Sarabun',sans-serif;background:#fff}
+      @media screen{.print-card{margin:20px auto;max-width:720px;padding:24px;border:1px solid #E2E8F0;border-radius:12px;margin-bottom:24px}}
+      @media print{@page{size:A4;margin:8mm}.print-card{page-break-after:always;padding:12mm}.no-print{display:none}}
+      :root{--blue:#1A56DB;--blue-l:#EFF6FF;--blue-m:#BFDBFE;--green:#059669;--green-l:#ECFDF5;--purple:#7C3AED;--purple-l:#F5F3FF;--ink:#0D1B2A;--ink2:#2C3E50;--ink3:#64748B;--ink4:#94A3B8;--border:#E2E8F0;--paper:#F7F9FC}
+      .av{width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,#1A3A5C,#1A56DB);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:16px;flex-shrink:0}
+      .pc-header{border-bottom:2px solid #0D1B2A;padding-bottom:12px;margin-bottom:14px}
+      .pc-school{font-size:11px;color:#64748B;margin-bottom:3px}
+      .pc-title{font-size:16px;font-weight:900;color:#0D1B2A}
+      .pc-teacher{display:flex;align-items:center;gap:12px;padding:12px;background:#F7F9FC;border-radius:8px;margin-bottom:14px}
+      .pc-teacher-name{font-size:15px;font-weight:800;color:#0D1B2A}
+      .pc-teacher-pos{font-size:11px;color:#94A3B8;margin-top:2px}
+      .pc-table{width:100%;border-collapse:collapse;font-size:11px;margin-bottom:14px}
+      .pc-table th{background:#0D1B2A;color:#fff;padding:7px 10px;text-align:left;font-size:10px;font-weight:700}
+      .pc-table td{padding:6px 10px;border-bottom:1px solid #E2E8F0;vertical-align:middle}
+      .pc-table .total-row td{background:#EFF6FF;font-weight:800;color:#1A56DB;border-top:2px solid #BFDBFE}
+      .pc-section-title{font-size:11px;font-weight:700;color:#64748B;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;display:flex;align-items:center;gap:6px}
+      .pc-section-title::after{content:'';flex:1;height:1px;background:#E2E8F0}
+      .pc-footer{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-top:14px;border-top:1px solid #E2E8F0;padding-top:14px}
+      .pc-sign{text-align:center}
+      .pc-sign .sign-line{border-top:1px solid #0D1B2A;margin-top:28px;padding-top:6px;font-size:10px;color:#64748B}
+      .print-card-wrap{background:#fff}
+    </style>
+  </head><body>
+    <div class="no-print" style="text-align:center;padding:14px;background:#0D1B2A">
+      <button onclick="window.print()" style="background:#1A56DB;color:#fff;border:none;padding:10px 28px;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit">🖨️ พิมพ์บัตรงานสอนทั้งหมด (${summary.length} ใบ)</button>
+    </div>
+    ${cardsHTML}
+  </body></html>`);
+  w.document.close();
+}
+
+// ════ EXPORT EXCEL ════
+function exportExcel() {
+  const summary = buildTeacherSummary();
+  const {semLabel, school} = appState;
+  const DAYS_SHORT = ['จ','อ','พ','พฤ','ศ'];
+  const DAY_FULL = ['จันทร์','อังคาร','พุธ','พฤหัสบดี','ศุกร์'];
+
+  let csv = '\uFEFF'; // BOM for Thai
+  csv += `บัตรงานสอน,${semLabel},${school}\n\n`;
+  csv += `ครูผู้สอน,วิชา,รหัสวิชา,ชั้น,หมวด,คาบ/วันจันทร์,คาบ/วันอังคาร,คาบ/วันพุธ,คาบ/วันพฤหัสบดี,คาบ/วันศุกร์,คาบ/สัปดาห์,รวมทั้งหมด\n`;
+
+  summary.forEach(({teacher: t, rows, total}) => {
+    rows.forEach((row, i) => {
+      const dayCount = DAY_FULL.map(d => row.slots.filter(s => s.day === d).length);
+      csv += [
+        i===0 ? `"${t.name}"` : '',
+        `"${row.subject?.name||''}"`,
+        row.subject?.code||'',
+        row.grade,
+        CAT_L[row.subject?.cat]||'',
+        ...dayCount,
+        row.count,
+        i===0 ? total : ''
+      ].join(',') + '\n';
+    });
+    csv += '\n';
+  });
+
+  const blob = new Blob([csv], {type:'text/csv;charset=utf-8'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `บัตรงานสอน_${school}_${semLabel}.csv`;
+  a.click();
+  URL.revokeObjectURL(url);
+  toast('Export CSV สำเร็จ! เปิดด้วย Excel แล้วเลือก Data > Text to Columns ✓');
+}
+
+// ════ RESET ════
+function resetAll() {
+  appState = {teachers:[], subjects:[], semesters:[], ttMap:{}, semId:null, school:'', semLabel:''};
+  activeTeacherFilter = 'all';
+  document.getElementById('upload-section').style.display = 'block';
+  document.getElementById('status-bar').style.display = 'none';
+  document.getElementById('stats-section').style.display = 'none';
+  document.getElementById('main-section').style.display = 'none';
+}
+
+// ════ UI HELPERS ════
+function showLoader() { document.getElementById('loader').classList.add('show'); }
+function hideLoader() { document.getElementById('loader').classList.remove('show'); }
+function toast(msg, type='ok') {
+  const el = document.getElementById('toast');
+  el.style.background = type==='error' ? '#DC2626' : '#059669';
+  el.textContent = msg;
+  el.style.display = 'flex';
+  setTimeout(() => { el.style.display = 'none'; }, 3500);
+}
+</script>
+</body>
+</html>
