@@ -1,0 +1,939 @@
+<!DOCTYPE html>
+
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ใบ ปพ. 1-9 คืออะไร? สรุปครบ เข้าใจง่าย</title>
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700;800&family=Noto+Serif+Thai:wght@400;600;700;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #0f2557;
+    --blue: #1a3a8f;
+    --sky: #2d6be4;
+    --gold: #f5c842;
+    --amber: #e8a020;
+    --cream: #fdf8ef;
+    --soft: #eef3fc;
+    --text: #1a1a2e;
+    --muted: #6b7280;
+    --white: #ffffff;
+  }
+
+- { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+font-family: ‘Sarabun’, sans-serif;
+background: var(–cream);
+color: var(–text);
+line-height: 1.7;
+overflow-x: hidden;
+}
+
+/* ===== HERO COVER ===== */
+.hero {
+position: relative;
+min-height: 100vh;
+display: flex;
+flex-direction: column;
+align-items: center;
+justify-content: center;
+overflow: hidden;
+background: linear-gradient(135deg, #0f2557 0%, #1a3a8f 40%, #2d6be4 80%, #5b90f5 100%);
+}
+
+.hero::before {
+content: ‘’;
+position: absolute; inset: 0;
+background-image:
+radial-gradient(circle at 20% 20%, rgba(245,200,66,0.15) 0%, transparent 50%),
+radial-gradient(circle at 80% 80%, rgba(45,107,228,0.3) 0%, transparent 50%),
+url(“data:image/svg+xml,%3Csvg width=‘60’ height=‘60’ viewBox=‘0 0 60 60’ xmlns=‘http://www.w3.org/2000/svg’%3E%3Cg fill=‘none’ fill-rule=‘evenodd’%3E%3Cg fill=’%23ffffff’ fill-opacity=‘0.03’%3E%3Cpath d=‘M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z’/%3E%3C/g%3E%3C/g%3E%3C/svg%3E”);
+}
+
+/* Floating document cards in background */
+.bg-docs {
+position: absolute; inset: 0;
+pointer-events: none;
+}
+.bg-doc {
+position: absolute;
+width: 80px; height: 100px;
+background: rgba(255,255,255,0.05);
+border: 1px solid rgba(255,255,255,0.1);
+border-radius: 8px;
+animation: floatDoc 8s ease-in-out infinite;
+}
+.bg-doc:nth-child(1) { top: 10%; left: 5%; animation-delay: 0s; }
+.bg-doc:nth-child(2) { top: 20%; right: 8%; animation-delay: 1.5s; width: 60px; height: 75px; }
+.bg-doc:nth-child(3) { bottom: 20%; left: 10%; animation-delay: 3s; width: 50px; height: 65px; }
+.bg-doc:nth-child(4) { bottom: 30%; right: 5%; animation-delay: 4.5s; }
+.bg-doc:nth-child(5) { top: 50%; left: 2%; animation-delay: 2s; width: 40px; height: 50px; }
+
+@keyframes floatDoc {
+0%, 100% { transform: translateY(0) rotate(-3deg); opacity: 0.4; }
+50% { transform: translateY(-20px) rotate(3deg); opacity: 0.8; }
+}
+
+.hero-badge {
+background: rgba(245,200,66,0.2);
+border: 1px solid var(–gold);
+color: var(–gold);
+padding: 6px 20px;
+border-radius: 50px;
+font-size: 13px;
+font-weight: 600;
+letter-spacing: 2px;
+margin-bottom: 24px;
+text-transform: uppercase;
+animation: fadeInDown 0.8s ease;
+}
+
+.hero-title {
+font-family: ‘Noto Serif Thai’, serif;
+font-size: clamp(2.2rem, 6vw, 4.5rem);
+font-weight: 900;
+color: var(–white);
+text-align: center;
+line-height: 1.2;
+animation: fadeInDown 1s ease 0.2s both;
+text-shadow: 0 4px 30px rgba(0,0,0,0.3);
+}
+
+.hero-title span {
+color: var(–gold);
+position: relative;
+}
+
+.hero-subtitle {
+font-size: clamp(1rem, 2.5vw, 1.3rem);
+color: rgba(255,255,255,0.8);
+text-align: center;
+max-width: 600px;
+margin: 16px auto 0;
+animation: fadeInDown 1s ease 0.4s both;
+}
+
+.hero-stats {
+display: flex;
+gap: 32px;
+margin-top: 48px;
+animation: fadeInUp 1s ease 0.6s both;
+}
+
+.hero-stat {
+text-align: center;
+background: rgba(255,255,255,0.1);
+backdrop-filter: blur(10px);
+border: 1px solid rgba(255,255,255,0.2);
+border-radius: 16px;
+padding: 20px 28px;
+}
+
+.hero-stat .num {
+font-family: ‘Noto Serif Thai’, serif;
+font-size: 2.5rem;
+font-weight: 900;
+color: var(–gold);
+line-height: 1;
+}
+
+.hero-stat .label {
+font-size: 0.85rem;
+color: rgba(255,255,255,0.7);
+margin-top: 4px;
+}
+
+.scroll-hint {
+position: absolute;
+bottom: 32px;
+left: 50%;
+transform: translateX(-50%);
+display: flex;
+flex-direction: column;
+align-items: center;
+gap: 8px;
+color: rgba(255,255,255,0.5);
+font-size: 12px;
+animation: bounce 2s infinite;
+}
+.scroll-hint svg { width: 20px; }
+
+@keyframes bounce { 0%,100%{transform:translateX(-50%) translateY(0)} 50%{transform:translateX(-50%) translateY(8px)} }
+@keyframes fadeInDown { from{opacity:0;transform:translateY(-30px)} to{opacity:1;transform:translateY(0)} }
+@keyframes fadeInUp { from{opacity:0;transform:translateY(30px)} to{opacity:1;transform:translateY(0)} }
+
+/* ===== MAIN CONTENT ===== */
+main { max-width: 1100px; margin: 0 auto; padding: 80px 24px; }
+
+.section-label {
+display: inline-flex;
+align-items: center;
+gap: 8px;
+background: var(–soft);
+border-left: 4px solid var(–sky);
+padding: 8px 20px;
+border-radius: 0 50px 50px 0;
+font-size: 13px;
+font-weight: 700;
+color: var(–sky);
+letter-spacing: 1px;
+text-transform: uppercase;
+margin-bottom: 16px;
+}
+
+.section-title {
+font-family: ‘Noto Serif Thai’, serif;
+font-size: clamp(1.8rem, 4vw, 2.8rem);
+font-weight: 800;
+color: var(–navy);
+margin-bottom: 40px;
+}
+
+/* ===== INTRO CARD ===== */
+.intro-card {
+background: linear-gradient(135deg, var(–navy) 0%, var(–blue) 100%);
+border-radius: 24px;
+padding: 48px;
+color: white;
+position: relative;
+overflow: hidden;
+margin-bottom: 80px;
+}
+
+.intro-card::after {
+content: ‘📋’;
+position: absolute;
+right: 48px; top: 50%;
+transform: translateY(-50%);
+font-size: 100px;
+opacity: 0.15;
+}
+
+.intro-card h2 {
+font-family: ‘Noto Serif Thai’, serif;
+font-size: 1.8rem;
+font-weight: 800;
+color: var(–gold);
+margin-bottom: 12px;
+}
+
+.intro-card p {
+font-size: 1.1rem;
+opacity: 0.9;
+max-width: 700px;
+line-height: 1.8;
+}
+
+/* ===== TABLE ===== */
+.table-wrapper {
+background: white;
+border-radius: 24px;
+overflow: hidden;
+box-shadow: 0 8px 40px rgba(15,37,87,0.1);
+margin-bottom: 80px;
+}
+
+table { width: 100%; border-collapse: collapse; }
+
+thead tr {
+background: linear-gradient(90deg, var(–navy), var(–blue));
+}
+
+thead th {
+padding: 20px 24px;
+text-align: left;
+color: white;
+font-weight: 700;
+font-size: 0.95rem;
+letter-spacing: 0.5px;
+}
+
+thead th:first-child { border-radius: 0; }
+
+tbody tr {
+border-bottom: 1px solid #f0f4ff;
+transition: all 0.2s;
+}
+
+tbody tr:hover { background: #f5f8ff; transform: scale(1.005); }
+tbody tr:last-child { border-bottom: none; }
+
+tbody td {
+padding: 20px 24px;
+vertical-align: top;
+font-size: 0.95rem;
+}
+
+.ppo-num {
+display: inline-flex;
+align-items: center;
+justify-content: center;
+width: 44px; height: 44px;
+background: linear-gradient(135deg, var(–sky), var(–blue));
+color: white;
+font-weight: 800;
+font-size: 1rem;
+border-radius: 12px;
+flex-shrink: 0;
+box-shadow: 0 4px 12px rgba(45,107,228,0.35);
+}
+
+.ppo-name {
+font-weight: 700;
+color: var(–navy);
+font-size: 1rem;
+margin-bottom: 2px;
+}
+
+.ppo-en {
+font-size: 0.8rem;
+color: var(–muted);
+}
+
+.tag {
+display: inline-block;
+padding: 3px 12px;
+border-radius: 50px;
+font-size: 0.78rem;
+font-weight: 600;
+margin: 2px;
+}
+
+.tag-important { background: #fef3cd; color: #b45309; border: 1px solid #fcd34d; }
+.tag-tcas { background: #dbeafe; color: #1d4ed8; border: 1px solid #93c5fd; }
+.tag-school { background: #dcfce7; color: #16a34a; border: 1px solid #86efac; }
+.tag-temp { background: #f3e8ff; color: #7c3aed; border: 1px solid #c4b5fd; }
+
+.who-gets { color: var(–muted); font-size: 0.85rem; }
+
+/* ===== HIGHLIGHTED CARDS ===== */
+.highlight-section { margin-bottom: 80px; }
+
+.highlight-grid {
+display: grid;
+grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+gap: 24px;
+}
+
+.highlight-card {
+background: white;
+border-radius: 20px;
+padding: 32px;
+box-shadow: 0 4px 20px rgba(15,37,87,0.08);
+border: 2px solid transparent;
+transition: all 0.3s;
+position: relative;
+overflow: hidden;
+}
+
+.highlight-card:hover {
+border-color: var(–sky);
+transform: translateY(-4px);
+box-shadow: 0 12px 40px rgba(45,107,228,0.15);
+}
+
+.highlight-card .num {
+position: absolute;
+top: -10px; right: 20px;
+font-family: ‘Noto Serif Thai’, serif;
+font-size: 4rem;
+font-weight: 900;
+color: #eef3fc;
+line-height: 1;
+}
+
+.hcard-icon { font-size: 2.2rem; margin-bottom: 12px; }
+.hcard-title { font-weight: 700; font-size: 1.15rem; color: var(–navy); margin-bottom: 8px; }
+.hcard-desc { color: #4b5563; font-size: 0.9rem; line-height: 1.7; }
+
+/* ===== MIND MAP ===== */
+.mindmap-section { margin-bottom: 80px; }
+
+.mindmap-container {
+background: white;
+border-radius: 24px;
+padding: 48px;
+box-shadow: 0 8px 40px rgba(15,37,87,0.1);
+overflow-x: auto;
+}
+
+.mindmap {
+position: relative;
+min-height: 600px;
+display: flex;
+align-items: center;
+justify-content: center;
+}
+
+.mindmap svg {
+position: absolute;
+top: 0; left: 0;
+width: 100%; height: 100%;
+pointer-events: none;
+}
+
+/* Flow Chart Style Mind Map */
+.flow-map {
+width: 100%;
+display: flex;
+flex-direction: column;
+gap: 0;
+}
+
+.flow-step {
+display: flex;
+align-items: flex-start;
+gap: 0;
+position: relative;
+}
+
+/* Timeline */
+.timeline {
+width: 100%;
+}
+
+.tl-item {
+display: flex;
+gap: 24px;
+position: relative;
+padding-bottom: 32px;
+}
+
+.tl-item:last-child { padding-bottom: 0; }
+
+.tl-left {
+display: flex;
+flex-direction: column;
+align-items: center;
+width: 60px;
+flex-shrink: 0;
+}
+
+.tl-circle {
+width: 48px; height: 48px;
+border-radius: 50%;
+display: flex; align-items: center; justify-content: center;
+font-weight: 800;
+font-size: 1.1rem;
+color: white;
+flex-shrink: 0;
+position: relative;
+z-index: 1;
+}
+
+.tl-line {
+width: 2px;
+flex: 1;
+background: linear-gradient(180deg, #d1dafe, #bfdbfe);
+margin-top: 8px;
+min-height: 40px;
+}
+
+.tl-content {
+flex: 1;
+background: #f8faff;
+border: 1px solid #e0e8ff;
+border-radius: 16px;
+padding: 20px 24px;
+margin-bottom: 8px;
+}
+
+.tl-content h3 {
+font-weight: 700;
+color: var(–navy);
+font-size: 1.05rem;
+margin-bottom: 6px;
+}
+
+.tl-content p { color: #4b5563; font-size: 0.9rem; }
+
+.tl-docs {
+display: flex;
+flex-wrap: wrap;
+gap: 6px;
+margin-top: 10px;
+}
+
+.tl-doc {
+background: var(–navy);
+color: white;
+padding: 3px 12px;
+border-radius: 50px;
+font-size: 0.8rem;
+font-weight: 600;
+}
+
+/* Color variations */
+.c1 { background: linear-gradient(135deg, #6366f1, #4338ca); }
+.c2 { background: linear-gradient(135deg, #0ea5e9, #0369a1); }
+.c3 { background: linear-gradient(135deg, #10b981, #047857); }
+.c4 { background: linear-gradient(135deg, #f59e0b, #b45309); }
+.c5 { background: linear-gradient(135deg, #ef4444, #b91c1c); }
+
+/* ===== QUICK REF ===== */
+.quickref {
+background: linear-gradient(135deg, #fdf8ef, #fff);
+border-radius: 24px;
+border: 2px solid var(–gold);
+padding: 40px;
+margin-bottom: 80px;
+}
+
+.quickref h2 {
+font-family: ‘Noto Serif Thai’, serif;
+font-size: 1.5rem;
+color: var(–navy);
+margin-bottom: 20px;
+display: flex; align-items: center; gap: 10px;
+}
+
+.qr-grid {
+display: grid;
+grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+gap: 16px;
+}
+
+.qr-item {
+display: flex;
+align-items: center;
+gap: 12px;
+padding: 14px 16px;
+background: white;
+border-radius: 12px;
+box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+
+.qr-badge {
+background: var(–navy);
+color: white;
+width: 36px; height: 36px;
+border-radius: 10px;
+display: flex; align-items: center; justify-content: center;
+font-weight: 800; font-size: 0.9rem;
+flex-shrink: 0;
+}
+
+.qr-text { font-size: 0.88rem; color: var(–text); font-weight: 500; }
+
+/* ===== FOOTER SOURCE ===== */
+.source-note {
+text-align: center;
+color: var(–muted);
+font-size: 0.85rem;
+padding: 24px;
+border-top: 1px solid #e5e7eb;
+}
+
+.source-note a { color: var(–sky); text-decoration: none; }
+.source-note a:hover { text-decoration: underline; }
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 640px) {
+.hero-stats { flex-direction: column; gap: 16px; }
+.intro-card { padding: 32px 24px; }
+.intro-card::after { display: none; }
+thead th, tbody td { padding: 14px 16px; font-size: 0.85rem; }
+.mindmap-container { padding: 24px 16px; }
+}
+
+/* Animate on scroll simulation */
+.fade-in {
+animation: fadeUp 0.7s ease both;
+}
+
+@keyframes fadeUp {
+from { opacity: 0; transform: translateY(24px); }
+to { opacity: 1; transform: translateY(0); }
+}
+</style>
+
+</head>
+<body>
+
+<!-- ===== HERO ===== -->
+
+<header class="hero">
+  <div class="bg-docs">
+    <div class="bg-doc"></div>
+    <div class="bg-doc"></div>
+    <div class="bg-doc"></div>
+    <div class="bg-doc"></div>
+    <div class="bg-doc"></div>
+  </div>
+
+  <div class="hero-badge">📄 เอกสารการศึกษา</div>
+
+  <h1 class="hero-title">
+    ใบ <span>ปพ. 1–9</span><br>คืออะไร?
+  </h1>
+
+  <p class="hero-subtitle">
+    สรุปเอกสารประเมินผลการศึกษา ทุกประเภท เข้าใจง่าย พร้อมลำดับการขอและการใช้งาน
+  </p>
+
+  <div class="hero-stats">
+    <div class="hero-stat">
+      <div class="num">9</div>
+      <div class="label">ประเภทเอกสาร</div>
+    </div>
+    <div class="hero-stat">
+      <div class="num">3</div>
+      <div class="label">ใบสำคัญสำหรับ TCAS</div>
+    </div>
+    <div class="hero-stat">
+      <div class="num">120</div>
+      <div class="label">วันอายุใบ ปพ.7</div>
+    </div>
+  </div>
+
+  <div class="scroll-hint">
+    <span>เลื่อนลงเพื่ออ่าน</span>
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <path d="M7 10l5 5 5-5"/>
+    </svg>
+  </div>
+</header>
+
+<!-- ===== MAIN ===== -->
+
+<main>
+
+  <!-- Intro -->
+
+  <div class="intro-card fade-in">
+    <h2>📋 ใบ ปพ. คืออะไร?</h2>
+    <p>
+      ใบ ปพ. คือ <strong>เอกสารประเมินผลตามหลักสูตรการศึกษาขั้นพื้นฐาน</strong>
+      ที่บ่งบอกข้อมูลทางการศึกษาของนักเรียน เพื่อใช้เป็นหลักฐานในการจัดการเรื่องต่าง ๆ
+      ที่เกี่ยวกับการศึกษา มีทั้งหมด <strong>9 ประเภท</strong> แต่ละประเภทมีจุดประสงค์ที่แตกต่างกัน
+    </p>
+  </div>
+
+  <!-- TABLE -->
+
+  <div class="section-label">📊 ตารางสรุป</div>
+  <h2 class="section-title">ใบ ปพ. แต่ละประเภท ใช้ทำอะไร?</h2>
+
+  <div class="table-wrapper fade-in">
+    <table>
+      <thead>
+        <tr>
+          <th>ปพ.</th>
+          <th>ชื่อเอกสาร</th>
+          <th>รายละเอียด</th>
+          <th>ผู้ได้รับ</th>
+          <th>แท็ก</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><div class="ppo-num">1</div></td>
+          <td>
+            <div class="ppo-name">ใบแสดงผลการเรียน</div>
+            <div class="ppo-en">Transcript</div>
+          </td>
+          <td>แสดงรายวิชา หน่วยกิต และเกรดทุกวิชา ใช้สมัครเรียนต่อและสมัครงาน</td>
+          <td class="who-gets">นักเรียน — จบแต่ละชั้นปี</td>
+          <td>
+            <span class="tag tag-important">⭐ สำคัญ</span>
+            <span class="tag tag-tcas">TCAS</span>
+            <span class="tag tag-tcas">กสพท</span>
+          </td>
+        </tr>
+        <tr>
+          <td><div class="ppo-num">2</div></td>
+          <td>
+            <div class="ppo-name">ใบแสดงวุฒิการศึกษา</div>
+            <div class="ppo-en">Diploma / Certificate</div>
+          </td>
+          <td>ใบประกาศนียบัตร รับรองการจบ ม.3 (ภาคบังคับ) และ ม.6 (ขั้นพื้นฐาน)</td>
+          <td class="who-gets">นักเรียน — จบ ม.3 / ม.6 เท่านั้น</td>
+          <td>
+            <span class="tag tag-important">⭐ สำคัญ</span>
+            <span class="tag tag-tcas">กสพท</span>
+          </td>
+        </tr>
+        <tr>
+          <td><div class="ppo-num">3</div></td>
+          <td>
+            <div class="ppo-name">ใบรายงานผู้สำเร็จการศึกษา</div>
+            <div class="ppo-en">Graduation Report</div>
+          </td>
+          <td>รายชื่อผู้จบการศึกษา ส่งจากโรงเรียน → เขตพื้นที่ → กระทรวงศึกษา เพื่อรับรองวุฒิ</td>
+          <td class="who-gets">โรงเรียน → สำนักงานเขต → กระทรวง</td>
+          <td><span class="tag tag-school">เอกสารราชการ</span></td>
+        </tr>
+        <tr>
+          <td><div class="ppo-num">4</div></td>
+          <td>
+            <div class="ppo-name">รายงานผลการพัฒนาคุณลักษณะ</div>
+            <div class="ppo-en">Character Development Report</div>
+          </td>
+          <td>รายงานคุณธรรม จริยธรรม และพฤติกรรมของนักเรียน มักออกควบคู่กับ ปพ.1</td>
+          <td class="who-gets">นักเรียน — ควบคู่ ปพ.1</td>
+          <td><span class="tag tag-school">ประเมินพฤติกรรม</span></td>
+        </tr>
+        <tr>
+          <td><div class="ppo-num">5</div></td>
+          <td>
+            <div class="ppo-name">แบบบันทึกพัฒนาการนักเรียน</div>
+            <div class="ppo-en">Student Development Record</div>
+          </td>
+          <td>บันทึกพัฒนาการด้านการเรียน พฤติกรรม และการมีส่วนร่วมในกิจกรรม จากการสังเกตของครู</td>
+          <td class="who-gets">ครูผู้สอน</td>
+          <td><span class="tag tag-school">ครูดูแล</span></td>
+        </tr>
+        <tr>
+          <td><div class="ppo-num">6</div></td>
+          <td>
+            <div class="ppo-name">สมุดพก</div>
+            <div class="ppo-en">Student Report Card</div>
+          </td>
+          <td>รวบรวมผลการเรียนและพัฒนาการของนักเรียน จัดส่งให้ผู้ปกครองรายเทอมหรือรายปี</td>
+          <td class="who-gets">นักเรียน / ผู้ปกครอง — รายเทอม/ปี</td>
+          <td><span class="tag tag-school">รายเทอม</span></td>
+        </tr>
+        <tr>
+          <td><div class="ppo-num">7</div></td>
+          <td>
+            <div class="ppo-name">ใบรับรองผลการศึกษา</div>
+            <div class="ppo-en">Temporary Enrollment Certificate</div>
+          </td>
+          <td>เอกสารชั่วคราวรับรองความเป็นนักเรียน ใช้แทน ปพ.1 ในกรณีที่ยังออกไม่ได้ <strong style="color:#7c3aed">⏰ อายุ 120 วัน</strong></td>
+          <td class="who-gets">นักเรียน — ชั่วคราว ก่อนได้ ปพ.1</td>
+          <td>
+            <span class="tag tag-important">⭐ สำคัญ</span>
+            <span class="tag tag-tcas">TCAS</span>
+            <span class="tag tag-temp">120 วัน</span>
+          </td>
+        </tr>
+        <tr>
+          <td><div class="ppo-num">8</div></td>
+          <td>
+            <div class="ppo-name">ใบระเบียนสะสม</div>
+            <div class="ppo-en">Cumulative Record</div>
+          </td>
+          <td>รวบรวมข้อมูลทุกอย่างของนักเรียน ทั้งการเรียน สุขภาพ ผลงาน เพื่อใช้แนะแนว</td>
+          <td class="who-gets">โรงเรียน — เก็บไว้ภายใน</td>
+          <td><span class="tag tag-school">ฐานข้อมูลโรงเรียน</span></td>
+        </tr>
+        <tr>
+          <td><div class="ppo-num">9</div></td>
+          <td>
+            <div class="ppo-name">สมุดบันทึกผลการเรียนรู้</div>
+            <div class="ppo-en">Learning Record Book</div>
+          </td>
+          <td>รวบรวมวิชาและผลการเรียนแต่ละชั้นปี ใช้ในกรณีเทียบโอนหน่วยกิตเมื่อย้ายโรงเรียน</td>
+          <td class="who-gets">นักเรียน — กรณีย้ายโรงเรียน</td>
+          <td><span class="tag tag-school">เทียบโอน</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- HIGHLIGHT 3 IMPORTANT -->
+
+  <div class="highlight-section">
+    <div class="section-label">⭐ ใบสำคัญ</div>
+    <h2 class="section-title">3 ใบที่ต้องรู้ก่อน TCAS</h2>
+
+```
+<div class="highlight-grid">
+  <div class="highlight-card fade-in">
+    <div class="num">1</div>
+    <div class="hcard-icon">📋</div>
+    <div class="hcard-title">ใบ ปพ.1 — Transcript</div>
+    <div class="hcard-desc">
+      ใบแสดงผลการเรียนอย่างเป็นทางการ ใช้สมัคร <strong>myTCAS</strong> และ <strong>กสพท</strong>
+      ต้องขอจากโรงเรียนหลังจบแต่ละชั้นปี
+    </div>
+    <br>
+    <span class="tag tag-tcas">myTCAS</span>
+    <span class="tag tag-tcas">กสพท</span>
+  </div>
+
+  <div class="highlight-card fade-in">
+    <div class="num">2</div>
+    <div class="hcard-icon">🎓</div>
+    <div class="hcard-title">ใบ ปพ.2 — ประกาศนียบัตร</div>
+    <div class="hcard-desc">
+      ใบรับรองวุฒิ ได้รับเมื่อจบ <strong>ม.3</strong> และ <strong>ม.6</strong> เท่านั้น
+      ใช้สมัคร กสพท และยืนยันวุฒิการศึกษา
+    </div>
+    <br>
+    <span class="tag tag-tcas">กสพท</span>
+    <span class="tag tag-important">จบ ม.3 / ม.6</span>
+  </div>
+
+  <div class="highlight-card fade-in">
+    <div class="num">7</div>
+    <div class="hcard-icon">🕐</div>
+    <div class="hcard-title">ใบ ปพ.7 — ใบรับรองชั่วคราว</div>
+    <div class="hcard-desc">
+      ใช้แทน ปพ.1 เมื่อยังออกไม่ได้ มีอายุ <strong>120 วัน</strong>
+      ใช้สมัคร myTCAS และ กสพท ได้เช่นกัน ต้องขอใหม่ถ้าหมดอายุ
+    </div>
+    <br>
+    <span class="tag tag-tcas">myTCAS</span>
+    <span class="tag tag-temp">120 วัน</span>
+  </div>
+</div>
+```
+
+  </div>
+
+  <!-- MIND MAP / TIMELINE -->
+
+  <div class="mindmap-section">
+    <div class="section-label">🗺️ Mind Map</div>
+    <h2 class="section-title">ลำดับการขอและใช้ใบ ปพ.</h2>
+
+```
+<div class="mindmap-container fade-in">
+  <div class="timeline">
+
+    <div class="tl-item">
+      <div class="tl-left">
+        <div class="tl-circle c1">1</div>
+        <div class="tl-line"></div>
+      </div>
+      <div>
+        <div class="tl-content">
+          <h3>📚 ระหว่างเรียนทุกชั้นปี (รายเทอม / รายปี)</h3>
+          <p>โรงเรียนจัดทำเอกสารติดตามพัฒนาการของนักเรียนอยู่ภายใน ไม่ต้องขอเอง</p>
+          <div class="tl-docs">
+            <span class="tl-doc">ปพ.5 แบบบันทึกพัฒนาการ (ครูดูแล)</span>
+            <span class="tl-doc">ปพ.6 สมุดพก (รับรายเทอม)</span>
+            <span class="tl-doc">ปพ.8 ระเบียนสะสม (โรงเรียนเก็บ)</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tl-item">
+      <div class="tl-left">
+        <div class="tl-circle c2">2</div>
+        <div class="tl-line"></div>
+      </div>
+      <div>
+        <div class="tl-content">
+          <h3>🎓 จบการศึกษา ม.3 หรือ ม.6</h3>
+          <p>ได้รับเอกสารสำคัญที่รับรองวุฒิการศึกษา</p>
+          <div class="tl-docs">
+            <span class="tl-doc">ปพ.1 ใบแสดงผลการเรียน (Transcript)</span>
+            <span class="tl-doc">ปพ.2 ใบประกาศนียบัตร (วุฒิ ม.3 / ม.6)</span>
+            <span class="tl-doc">ปพ.4 รายงานคุณลักษณะ (ควบคู่ ปพ.1)</span>
+            <span class="tl-doc">ปพ.3 โรงเรียนส่งกระทรวง (ตรวจสอบวุฒิ)</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tl-item">
+      <div class="tl-left">
+        <div class="tl-circle c4">3</div>
+        <div class="tl-line"></div>
+      </div>
+      <div>
+        <div class="tl-content">
+          <h3>⏳ ช่วงรอ ปพ.1 — ยังไม่ได้รับ</h3>
+          <p>ขอใบชั่วคราวจากโรงเรียน ใช้งานได้เหมือนกัน แต่มีอายุจำกัด</p>
+          <div class="tl-docs">
+            <span class="tl-doc">ปพ.7 ใบรับรองชั่วคราว (อายุ 120 วัน)</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tl-item">
+      <div class="tl-left">
+        <div class="tl-circle c3">4</div>
+        <div class="tl-line"></div>
+      </div>
+      <div>
+        <div class="tl-content">
+          <h3>📝 ใช้สมัคร myTCAS / กสพท</h3>
+          <p>ใช้ ปพ.1 หรือ ปพ.7 สมัคร myTCAS ส่วน กสพท ต้องใช้ทั้ง ปพ.1 / ปพ.7 และ ปพ.2 ด้วย</p>
+          <div class="tl-docs">
+            <span class="tl-doc">✅ myTCAS → ปพ.1 หรือ ปพ.7</span>
+            <span class="tl-doc">✅ กสพท → ปพ.1 + ปพ.2 (หรือ ปพ.7)</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tl-item">
+      <div class="tl-left">
+        <div class="tl-circle c5">5</div>
+      </div>
+      <div>
+        <div class="tl-content">
+          <h3>🔄 กรณีพิเศษ: ย้ายโรงเรียน</h3>
+          <p>ต้องนำเอกสารบันทึกผลการเรียนทุกรายวิชาไปเทียบโอนหน่วยกิต</p>
+          <div class="tl-docs">
+            <span class="tl-doc">ปพ.9 สมุดบันทึกผลการเรียนรู้ (เทียบโอน)</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+```
+
+  </div>
+
+  <!-- QUICK REFERENCE -->
+
+  <div class="quickref fade-in">
+    <h2>💡 สรุปย่อ ใบไหนใช้ทำอะไร</h2>
+    <div class="qr-grid">
+      <div class="qr-item">
+        <div class="qr-badge">1</div>
+        <div class="qr-text">Transcript ผลการเรียน → สมัครเรียนต่อ / งาน / TCAS</div>
+      </div>
+      <div class="qr-item">
+        <div class="qr-badge">2</div>
+        <div class="qr-text">ประกาศนียบัตร → รับรองวุฒิ ม.3 / ม.6</div>
+      </div>
+      <div class="qr-item">
+        <div class="qr-badge">3</div>
+        <div class="qr-text">รายงานผู้สำเร็จ → โรงเรียนส่งกระทรวง</div>
+      </div>
+      <div class="qr-item">
+        <div class="qr-badge">4</div>
+        <div class="qr-text">รายงานคุณลักษณะ → พฤติกรรม / คุณธรรม</div>
+      </div>
+      <div class="qr-item">
+        <div class="qr-badge">5</div>
+        <div class="qr-text">บันทึกพัฒนาการ → ครูสังเกตและบันทึก</div>
+      </div>
+      <div class="qr-item">
+        <div class="qr-badge">6</div>
+        <div class="qr-text">สมุดพก → แจกผู้ปกครองรายเทอม</div>
+      </div>
+      <div class="qr-item">
+        <div class="qr-badge">7</div>
+        <div class="qr-text">ใบรับรองชั่วคราว → แทน ปพ.1 ใช้ได้ 120 วัน</div>
+      </div>
+      <div class="qr-item">
+        <div class="qr-badge">8</div>
+        <div class="qr-text">ระเบียนสะสม → ฐานข้อมูลนักเรียนของโรงเรียน</div>
+      </div>
+      <div class="qr-item">
+        <div class="qr-badge">9</div>
+        <div class="qr-text">บันทึกผลการเรียนรู้ → ย้ายโรงเรียน / เทียบโอน</div>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<div class="source-note">
+  ข้อมูลอ้างอิงจาก <a href="https://www.smartmathpro.com/article/academic-record/" target="_blank">SmartMathPro — ใบ ปพ. 1-9 คืออะไร?</a>
+  และระเบียบกระทรวงศึกษาธิการว่าด้วยเอกสารหลักฐานการศึกษา
+</div>
+
+</body>
+</html>
