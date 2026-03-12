@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>ระบบตารางสอน โรงเรียนบ้านเขาหัวนา</title>
 <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600;700;800;900&display=swap" rel="stylesheet">
+<script src="https://accounts.google.com/gsi/client" async defer></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'Sarabun',sans-serif;background:#EEF2F7;min-height:100vh;display:flex;font-size:14px}
@@ -104,11 +105,34 @@ nav{flex:1;padding:4px 0}
 .f1{flex:1}.g6{gap:6px}.g8{gap:8px}.g10{gap:10px}.g12{gap:12px}.mla{margin-left:auto}
 @media(max-width:900px){.sg4{grid-template-columns:repeat(2,1fr)}.tt-stats{grid-template-columns:repeat(2,1fr)}}
 @media print{.sb,.bp,.bo,.bd,.bs,#toast,#loader{display:none!important}.pg{padding:0}.ttwrap{box-shadow:none}}
+.login-cover{position:fixed;inset:0;background:linear-gradient(135deg,#0F1720,#020617);display:flex;align-items:center;justify-content:center;z-index:3000;padding:20px}
+.login-card{background:#020617;border-radius:18px;padding:28px 32px;max-width:420px;width:100%;box-shadow:0 24px 80px rgba(15,23,42,.9);border:1px solid rgba(148,163,184,.35);color:#E5E7EB;text-align:center}
+.login-card h2{font-size:20px;font-weight:800;margin-bottom:6px;color:#F9FAFB}
+.login-card p{font-size:12px;color:#9CA3AF;margin-bottom:18px}
+.login-meta{font-size:11px;color:#6B7280;margin-top:14px}
+.login-meta span{display:block}
+.user-box{margin-top:8px;padding:7px 10px;border-radius:8px;background:rgba(15,23,42,.18);border:1px solid rgba(148,163,184,.4);font-size:9px;color:#E5E7EB}
+.user-box-name{font-weight:700;font-size:10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.user-box-email{opacity:.7;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.user-box-btn{margin-top:6px;width:100%;border:none;border-radius:6px;padding:5px 0;font-size:10px;font-weight:700;cursor:pointer;background:#FEE2E2;color:#B91C1C}
+.user-box-btn:hover{background:#FCA5A5}
 </style>
 </head>
 <body>
 <div id="loader"><div class="lbox"><div class="spin"></div><div id="ltxt" style="color:#1E3A5F;font-weight:700;font-size:14px">กำลังโหลด...</div></div></div>
 <div id="toast"></div>
+
+<div id="login-cover" class="login-cover">
+  <div class="login-card">
+    <h2>เข้าสู่ระบบด้วยบัญชี Google</h2>
+    <p>ใช้บัญชีของครูหรือผู้ดูแลระบบเพื่อเข้าจัดการตารางสอน</p>
+    <div id="g-btn" style="display:flex;justify-content:center"></div>
+    <div class="login-meta">
+      <span>ระบบจะเชื่อมต่อกับ Google Sheets ของโรงเรียน</span>
+      <span>เพื่ออ่าน/บันทึกข้อมูลตารางสอน</span>
+    </div>
+  </div>
+</div>
 
 <aside class="sb" id="sb">
   <div class="sb-hd">
@@ -138,6 +162,11 @@ nav{flex:1;padding:4px 0}
   </nav>
   <div class="sb-ft">
     <button class="rfb" onclick="loadAll()"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 4v6h-6M1 20v-6h6M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/></svg> รีเฟรช</button>
+    <div id="user-box" class="user-box" style="display:none">
+      <div class="user-box-name" id="user-name">-</div>
+      <div class="user-box-email" id="user-email">-</div>
+      <button class="user-box-btn" onclick="logout()">ออกจากระบบ</button>
+    </div>
     <div style="font-size:9px;opacity:.3;margin-top:7px;text-align:center">📊 Google Sheets</div>
   </div>
 </aside>
@@ -484,6 +513,7 @@ nav{flex:1;padding:4px 0}
 <script>
 // ════════════════════════════════════════
 const API='https://script.google.com/macros/s/AKfycbwbrBoiOWQQqFsDtsdgVk6-FEg2WilHieQ3trFCOMWawN7edMOLToyWCNpuXHYlIfKUYg/exec';
+const GOOGLE_CLIENT_ID='YOUR_GOOGLE_CLIENT_ID_HERE';
 const DAYS=['จันทร์','อังคาร','พุธ','พฤหัสบดี','ศุกร์'];
 const TS=[{id:'t1',l:'08.30-09.30'},{id:'t2',l:'09.30-10.30'},{id:'t3',l:'10.30-11.30'},{id:'t4',l:'11.30-12.30',lunch:true},{id:'t5',l:'12.30-13.30'},{id:'t6',l:'13.30-14.30'},{id:'t7',l:'14.30-15.30'}];
 const DCOLS=['#F59E0B','#A78BFA','#34D399','#FB923C','#60A5FA'];
@@ -500,6 +530,7 @@ let teachers=[],subjects=[],semesters=[],ttMap={};
 let curSemId=null,curTid=null,editCell=null,pickColor='#3B82F6',pickSubs=[];
 let asgnTFilter='all',plTSel=[],plGSel=[],asgnEditId=null,plEditId=null;
 let scheduleDraft=null,asTeacherSel=[];
+let currentUser=null;
 
 // ── DEFAULT DATA ──
 const DT=[
@@ -1237,8 +1268,75 @@ function showL(t='กำลังโหลด...'){document.getElementById('ltxt
 function hideL(){document.getElementById('loader').classList.remove('show');}
 function printPage(id){const w=window.open('','_blank');w.document.write(`<!DOCTYPE html><html><head><meta charset="utf-8"><link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;600;700;800&display=swap" rel="stylesheet"><style>body{font-family:'Sarabun',sans-serif;padding:20px;font-size:13px}.bp,.bo,.bd,.bs,.ph-row .f{display:none}</style></head><body>${document.getElementById(id).innerHTML}</body></html>`);w.document.close();setTimeout(()=>w.print(),800);}
 
+// ══ AUTH ══
+function decodeJwt(token){
+  try{
+    const payload=token.split('.')[1]||'';
+    const base=payload.replace(/-/g,'+').replace(/_/g,'/');
+    const pad='='.repeat((4-base.length%4)%4);
+    const json=atob(base+pad);
+    return JSON.parse(json);
+  }catch(e){
+    console.error('JWT decode error',e);
+    return {};
+  }
+}
+function updateUserUI(){
+  const box=document.getElementById('user-box');
+  const n=document.getElementById('user-name');
+  const em=document.getElementById('user-email');
+  if(currentUser&&box&&n&&em){
+    n.textContent=currentUser.name||currentUser.email||'-';
+    em.textContent=currentUser.email||'';
+    box.style.display='block';
+  }else if(box){
+    box.style.display='none';
+  }
+}
+function handleCredentialResponse(response){
+  const payload=decodeJwt(response.credential||'');
+  if(!payload||!payload.email){
+    notify('ไม่สามารถยืนยันตัวตนได้','error');
+    return;
+  }
+  currentUser={email:payload.email,name:payload.name||payload.given_name||payload.email};
+  const cover=document.getElementById('login-cover');
+  if(cover) cover.style.display='none';
+  updateUserUI();
+  // โหลดข้อมูลหลักหลังจากล็อกอินสำเร็จ
+  loadAll();
+}
+function initAuth(){
+  const cover=document.getElementById('login-cover');
+  if(cover) cover.style.display='flex';
+  if(!GOOGLE_CLIENT_ID||GOOGLE_CLIENT_ID==='YOUR_GOOGLE_CLIENT_ID_HERE'){
+    console.warn('กรุณาใส่ GOOGLE_CLIENT_ID ของคุณในไฟล์ indexlogin.html');
+  }
+  if(window.google&&google.accounts&&google.accounts.id){
+    google.accounts.id.initialize({
+      client_id:GOOGLE_CLIENT_ID,
+      callback:handleCredentialResponse
+    });
+    const btn=document.getElementById('g-btn');
+    if(btn){
+      google.accounts.id.renderButton(btn,{theme:'outline',size:'large',width:260});
+    }
+  }else{
+    console.warn('Google Identity Services ยังไม่พร้อม');
+  }
+}
+function logout(){
+  if(window.google&&google.accounts&&google.accounts.id&&currentUser?.email){
+    try{google.accounts.id.revoke(currentUser.email,()=>{});}catch(e){console.warn(e);}
+  }
+  currentUser=null;
+  updateUserUI();
+  const cover=document.getElementById('login-cover');
+  if(cover) cover.style.display='flex';
+}
+
 // ══ INIT ══
-loadAll();
+window.addEventListener('load',initAuth);
 </script>
 </body>
 </html>
