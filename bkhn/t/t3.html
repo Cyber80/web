@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+
+<meta charset="UTF-8">
+<title>National AI Supervision System</title>
+
+<style>
+
+body{
+font-family:Sarabun, sans-serif;
+margin:0;
+background:#f2f5fb;
+}
+
+.sidebar{
+width:250px;
+height:100vh;
+background:#1f3c88;
+position:fixed;
+color:white;
+padding:20px;
+}
+
+.sidebar h2{
+margin-top:0;
+}
+
+.sidebar a{
+display:block;
+color:white;
+padding:10px;
+text-decoration:none;
+margin-top:10px;
+border-radius:5px;
+}
+
+.sidebar a:hover{
+background:#3b5bdb;
+}
+
+.main{
+margin-left:270px;
+padding:30px;
+}
+
+.card{
+background:white;
+padding:20px;
+border-radius:10px;
+box-shadow:0 4px 8px rgba(0,0,0,0.08);
+margin-bottom:20px;
+}
+
+.grid{
+display:grid;
+grid-template-columns:repeat(4,1fr);
+gap:20px;
+}
+
+table{
+width:100%;
+border-collapse:collapse;
+}
+
+th,td{
+border-bottom:1px solid #ddd;
+padding:10px;
+text-align:left;
+}
+
+button{
+background:#1f3c88;
+color:white;
+border:none;
+padding:10px 20px;
+border-radius:5px;
+cursor:pointer;
+}
+
+input,select{
+padding:8px;
+width:100%;
+margin-top:5px;
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+<div class="sidebar">
+
+<h2>AI Supervision</h2>
+
+<a href="#">Dashboard</a>
+<a href="#">Schedule</a>
+<a href="#">Supervision</a>
+<a href="#">Teachers</a>
+<a href="#">Reports</a>
+<a href="#">AI Analysis</a>
+
+</div>
+
+<div class="main">
+
+<h1>National AI Supervision Dashboard</h1>
+
+<div class="grid">
+
+<div class="card">
+<h2>120</h2>
+<p>Teachers</p>
+</div>
+
+<div class="card">
+<h2>95%</h2>
+<p>Supervision Completed</p>
+</div>
+
+<div class="card">
+<h2>4.2</h2>
+<p>Average Score</p>
+</div>
+
+<div class="card">
+<h2>AI</h2>
+<p>Teacher Analytics</p>
+</div>
+
+</div>
+
+
+<div class="card">
+
+<h2>Supervision Schedule</h2>
+
+<table>
+
+<tr>
+<th>Teacher</th>
+<th>Supervisor</th>
+<th>Date</th>
+<th>Status</th>
+</tr>
+
+<tr>
+<td>สมชาย</td>
+<td>ผอ.</td>
+<td>12/06/2026</td>
+<td>Scheduled</td>
+</tr>
+
+<tr>
+<td>สมหญิง</td>
+<td>รองผอ.</td>
+<td>15/06/2026</td>
+<td>Completed</td>
+</tr>
+
+</table>
+
+</div>
+
+
+
+<div class="card">
+
+<h2>Supervision Form (40 Indicators)</h2>
+
+<form>
+
+<label>1 วิเคราะห์หลักสูตร</label>
+<select>
+<option>1</option>
+<option>2</option>
+<option>3</option>
+<option>4</option>
+<option>5</option>
+</select>
+
+<label>2 กำหนดผลลัพธ์การเรียนรู้</label>
+<select>
+<option>1</option>
+<option>2</option>
+<option>3</option>
+<option>4</option>
+<option>5</option>
+</select>
+
+<label>3 Active Learning</label>
+<select>
+<option>1</option>
+<option>2</option>
+<option>3</option>
+<option>4</option>
+<option>5</option>
+</select>
+
+<label>4 การใช้สื่อ</label>
+<select>
+<option>1</option>
+<option>2</option>
+<option>3</option>
+<option>4</option>
+<option>5</option>
+</select>
+
+<label>5 การตั้งคำถาม</label>
+<select>
+<option>1</option>
+<option>2</option>
+<option>3</option>
+<option>4</option>
+<option>5</option>
+</select>
+
+<label>6 การมีส่วนร่วมผู้เรียน</label>
+<select>
+<option>1</option>
+<option>2</option>
+<option>3</option>
+<option>4</option>
+<option>5</option>
+</select>
+
+<label>7 การบริหารชั้นเรียน</label>
+<select>
+<option>1</option>
+<option>2</option>
+<option>3</option>
+<option>4</option>
+<option>5</option>
+</select>
+
+<label>8 การสรุปบทเรียน</label>
+<select>
+<option>1</option>
+<option>2</option>
+<option>3</option>
+<option>4</option>
+<option>5</option>
+</select>
+
+<label>9 การประเมินผล</label>
+<select>
+<option>1</option>
+<option>2</option>
+<option>3</option>
+<option>4</option>
+<option>5</option>
+</select>
+
+<label>10 Feedback ผู้เรียน</label>
+<select>
+<option>1</option>
+<option>2</option>
+<option>3</option>
+<option>4</option>
+<option>5</option>
+</select>
+
+<br><br>
+
+<button type="submit">บันทึกการนิเทศ</button>
+
+</form>
+
+</div>
+
+
+
+<div class="card">
+
+<h2>AI Teacher Analysis</h2>
+
+<p>
+
+AI วิเคราะห์พบว่า  
+ครูมีจุดแข็งด้าน Active Learning  
+ควรพัฒนาด้าน Assessment for Learning
+
+</p>
+
+</div>
+
+
+
+<div class="card">
+
+<h2>Upload Evidence</h2>
+
+<input type="file">
+
+</div>
+
+
+
+<div class="card">
+
+<h2>Digital Signature</h2>
+
+<input placeholder="พิมพ์ชื่อเพื่อเซ็นรับรอง">
+
+</div>
+
+
+
+</div>
+
+</body>
+</html>
