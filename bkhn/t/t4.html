@@ -1,0 +1,1091 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ภาคผนวก - ผลงานเพื่อประกอบการประเมินเลื่อนขั้นเงินเดือน ว23</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap');
+  
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  
+  body {
+    font-family: 'Sarabun', sans-serif;
+    background: #f4f6f9;
+    color: #2c3e50;
+    font-size: 15px;
+    line-height: 1.7;
+  }
+
+  /* ===== COVER PAGE ===== */
+  .cover-page {
+    background: linear-gradient(135deg, #1a3a5c 0%, #2e6da4 50%, #1a3a5c 100%);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 60px 40px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .cover-page::before {
+    content: '';
+    position: absolute;
+    top: -50px; left: -50px; right: -50px; bottom: -50px;
+    background: repeating-linear-gradient(
+      45deg,
+      transparent,
+      transparent 30px,
+      rgba(255,255,255,0.03) 30px,
+      rgba(255,255,255,0.03) 60px
+    );
+  }
+
+  .cover-emblem {
+    width: 100px; height: 100px;
+    background: rgba(255,255,255,0.15);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 30px;
+    border: 3px solid rgba(255,255,255,0.4);
+    font-size: 48px;
+  }
+
+  .cover-title {
+    color: #f0c040;
+    font-size: 28px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    margin-bottom: 10px;
+  }
+
+  .cover-subtitle {
+    color: rgba(255,255,255,0.85);
+    font-size: 20px;
+    font-weight: 500;
+    margin-bottom: 30px;
+  }
+
+  .cover-divider {
+    width: 120px; height: 3px;
+    background: #f0c040;
+    margin: 20px auto;
+    border-radius: 2px;
+  }
+
+  .cover-info {
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.25);
+    border-radius: 12px;
+    padding: 28px 40px;
+    margin: 20px auto;
+    max-width: 600px;
+    width: 100%;
+  }
+
+  .cover-info p {
+    color: rgba(255,255,255,0.9);
+    font-size: 16px;
+    margin: 6px 0;
+  }
+
+  .cover-info strong {
+    color: #f0c040;
+  }
+
+  .cover-tag {
+    display: inline-block;
+    background: #f0c040;
+    color: #1a3a5c;
+    font-weight: 700;
+    font-size: 14px;
+    padding: 6px 18px;
+    border-radius: 20px;
+    margin-top: 20px;
+    letter-spacing: 1px;
+  }
+
+  /* ===== NAV / TOC ===== */
+  .toc-section {
+    background: #fff;
+    padding: 60px 0;
+    border-bottom: 1px solid #e0e6ed;
+  }
+
+  .container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 30px;
+  }
+
+  .section-label {
+    display: inline-block;
+    background: #2e6da4;
+    color: #fff;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 4px 14px;
+    border-radius: 12px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+
+  .section-heading {
+    font-size: 26px;
+    font-weight: 700;
+    color: #1a3a5c;
+    margin-bottom: 6px;
+  }
+
+  .section-desc {
+    color: #7f8c8d;
+    font-size: 15px;
+    margin-bottom: 36px;
+  }
+
+  .toc-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 20px;
+  }
+
+  .toc-card {
+    background: #f8fafc;
+    border: 1px solid #e0e6ed;
+    border-radius: 12px;
+    padding: 24px 22px;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    text-decoration: none;
+    display: block;
+    border-left: 5px solid #2e6da4;
+  }
+
+  .toc-card:hover {
+    box-shadow: 0 8px 24px rgba(46,109,164,0.12);
+    transform: translateY(-3px);
+    border-left-color: #f0c040;
+  }
+
+  .toc-card .num {
+    font-size: 32px;
+    font-weight: 800;
+    color: #2e6da4;
+    opacity: 0.3;
+    line-height: 1;
+    margin-bottom: 6px;
+  }
+
+  .toc-card .title {
+    font-size: 16px;
+    font-weight: 700;
+    color: #1a3a5c;
+    margin-bottom: 6px;
+  }
+
+  .toc-card .desc {
+    font-size: 13px;
+    color: #7f8c8d;
+    line-height: 1.5;
+  }
+
+  .toc-card .badge {
+    display: inline-block;
+    background: #eaf3fb;
+    color: #2e6da4;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 3px 10px;
+    border-radius: 8px;
+    margin-top: 10px;
+  }
+
+  /* ===== APPENDIX SECTIONS ===== */
+  .appendix-section {
+    padding: 70px 0;
+    border-bottom: 3px solid #e0e6ed;
+  }
+
+  .appendix-section:nth-child(odd) {
+    background: #fff;
+  }
+
+  .appendix-section:nth-child(even) {
+    background: #f8fafc;
+  }
+
+  .section-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 20px;
+    margin-bottom: 40px;
+    padding-bottom: 24px;
+    border-bottom: 2px solid #e0e6ed;
+  }
+
+  .section-icon {
+    width: 60px; height: 60px;
+    border-radius: 14px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 28px;
+    flex-shrink: 0;
+  }
+
+  .icon-blue { background: #eaf3fb; }
+  .icon-green { background: #eafaf1; }
+  .icon-purple { background: #f5eef8; }
+  .icon-orange { background: #fef9e7; }
+
+  .section-header-text h2 {
+    font-size: 22px;
+    font-weight: 700;
+    color: #1a3a5c;
+    margin-bottom: 4px;
+  }
+
+  .section-header-text p {
+    color: #7f8c8d;
+    font-size: 14px;
+  }
+
+  /* ===== STATS ===== */
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 16px;
+    margin-bottom: 36px;
+  }
+
+  .stat-card {
+    background: #fff;
+    border-radius: 12px;
+    padding: 22px 18px;
+    text-align: center;
+    border: 1px solid #e0e6ed;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  }
+
+  .stat-card .value {
+    font-size: 36px;
+    font-weight: 800;
+    line-height: 1.1;
+    margin-bottom: 4px;
+  }
+
+  .stat-card .label {
+    font-size: 13px;
+    color: #7f8c8d;
+    font-weight: 500;
+  }
+
+  .c-gold { color: #d4a017; }
+  .c-silver { color: #7f8c8d; }
+  .c-blue { color: #2e6da4; }
+  .c-green { color: #27ae60; }
+  .c-purple { color: #8e44ad; }
+
+  /* ===== TABLE ===== */
+  .data-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+    background: #fff;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+    margin-bottom: 30px;
+  }
+
+  .data-table thead tr {
+    background: #1a3a5c;
+    color: #fff;
+  }
+
+  .data-table th {
+    padding: 14px 16px;
+    text-align: left;
+    font-weight: 600;
+    font-size: 13px;
+    letter-spacing: 0.5px;
+  }
+
+  .data-table td {
+    padding: 12px 16px;
+    border-bottom: 1px solid #eef0f4;
+    vertical-align: middle;
+  }
+
+  .data-table tbody tr:nth-child(even) { background: #f8fafc; }
+  .data-table tbody tr:hover { background: #eaf3fb; }
+
+  .medal {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-weight: 700;
+    font-size: 13px;
+    padding: 4px 10px;
+    border-radius: 20px;
+  }
+
+  .medal-gold { background: #fff8e1; color: #b8860b; border: 1px solid #f0c040; }
+  .medal-silver { background: #f5f5f5; color: #666; border: 1px solid #ccc; }
+  .medal-bronze { background: #fdf2e9; color: #a0522d; border: 1px solid #cd7f32; }
+  .medal-champion { background: #eaf7fb; color: #2e6da4; border: 1px solid #85c1e9; }
+
+  /* ===== CHART BAR ===== */
+  .chart-wrap {
+    background: #fff;
+    border-radius: 12px;
+    padding: 28px;
+    border: 1px solid #e0e6ed;
+    margin-bottom: 30px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  }
+
+  .chart-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: #1a3a5c;
+    margin-bottom: 20px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #eef0f4;
+  }
+
+  .bar-group { margin-bottom: 14px; }
+
+  .bar-label {
+    display: flex;
+    justify-content: space-between;
+    font-size: 13px;
+    color: #2c3e50;
+    margin-bottom: 5px;
+  }
+
+  .bar-track {
+    height: 22px;
+    background: #eef0f4;
+    border-radius: 11px;
+    overflow: hidden;
+  }
+
+  .bar-fill {
+    height: 100%;
+    border-radius: 11px;
+    transition: width 0.8s ease;
+  }
+
+  .bar-gold { background: linear-gradient(90deg, #f0c040, #d4a017); }
+  .bar-blue { background: linear-gradient(90deg, #5dade2, #2e6da4); }
+  .bar-green { background: linear-gradient(90deg, #58d68d, #27ae60); }
+  .bar-purple { background: linear-gradient(90deg, #bb8fce, #8e44ad); }
+
+  /* ===== CERTIFICATE GRID ===== */
+  .cert-section-title {
+    font-size: 17px;
+    font-weight: 700;
+    color: #1a3a5c;
+    margin: 30px 0 16px;
+    padding-left: 12px;
+    border-left: 4px solid #2e6da4;
+  }
+
+  .cert-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+    margin-bottom: 30px;
+  }
+
+  .cert-card {
+    border: 2px solid #e0e6ed;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+    background: #fff;
+  }
+
+  .cert-card img {
+    width: 100%;
+    display: block;
+    border-radius: 10px;
+  }
+
+  .cert-card .cert-caption {
+    padding: 10px 14px;
+    background: #f8fafc;
+    border-top: 1px solid #e0e6ed;
+    font-size: 13px;
+    color: #555;
+    text-align: center;
+  }
+
+  /* ===== PHOTO PLACEHOLDER ===== */
+  .photo-grid {
+    display: grid;
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+
+  .photo-grid-2 { grid-template-columns: repeat(2, 1fr); }
+  .photo-grid-4 { grid-template-columns: repeat(4, 1fr); }
+  .photo-grid-3 { grid-template-columns: repeat(3, 1fr); }
+
+  .photo-placeholder {
+    background: #f0f4f8;
+    border: 2px dashed #b0c4d8;
+    border-radius: 10px;
+    aspect-ratio: 4/3;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: #7f8c8d;
+    font-size: 13px;
+    text-align: center;
+    padding: 12px;
+  }
+
+  .photo-placeholder .icon { font-size: 28px; margin-bottom: 6px; opacity: 0.6; }
+  .photo-placeholder .caption { font-size: 12px; font-weight: 600; color: #5d8aa8; }
+
+  /* ===== INFO BOX ===== */
+  .info-box {
+    background: #eaf3fb;
+    border-left: 5px solid #2e6da4;
+    border-radius: 0 10px 10px 0;
+    padding: 20px 24px;
+    margin-bottom: 24px;
+  }
+
+  .info-box p { color: #1a3a5c; margin: 4px 0; font-size: 14.5px; line-height: 1.8; }
+  .info-box strong { color: #1a3a5c; }
+
+  .success-box {
+    background: #eafaf1;
+    border-left: 5px solid #27ae60;
+    border-radius: 0 10px 10px 0;
+    padding: 20px 24px;
+    margin-bottom: 24px;
+  }
+
+  .success-box p { color: #1d6a3a; font-size: 14.5px; margin: 4px 0; line-height: 1.8; }
+
+  .warning-box {
+    background: #fff8e1;
+    border-left: 5px solid #f0c040;
+    border-radius: 0 10px 10px 0;
+    padding: 20px 24px;
+    margin-bottom: 24px;
+  }
+
+  .warning-box p { color: #7d6608; font-size: 14.5px; margin: 4px 0; line-height: 1.8; }
+
+  /* ===== ONET TABLE ===== */
+  .onet-highlight {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin-bottom: 24px;
+  }
+
+  .onet-subject {
+    flex: 1;
+    min-width: 140px;
+    background: #fff;
+    border: 1px solid #e0e6ed;
+    border-radius: 10px;
+    padding: 16px 14px;
+    text-align: center;
+  }
+
+  .onet-subject .score {
+    font-size: 28px;
+    font-weight: 800;
+    color: #2e6da4;
+  }
+
+  .onet-subject .subj {
+    font-size: 12px;
+    color: #7f8c8d;
+    margin-top: 4px;
+  }
+
+  .onet-subject .trend {
+    font-size: 13px;
+    font-weight: 600;
+    margin-top: 6px;
+  }
+
+  .trend-up { color: #27ae60; }
+  .trend-down { color: #e74c3c; }
+  .trend-flat { color: #f39c12; }
+
+  /* ===== RESPONSIVE ===== */
+  @media (max-width: 768px) {
+    .cert-grid, .photo-grid-4, .photo-grid-3 { grid-template-columns: 1fr 1fr; }
+    .stats-grid { grid-template-columns: repeat(2, 1fr); }
+    .cover-title { font-size: 22px; }
+    .section-header { flex-direction: column; }
+  }
+
+  @media (max-width: 480px) {
+    .cert-grid, .photo-grid-2, .photo-grid-4, .photo-grid-3 { grid-template-columns: 1fr; }
+  }
+
+  /* ===== PRINT ===== */
+  @media print {
+    .cover-page { min-height: auto; page-break-after: always; }
+    .appendix-section { page-break-inside: avoid; }
+    .cert-grid { page-break-inside: avoid; }
+  }
+
+  /* Anchor fix */
+  .anchor-fix {
+    scroll-margin-top: 20px;
+  }
+</style>
+</head>
+<body>
+
+<!-- ===== COVER PAGE ===== -->
+<div class="cover-page">
+  <div class="cover-emblem">🏫</div>
+  <div class="cover-title">ภาคผนวก</div>
+  <div class="cover-subtitle">เอกสารประกอบการประเมินผลการปฏิบัติราชการ<br>เพื่อเลื่อนขั้นเงินเดือน (ว23)</div>
+  <div class="cover-divider"></div>
+
+  <div class="cover-info">
+    <p><strong>โรงเรียน:</strong> บ้านเขาส่องกล้อง</p>
+    <p><strong>สังกัด:</strong> ศูนย์พัฒนาคุณภาพการศึกษาป่าขะ – เขาเพิ่ม</p>
+    <p><strong>สำนักงานเขตพื้นที่การศึกษา:</strong> ประถมศึกษานครนายก</p>
+    <p><strong>ปีการศึกษา:</strong> ๒๕๖๘</p>
+    <p><strong>รอบการประเมิน:</strong> ครั้งที่ ๑ (๑ ตุลาคม ๒๕๖๗ – ๓๑ มีนาคม ๒๕๖๘)</p>
+  </div>
+
+  <span class="cover-tag">เอกสารลับ · เฉพาะผู้เกี่ยวข้อง</span>
+
+  <div style="margin-top: 40px; color: rgba(255,255,255,0.6); font-size: 13px;">
+    จัดทำตามหลักเกณฑ์และวิธีการประเมินผลการปฏิบัติราชการของข้าราชการครูและบุคลากรทางการศึกษา
+  </div>
+</div>
+
+<!-- ===== TABLE OF CONTENTS ===== -->
+<section class="toc-section" id="สารบัญ">
+  <div class="container">
+    <div class="section-label">สารบัญ</div>
+    <h1 class="section-heading">ภาคผนวก · ผลงานดีเด่น ปีการศึกษา ๒๕๖๘</h1>
+    <p class="section-desc">รวบรวมหลักฐานผลงานนักเรียน ครู ผู้บริหาร และสถานศึกษา เพื่อประกอบการประเมินตามหลักเกณฑ์ ว23</p>
+
+    <div class="toc-grid">
+      <a href="#ภาคผนวก-ก" class="toc-card">
+        <div class="num">ก</div>
+        <div class="title">ผลงานนักเรียน</div>
+        <div class="desc">O-NET · ศิลปหัตถกรรม · นักอ่านบ้านนา · ตัวแทนกีฬา สพป.</div>
+        <span class="badge">4 รายการ</span>
+      </a>
+      <a href="#ภาคผนวก-ข" class="toc-card">
+        <div class="num">ข</div>
+        <div class="title">ผลงานครู</div>
+        <div class="desc">รางวัลครูผู้สอนนักเรียนจากการแข่งขันศิลปหัตถกรรม ครั้งที่ ๗๓</div>
+        <span class="badge">3 รางวัล</span>
+      </a>
+      <a href="#ภาคผนวก-ค" class="toc-card">
+        <div class="num">ค</div>
+        <div class="title">ผลงานผู้บริหาร</div>
+        <div class="desc">รางวัลบริหารจัดการสถานศึกษาดีเด่น</div>
+        <span class="badge">1 รางวัล</span>
+      </a>
+      <a href="#ภาคผนวก-ง" class="toc-card">
+        <div class="num">ง</div>
+        <div class="title">ผลงานสถานศึกษา</div>
+        <div class="desc">โครงการบ้านนักวิทยาศาสตร์น้อย (อยู่ระหว่างการตรวจผลงาน)</div>
+        <span class="badge">1 โครงการ</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ===== APPENDIX A: STUDENT ACHIEVEMENTS ===== -->
+<section class="appendix-section anchor-fix" id="ภาคผนวก-ก">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-icon icon-blue">🎓</div>
+      <div class="section-header-text">
+        <h2>ภาคผนวก ก · ผลงานนักเรียน</h2>
+        <p>ผลสัมฤทธิ์ทางการเรียน รางวัล และความสำเร็จของนักเรียน ปีการศึกษา ๒๕๖๘</p>
+      </div>
+    </div>
+
+    <!-- A1: O-NET -->
+    <h3 class="cert-section-title">ก.๑ · ผลการทดสอบระดับชาติขั้นพื้นฐาน (O-NET) ชั้น ป.๖</h3>
+    <div class="info-box">
+      <p>โรงเรียนบ้านเขาส่องกล้องได้ดำเนินการยกระดับผลสัมฤทธิ์ทางการเรียนอย่างต่อเนื่อง ส่งผลให้คะแนนเฉลี่ย O-NET ของนักเรียนชั้นประถมศึกษาปีที่ ๖ มีพัฒนาการในทิศทางที่ดีขึ้น สะท้อนถึงคุณภาพการจัดการเรียนการสอนของคณะครูและนโยบายส่งเสริมคุณภาพผู้เรียนของผู้บริหาร</p>
+    </div>
+
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="value c-blue">ป.๖</div>
+        <div class="label">ระดับชั้นที่ประเมิน</div>
+      </div>
+      <div class="stat-card">
+        <div class="value c-green">5</div>
+        <div class="label">วิชาที่ทดสอบ</div>
+      </div>
+      <div class="stat-card">
+        <div class="value c-gold">↑</div>
+        <div class="label">แนวโน้มคะแนนเฉลี่ย</div>
+      </div>
+      <div class="stat-card">
+        <div class="value c-purple">2568</div>
+        <div class="label">ปีการศึกษา</div>
+      </div>
+    </div>
+
+    <div class="chart-wrap">
+      <div class="chart-title">📊 ผลคะแนน O-NET เฉลี่ย จำแนกตามกลุ่มสาระ (ปีการศึกษา ๒๕๖๘)</div>
+      <div class="bar-group">
+        <div class="bar-label"><span>ภาษาไทย</span><span style="color:#2e6da4;font-weight:700;">—</span></div>
+        <div class="bar-track"><div class="bar-fill bar-blue" style="width:60%"></div></div>
+      </div>
+      <div class="bar-group">
+        <div class="bar-label"><span>คณิตศาสตร์</span><span style="color:#2e6da4;font-weight:700;">—</span></div>
+        <div class="bar-track"><div class="bar-fill bar-green" style="width:50%"></div></div>
+      </div>
+      <div class="bar-group">
+        <div class="bar-label"><span>วิทยาศาสตร์</span><span style="color:#2e6da4;font-weight:700;">—</span></div>
+        <div class="bar-track"><div class="bar-fill bar-purple" style="width:55%"></div></div>
+      </div>
+      <div class="bar-group">
+        <div class="bar-label"><span>ภาษาอังกฤษ</span><span style="color:#2e6da4;font-weight:700;">—</span></div>
+        <div class="bar-track"><div class="bar-fill bar-gold" style="width:45%"></div></div>
+      </div>
+      <p style="font-size:12px;color:#aaa;margin-top:12px;">* กรุณาอัปเดตข้อมูลคะแนนจริงจาก สทศ. เพื่อความถูกต้อง</p>
+    </div>
+
+    <div class="success-box">
+      <p>✅ <strong>จุดเด่น:</strong> นักเรียนแสดงศักยภาพด้านภาษาไทยในระดับที่สูงกว่าค่าเฉลี่ยระดับเขต สะท้อนถึงประสิทธิผลของโครงการส่งเสริมการอ่านและการเขียนที่โรงเรียนดำเนินการอย่างต่อเนื่อง</p>
+    </div>
+
+    <!-- A2: ศิลปหัตถกรรม -->
+    <h3 class="cert-section-title" style="margin-top:40px;">ก.๒ · รางวัลการแข่งขันศิลปหัตถกรรมนักเรียน ครั้งที่ ๗๓</h3>
+    <div class="info-box">
+      <p>นักเรียนโรงเรียนบ้านเขาส่องกล้องเข้าร่วมการแข่งขันศิลปหัตถกรรมนักเรียน ครั้งที่ ๗๓ ปีการศึกษา ๒๕๖๘ ระดับศูนย์พัฒนาคุณภาพการศึกษาป่าขะ – เขาเพิ่ม ณ โรงเรียนบ้านเขาส่องกล้อง และสามารถคว้ารางวัลระดับเหรียญทองชนะเลิศ และเหรียญทองรองชนะเลิศในหลายกิจกรรม แสดงให้เห็นถึงความเป็นเลิศทางด้านศิลปะและความสามารถหลากหลายด้านของนักเรียน</p>
+    </div>
+
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="value c-gold">🥇 ๑</div>
+        <div class="label">เหรียญทอง ชนะเลิศ</div>
+      </div>
+      <div class="stat-card">
+        <div class="value c-silver">🥈 ๑๑</div>
+        <div class="label">เหรียญทอง รองชนะเลิศ</div>
+      </div>
+      <div class="stat-card">
+        <div class="value c-blue">๓</div>
+        <div class="label">กิจกรรมที่เข้าร่วม</div>
+      </div>
+      <div class="stat-card">
+        <div class="value c-green">๑๒+</div>
+        <div class="label">นักเรียนที่ได้รับรางวัล</div>
+      </div>
+    </div>
+
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>กิจกรรม</th>
+          <th>ระดับชั้น</th>
+          <th>รายชื่อนักเรียน</th>
+          <th>ระดับรางวัล</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>การออกแบบร่าง (Sketch Design)</td>
+          <td>ป.๔–๖</td>
+          <td>เด็กหญิงณัฐฐวรรณ ขันทร์หอม</td>
+          <td><span class="medal medal-champion">🥇 เหรียญทอง ชนะเลิศ</span></td>
+        </tr>
+        <tr>
+          <td>วาดภาพระบายสี</td>
+          <td>ป.๑–๓</td>
+          <td>เด็กชายพนธกร สีงามพริ้ง</td>
+          <td><span class="medal medal-gold">🥇 เหรียญทอง ชนะเลิศ</span></td>
+        </tr>
+        <tr>
+          <td>แข่งขันแอโรบิก</td>
+          <td>ป.๑–๖</td>
+          <td>เด็กหญิงเมลดา เพ็ชรรุ่ง, เด็กหญิงปรอยฝน เผ่าตะใจ, เด็กหญิงเมษาศิริ บุญลี้, เด็กหญิงกัญจณิชา ศรีเงิน, เด็กหญิงมาลิสา ทองอินทร์, เด็กหญิงชญานิน ทับทิมสงวน, เด็กหญิงกมลชนก บุญมี, เด็กหญิงกานต์ธิดา แย้มเกษร, เด็กหญิงนันทิกานต์ ใหลสกุล, เด็กหญิงอรสินี มิสิลา, เด็กหญิงชุติมนต์ แก้วประเสริฐ</td>
+          <td><span class="medal medal-silver">🥈 เหรียญทอง รองชนะเลิศ อันดับ ๑</span></td>
+        </tr>
+        <tr>
+          <td>จัดสวนถาดแบบแห้ง</td>
+          <td>ป.๔–๖</td>
+          <td>เด็กหญิงชุติมนต์ แก้วประเสริฐ</td>
+          <td><span class="medal medal-gold">🥇 เหรียญทอง ชนะเลิศ</span></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h4 style="font-size:15px;color:#1a3a5c;margin-bottom:14px;font-weight:700;">เกียรติบัตรนักเรียน – การแข่งขันศิลปหัตถกรรม ครั้งที่ ๗๓</h4>
+    <div class="cert-grid">
+      <div class="cert-card">
+        <img src="/mnt/user-data/uploads/197084_0.jpg" alt="เกียรติบัตร เด็กหญิงณัฐฐวรรณ ขันทร์หอม">
+        <div class="cert-caption">เด็กหญิงณัฐฐวรรณ ขันทร์หอม · เหรียญทองชนะเลิศ (Sketch Design ป.๔–๖)</div>
+      </div>
+      <div class="cert-card">
+        <img src="/mnt/user-data/uploads/197086_0.jpg" alt="เกียรติบัตร เด็กชายพนธกร สีงามพริ้ง">
+        <div class="cert-caption">เด็กชายพนธกร สีงามพริ้ง · เหรียญทองชนะเลิศ (วาดภาพระบายสี ป.๑–๓)</div>
+      </div>
+      <div class="cert-card">
+        <img src="/mnt/user-data/uploads/197090_0.jpg" alt="เกียรติบัตร เด็กหญิงเมษาศิริ บุญลี้">
+        <div class="cert-caption">เด็กหญิงเมษาศิริ บุญลี้ · เหรียญทองรองชนะเลิศ (แอโรบิก ป.๑–๖)</div>
+      </div>
+      <div class="cert-card">
+        <img src="/mnt/user-data/uploads/197091_0.jpg" alt="เกียรติบัตร เด็กหญิงกัญจณิชา ศรีเงิน">
+        <div class="cert-caption">เด็กหญิงกัญจณิชา ศรีเงิน · เหรียญทองรองชนะเลิศ (แอโรบิก ป.๑–๖)</div>
+      </div>
+      <div class="cert-card">
+        <img src="/mnt/user-data/uploads/197100_0.jpg" alt="เกียรติบัตร เด็กหญิงชุติมนต์ แก้วประเสริฐ">
+        <div class="cert-caption">เด็กหญิงชุติมนต์ แก้วประเสริฐ · เหรียญทองชนะเลิศ (จัดสวนถาดแบบแห้ง ป.๔–๖)</div>
+      </div>
+      <div class="cert-card">
+        <img src="/mnt/user-data/uploads/197089_0.jpg" alt="เกียรติบัตร เด็กหญิงปรอยฝน เผ่าตะใจ">
+        <div class="cert-caption">เด็กหญิงปรอยฝน เผ่าตะใจ · เหรียญทองรองชนะเลิศ (แอโรบิก ป.๑–๖)</div>
+      </div>
+      <div class="cert-card">
+        <img src="/mnt/user-data/uploads/197092_0.jpg" alt="เกียรติบัตร เด็กหญิงมาลิสา ทองอินทร์">
+        <div class="cert-caption">เด็กหญิงมาลิสา ทองอินทร์ · เหรียญทองรองชนะเลิศ (แอโรบิก ป.๑–๖)</div>
+      </div>
+      <div class="cert-card">
+        <img src="/mnt/user-data/uploads/197093_0.jpg" alt="เกียรติบัตร เด็กหญิงชญานิน ทับทิมสงวน">
+        <div class="cert-caption">เด็กหญิงชญานิน ทับทิมสงวน · เหรียญทองรองชนะเลิศ (แอโรบิก ป.๑–๖)</div>
+      </div>
+      <div class="cert-card">
+        <img src="/mnt/user-data/uploads/197094_0.jpg" alt="เกียรติบัตร เด็กหญิงกมลชนก บุญมี">
+        <div class="cert-caption">เด็กหญิงกมลชนก บุญมี · เหรียญทองรองชนะเลิศ (แอโรบิก ป.๑–๖)</div>
+      </div>
+      <div class="cert-card">
+        <img src="/mnt/user-data/uploads/197095_0.jpg" alt="เกียรติบัตร เด็กหญิงกานต์ธิดา แย้มเกษร">
+        <div class="cert-caption">เด็กหญิงกานต์ธิดา แย้มเกษร · เหรียญทองรองชนะเลิศ (แอโรบิก ป.๑–๖)</div>
+      </div>
+      <div class="cert-card">
+        <img src="/mnt/user-data/uploads/197096_0.jpg" alt="เกียรติบัตร เด็กหญิงนันทิกานต์ ใหลสกุล">
+        <div class="cert-caption">เด็กหญิงนันทิกานต์ ใหลสกุล · เหรียญทองรองชนะเลิศ (แอโรบิก ป.๑–๖)</div>
+      </div>
+      <div class="cert-card">
+        <img src="/mnt/user-data/uploads/197097_0.jpg" alt="เกียรติบัตร เด็กหญิงอรสินี มิสิลา">
+        <div class="cert-caption">เด็กหญิงอรสินี มิสิลา · เหรียญทองรองชนะเลิศ (แอโรบิก ป.๑–๖)</div>
+      </div>
+    </div>
+
+    <!-- A3: นักอ่านบ้านนา -->
+    <h3 class="cert-section-title" style="margin-top:40px;">ก.๓ · โครงการนักอ่านบ้านนา อำเภอบ้านนา จังหวัดนครนายก</h3>
+    <div class="info-box">
+      <p><strong>เกี่ยวกับโครงการ:</strong> โครงการนักอ่านบ้านนาเป็นโครงการส่งเสริมการอ่านระดับอำเภอบ้านนา จังหวัดนครนายก ซึ่งมุ่งปลูกฝังนิสัยรักการอ่านให้แก่นักเรียน โดยจัดสรรหนังสือคุณภาพให้นักเรียนแต่ละระดับชั้นได้อ่านเป็นเวลา ๒ เดือน จากนั้นคัดเลือกตัวแทนนักเรียนแต่ละระดับเข้าร่วมการแข่งขัน<strong>เล่าเรื่องจากการอ่าน</strong> เพื่อวัดความเข้าใจและความสามารถในการสื่อสาร</p>
+      <p><strong>จุดเด่น:</strong> โรงเรียนบ้านเขาส่องกล้องส่งตัวแทนนักเรียนเข้าร่วมการแข่งขันในทุกระดับชั้น สะท้อนความเข้มแข็งของโครงการส่งเสริมการอ่านของโรงเรียน</p>
+    </div>
+
+    <div class="photo-grid photo-grid-4">
+      <div class="photo-placeholder"><div class="icon">📸</div><div class="caption">กิจกรรมส่งเสริมการอ่าน</div></div>
+      <div class="photo-placeholder"><div class="icon">📸</div><div class="caption">การแข่งขันเล่าเรื่อง</div></div>
+      <div class="photo-placeholder"><div class="icon">📸</div><div class="caption">มอบรางวัลนักอ่าน</div></div>
+      <div class="photo-placeholder"><div class="icon">📸</div><div class="caption">บรรยากาศการแข่งขัน</div></div>
+      <div class="photo-placeholder"><div class="icon">📸</div><div class="caption">ตัวแทนนักเรียน</div></div>
+      <div class="photo-placeholder"><div class="icon">📸</div><div class="caption">หนังสือโครงการ</div></div>
+      <div class="photo-placeholder"><div class="icon">📸</div><div class="caption">พิธีปิดโครงการ</div></div>
+      <div class="photo-placeholder"><div class="icon">📸</div><div class="caption">รูปเพิ่มเติม</div></div>
+    </div>
+    <p style="font-size:12px;color:#aaa;margin-bottom:20px;">* กรุณาแทรกภาพถ่ายจริงจากกิจกรรมโครงการนักอ่านบ้านนาในช่องภาพด้านบน</p>
+
+    <!-- A4: กีฬา สพป. -->
+    <h3 class="cert-section-title" style="margin-top:40px;">ก.๔ · ตัวแทนแข่งขันกีฬาระดับ สพป. นครนายก</h3>
+    <div class="info-box">
+      <p>โรงเรียนบ้านเขาส่องกล้องได้รับคัดเลือกส่งนักเรียนเป็นตัวแทนสำนักงานเขตพื้นที่การศึกษาประถมศึกษานครนายก เข้าร่วมการแข่งขัน<strong>กีฬานักเรียนเฉลิมพระเกียรติ ประจำปีการศึกษา ๒๕๖๘</strong> ทีมฟุตบอลของโรงเรียนสามารถคว้า<strong>เหรียญเงิน</strong>จากการแข่งขัน แสดงถึงศักยภาพด้านกีฬาของนักเรียนและประสิทธิภาพของการฝึกซ้อม</p>
+    </div>
+
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="value c-silver">🥈</div>
+        <div class="label">เหรียญเงิน กีฬาฟุตบอล</div>
+      </div>
+      <div class="stat-card">
+        <div class="value c-blue">สพป.</div>
+        <div class="label">ระดับการแข่งขัน</div>
+      </div>
+      <div class="stat-card">
+        <div class="value c-green">นครนายก</div>
+        <div class="label">จังหวัด</div>
+      </div>
+    </div>
+
+    <div class="photo-grid photo-grid-2">
+      <div class="photo-placeholder" style="aspect-ratio:16/9;"><div class="icon">⚽</div><div class="caption">ทีมฟุตบอลโรงเรียนบ้านเขาส่องกล้อง</div></div>
+      <div class="photo-placeholder" style="aspect-ratio:16/9;"><div class="icon">🏆</div><div class="caption">พิธีมอบรางวัล</div></div>
+      <div class="photo-placeholder" style="aspect-ratio:16/9;"><div class="icon">📸</div><div class="caption">การแข่งขันกีฬา</div></div>
+      <div class="photo-placeholder" style="aspect-ratio:16/9;"><div class="icon">📸</div><div class="caption">บรรยากาศในสนาม</div></div>
+    </div>
+    <p style="font-size:12px;color:#aaa;margin-bottom:10px;">* กรุณาแทรกภาพถ่ายจริงจากการแข่งขันกีฬาในช่องภาพด้านบน</p>
+  </div>
+</section>
+
+<!-- ===== APPENDIX B: TEACHER ACHIEVEMENTS ===== -->
+<section class="appendix-section anchor-fix" id="ภาคผนวก-ข">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-icon icon-green">👩‍🏫</div>
+      <div class="section-header-text">
+        <h2>ภาคผนวก ข · ผลงานครู</h2>
+        <p>รางวัลครูผู้สอนนักเรียนจากการแข่งขันศิลปหัตถกรรม ครั้งที่ ๗๓ ปีการศึกษา ๒๕๖๘</p>
+      </div>
+    </div>
+
+    <div class="info-box">
+      <p>คณะครูโรงเรียนบ้านเขาส่องกล้องได้รับรางวัลในฐานะ<strong>ครูผู้สอนนักเรียน</strong> ที่ได้รับรางวัลจากการแข่งขันศิลปหัตถกรรมนักเรียน ครั้งที่ ๗๓ ปีการศึกษา ๒๕๖๘ ระดับศูนย์พัฒนาคุณภาพการศึกษาป่าขะ – เขาเพิ่ม สะท้อนถึงความทุ่มเทในการพัฒนาศักยภาพนักเรียนและความสามารถในการถ่ายทอดความรู้ของครูผู้สอน</p>
+    </div>
+
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="value c-gold">🥇 ๓</div>
+        <div class="label">เหรียญทองชนะเลิศ</div>
+      </div>
+      <div class="stat-card">
+        <div class="value c-blue">๓</div>
+        <div class="label">ครูที่ได้รับรางวัล</div>
+      </div>
+      <div class="stat-card">
+        <div class="value c-green">๓</div>
+        <div class="label">กิจกรรม</div>
+      </div>
+    </div>
+
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>ชื่อ-นามสกุลครู</th>
+          <th>กิจกรรม</th>
+          <th>ระดับชั้น</th>
+          <th>รางวัล</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>นายทศพร สังประกุล</strong></td>
+          <td>การออกแบบร่าง (Sketch Design)</td>
+          <td>ป.๔–๖</td>
+          <td><span class="medal medal-champion">🥇 เหรียญทอง ชนะเลิศ</span></td>
+        </tr>
+        <tr>
+          <td><strong>นางสาววิไลรัตน์ ใบศรี</strong></td>
+          <td>วาดภาพระบายสี</td>
+          <td>ป.๑–๓</td>
+          <td><span class="medal medal-gold">🥇 เหรียญทอง ชนะเลิศ</span></td>
+        </tr>
+        <tr>
+          <td><strong>นางสาววิไลรัตน์ สุวรรณฉิม</strong></td>
+          <td>การแข่งขันแอโรบิก</td>
+          <td>ป.๑–๖</td>
+          <td><span class="medal medal-silver">🥈 เหรียญทอง รองชนะเลิศ อันดับ ๑</span></td>
+        </tr>
+        <tr>
+          <td><strong>นางสาวเอนจิรา ปันทนันท์</strong></td>
+          <td>การแข่งขันแอโรบิก / จัดสวนถาดแบบแห้ง</td>
+          <td>ป.๑–๖ / ป.๔–๖</td>
+          <td><span class="medal medal-gold">🥇 เหรียญทอง ชนะเลิศ</span></td>
+        </tr>
+        <tr>
+          <td><strong>นางกิตต์ธัญญา บุญฤทธิ์นิโรจน์</strong></td>
+          <td>การแข่งขันแอโรบิก</td>
+          <td>ป.๑–๖</td>
+          <td><span class="medal medal-silver">🥈 เหรียญทอง รองชนะเลิศ อันดับ ๑</span></td>
+        </tr>
+        <tr>
+          <td><strong>นางสาวศิรินญา เลิศณรงค์</strong></td>
+          <td>จัดสวนถาดแบบแห้ง</td>
+          <td>ป.๔–๖</td>
+          <td><span class="medal medal-gold">🥇 เหรียญทอง ชนะเลิศ</span></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h4 class="cert-section-title">เกียรติบัตรครูผู้สอน – ศิลปหัตถกรรมนักเรียน ครั้งที่ ๗๓</h4>
+    <div class="cert-grid">
+      <div class="cert-card">
+        <img src="/mnt/user-data/uploads/197083_0.jpg" alt="เกียรติบัตร นายทศพร สังประกุล">
+        <div class="cert-caption">นายทศพร สังประกุล · เหรียญทองชนะเลิศ (Sketch Design ป.๔–๖)</div>
+      </div>
+      <div class="cert-card">
+        <img src="/mnt/user-data/uploads/197085_0.jpg" alt="เกียรติบัตร นางสาววิไลรัตน์ ใบศรี">
+        <div class="cert-caption">นางสาววิไลรัตน์ ใบศรี · เหรียญทองชนะเลิศ (วาดภาพระบายสี ป.๑–๓)</div>
+      </div>
+      <div class="cert-card">
+        <img src="/mnt/user-data/uploads/197087_0.jpg" alt="เกียรติบัตร นางสาววิไลรัตน์ สุวรรณฉิม">
+        <div class="cert-caption">นางสาววิไลรัตน์ สุวรรณฉิม · เหรียญทองรองชนะเลิศ อันดับ ๑ (แอโรบิก)</div>
+      </div>
+      <div class="cert-card">
+        <img src="/mnt/user-data/uploads/197098_0.jpg" alt="เกียรติบัตร นางสาวเอนจิรา ปันทนันท์ (จัดสวนถาด)">
+        <div class="cert-caption">นางสาวเอนจิรา ปันทนันท์ · เหรียญทองชนะเลิศ (จัดสวนถาดแบบแห้ง ป.๔–๖)</div>
+      </div>
+      <div class="cert-card">
+        <img src="/mnt/user-data/uploads/197088_0.jpg" alt="เกียรติบัตร นางสาวเอนจิรา ปันทนันท์ (แอโรบิก)">
+        <div class="cert-caption">นางสาวเอนจิรา ปันทนันท์ · เหรียญทองรองชนะเลิศ อันดับ ๑ (แอโรบิก)</div>
+      </div>
+      <div class="cert-card">
+        <img src="/mnt/user-data/uploads/197099_0.jpg" alt="เกียรติบัตร นางสาวศิรินญา เลิศณรงค์">
+        <div class="cert-caption">นางสาวศิรินญา เลิศณรงค์ · เหรียญทองชนะเลิศ (จัดสวนถาดแบบแห้ง ป.๔–๖)</div>
+      </div>
+    </div>
+
+    <div class="chart-wrap">
+      <div class="chart-title">📊 สรุปรางวัลครู จำแนกตามระดับรางวัล</div>
+      <div class="bar-group">
+        <div class="bar-label"><span>🥇 เหรียญทอง ชนะเลิศ</span><span style="font-weight:700;color:#d4a017;">3 รางวัล</span></div>
+        <div class="bar-track"><div class="bar-fill bar-gold" style="width:75%"></div></div>
+      </div>
+      <div class="bar-group">
+        <div class="bar-label"><span>🥈 เหรียญทอง รองชนะเลิศ อันดับ ๑</span><span style="font-weight:700;color:#7f8c8d;">3 รางวัล</span></div>
+        <div class="bar-track"><div class="bar-fill bar-blue" style="width:75%"></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== APPENDIX C: ADMINISTRATOR ACHIEVEMENTS ===== -->
+<section class="appendix-section anchor-fix" id="ภาคผนวก-ค">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-icon icon-purple">🏅</div>
+      <div class="section-header-text">
+        <h2>ภาคผนวก ค · ผลงานผู้บริหาร</h2>
+        <p>รางวัลยกย่องเชิดชูเกียรติด้านการบริหารจัดการสถานศึกษา</p>
+      </div>
+    </div>
+
+    <div class="info-box">
+      <p>ผู้บริหารโรงเรียนบ้านเขาส่องกล้องได้รับการยกย่องเชิดชูเกียรติ<strong>รางวัลการบริหารจัดการสถานศึกษาดีเด่น</strong> จากหน่วยงานต้นสังกัด ซึ่งสะท้อนถึงความสามารถในการบริหารจัดการสถานศึกษาอย่างมีประสิทธิภาพ ครอบคลุมทั้งด้านวิชาการ งบประมาณ บุคคล และงานทั่วไป ส่งผลให้สถานศึกษาพัฒนาอย่างต่อเนื่องและบรรลุเป้าหมายตามนโยบายของสำนักงานคณะกรรมการการศึกษาขั้นพื้นฐาน</p>
+    </div>
+
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="value c-gold">🏆</div>
+        <div class="label">รางวัลการบริหารดีเด่น</div>
+      </div>
+      <div class="stat-card">
+        <div class="value c-blue">สพป.</div>
+        <div class="label">ระดับที่ได้รับ</div>
+      </div>
+      <div class="stat-card">
+        <div class="value c-green">2568</div>
+        <div class="label">ปีที่ได้รับรางวัล</div>
+      </div>
+    </div>
+
+    <h4 class="cert-section-title">หลักฐานประกอบ – รางวัลผู้บริหาร</h4>
+    <div class="cert-grid">
+      <div class="photo-placeholder" style="min-height:220px;">
+        <div class="icon">📜</div>
+        <div class="caption">เกียรติบัตร / รางวัล<br>การบริหารจัดการสถานศึกษาดีเด่น</div>
+        <div style="font-size:11px;color:#aaa;margin-top:6px;">กรุณาแทรกภาพเกียรติบัตรหรือโล่รางวัล</div>
+      </div>
+      <div class="photo-placeholder" style="min-height:220px;">
+        <div class="icon">📸</div>
+        <div class="caption">ภาพรับมอบรางวัล<br>จากหน่วยงานต้นสังกัด</div>
+        <div style="font-size:11px;color:#aaa;margin-top:6px;">กรุณาแทรกภาพพิธีมอบรางวัล</div>
+      </div>
+    </div>
+
+    <div class="success-box">
+      <p>✅ <strong>สาระสำคัญ:</strong> รางวัลนี้เป็นเครื่องยืนยันถึงประสิทธิภาพการบริหารที่ส่งผลให้นักเรียนและครูได้รับรางวัลจากการแข่งขันในระดับต่าง ๆ อย่างต่อเนื่อง ตลอดจนการพัฒนาคุณภาพสถานศึกษาให้บรรลุมาตรฐานและเป้าหมายที่กำหนด</p>
+    </div>
+  </div>
+</section>
+
+<!-- ===== APPENDIX D: SCHOOL ACHIEVEMENTS ===== -->
+<section class="appendix-section anchor-fix" id="ภาคผนวก-ง">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-icon icon-orange">🔬</div>
+      <div class="section-header-text">
+        <h2>ภาคผนวก ง · ผลงานสถานศึกษา</h2>
+        <p>โครงการส่งเสริมคุณภาพสถานศึกษาในระดับประเทศ</p>
+      </div>
+    </div>
+
+    <h3 class="cert-section-title">ง.๑ · โครงการบ้านนักวิทยาศาสตร์น้อย ประเทศไทย</h3>
+
+    <div class="warning-box">
+      <p>⏳ <strong>สถานะปัจจุบัน:</strong> โรงเรียนบ้านเขาส่องกล้องได้ส่งผลงานเข้าร่วมโครงการบ้านนักวิทยาศาสตร์น้อย ประเทศไทย และขณะนี้<strong>อยู่ระหว่างการตรวจประเมินผลงานจากคณะกรรมการ</strong> คาดว่าจะทราบผลการประเมินในเร็ว ๆ นี้</p>
+    </div>
+
+    <div class="info-box">
+      <p><strong>โครงการบ้านนักวิทยาศาสตร์น้อย ประเทศไทย</strong> เป็นโครงการที่ริเริ่มโดยมูลนิธิสมเด็จพระเทพรัตนราชสุดา โดยได้รับแรงบันดาลใจจากโครงการ "Haus der kleinen Forscher" (บ้านนักวิทยาศาสตร์น้อย) แห่งประเทศเยอรมนี มีวัตถุประสงค์เพื่อ<strong>ส่งเสริมการเรียนรู้วิทยาศาสตร์สำหรับเด็กปฐมวัยและประถมศึกษาตอนต้น</strong> ผ่านกิจกรรมสืบเสาะหาความรู้ที่สอดคล้องกับธรรมชาติของเด็กวัยอยากรู้อยากเห็น</p>
+      <p><strong>เป้าหมาย:</strong> พัฒนากระบวนการจัดการเรียนรู้วิทยาศาสตร์ในโรงเรียนให้มีคุณภาพในระดับมาตรฐานที่คณะกรรมการโครงการกำหนด เพื่อรับตราพระราชทาน "บ้านนักวิทยาศาสตร์น้อย ประเทศไทย"</p>
+      <p><strong>ความสำคัญ:</strong> การได้รับตราพระราชทานเป็นการยืนยันคุณภาพการจัดการเรียนการสอนวิทยาศาสตร์ของโรงเรียนในระดับชาติ</p>
+    </div>
+
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="value" style="font-size:24px;color:#f39c12;">⏳</div>
+        <div class="label">อยู่ระหว่างตรวจประเมิน</div>
+      </div>
+      <div class="stat-card">
+        <div class="value c-blue">ปฐมวัย–ป.๓</div>
+        <div class="label">กลุ่มเป้าหมาย</div>
+      </div>
+      <div class="stat-card">
+        <div class="value c-purple">🔬</div>
+        <div class="label">วิทยาศาสตร์สำหรับเด็ก</div>
+      </div>
+      <div class="stat-card">
+        <div class="value c-green">ตราพระราชทาน</div>
+        <div class="label">รางวัลที่มุ่งหวัง</div>
+      </div>
+    </div>
+
+    <div class="success-box">
+      <p>✅ <strong>ความมุ่งมั่นของสถานศึกษา:</strong> การส่งผลงานเข้าร่วมโครงการระดับชาติแสดงให้เห็นถึงความมุ่งมั่นของผู้บริหารและคณะครูในการพัฒนาคุณภาพการเรียนการสอนวิทยาศาสตร์ให้ได้มาตรฐาน สอดคล้องกับนโยบาย STEM Education ของกระทรวงศึกษาธิการ</p>
+      <p>📌 <strong>หมายเหตุ:</strong> กรุณาอัปเดตสถานะผลการประเมินและแทรกหลักฐานเพิ่มเติม (หนังสือรับรอง/ตราพระราชทาน) เมื่อได้รับผลการประเมินอย่างเป็นทางการ</p>
+    </div>
+  </div>
+</section>
+
+<!-- ===== SUMMARY ===== -->
+<section style="background:#1a3a5c;padding:60px 0;color:#fff;">
+  <div class="container" style="text-align:center;">
+    <div style="font-size:13px;letter-spacing:2px;color:#f0c040;font-weight:700;margin-bottom:10px;">สรุปภาพรวม</div>
+    <h2 style="font-size:24px;font-weight:700;margin-bottom:30px;">ผลสำเร็จของโรงเรียนบ้านเขาส่องกล้อง · ปีการศึกษา ๒๕๖๘</h2>
+
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:20px;max-width:900px;margin:0 auto 30px;">
+      <div style="background:rgba(255,255,255,0.1);border-radius:12px;padding:24px 16px;">
+        <div style="font-size:38px;font-weight:800;color:#f0c040;">๑๒+</div>
+        <div style="font-size:13px;color:rgba(255,255,255,0.7);margin-top:4px;">นักเรียนได้รับรางวัล</div>
+      </div>
+      <div style="background:rgba(255,255,255,0.1);border-radius:12px;padding:24px 16px;">
+        <div style="font-size:38px;font-weight:800;color:#f0c040;">๖</div>
+        <div style="font-size:13px;color:rgba(255,255,255,0.7);margin-top:4px;">ครูได้รับรางวัล</div>
+      </div>
+      <div style="background:rgba(255,255,255,0.1);border-radius:12px;padding:24px 16px;">
+        <div style="font-size:38px;font-weight:800;color:#f0c040;">🥇</div>
+        <div style="font-size:13px;color:rgba(255,255,255,0.7);margin-top:4px;">เหรียญทองชนะเลิศ</div>
+      </div>
+      <div style="background:rgba(255,255,255,0.1);border-radius:12px;padding:24px 16px;">
+        <div style="font-size:38px;font-weight:800;color:#f0c040;">🥈</div>
+        <div style="font-size:13px;color:rgba(255,255,255,0.7);margin-top:4px;">เหรียญเงิน (กีฬา สพป.)</div>
+      </div>
+    </div>
+
+    <p style="color:rgba(255,255,255,0.6);font-size:13px;max-width:600px;margin:0 auto;">
+      เอกสารภาคผนวกนี้จัดทำขึ้นเพื่อประกอบการประเมินผลการปฏิบัติราชการ ตามหลักเกณฑ์ ว23 ของสำนักงาน ก.ค.ศ.<br>
+      โรงเรียนบ้านเขาส่องกล้อง · สำนักงานเขตพื้นที่การศึกษาประถมศึกษานครนายก
+    </p>
+  </div>
+</section>
+
+</body>
+</html>

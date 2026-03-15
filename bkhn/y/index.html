@@ -1,0 +1,952 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ระบบรายงานผลการปฏิบัติงาน ว23 | โรงเรียนบ้านเขาส่องกล้อง</title>
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&family=Noto+Serif+Thai:wght@600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --navy: #1b2a52; --navy2: #243160; --navy3: #0d1a3a;
+  --gold: #c89624; --gold2: #f0c84a; --gold3: #fdf3d0;
+  --cream: #f8f6f0; --white: #fff;
+  --g50: #f7f5f1; --g100: #ebe9e4; --g200: #d1cec8; --g300: #b0ada6;
+  --g500: #7a776f; --g700: #3d3b35; --g900: #1a1915;
+  --green: #155c38; --green2: #e6f4ed; --green3: #0f4a2d;
+  --blue: #1a4a8a; --blue2: #e8f0fb;
+  --purple: #4a1e8a; --purple2: #f0ebfb;
+  --red: #8b1a1a; --red2: #fdf0f0;
+  --amber: #8a5a00; --amber2: #fdf5e0;
+  --serif: 'Noto Serif Thai', serif;
+  --sans: 'Sarabun', sans-serif;
+  --r4: 4px; --r8: 8px; --r12: 12px; --r16: 16px;
+  --sh: 0 1px 3px rgba(0,0,0,.08), 0 4px 16px rgba(0,0,0,.06);
+  --sh2: 0 4px 24px rgba(0,0,0,.12);
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body { font-family: var(--sans); background: var(--cream); color: var(--g700); font-size: 15px; line-height: 1.7; min-height: 100vh; }
+
+/* ── TOPBAR ── */
+.topbar { background: var(--navy); color: #fff; display: flex; align-items: center; padding: 0 1.5rem; border-bottom: 2px solid var(--gold); position: sticky; top: 0; z-index: 1000; }
+.topbar-brand { display: flex; align-items: center; gap: 10px; padding: 14px 0; }
+.topbar-logo { width: 32px; height: 32px; background: var(--gold); border-radius: var(--r8); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.topbar-logo svg { width: 18px; height: 18px; stroke: var(--navy); fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.topbar-name { font-family: var(--serif); font-size: 15px; color: #fff; line-height: 1.2; }
+.topbar-sub { font-size: 11px; color: rgba(255,255,255,.5); }
+.topbar-nav { display: flex; margin-left: auto; gap: 2px; }
+.topbar-nav button { background: none; border: none; color: rgba(255,255,255,.6); font-family: var(--sans); font-size: 13px; padding: 12px 14px; cursor: pointer; border-radius: var(--r4); transition: .2s; border-bottom: 2px solid transparent; margin-bottom: -2px; }
+.topbar-nav button:hover { color: #fff; background: rgba(255,255,255,.07); }
+.topbar-nav button.active { color: var(--gold2); border-bottom-color: var(--gold2); }
+
+/* ── SIDEBAR + MAIN LAYOUT ── */
+.shell { display: flex; min-height: calc(100vh - 54px); }
+.sidebar { width: 230px; background: var(--white); border-right: 1px solid var(--g100); flex-shrink: 0; padding: 1.25rem 0; }
+.sidebar-section { padding: 0 0.75rem; margin-bottom: 1.5rem; }
+.sidebar-label { font-size: 10.5px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: var(--g300); padding: 0 0.75rem; margin-bottom: 6px; }
+.sidebar-item { display: flex; align-items: center; gap: 9px; padding: 8px 12px; border-radius: var(--r8); color: var(--g500); font-size: 13.5px; cursor: pointer; transition: .18s; border: none; background: none; width: 100%; text-align: left; font-family: var(--sans); }
+.sidebar-item svg { width: 15px; height: 15px; stroke: currentColor; fill: none; stroke-width: 2; flex-shrink: 0; }
+.sidebar-item:hover { background: var(--g50); color: var(--navy); }
+.sidebar-item.active { background: var(--blue2); color: var(--blue); font-weight: 600; }
+.sidebar-item.active svg { stroke: var(--blue); }
+.sidebar-badge { margin-left: auto; background: var(--navy); color: var(--gold2); font-size: 10.5px; font-weight: 700; padding: 1px 7px; border-radius: 100px; }
+
+/* ── MAIN ── */
+.main { flex: 1; padding: 1.75rem 2rem; overflow-x: hidden; }
+
+/* ── PAGE HEADER ── */
+.page-hd { margin-bottom: 1.75rem; }
+.page-ey { font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--gold); margin-bottom: 3px; }
+.page-title { font-family: var(--serif); font-size: 1.7rem; color: var(--navy); font-weight: 700; line-height: 1.2; margin-bottom: 4px; }
+.page-desc { font-size: 13.5px; color: var(--g500); }
+
+/* ── SECTION ── */
+.section { background: var(--white); border-radius: var(--r12); border: 1px solid var(--g100); margin-bottom: 1.25rem; overflow: hidden; }
+.section-hd { display: flex; align-items: center; gap: 10px; padding: 1rem 1.25rem; border-bottom: 1px solid var(--g100); background: var(--g50); cursor: pointer; }
+.section-hd-icon { width: 32px; height: 32px; border-radius: var(--r8); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.section-hd h3 { font-size: 14px; font-weight: 600; color: var(--navy); flex: 1; }
+.section-hd-sub { font-size: 12px; color: var(--g500); }
+.chevron { width: 16px; height: 16px; stroke: var(--g500); fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; transition: transform .2s; }
+.chevron.open { transform: rotate(180deg); }
+.section-body { padding: 1.25rem; display: none; }
+.section-body.open { display: block; }
+
+/* ── FORMS ── */
+.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.form-grid-3 { grid-template-columns: 1fr 1fr 1fr; }
+@media (max-width: 640px) { .form-grid, .form-grid-3 { grid-template-columns: 1fr; } }
+.form-group { display: flex; flex-direction: column; gap: 5px; }
+.form-group.full { grid-column: 1 / -1; }
+label { font-size: 12.5px; font-weight: 600; color: var(--g700); }
+label span { font-weight: 400; color: var(--g500); }
+input[type=text], input[type=number], select, textarea {
+  border: 1px solid var(--g200); border-radius: var(--r8);
+  padding: 8px 12px; font-family: var(--sans); font-size: 14px; color: var(--g700);
+  background: var(--white); width: 100%; transition: .15s; outline: none;
+}
+input:focus, select:focus, textarea:focus { border-color: var(--navy); box-shadow: 0 0 0 3px rgba(27,42,82,.08); }
+textarea { resize: vertical; min-height: 80px; line-height: 1.6; }
+select { cursor: pointer; }
+
+/* ── SCORE INPUT ── */
+.score-row { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 10px; align-items: end; margin-bottom: 10px; padding: 10px; background: var(--g50); border-radius: var(--r8); border: 1px solid var(--g100); }
+.score-row:first-child { grid-template-columns: 2fr 1fr 1fr 1fr; background: var(--navy); border-color: var(--navy); border-radius: var(--r8) var(--r8) 0 0; }
+.score-row:first-child label { color: rgba(255,255,255,.7); font-size: 11px; letter-spacing: .5px; }
+
+/* ── AWARD ENTRY ── */
+.award-entry { border: 1px solid var(--g100); border-radius: var(--r8); padding: 12px; margin-bottom: 10px; background: var(--g50); position: relative; }
+.award-entry-hd { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+.award-num { font-size: 11.5px; font-weight: 700; color: var(--g500); }
+.btn-remove { background: none; border: none; cursor: pointer; color: var(--red); font-size: 13px; padding: 2px 6px; border-radius: var(--r4); transition: .15s; }
+.btn-remove:hover { background: var(--red2); }
+.btn-add { display: flex; align-items: center; gap: 6px; padding: 8px 14px; background: none; border: 1.5px dashed var(--g200); border-radius: var(--r8); color: var(--g500); font-family: var(--sans); font-size: 13px; cursor: pointer; transition: .2s; width: 100%; justify-content: center; margin-top: 6px; }
+.btn-add:hover { border-color: var(--navy); color: var(--navy); background: var(--blue2); }
+
+/* ── BUTTONS ── */
+.btn { display: inline-flex; align-items: center; gap: 7px; padding: 9px 18px; border-radius: var(--r8); font-family: var(--sans); font-size: 14px; cursor: pointer; transition: .18s; font-weight: 500; border: none; }
+.btn-primary { background: var(--navy); color: #fff; }
+.btn-primary:hover { background: var(--navy2); }
+.btn-primary:active { transform: scale(.98); }
+.btn-secondary { background: var(--white); color: var(--navy); border: 1.5px solid var(--g200); }
+.btn-secondary:hover { border-color: var(--navy); background: var(--blue2); }
+.btn-gold { background: var(--gold); color: var(--navy3); font-weight: 700; }
+.btn-gold:hover { background: var(--gold2); }
+.btn-danger { background: var(--red2); color: var(--red); border: 1px solid #f5c0c0; }
+.btn-danger:hover { background: #fce0e0; }
+.btn svg { width: 15px; height: 15px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.btn-row { display: flex; gap: 10px; margin-top: 1.25rem; flex-wrap: wrap; align-items: center; }
+
+/* ── STATS ── */
+.stat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 10px; margin-bottom: 1.5rem; }
+.stat-card { background: var(--white); border-radius: var(--r8); padding: 1rem 1.1rem; border: 1px solid var(--g100); }
+.stat-n { font-family: var(--serif); font-size: 2rem; font-weight: 700; color: var(--navy); line-height: 1; }
+.stat-l { font-size: 12px; color: var(--g500); margin-top: 4px; }
+
+/* ── BADGE ── */
+.bge { display: inline-flex; align-items: center; padding: 2px 9px; border-radius: 100px; font-size: 11.5px; font-weight: 600; }
+.bge-gold { background: #fef3c7; color: #78350f; border: 1px solid #fbbf24; }
+.bge-silver { background: #f1f2f4; color: #374151; border: 1px solid #d1d5db; }
+.bge-green { background: var(--green2); color: var(--green3); border: 1px solid #a7d7bc; }
+.bge-blue { background: var(--blue2); color: var(--blue); border: 1px solid #b5cff4; }
+.bge-purple { background: var(--purple2); color: var(--purple); border: 1px solid #c4a9f0; }
+.bge-red { background: var(--red2); color: var(--red); border: 1px solid #f0a8a8; }
+.bge-amber { background: var(--amber2); color: var(--amber); border: 1px solid #e0c070; }
+.bge-pend { background: #fffbeb; color: #78350f; border: 1px solid #fde68a; }
+
+/* ── ALERT ── */
+.alert { padding: .85rem 1rem; border-radius: var(--r8); font-size: 13.5px; margin-bottom: 1rem; line-height: 1.6; }
+.alert-info { background: var(--blue2); color: var(--blue); border-left: 3px solid var(--blue); }
+.alert-success { background: var(--green2); color: var(--green3); border-left: 3px solid var(--green); }
+.alert-warn { background: var(--amber2); color: var(--amber); border-left: 3px solid var(--gold); }
+
+/* ── TABS ── */
+.tab-bar { display: flex; gap: 4px; border-bottom: 1.5px solid var(--g100); margin-bottom: 1.25rem; }
+.tab-btn { background: none; border: none; font-family: var(--sans); font-size: 13.5px; color: var(--g500); padding: 9px 14px; cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -2px; transition: .18s; border-radius: var(--r4) var(--r4) 0 0; }
+.tab-btn:hover { color: var(--navy); background: var(--g50); }
+.tab-btn.active { color: var(--navy); font-weight: 600; border-bottom-color: var(--navy); }
+
+/* ── REPORT OUTPUT ── */
+.report-wrap { background: var(--white); border-radius: var(--r12); border: 1px solid var(--g100); overflow: hidden; }
+.report-toolbar { display: flex; align-items: center; gap: 10px; padding: .75rem 1.25rem; background: var(--g50); border-bottom: 1px solid var(--g100); }
+.report-toolbar span { font-size: 13px; color: var(--g500); flex: 1; }
+#reportContent { padding: 2rem; font-size: 15px; line-height: 1.85; color: var(--g700); min-height: 300px; }
+#reportContent h1 { font-family: var(--serif); font-size: 1.5rem; color: var(--navy); border-bottom: 2px solid var(--gold); padding-bottom: 8px; margin-bottom: 1rem; }
+#reportContent h2 { font-family: var(--serif); font-size: 1.15rem; color: var(--navy2); margin: 1.5rem 0 .5rem; border-left: 3px solid var(--gold); padding-left: 10px; }
+#reportContent h3 { font-size: 1rem; font-weight: 700; color: var(--navy); margin: 1rem 0 .4rem; }
+#reportContent p { margin-bottom: .8rem; }
+#reportContent table { width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: 13.5px; }
+#reportContent th { background: var(--navy); color: #fff; padding: 8px 12px; text-align: left; font-size: 12.5px; font-weight: 600; }
+#reportContent td { padding: 7px 12px; border-bottom: 1px solid var(--g100); }
+#reportContent tr:nth-child(even) td { background: var(--g50); }
+#reportContent .highlight { background: var(--gold3); padding: 1rem; border-radius: var(--r8); margin: 1rem 0; border-left: 3px solid var(--gold); }
+.loading-dots { display: inline-flex; gap: 5px; }
+.loading-dots span { width: 8px; height: 8px; background: var(--navy); border-radius: 50%; animation: dot-bounce 1.4s infinite ease-in-out; }
+.loading-dots span:nth-child(2) { animation-delay: .2s; }
+.loading-dots span:nth-child(3) { animation-delay: .4s; }
+@keyframes dot-bounce { 0%, 80%, 100% { transform: scale(0.6); opacity: .5; } 40% { transform: scale(1); opacity: 1; } }
+
+/* ── PAGE DISPLAY ── */
+.page-content { display: none; }
+.page-content.active { display: block; }
+
+/* ── PROGRESS ── */
+.progress-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 1.25rem; }
+.progress-item { display: flex; align-items: center; gap: 10px; }
+.progress-dot { width: 20px; height: 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; flex-shrink: 0; }
+.p-done { background: var(--green); color: #fff; }
+.p-now { background: var(--gold); color: var(--navy3); }
+.p-todo { background: var(--g100); color: var(--g500); }
+.progress-label { font-size: 13.5px; color: var(--g700); }
+
+/* ── PERSON TAGS ── */
+.person-tag { display: inline-flex; align-items: center; gap: 5px; padding: 3px 10px 3px 4px; border-radius: 100px; background: var(--blue2); border: 1px solid #b5cff4; font-size: 12px; color: var(--blue); margin: 3px; }
+.person-avatar { width: 20px; height: 20px; border-radius: 50%; background: var(--blue); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 700; }
+
+/* ── DASHBOARD ── */
+.dash-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 1.5rem; }
+.dash-card { background: var(--white); border-radius: var(--r12); border: 1px solid var(--g100); padding: 1.25rem; }
+.dash-card-hd { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .5px; color: var(--g500); margin-bottom: .5rem; }
+.dash-card-n { font-family: var(--serif); font-size: 2.5rem; font-weight: 700; color: var(--navy); line-height: 1; }
+.dash-card-sub { font-size: 13px; color: var(--g500); margin-top: 4px; }
+.dash-card-bar { height: 4px; background: var(--g100); border-radius: 2px; margin-top: 10px; overflow: hidden; }
+.dash-card-bar-fill { height: 100%; background: var(--navy); border-radius: 2px; }
+.dash-card-accent { height: 3px; border-radius: var(--r4) var(--r4) 0 0; background: var(--gold); margin: -1.25rem -1.25rem 1rem; }
+
+/* ── TABLE ── */
+.data-tbl { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+.data-tbl th { background: var(--navy); color: #fff; padding: 9px 12px; text-align: left; font-size: 12px; font-weight: 600; }
+.data-tbl td { padding: 8px 12px; border-bottom: 1px solid var(--g100); }
+.data-tbl tr:hover td { background: var(--blue2); }
+.data-tbl tr:last-child td { border-bottom: none; }
+
+/* ── DIVIDER ── */
+hr.div { border: none; border-top: 1px solid var(--g100); margin: 1.25rem 0; }
+
+/* ── UTILS ── */
+.tc { text-align: center; }
+.tsm { font-size: 13px; }
+.tmuted { color: var(--g500); }
+.fw6 { font-weight: 600; }
+.mt1 { margin-top: .5rem; } .mt2 { margin-top: 1rem; } .mt3 { margin-top: 1.5rem; }
+.mb1 { margin-bottom: .5rem; } .mb2 { margin-bottom: 1rem; }
+.flex { display: flex; align-items: center; gap: 10px; }
+.flex-between { display: flex; align-items: center; justify-content: space-between; }
+</style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <div class="topbar-brand">
+    <div class="topbar-logo">
+      <svg viewBox="0 0 24 24"><path d="M12 14l9-5-9-5-9 5 9 5z"/><path d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z"/></svg>
+    </div>
+    <div>
+      <div class="topbar-name">ระบบรายงานผลการปฏิบัติงาน</div>
+      <div class="topbar-sub">โรงเรียนบ้านเขาส่องกล้อง · ว23</div>
+    </div>
+  </div>
+  <div class="topbar-nav">
+    <button class="active" onclick="showPage('dashboard')">ภาพรวม</button>
+    <button onclick="showPage('teacher')">ข้อมูลครู</button>
+    <button onclick="showPage('director')">ข้อมูลผู้บริหาร</button>
+    <button onclick="showPage('student')">ผลงานนักเรียน</button>
+    <button onclick="showPage('school')">ผลงานสถานศึกษา</button>
+    <button onclick="showPage('report')" style="background:rgba(200,150,36,.15);color:var(--gold2)">สร้างรายงาน AI</button>
+  </div>
+</div>
+
+<div class="shell">
+<!-- SIDEBAR -->
+<div class="sidebar">
+  <div class="sidebar-section">
+    <div class="sidebar-label">ตัวชี้วัด</div>
+    <button class="sidebar-item active" onclick="sideNav(this,'dash-kpi')">
+      <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+      ภาพรวมทุกตัวชี้วัด
+    </button>
+    <button class="sidebar-item" onclick="sideNav(this,'dash-kpi')">
+      <svg viewBox="0 0 24 24"><path d="M12 20V10m6 10V4M6 20v-4"/></svg>
+      ผลสัมฤทธิ์นักเรียน
+    </button>
+    <button class="sidebar-item" onclick="sideNav(this,'dash-kpi')">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+      ผลงานครู
+    </button>
+    <button class="sidebar-item" onclick="sideNav(this,'dash-kpi')">
+      <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      ผลงานผู้บริหาร
+    </button>
+    <button class="sidebar-item" onclick="sideNav(this,'dash-kpi')">
+      <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      ผลงานสถานศึกษา
+    </button>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-label">รายงาน</div>
+    <button class="sidebar-item" onclick="showPage('report')">
+      <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+      รายงานครู
+    </button>
+    <button class="sidebar-item" onclick="showPage('report')">
+      <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+      รายงานผู้บริหาร
+      <span class="sidebar-badge">AI</span>
+    </button>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-label">ข้อมูลปีการศึกษา</div>
+    <select style="width:100%;font-size:13px;padding:6px 10px;border-radius:var(--r8);border:1px solid var(--g200);font-family:var(--sans)">
+      <option>ปีการศึกษา ๒๕๖๘</option>
+      <option>ปีการศึกษา ๒๕๖๗</option>
+    </select>
+  </div>
+</div>
+
+<!-- MAIN CONTENT -->
+<div class="main">
+
+<!-- ═══ DASHBOARD PAGE ═══ -->
+<div id="page-dashboard" class="page-content active">
+  <div class="page-hd">
+    <div class="page-ey">ภาพรวมระบบ</div>
+    <h1 class="page-title">ตัวชี้วัดผลการปฏิบัติงาน ว23</h1>
+    <p class="page-desc">โรงเรียนบ้านเขาส่องกล้อง · ปีการศึกษา ๒๕๖๘</p>
+  </div>
+
+  <div class="stat-grid">
+    <div class="stat-card"><div class="stat-n" style="color:var(--green)">20</div><div class="stat-l">รางวัลศิลปหัตถกรรม</div></div>
+    <div class="stat-card"><div class="stat-n" style="color:#b8860b">100%</div><div class="stat-l">เหรียญทองทุกรายการ</div></div>
+    <div class="stat-card"><div class="stat-n" style="color:var(--navy)">6</div><div class="stat-l">ครูที่ได้รับรางวัล</div></div>
+    <div class="stat-card"><div class="stat-n" style="color:var(--purple)">4</div><div class="stat-l">ตัวชี้วัดที่บันทึกแล้ว</div></div>
+  </div>
+
+  <div class="dash-grid">
+    <div class="dash-card">
+      <div class="dash-card-accent" style="background:var(--green)"></div>
+      <div class="dash-card-hd">ผลงานนักเรียน</div>
+      <div class="dash-card-n" style="color:var(--green)">12</div>
+      <div class="dash-card-sub">รางวัลจากศิลปหัตถกรรม ครั้งที่ ๗๓</div>
+      <div class="dash-card-bar mt2"><div class="dash-card-bar-fill" style="width:100%;background:var(--green)"></div></div>
+      <div class="flex mt2" style="gap:6px;flex-wrap:wrap">
+        <span class="bge bge-gold">ทองชนะเลิศ ×5</span>
+        <span class="bge bge-silver">รองชนะเลิศ ×7</span>
+      </div>
+    </div>
+    <div class="dash-card">
+      <div class="dash-card-accent"></div>
+      <div class="dash-card-hd">ผลงานครูผู้สอน</div>
+      <div class="dash-card-n">8</div>
+      <div class="dash-card-sub">รางวัลครู · ครู 6 ท่าน</div>
+      <div class="dash-card-bar mt2"><div class="dash-card-bar-fill" style="width:100%"></div></div>
+      <div class="flex mt2" style="gap:6px;flex-wrap:wrap">
+        <span class="bge bge-gold">ทองชนะเลิศ ×5</span>
+        <span class="bge bge-silver">รองชนะเลิศ ×3</span>
+      </div>
+    </div>
+    <div class="dash-card">
+      <div class="dash-card-accent" style="background:var(--gold)"></div>
+      <div class="dash-card-hd">ผลงานผู้บริหาร</div>
+      <div class="dash-card-n" style="color:var(--gold)">1+</div>
+      <div class="dash-card-sub">รางวัลบริหารจัดการดีเด่น</div>
+      <div class="dash-card-bar mt2"><div class="dash-card-bar-fill" style="width:60%;background:var(--gold)"></div></div>
+      <span class="bge bge-amber mt2">รอกรอกข้อมูลเพิ่ม</span>
+    </div>
+    <div class="dash-card">
+      <div class="dash-card-accent" style="background:var(--purple)"></div>
+      <div class="dash-card-hd">ผลงานสถานศึกษา</div>
+      <div class="dash-card-n" style="color:var(--purple)">1</div>
+      <div class="dash-card-sub">โครงการบ้านนักวิทยาศาสตร์น้อย</div>
+      <div class="dash-card-bar mt2"><div class="dash-card-bar-fill" style="width:70%;background:var(--purple)"></div></div>
+      <span class="bge bge-pend mt2">อยู่ระหว่างตรวจประเมิน</span>
+    </div>
+  </div>
+
+  <div class="alert alert-info">
+    <strong>ขั้นตอนถัดไป:</strong> กรอกข้อมูลในแต่ละแท็บให้ครบ แล้วกด "สร้างรายงาน AI" เพื่อให้ระบบประมวลผลออกมาเป็นรายงานผลการปฏิบัติงานอัตโนมัติ
+  </div>
+
+  <div class="section">
+    <div class="section-hd" onclick="toggleSection(this)">
+      <div class="section-hd-icon" style="background:var(--blue2)"><svg style="width:16px;height:16px;stroke:var(--blue);fill:none;stroke-width:2" viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div>
+      <h3>สถานะความสมบูรณ์ของข้อมูล</h3>
+      <svg class="chevron open" viewBox="0 0 24 24"><polyline points="18 15 12 9 6 15"/></svg>
+    </div>
+    <div class="section-body open">
+      <div class="progress-list">
+        <div class="progress-item"><div class="progress-dot p-done">✓</div><span class="progress-label">รางวัลศิลปหัตถกรรม ครั้งที่ ๗๓ (นักเรียน + ครู) — <strong>20 รางวัล</strong></span></div>
+        <div class="progress-item"><div class="progress-dot p-now">!</div><span class="progress-label">ผลสอบ O-Net — <strong>ยังไม่ได้กรอก</strong> กรุณาเพิ่มในแท็บ "ผลงานนักเรียน"</span></div>
+        <div class="progress-item"><div class="progress-dot p-now">!</div><span class="progress-label">รางวัลการบริหารจัดการสถานศึกษาดีเด่น — <strong>รอข้อมูล</strong></span></div>
+        <div class="progress-item"><div class="progress-dot p-now">!</div><span class="progress-label">โครงการนักอ่านบ้านนา — <strong>รอผลการแข่งขัน</strong></span></div>
+        <div class="progress-item"><div class="progress-dot p-todo">○</div><span class="progress-label">ผลการแข่งขันกีฬา สพป. — <strong>เหรียญเงินฟุตบอล (บันทึกแล้ว)</strong></span></div>
+        <div class="progress-item"><div class="progress-dot p-todo">○</div><span class="progress-label">โครงการบ้านนักวิทยาศาสตร์น้อย — <strong>อยู่ระหว่างตรวจประเมิน</strong></span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ TEACHER PAGE ═══ -->
+<div id="page-teacher" class="page-content">
+  <div class="page-hd">
+    <div class="page-ey">ตัวชี้วัด · ผลงานครู</div>
+    <h1 class="page-title">ข้อมูลผลงานดีเด่นของครูผู้สอน</h1>
+    <p class="page-desc">บันทึกรางวัล ความสำเร็จ และผลการปฏิบัติงานของครูแต่ละท่าน</p>
+  </div>
+
+  <div class="tab-bar">
+    <button class="tab-btn active" onclick="switchTab(this,'t-awards')">รางวัลศิลปหัตถกรรม</button>
+    <button class="tab-btn" onclick="switchTab(this,'t-teach')">การพัฒนาการสอน</button>
+    <button class="tab-btn" onclick="switchTab(this,'t-train')">การอบรม/พัฒนาตนเอง</button>
+  </div>
+
+  <div id="t-awards">
+    <div class="alert alert-success">บันทึกข้อมูลรางวัลศิลปหัตถกรรม ครั้งที่ ๗๓ แล้ว รวม <strong>8 รางวัล</strong></div>
+    <table class="data-tbl">
+      <thead><tr><th>ที่</th><th>ชื่อ-สกุล</th><th>กิจกรรม</th><th>รางวัล</th><th>วันที่</th></tr></thead>
+      <tbody>
+        <tr><td>1</td><td>นายทศพร สังประกุล</td><td>Sketch Design ป.๔–๖</td><td><span class="bge bge-gold">ทองชนะเลิศ</span></td><td>13 ก.พ. 68</td></tr>
+        <tr><td>2</td><td>นางสาววิไลรัตน์ ใบศรี</td><td>วาดภาพระบายสี ป.๑–๓</td><td><span class="bge bge-gold">ทองชนะเลิศ</span></td><td>13 ก.พ. 68</td></tr>
+        <tr><td>3</td><td>นางสาววิไลรัตน์ สุวรรณฉิม</td><td>แอโรบิก ป.๑–๖</td><td><span class="bge bge-silver">รองชนะเลิศ ๑</span></td><td>13 ก.พ. 68</td></tr>
+        <tr><td>4</td><td>นางสาวเอนจิรา ปันทนันท์</td><td>แอโรบิก ป.๑–๖</td><td><span class="bge bge-silver">รองชนะเลิศ ๑</span></td><td>13 ก.พ. 68</td></tr>
+        <tr><td>5</td><td>นางกิตต์ธัญญา บุญฤทธิ์นิโรจน์</td><td>แอโรบิก ป.๑–๖</td><td><span class="bge bge-silver">รองชนะเลิศ ๑</span></td><td>13 ก.พ. 68</td></tr>
+        <tr><td>6</td><td>นางสาวเอนจิรา ปันทนันท์</td><td>จัดสวนถาดแห้ง ป.๔–๖</td><td><span class="bge bge-gold">ทองชนะเลิศ</span></td><td>13 ก.พ. 68</td></tr>
+        <tr><td>7</td><td>นางสาวศิรินญา เลิศณรงค์</td><td>จัดสวนถาดแห้ง ป.๔–๖</td><td><span class="bge bge-gold">ทองชนะเลิศ</span></td><td>13 ก.พ. 68</td></tr>
+        <tr><td>8</td><td>นายทศพร สังประกุล</td><td>Sketch Design (เพิ่มเติม)</td><td><span class="bge bge-gold">ทองชนะเลิศ</span></td><td>13 ก.พ. 68</td></tr>
+      </tbody>
+    </table>
+    <div id="extraAwards"></div>
+    <button class="btn-add mt2" onclick="addAwardRow('extraAwards','ครู')">
+      <svg style="width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      เพิ่มรางวัล
+    </button>
+  </div>
+
+  <div id="t-teach" style="display:none">
+    <div class="section">
+      <div class="section-hd" onclick="toggleSection(this)">
+        <div class="section-hd-icon" style="background:var(--green2)"><svg style="width:16px;height:16px;stroke:var(--green);fill:none;stroke-width:2" viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></div>
+        <h3>นวัตกรรม/สื่อการสอนดีเด่น</h3>
+        <svg class="chevron open" viewBox="0 0 24 24"><polyline points="18 15 12 9 6 15"/></svg>
+      </div>
+      <div class="section-body open">
+        <div id="innovationList">
+          <div class="award-entry">
+            <div class="award-entry-hd"><span class="award-num">รายการที่ 1</span><button class="btn-remove" onclick="this.closest('.award-entry').remove()">ลบ</button></div>
+            <div class="form-grid">
+              <div class="form-group"><label>ชื่อครู</label><input type="text" placeholder="ชื่อ-สกุล" value="นายทศพร สังประกุล"></div>
+              <div class="form-group"><label>ชื่อนวัตกรรม/สื่อ</label><input type="text" placeholder="เช่น บทเรียนออนไลน์..."></div>
+              <div class="form-group"><label>กลุ่มสาระ</label><select><option>ศิลปะ</option><option>ภาษาไทย</option><option>คณิตศาสตร์</option><option>วิทยาศาสตร์</option><option>สังคมศึกษา</option><option>ภาษาอังกฤษ</option><option>สุขศึกษา/พลศึกษา</option><option>การงานอาชีพ</option></select></div>
+              <div class="form-group"><label>ผลที่เกิดขึ้น <span>(ระดับ)</span></label><select><option>ระดับโรงเรียน</option><option>ระดับเขต</option><option>ระดับจังหวัด</option><option>ระดับชาติ</option></select></div>
+              <div class="form-group full"><label>รายละเอียด/ผลการใช้</label><textarea placeholder="อธิบายผลที่เกิดขึ้นกับนักเรียน..."></textarea></div>
+            </div>
+          </div>
+        </div>
+        <button class="btn-add" onclick="addInnovation()">
+          <svg style="width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          เพิ่มนวัตกรรม
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div id="t-train" style="display:none">
+    <div class="form-grid">
+      <div class="form-group"><label>ชื่อครู</label><input type="text" placeholder="ชื่อ-สกุล"></div>
+      <div class="form-group"><label>หลักสูตร/การอบรม</label><input type="text" placeholder="ชื่อการอบรม..."></div>
+      <div class="form-group"><label>จำนวนชั่วโมง</label><input type="number" placeholder="0" min="0"></div>
+      <div class="form-group"><label>หน่วยงานที่จัด</label><input type="text" placeholder="เช่น สพฐ., สพป.นครนายก..."></div>
+    </div>
+    <div class="btn-row"><button class="btn btn-primary"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>บันทึกการอบรม</button></div>
+  </div>
+</div>
+
+<!-- ═══ DIRECTOR PAGE ═══ -->
+<div id="page-director" class="page-content">
+  <div class="page-hd">
+    <div class="page-ey">ตัวชี้วัด · ผลงานผู้บริหาร</div>
+    <h1 class="page-title">ข้อมูลผลงานดีเด่นของผู้บริหาร</h1>
+    <p class="page-desc">บันทึกรางวัล ผลงาน และการพัฒนาสถานศึกษาของผู้อำนวยการ</p>
+  </div>
+
+  <div class="section">
+    <div class="section-hd" onclick="toggleSection(this)">
+      <div class="section-hd-icon" style="background:var(--amber2)"><svg style="width:16px;height:16px;stroke:var(--amber);fill:none;stroke-width:2" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div>
+      <h3>รางวัลการบริหารจัดการสถานศึกษาดีเด่น</h3>
+      <svg class="chevron open" viewBox="0 0 24 24"><polyline points="18 15 12 9 6 15"/></svg>
+    </div>
+    <div class="section-body open">
+      <div id="directorAwards">
+        <div class="award-entry">
+          <div class="award-entry-hd"><span class="award-num">รางวัลที่ 1</span><button class="btn-remove" onclick="this.closest('.award-entry').remove()">ลบ</button></div>
+          <div class="form-grid">
+            <div class="form-group"><label>ชื่อรางวัล</label><input type="text" placeholder="เช่น บริหารจัดการสถานศึกษาดีเด่น..."></div>
+            <div class="form-group"><label>หน่วยงานที่มอบ</label><input type="text" placeholder="เช่น สพป.นครนายก..."></div>
+            <div class="form-group"><label>วันที่ได้รับ</label><input type="text" placeholder="เช่น 15 มีนาคม 2568"></div>
+            <div class="form-group"><label>ระดับ</label><select><option>ระดับโรงเรียน</option><option>ระดับเขต</option><option>ระดับจังหวัด</option><option selected>ระดับ สพป.</option><option>ระดับชาติ</option></select></div>
+            <div class="form-group full"><label>รายละเอียด/เกณฑ์ที่ผ่าน</label><textarea placeholder="อธิบายเกณฑ์ที่ผ่านการประเมิน ผลการดำเนินงาน..."></textarea></div>
+          </div>
+        </div>
+      </div>
+      <button class="btn-add" onclick="addDirAward()"><svg style="width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>เพิ่มรางวัล</button>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-hd" onclick="toggleSection(this)">
+      <div class="section-hd-icon" style="background:var(--blue2)"><svg style="width:16px;height:16px;stroke:var(--blue);fill:none;stroke-width:2" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div>
+      <h3>ผลการพัฒนาสถานศึกษา</h3>
+      <svg class="chevron" viewBox="0 0 24 24"><polyline points="18 15 12 9 6 15"/></svg>
+    </div>
+    <div class="section-body">
+      <div class="form-grid">
+        <div class="form-group full"><label>วิสัยทัศน์การบริหารปีการศึกษา ๒๕๖๘</label><textarea placeholder="ระบุวิสัยทัศน์/นโยบายหลักของผู้อำนวยการ..."></textarea></div>
+        <div class="form-group"><label>จำนวนครู (ทั้งหมด)</label><input type="number" value="12" min="1"></div>
+        <div class="form-group"><label>จำนวนนักเรียน (ทั้งหมด)</label><input type="number" value="150" min="1"></div>
+        <div class="form-group"><label>ห้องเรียน</label><input type="number" value="8" min="1"></div>
+        <div class="form-group"><label>งบประมาณที่บริหาร (บาท)</label><input type="number" placeholder="0"></div>
+        <div class="form-group full"><label>ผลงานโครงการสำคัญ</label><textarea placeholder="ระบุโครงการ/กิจกรรมสำคัญที่ดำเนินการในปีการศึกษานี้..."></textarea></div>
+        <div class="form-group full"><label>ความร่วมมือกับชุมชน/เครือข่าย</label><textarea placeholder="ระบุการสร้างความร่วมมือกับชุมชน ผู้ปกครอง หน่วยงานภายนอก..."></textarea></div>
+      </div>
+      <div class="btn-row"><button class="btn btn-primary" onclick="saveSection()"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>บันทึก</button></div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-hd" onclick="toggleSection(this)">
+      <div class="section-hd-icon" style="background:var(--green2)"><svg style="width:16px;height:16px;stroke:var(--green);fill:none;stroke-width:2" viewBox="0 0 24 24"><path d="M12 20V10m6 10V4M6 20v-4"/></svg></div>
+      <h3>ผลคะแนน O-Net ภาพรวม (สำหรับผู้บริหาร)</h3>
+      <svg class="chevron" viewBox="0 0 24 24"><polyline points="18 15 12 9 6 15"/></svg>
+    </div>
+    <div class="section-body">
+      <div class="alert alert-info">บันทึกคะแนน O-Net เพื่อเปรียบเทียบกับค่าเฉลี่ยระดับ สพป. และระดับประเทศ</div>
+      <div style="display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:8px">
+        <div class="form-group"><label>กลุ่มสาระ</label></div>
+        <div class="form-group"><label>คะแนนโรงเรียน</label></div>
+        <div class="form-group"><label>ค่าเฉลี่ย สพป.</label></div>
+        <div class="form-group"><label>ค่าเฉลี่ยประเทศ</label></div>
+        <div class="form-group"><input type="text" value="ภาษาไทย" readonly style="background:var(--g50)"></div>
+        <div class="form-group"><input type="number" id="onet-thai-school" placeholder="0" min="0" max="100"></div>
+        <div class="form-group"><input type="number" id="onet-thai-district" placeholder="0" min="0" max="100"></div>
+        <div class="form-group"><input type="number" id="onet-thai-nation" placeholder="0" min="0" max="100"></div>
+        <div class="form-group"><input type="text" value="คณิตศาสตร์" readonly style="background:var(--g50)"></div>
+        <div class="form-group"><input type="number" id="onet-math-school" placeholder="0" min="0" max="100"></div>
+        <div class="form-group"><input type="number" id="onet-math-district" placeholder="0" min="0" max="100"></div>
+        <div class="form-group"><input type="number" id="onet-math-nation" placeholder="0" min="0" max="100"></div>
+        <div class="form-group"><input type="text" value="วิทยาศาสตร์" readonly style="background:var(--g50)"></div>
+        <div class="form-group"><input type="number" id="onet-sci-school" placeholder="0" min="0" max="100"></div>
+        <div class="form-group"><input type="number" id="onet-sci-district" placeholder="0" min="0" max="100"></div>
+        <div class="form-group"><input type="number" id="onet-sci-nation" placeholder="0" min="0" max="100"></div>
+        <div class="form-group"><input type="text" value="ภาษาอังกฤษ" readonly style="background:var(--g50)"></div>
+        <div class="form-group"><input type="number" id="onet-eng-school" placeholder="0" min="0" max="100"></div>
+        <div class="form-group"><input type="number" id="onet-eng-district" placeholder="0" min="0" max="100"></div>
+        <div class="form-group"><input type="number" id="onet-eng-nation" placeholder="0" min="0" max="100"></div>
+      </div>
+      <div class="btn-row"><button class="btn btn-primary" onclick="saveSection()"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>บันทึกคะแนน</button></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ STUDENT PAGE ═══ -->
+<div id="page-student" class="page-content">
+  <div class="page-hd">
+    <div class="page-ey">ตัวชี้วัด · ผลงานนักเรียน</div>
+    <h1 class="page-title">ผลงานดีเด่นของนักเรียน</h1>
+  </div>
+  <div class="section">
+    <div class="section-hd" onclick="toggleSection(this)">
+      <div class="section-hd-icon" style="background:var(--green2)"><svg style="width:16px;height:16px;stroke:var(--green);fill:none;stroke-width:2" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div>
+      <h3>รางวัลศิลปหัตถกรรม ครั้งที่ ๗๓ (นักเรียน)</h3>
+      <span class="section-hd-sub">12 รางวัล</span>
+      <svg class="chevron open" viewBox="0 0 24 24"><polyline points="18 15 12 9 6 15"/></svg>
+    </div>
+    <div class="section-body open">
+      <table class="data-tbl">
+        <thead><tr><th>ที่</th><th>ชื่อนักเรียน</th><th>กิจกรรม</th><th>ระดับ</th><th>รางวัล</th></tr></thead>
+        <tbody id="stdAwardTable">
+          <tr><td>1</td><td>เด็กหญิงณัฐฐิวรรณ ขันทร์หอม</td><td>Sketch Design ป.๔–๖</td><td>ศูนย์ฯ</td><td><span class="bge bge-gold">ทองชนะเลิศ</span></td></tr>
+          <tr><td>2</td><td>เด็กชายพนธกร สีงามพริ้ง</td><td>วาดภาพระบายสี ป.๑–๓</td><td>ศูนย์ฯ</td><td><span class="bge bge-gold">ทองชนะเลิศ</span></td></tr>
+          <tr><td>3-11</td><td>ทีมแอโรบิก (9 คน)</td><td>แอโรบิก ป.๑–๖</td><td>ศูนย์ฯ</td><td><span class="bge bge-silver">รองชนะเลิศ ๑</span></td></tr>
+          <tr><td>12</td><td>เด็กหญิงชุติมนต์ แก้วประเสริฐ</td><td>จัดสวนถาดแห้ง ป.๔–๖</td><td>ศูนย์ฯ</td><td><span class="bge bge-gold">ทองชนะเลิศ</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="section">
+    <div class="section-hd" onclick="toggleSection(this)">
+      <div class="section-hd-icon" style="background:var(--blue2)"><svg style="width:16px;height:16px;stroke:var(--blue);fill:none;stroke-width:2" viewBox="0 0 24 24"><path d="M12 20V10m6 10V4M6 20v-4"/></svg></div>
+      <h3>โครงการนักอ่านบ้านนา</h3>
+      <svg class="chevron" viewBox="0 0 24 24"><polyline points="18 15 12 9 6 15"/></svg>
+    </div>
+    <div class="section-body">
+      <div class="form-grid">
+        <div class="form-group"><label>จำนวนนักเรียนที่ส่งเข้าแข่งขัน</label><input type="number" placeholder="0" min="0"></div>
+        <div class="form-group"><label>จำนวนรางวัลที่ได้รับ</label><input type="number" placeholder="0" min="0"></div>
+        <div class="form-group full"><label>รายชื่อนักเรียนที่ได้รับรางวัล</label><textarea placeholder="ชื่อ-สกุล ระดับชั้น รางวัลที่ได้..."></textarea></div>
+      </div>
+      <div class="btn-row"><button class="btn btn-primary" onclick="saveSection()"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>บันทึก</button></div>
+    </div>
+  </div>
+  <div class="section">
+    <div class="section-hd" onclick="toggleSection(this)">
+      <div class="section-hd-icon" style="background:#f0f0ff"><svg style="width:16px;height:16px;stroke:#4a4aaa;fill:none;stroke-width:2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></div>
+      <h3>กีฬาระดับ สพป. นครนายก</h3>
+      <svg class="chevron open" viewBox="0 0 24 24"><polyline points="18 15 12 9 6 15"/></svg>
+    </div>
+    <div class="section-body open">
+      <div class="alert alert-success">บันทึกแล้ว: ฟุตบอล — <strong>เหรียญเงิน</strong> · การแข่งขันกีฬานักเรียนเฉลิมพระเกียรติ ปีการศึกษา ๒๕๖๘</div>
+      <div class="form-grid">
+        <div class="form-group"><label>ประเภทกีฬา</label><input type="text" value="ฟุตบอล"></div>
+        <div class="form-group"><label>รางวัล</label><select><option>เหรียญทอง</option><option selected>เหรียญเงิน</option><option>เหรียญทองแดง</option></select></div>
+        <div class="form-group full"><label>รายชื่อนักเรียน</label><textarea placeholder="รายชื่อนักเรียนที่เป็นตัวแทน..."></textarea></div>
+      </div>
+      <div class="btn-row"><button class="btn btn-primary" onclick="saveSection()"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>บันทึก</button></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ SCHOOL PAGE ═══ -->
+<div id="page-school" class="page-content">
+  <div class="page-hd">
+    <div class="page-ey">ตัวชี้วัด · ผลงานสถานศึกษา</div>
+    <h1 class="page-title">ผลงานดีเด่นของสถานศึกษา</h1>
+  </div>
+  <div class="section">
+    <div class="section-hd" onclick="toggleSection(this)">
+      <div class="section-hd-icon" style="background:var(--purple2)"><svg style="width:16px;height:16px;stroke:var(--purple);fill:none;stroke-width:2" viewBox="0 0 24 24"><path d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg></div>
+      <h3>โครงการบ้านนักวิทยาศาสตร์น้อย ประเทศไทย</h3>
+      <span class="bge bge-pend" style="margin-left:auto;margin-right:.5rem">อยู่ระหว่างตรวจ</span>
+      <svg class="chevron open" viewBox="0 0 24 24"><polyline points="18 15 12 9 6 15"/></svg>
+    </div>
+    <div class="section-body open">
+      <div class="alert alert-warn">โรงเรียนยื่นขอรับการประเมินแล้ว ขณะนี้อยู่ระหว่างการตรวจผลงานจากคณะกรรมการ</div>
+      <div class="form-grid">
+        <div class="form-group"><label>ปีที่เข้าร่วมโครงการ (แรก)</label><input type="text" value="2563"></div>
+        <div class="form-group"><label>จำนวนกิจกรรมที่จัด</label><input type="number" placeholder="0" min="0"></div>
+        <div class="form-group"><label>จำนวนครูที่ผ่านอบรม</label><input type="number" placeholder="0" min="0"></div>
+        <div class="form-group"><label>สถานะการยื่นขอ</label><select><option>ยังไม่ได้ยื่น</option><option>ยื่นแล้ว รอผล</option><option selected>อยู่ระหว่างตรวจ</option><option>ผ่านการประเมิน</option></select></div>
+        <div class="form-group full"><label>สรุปผลการดำเนินงาน</label><textarea placeholder="สรุปกิจกรรม ผลที่เกิดกับนักเรียน ครู และโรงเรียน..."></textarea></div>
+      </div>
+      <div class="btn-row"><button class="btn btn-primary" onclick="saveSection()"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>บันทึก</button></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ REPORT PAGE ═══ -->
+<div id="page-report" class="page-content">
+  <div class="page-hd">
+    <div class="page-ey">AI · สร้างรายงานอัตโนมัติ</div>
+    <h1 class="page-title">สร้างรายงานผลการปฏิบัติงาน</h1>
+    <p class="page-desc">ระบบจะประมวลผลข้อมูลทั้งหมดและสร้างรายงานโดยอัตโนมัติ</p>
+  </div>
+
+  <div class="dash-grid mb2">
+    <div style="background:var(--white);border:1px solid var(--g100);border-radius:var(--r12);padding:1.25rem">
+      <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--g500);margin-bottom:.75rem">เลือกประเภทรายงาน</div>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:14px;font-weight:400">
+          <input type="radio" name="reportType" value="teacher" id="rt-teacher"> รายงานผลการปฏิบัติงาน (ครู)
+        </label>
+        <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:14px;font-weight:400">
+          <input type="radio" name="reportType" value="director" id="rt-director" checked> รายงานผลการปฏิบัติงาน (ผู้บริหาร)
+        </label>
+        <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:14px;font-weight:400">
+          <input type="radio" name="reportType" value="both"> รายงานรวม (ครู + ผู้บริหาร)
+        </label>
+      </div>
+    </div>
+    <div style="background:var(--white);border:1px solid var(--g100);border-radius:var(--r12);padding:1.25rem">
+      <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--g500);margin-bottom:.75rem">ตัวเลือกรายงาน</div>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:14px;font-weight:400"><input type="checkbox" checked> รวมสถิติและกราฟ</label>
+        <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:14px;font-weight:400"><input type="checkbox" checked> อ้างอิงตัวชี้วัด ว23</label>
+        <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:14px;font-weight:400"><input type="checkbox" checked> รายละเอียดรางวัล</label>
+        <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:14px;font-weight:400"><input type="checkbox"> เน้นจุดเด่น/ข้อเสนอแนะ</label>
+      </div>
+    </div>
+  </div>
+
+  <div style="background:var(--white);border:1px solid var(--g100);border-radius:var(--r12);padding:1.25rem;margin-bottom:1.25rem">
+    <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--g500);margin-bottom:.75rem">ข้อมูลส่วนตัว (สำหรับรายงาน)</div>
+    <div class="form-grid">
+      <div class="form-group"><label>ชื่อ-สกุล ผู้บริหาร</label><input type="text" id="dirName" placeholder="นาย/นาง/นางสาว..."></div>
+      <div class="form-group"><label>ตำแหน่ง</label><input type="text" id="dirPosition" value="ผู้อำนวยการโรงเรียน" placeholder="ตำแหน่ง"></div>
+      <div class="form-group"><label>โรงเรียน</label><input type="text" id="schoolName" value="บ้านเขาส่องกล้อง"></div>
+      <div class="form-group"><label>วิทยฐานะปัจจุบัน</label><select id="currentTitle"><option>ครู</option><option>ครูชำนาญการ</option><option selected>ครูชำนาญการพิเศษ</option><option>ครูเชี่ยวชาญ</option></select></div>
+    </div>
+  </div>
+
+  <div class="btn-row mb2">
+    <button class="btn btn-gold" onclick="generateReport()" id="genBtn">
+      <svg viewBox="0 0 24 24"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><polyline points="13 2 13 9 20 9"/></svg>
+      สร้างรายงาน AI
+    </button>
+    <button class="btn btn-secondary" onclick="copyReport()">
+      <svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+      คัดลอก
+    </button>
+    <button class="btn btn-secondary" onclick="printReport()">
+      <svg viewBox="0 0 24 24"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+      พิมพ์
+    </button>
+  </div>
+
+  <div class="report-wrap">
+    <div class="report-toolbar">
+      <span id="reportStatus">พร้อมสร้างรายงาน — กดปุ่ม "สร้างรายงาน AI" ด้านบน</span>
+    </div>
+    <div id="reportContent">
+      <div style="text-align:center;padding:3rem;color:var(--g300)">
+        <svg style="width:48px;height:48px;stroke:var(--g200);fill:none;stroke-width:1.5;margin-bottom:1rem" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+        <div style="font-size:15px;color:var(--g500)">รายงานจะแสดงที่นี่เมื่อกดสร้างรายงาน</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div><!-- end .main -->
+</div><!-- end .shell -->
+
+<script>
+/* ── PAGE NAVIGATION ── */
+function showPage(id) {
+  document.querySelectorAll('.page-content').forEach(p => p.classList.remove('active'));
+  const el = document.getElementById('page-' + id);
+  if (el) el.classList.add('active');
+  document.querySelectorAll('.topbar-nav button').forEach((b, i) => {
+    b.classList.toggle('active', b.getAttribute('onclick') === `showPage('${id}')`);
+  });
+}
+
+function sideNav(btn, section) {
+  document.querySelectorAll('.sidebar-item').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+/* ── TABS ── */
+function switchTab(btn, panelId) {
+  const bar = btn.parentElement;
+  bar.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  ['t-awards', 't-teach', 't-train'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.style.display = id === panelId ? 'block' : 'none';
+  });
+}
+
+/* ── SECTIONS ── */
+function toggleSection(hd) {
+  const body = hd.nextElementSibling;
+  const chevron = hd.querySelector('.chevron');
+  body.classList.toggle('open');
+  chevron.classList.toggle('open');
+}
+
+/* ── DYNAMIC ROWS ── */
+let awardCount = 8;
+function addAwardRow(containerId) {
+  awardCount++;
+  const el = document.getElementById(containerId);
+  const div = document.createElement('div');
+  div.className = 'award-entry mt1';
+  div.innerHTML = `
+    <div class="award-entry-hd"><span class="award-num">รางวัลที่ ${awardCount}</span><button class="btn-remove" onclick="this.closest('.award-entry').remove()">ลบ</button></div>
+    <div class="form-grid">
+      <div class="form-group"><label>ชื่อครู</label><input type="text" placeholder="ชื่อ-สกุล"></div>
+      <div class="form-group"><label>กิจกรรม</label><input type="text" placeholder="ชื่อกิจกรรม"></div>
+      <div class="form-group"><label>ระดับชั้น</label><input type="text" placeholder="เช่น ป.1-3"></div>
+      <div class="form-group"><label>รางวัล</label><select>
+        <option>เหรียญทองชนะเลิศ</option><option>เหรียญทองรองชนะเลิศ อันดับ 1</option><option>เหรียญทองรองชนะเลิศ อันดับ 2</option><option>เหรียญเงิน</option><option>เหรียญทองแดง</option>
+      </select></div>
+      <div class="form-group"><label>วันที่</label><input type="text" placeholder="วัน เดือน ปี"></div>
+      <div class="form-group"><label>ระดับการแข่งขัน</label><select><option>ระดับศูนย์ฯ</option><option>ระดับเขต</option><option>ระดับจังหวัด</option><option>ระดับชาติ</option></select></div>
+    </div>`;
+  el.appendChild(div);
+}
+
+let innovCount = 1;
+function addInnovation() {
+  innovCount++;
+  const el = document.getElementById('innovationList');
+  const div = document.createElement('div');
+  div.className = 'award-entry';
+  div.innerHTML = `
+    <div class="award-entry-hd"><span class="award-num">รายการที่ ${innovCount}</span><button class="btn-remove" onclick="this.closest('.award-entry').remove()">ลบ</button></div>
+    <div class="form-grid">
+      <div class="form-group"><label>ชื่อครู</label><input type="text" placeholder="ชื่อ-สกุล"></div>
+      <div class="form-group"><label>ชื่อนวัตกรรม/สื่อ</label><input type="text" placeholder="ชื่อนวัตกรรม"></div>
+      <div class="form-group"><label>กลุ่มสาระ</label><select><option>ศิลปะ</option><option>ภาษาไทย</option><option>คณิตศาสตร์</option><option>วิทยาศาสตร์</option><option>สังคมศึกษา</option><option>ภาษาอังกฤษ</option></select></div>
+      <div class="form-group"><label>ระดับ</label><select><option>ระดับโรงเรียน</option><option>ระดับเขต</option><option>ระดับจังหวัด</option><option>ระดับชาติ</option></select></div>
+      <div class="form-group full"><label>รายละเอียด</label><textarea placeholder="อธิบายผลที่เกิดขึ้น..."></textarea></div>
+    </div>`;
+  el.appendChild(div);
+}
+
+let dirAwardCount = 1;
+function addDirAward() {
+  dirAwardCount++;
+  const el = document.getElementById('directorAwards');
+  const div = document.createElement('div');
+  div.className = 'award-entry';
+  div.innerHTML = `
+    <div class="award-entry-hd"><span class="award-num">รางวัลที่ ${dirAwardCount}</span><button class="btn-remove" onclick="this.closest('.award-entry').remove()">ลบ</button></div>
+    <div class="form-grid">
+      <div class="form-group"><label>ชื่อรางวัล</label><input type="text" placeholder="ชื่อรางวัล..."></div>
+      <div class="form-group"><label>หน่วยงาน</label><input type="text" placeholder="หน่วยงานที่มอบ"></div>
+      <div class="form-group"><label>วันที่</label><input type="text" placeholder="วัน เดือน ปี"></div>
+      <div class="form-group"><label>ระดับ</label><select><option>ระดับโรงเรียน</option><option>ระดับเขต</option><option>ระดับจังหวัด</option><option>ระดับ สพป.</option><option>ระดับชาติ</option></select></div>
+      <div class="form-group full"><label>รายละเอียด</label><textarea placeholder="รายละเอียด..."></textarea></div>
+    </div>`;
+  el.appendChild(div);
+}
+
+function saveSection() {
+  const btn = event.target;
+  btn.textContent = '✓ บันทึกแล้ว';
+  btn.style.background = 'var(--green)';
+  setTimeout(() => { btn.innerHTML = '<svg style="width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:2" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>บันทึก'; btn.style.background = ''; }, 2000);
+}
+
+/* ── AI REPORT GENERATION ── */
+async function generateReport() {
+  const btn = document.getElementById('genBtn');
+  const content = document.getElementById('reportContent');
+  const status = document.getElementById('reportStatus');
+  const reportType = document.querySelector('input[name="reportType"]:checked').value;
+  const dirName = document.getElementById('dirName').value || '(ชื่อผู้บริหาร)';
+  const schoolName = document.getElementById('schoolName').value || 'บ้านเขาส่องกล้อง';
+  const currentTitle = document.getElementById('currentTitle').value;
+
+  btn.disabled = true;
+  btn.innerHTML = `<div class="loading-dots"><span></span><span></span><span></span></div> กำลังประมวลผล...`;
+  status.innerHTML = `<div class="loading-dots"><span></span><span></span><span></span></div> &nbsp; AI กำลังวิเคราะห์และสร้างรายงาน...`;
+  content.innerHTML = `<div style="text-align:center;padding:3rem"><div class="loading-dots" style="justify-content:center"><span></span><span></span><span></span></div><p style="color:var(--g500);margin-top:1rem">กำลังประมวลผลข้อมูลทั้งหมด...</p></div>`;
+
+  const onetThai = document.getElementById('onet-thai-school').value;
+  const onetMath = document.getElementById('onet-math-school').value;
+  const onetSci = document.getElementById('onet-sci-school').value;
+  const onetEng = document.getElementById('onet-eng-school').value;
+
+  const onetSection = (onetThai || onetMath) ? `
+ผลคะแนน O-Net:
+- ภาษาไทย: ${onetThai || 'ไม่ได้ระบุ'} คะแนน
+- คณิตศาสตร์: ${onetMath || 'ไม่ได้ระบุ'} คะแนน
+- วิทยาศาสตร์: ${onetSci || 'ไม่ได้ระบุ'} คะแนน
+- ภาษาอังกฤษ: ${onetEng || 'ไม่ได้ระบุ'} คะแนน` : 'ผลคะแนน O-Net: ยังไม่ได้บันทึก (กรุณาเพิ่มในภายหลัง)';
+
+  const prompt = reportType === 'teacher' ? buildTeacherPrompt(dirName, schoolName, currentTitle, onetSection)
+    : reportType === 'director' ? buildDirectorPrompt(dirName, schoolName, currentTitle, onetSection)
+    : buildBothPrompt(dirName, schoolName, currentTitle, onetSection);
+
+  try {
+    const response = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 1000,
+        messages: [{ role: 'user', content: prompt }]
+      })
+    });
+    const data = await response.json();
+    const text = data.content?.map(c => c.text || '').join('') || '';
+    renderReport(text);
+    status.textContent = '✓ สร้างรายงานเสร็จสมบูรณ์';
+  } catch (err) {
+    content.innerHTML = `<div class="alert alert-warn" style="margin:1.5rem">เกิดข้อผิดพลาด: ${err.message}<br><br><strong>ตัวอย่างรายงาน (offline mode):</strong></div>` + buildSampleReport(dirName, schoolName, reportType);
+    status.textContent = '⚠ ใช้ตัวอย่างรายงาน (offline)';
+  }
+
+  btn.disabled = false;
+  btn.innerHTML = `<svg style="width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:2" viewBox="0 0 24 24"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><polyline points="13 2 13 9 20 9"/></svg>สร้างรายงานใหม่`;
+}
+
+function buildDirectorPrompt(name, school, title, onet) {
+  return `คุณเป็นผู้เชี่ยวชาญด้านการประเมินผลการปฏิบัติงานครูและผู้บริหารการศึกษาตามหลักเกณฑ์ ว23
+
+จากข้อมูลต่อไปนี้ โปรดเขียนรายงานผลการปฏิบัติงานของผู้บริหารสถานศึกษา ตามตัวชี้วัด ว23 ให้ครอบคลุม 4 ด้าน ดังนี้
+
+**ข้อมูลผู้บริหาร:**
+- ชื่อ: ${name} ตำแหน่ง: ผู้อำนวยการโรงเรียน${school} วิทยฐานะ: ${title}
+- โรงเรียน${school} ศูนย์พัฒนาคุณภาพการศึกษาป่าขะ–เขาเพิ่ม สพป.นครนายก
+- ปีการศึกษา ๒๕๖๘
+
+**ผลงานดีเด่น:**
+1. รางวัลศิลปหัตถกรรมนักเรียน ครั้งที่ ๗๓ รวม 20 รางวัล (เหรียญทองทุกรางวัล) ได้แก่:
+   - นักเรียน 12 รางวัล: เหรียญทองชนะเลิศ 5 รางวัล, รองชนะเลิศ 7 รางวัล
+   - ครู 8 รางวัล: เหรียญทองชนะเลิศ 5 รางวัล, รองชนะเลิศ 3 รางวัล
+   - 4 กิจกรรม: Sketch Design, วาดภาพระบายสี, แอโรบิก, จัดสวนถาดแห้ง
+2. นักเรียนได้รับรางวัลเหรียญเงิน กีฬาฟุตบอล การแข่งขันกีฬานักเรียนเฉลิมพระเกียรติ ระดับ สพป.นครนายก ปีการศึกษา ๒๕๖๘
+3. ส่งนักเรียนเข้าร่วมโครงการนักอ่านบ้านนา อ.บ้านนา จ.นครนายก
+4. เข้าร่วมโครงการบ้านนักวิทยาศาสตร์น้อย ประเทศไทย ขณะนี้อยู่ระหว่างการตรวจประเมินเพื่อรับตราพระราชทาน
+${onet}
+
+**โปรดเขียนรายงานครอบคลุม:**
+1. ด้านการบริหารและการจัดการ — วิสัยทัศน์ นโยบาย การบริหารที่นำไปสู่ผลงาน
+2. ด้านผลสัมฤทธิ์และผลงานของผู้เรียน — สรุปผลงานนักเรียน วิเคราะห์จุดเด่น
+3. ด้านผลงานครู — วิเคราะห์ผลงานครู ความสำเร็จในการพัฒนาครู
+4. ด้านการพัฒนาสถานศึกษา — โครงการ ความร่วมมือ ความก้าวหน้า
+
+รายงานควรเป็นภาษาราชการ สั้นกระชับ เน้นจุดเด่น อ้างอิงตัวเลขสถิติ และสอดคล้องกับกรอบ ว23 ความยาวประมาณ 500-700 คำ ใช้ Markdown formatting (##, **, ตาราง)`;
+}
+
+function buildTeacherPrompt(name, school, title, onet) {
+  return `คุณเป็นผู้เชี่ยวชาญด้านการประเมินผลการปฏิบัติงานครูตามหลักเกณฑ์ ว23
+
+จากข้อมูลต่อไปนี้ โปรดเขียนรายงานผลการปฏิบัติงานของครูผู้สอน ตามตัวชี้วัด ว23
+
+**ข้อมูล:** โรงเรียน${school} · ปีการศึกษา ๒๕๖๘
+
+**รางวัลครู (8 รางวัล):**
+- นายทศพร สังประกุล: Sketch Design ป.๔–๖ เหรียญทองชนะเลิศ (2 รางวัล)
+- นางสาววิไลรัตน์ ใบศรี: วาดภาพระบายสี ป.๑–๓ เหรียญทองชนะเลิศ
+- นางสาววิไลรัตน์ สุวรรณฉิม, นางสาวเอนจิรา ปันทนันท์, นางกิตต์ธัญญา บุญฤทธิ์นิโรจน์: แอโรบิก รองชนะเลิศ อันดับ ๑
+- นางสาวเอนจิรา ปันทนันท์, นางสาวศิรินญา เลิศณรงค์: จัดสวนถาดแห้ง เหรียญทองชนะเลิศ
+
+${onet}
+
+เขียนรายงานผลการปฏิบัติงานภาษาราชการ ครอบคลุมด้านการสอน การพัฒนาผู้เรียน และผลงาน สั้นกระชับ ประมาณ 400-500 คำ ใช้ Markdown`;
+}
+
+function buildBothPrompt(name, school, title, onet) {
+  return buildDirectorPrompt(name, school, title, onet) + '\n\n**หมายเหตุ:** โปรดรวมสรุปผลงานครูผู้สอนไว้ในรายงานด้วย';
+}
+
+function renderReport(text) {
+  let html = text
+    .replace(/^### (.+)$/gm, '<h3>$1</h3>')
+    .replace(/^## (.+)$/gm, '<h2>$1</h2>')
+    .replace(/^# (.+)$/gm, '<h1>$1</h1>')
+    .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+    .replace(/\*(.+?)\*/g, '<em>$1</em>')
+    .replace(/^\| (.+) \|$/gm, (m) => {
+      if (m.includes('---')) return '';
+      const cells = m.split('|').filter(c => c.trim()).map(c => `<td>${c.trim()}</td>`).join('');
+      return `<tr>${cells}</tr>`;
+    })
+    .replace(/(<tr>[\s\S]+?<\/tr>)/g, (m) => `<table>${m}</table>`)
+    .replace(/^> (.+)$/gm, '<div class="highlight">$1</div>')
+    .replace(/^- (.+)$/gm, '<li>$1</li>')
+    .replace(/(<li>[\s\S]+?<\/li>)/g, '<ul>$&</ul>')
+    .replace(/\n\n/g, '</p><p>')
+    .replace(/^(?!<[hultd])(.+)$/gm, '<p>$1</p>');
+  document.getElementById('reportContent').innerHTML = html;
+}
+
+function buildSampleReport(name, school, type) {
+  return `
+    <h1>รายงานผลการปฏิบัติงาน ปีการศึกษา ๒๕๖๘</h1>
+    <p><strong>${name || '(ชื่อผู้บริหาร)'}</strong> ผู้อำนวยการโรงเรียน${school}</p>
+    <h2>๑. ด้านผลสัมฤทธิ์ของนักเรียน</h2>
+    <p>โรงเรียน${school}ได้ส่งนักเรียนเข้าร่วมการแข่งขันศิลปหัตถกรรมนักเรียน ครั้งที่ ๗๓ ปีการศึกษา ๒๕๖๘ และได้รับรางวัลระดับเหรียญทอง <strong>ทุกรายการ</strong> รวม ๑๒ รางวัล คิดเป็นร้อยละ ๑๐๐ ของการส่งเข้าแข่งขัน</p>
+    <table><tr><th>กิจกรรม</th><th>รางวัล</th><th>จำนวน</th></tr><tr><td>Sketch Design ป.๔–๖</td><td>ทองชนะเลิศ</td><td>1</td></tr><tr><td>วาดภาพระบายสี ป.๑–๓</td><td>ทองชนะเลิศ</td><td>1</td></tr><tr><td>แอโรบิก ป.๑–๖</td><td>รองชนะเลิศ อันดับ ๑</td><td>9</td></tr><tr><td>จัดสวนถาดแห้ง ป.๔–๖</td><td>ทองชนะเลิศ</td><td>1</td></tr></table>
+    <h2>๒. ด้านผลงานครู</h2>
+    <p>ครูผู้สอนจำนวน <strong>6 ท่าน</strong> ได้รับรางวัลรวม <strong>8 รางวัล</strong> ในระดับเหรียญทองทุกรางวัล แสดงให้เห็นถึงคุณภาพการจัดการเรียนการสอนในระดับสูง</p>
+    <h2>๓. ด้านการพัฒนาสถานศึกษา</h2>
+    <p>โรงเรียนได้เข้าร่วม <strong>โครงการบ้านนักวิทยาศาสตร์น้อย ประเทศไทย</strong> ขณะนี้อยู่ระหว่างการตรวจผลงานเพื่อรับตราพระราชทาน นอกจากนี้ยังได้รับ <strong>เหรียญเงิน</strong> จากการแข่งขันกีฬาฟุตบอลระดับ สพป.นครนายก</p>
+    <div class="highlight">✦ ผลสรุป: โรงเรียน${school}มีผลการปฏิบัติงานในระดับ <strong>ดีมาก</strong> โดยได้รับรางวัลระดับเหรียญทองทุกรายการจากการแข่งขันระดับศูนย์ฯ</div>`;
+}
+
+function copyReport() {
+  const text = document.getElementById('reportContent').innerText;
+  navigator.clipboard.writeText(text).then(() => { alert('คัดลอกเนื้อหารายงานแล้ว'); });
+}
+
+function printReport() {
+  window.print();
+}
+
+/* ── PRINT STYLES ── */
+const printCSS = document.createElement('style');
+printCSS.media = 'print';
+printCSS.textContent = `
+  .topbar, .sidebar, .topbar-nav, .btn-row, .report-toolbar, .dash-grid, .stat-grid { display:none!important; }
+  .shell { display:block; }
+  .main { padding:0; }
+  .page-content { display:none!important; }
+  #page-report { display:block!important; }
+  #reportContent { padding:0; }
+`;
+document.head.appendChild(printCSS);
+</script>
+</body>
+</html>

@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>องค์ประกอบที่ ๓ วินัย คุณธรรม จริยธรรม และจรรยาบรรณวิชาชีพ – โรงเรียนบ้านเขาหัวนา</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap');
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{font-family:'Sarabun',sans-serif;background:#f5f6f8;color:#2c3e50;font-size:15px;line-height:1.8;}
+
+  /* ══ TAB NAV ══ */
+  .tab-nav{
+    position:sticky; top:0; z-index:100;
+    display:grid; grid-template-columns:1fr 1fr;
+    box-shadow:0 4px 16px rgba(0,0,0,0.15);
+  }
+  .tab-btn{
+    padding:18px 10px; text-align:center; cursor:pointer;
+    font-size:15px; font-weight:700; letter-spacing:0.3px;
+    border:none; transition:all 0.25s;
+  }
+  .tab-btn.director{
+    background:#1a3a5c; color:rgba(255,255,255,0.65);
+  }
+  .tab-btn.teacher{
+    background:#1a5732; color:rgba(255,255,255,0.65);
+  }
+  .tab-btn.active{
+    color:#f0c040;
+    box-shadow:inset 0 -4px 0 #f0c040;
+  }
+  .tab-btn .role-label{
+    display:block; font-size:11px; font-weight:600;
+    letter-spacing:1.5px; opacity:0.7; margin-bottom:2px;
+  }
+  .tab-btn.active .role-label{ opacity:1; color:#f0c040; }
+
+  .tab-panel{ display:none; }
+  .tab-panel.active{ display:block; }
+
+  /* ══ SHARED HEADER ══ */
+  .hdr{
+    padding:52px 0 44px; text-align:center;
+    position:relative; overflow:hidden;
+  }
+  .hdr-dir{ background:linear-gradient(135deg,#1a3a5c 0%,#2e6da4 55%,#1a3a5c 100%); }
+  .hdr-tch{ background:linear-gradient(135deg,#1a5732 0%,#27ae60 55%,#1a5732 100%); }
+  .hdr::before{content:'';position:absolute;inset:-40px;background:repeating-linear-gradient(45deg,transparent,transparent 28px,rgba(255,255,255,0.03) 28px,rgba(255,255,255,0.03) 56px);}
+  .hdr .badge{
+    display:inline-block;background:rgba(240,192,64,0.2);
+    border:1px solid #f0c040;color:#f0c040;
+    font-size:11.5px;font-weight:700;letter-spacing:2px;
+    padding:5px 18px;border-radius:20px;margin-bottom:16px;position:relative;
+  }
+  .hdr h1{color:#fff;font-size:26px;font-weight:700;line-height:1.45;margin-bottom:8px;position:relative;}
+  .hdr h1 em{color:#f0c040;font-style:normal;}
+  .hdr .meta{color:rgba(255,255,255,0.72);font-size:14px;position:relative;}
+  .score-pill{
+    display:inline-block;background:#f0c040;color:#1a3a5c;
+    font-size:17px;font-weight:800;padding:8px 28px;
+    border-radius:24px;margin-top:18px;position:relative;
+  }
+
+  /* ══ LAYOUT ══ */
+  .wrap{max-width:980px;margin:0 auto;padding:0 28px;}
+  .sec{padding:50px 0;border-bottom:2px solid #e0e6ed;background:#fff;}
+  .sec.alt{background:#f8fafc;}
+
+  .slabel{display:inline-block;color:#fff;font-size:11px;font-weight:700;letter-spacing:1.5px;padding:3px 12px;border-radius:10px;margin-bottom:10px;}
+  .sl-blue{background:#2e6da4;} .sl-green{background:#27ae60;} .sl-purple{background:#8e44ad;} .sl-gold{background:#c8900a;}
+
+  .stitle{font-size:20px;font-weight:700;color:#1a3a5c;margin-bottom:6px;}
+  .ssub{font-size:14px;color:#7f8c8d;margin-bottom:26px;}
+
+  /* ══ BOXES ══ */
+  .ibox{border-left:5px solid #2e6da4;background:#eaf3fb;border-radius:0 10px 10px 0;padding:17px 20px;margin-bottom:20px;}
+  .ibox p{color:#1a3a5c;font-size:14.5px;line-height:1.85;margin:5px 0;}
+  .sbox{border-left:5px solid #27ae60;background:#eafaf1;border-radius:0 10px 10px 0;padding:17px 20px;margin-bottom:20px;}
+  .sbox p{color:#1a5732;font-size:14.5px;line-height:1.85;margin:5px 0;}
+  .goldbox{border-left:5px solid #c8900a;background:#fef9e7;border-radius:0 10px 10px 0;padding:17px 20px;margin-bottom:20px;}
+  .goldbox p{color:#7d5a0a;font-size:14.5px;line-height:1.85;margin:5px 0;}
+  .purplebox{border-left:5px solid #8e44ad;background:#f5eef8;border-radius:0 10px 10px 0;padding:17px 20px;margin-bottom:20px;}
+  .purplebox p{color:#5b2c6f;font-size:14.5px;line-height:1.85;margin:5px 0;}
+
+  /* ══ PILLAR CARDS ══ */
+  .pillars{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:16px;margin-bottom:30px;}
+  .pillar{background:#fff;border:1px solid #e0e6ed;border-radius:14px;padding:22px 18px;text-align:center;box-shadow:0 3px 10px rgba(0,0,0,0.06);}
+  .pillar .icon{font-size:36px;margin-bottom:10px;}
+  .pillar .pt{font-size:15px;font-weight:700;color:#1a3a5c;margin-bottom:7px;}
+  .pillar .pd{font-size:13px;color:#555;line-height:1.6;}
+  .pillar .ps{display:inline-block;margin-top:10px;font-size:12px;font-weight:700;padding:3px 10px;border-radius:10px;}
+  .p1{border-top:4px solid #2e6da4;} .p2{border-top:4px solid #27ae60;} .p3{border-top:4px solid #8e44ad;} .p4{border-top:4px solid #c8900a;}
+
+  /* ══ TABLE ══ */
+  .tbl{width:100%;border-collapse:collapse;font-size:14px;background:#fff;border-radius:10px;overflow:hidden;box-shadow:0 2px 10px rgba(0,0,0,0.06);margin-bottom:26px;}
+  .tbl thead tr{background:#1a3a5c;color:#fff;}
+  .tbl.thead-green thead tr{background:#27ae60;}
+  .tbl.thead-purple thead tr{background:#8e44ad;}
+  .tbl th{padding:12px 15px;text-align:left;font-weight:600;font-size:13px;}
+  .tbl td{padding:11px 15px;border-bottom:1px solid #eef0f4;vertical-align:top;line-height:1.75;}
+  .tbl tbody tr:nth-child(even){background:#f8fafc;}
+  .tbl tbody tr:hover{background:#eaf3fb;}
+  .tbl .num{text-align:center;font-weight:700;color:#2e6da4;}
+  .tbl.thead-green tbody tr:hover{background:#eafaf1;}
+  .tbl.thead-purple .num{color:#8e44ad;}
+
+  .tag{display:inline-block;font-size:11.5px;font-weight:700;padding:2px 9px;border-radius:10px;white-space:nowrap;}
+
+  /* ══ TIMELINE ══ */
+  .tl{margin-bottom:26px;}
+  .tli{display:flex;gap:16px;margin-bottom:18px;position:relative;}
+  .tli::before{content:'';position:absolute;left:21px;top:44px;width:2px;height:calc(100% + 6px);background:#e0e6ed;}
+  .tli:last-child::before{display:none;}
+  .tldot{width:44px;height:44px;border-radius:50%;color:#fff;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;position:relative;z-index:1;}
+  .dot-bl{background:#2e6da4;} .dot-gr{background:#27ae60;} .dot-go{background:#c8900a;} .dot-pu{background:#8e44ad;}
+  .tlbody{flex:1;background:#fff;border:1px solid #e0e6ed;border-radius:12px;padding:16px 18px;box-shadow:0 2px 6px rgba(0,0,0,0.04);}
+  .tlbody h4{font-size:14.5px;font-weight:700;color:#1a3a5c;margin-bottom:5px;}
+  .tlbody p{font-size:13.5px;color:#444;line-height:1.75;}
+  .tltag{display:inline-block;font-size:11px;font-weight:700;padding:2px 9px;border-radius:10px;margin-bottom:6px;}
+
+  /* ══ CARD GRID ══ */
+  .cgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(275px,1fr));gap:15px;margin-bottom:26px;}
+  .ccard{background:#fff;border:1px solid #e0e6ed;border-radius:12px;padding:18px;box-shadow:0 2px 8px rgba(0,0,0,0.05);}
+  .ccard .ci{font-size:26px;margin-bottom:7px;}
+  .ccard .ct{font-size:14.5px;font-weight:700;color:#1a3a5c;margin-bottom:5px;}
+  .ccard .cd{font-size:13.5px;color:#444;line-height:1.7;}
+
+  /* ══ SCORE SUMMARY ══ */
+  .score-highlight{
+    background:linear-gradient(135deg,#eaf3fb,#f5eef8);
+    border:2px solid #2e6da4; border-radius:14px;
+    padding:26px 28px; margin-bottom:26px;
+    display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:16px;
+  }
+  .sh-item{text-align:center;}
+  .sh-val{font-size:36px;font-weight:800;color:#1a3a5c;line-height:1.1;}
+  .sh-lbl{font-size:13px;color:#555;margin-top:4px;}
+
+  /* ══ FOOTER ══ */
+  .foot{padding:38px 0;text-align:center;font-size:13px;}
+  .foot-dir{background:#1a3a5c;}
+  .foot-tch{background:#1a5732;}
+  .foot p{color:rgba(255,255,255,0.7);}
+  .foot strong{color:#f0c040;}
+
+  @media(max-width:640px){
+    .pillars{grid-template-columns:1fr 1fr;}
+    .cgrid{grid-template-columns:1fr;}
+    .tab-btn{font-size:13px;padding:14px 8px;}
+  }
+</style>
+</head>
+<body>
+
+<!-- ══ TAB NAVIGATION ══ -->
+<div class="tab-nav">
+  <button class="tab-btn director active" onclick="switchTab('director')">
+    <span class="role-label">ผู้บริหารสถานศึกษา</span>
+    ผู้อำนวยการโรงเรียน
+  </button>
+  <button class="tab-btn teacher" onclick="switchTab('teacher')">
+    <span class="role-label">ข้าราชการครู</span>
+    ครูผู้สอน
+  </button>
+</div>
+
+<!-- ════════════════════════════════════════════
+     PANEL A: ผู้อำนวยการโรงเรียน
+════════════════════════════════════════════ -->
+<div id="panel-director" class="tab-panel active">
+
+  <div class="hdr hdr-dir">
+    <div class="badge">แบบประเมินผลการปฏิบัติราชการ · ว23 · ผู้บริหารสถานศึกษา</div>
+    <h1>องค์ประกอบที่ ๓<br>
+    <em>การปฏิบัติตนในการรักษาวินัย คุณธรรม จริยธรรม</em><br>
+    <em>และจรรยาบรรณวิชาชีพ</em></h1>
+    <div class="meta">ผู้อำนวยการโรงเรียนบ้านเขาหัวนา · อำเภอบ้านนา จังหวัดนครนายก · ปีการศึกษา ๒๕๖๘</div>
+    <div class="score-pill">คะแนนเต็ม ๒๐ คะแนน</div>
+  </div>
+
+  <!-- D1: กรอบแนวคิด -->
+  <section class="sec">
+  <div class="wrap">
+    <div class="slabel sl-blue">กรอบแนวคิด</div>
+    <h2 class="stitle">๑. ภาพรวมองค์ประกอบที่ ๓ (ผู้บริหารสถานศึกษา)</h2>
+    <p class="ssub">หลักการประเมินพฤติกรรมการปฏิบัติตนของผู้บริหารสถานศึกษาใน ๔ มิติหลัก</p>
+    <div class="ibox">
+      <p>องค์ประกอบที่ ๓ มีน้ำหนักคะแนน <strong>๒๐ คะแนน</strong> เป็นการประเมินพฤติกรรมการปฏิบัติตนของ<strong>ผู้บริหารสถานศึกษา</strong> ใน ๔ มิติ ได้แก่ วินัยในตนเองในฐานะผู้นำองค์กร การดำรงตนด้วยคุณธรรมจริยธรรม การปฏิบัติตามจรรยาบรรณวิชาชีพ และการเป็นแบบอย่างที่ดีแก่ครู นักเรียน และชุมชน ซึ่งส่งผลโดยตรงต่อวัฒนธรรมองค์กรและคุณลักษณะอันพึงประสงค์ของนักเรียน</p>
+    </div>
+    <div class="pillars">
+      <div class="pillar p1"><div class="icon">⚖️</div><div class="pt">วินัยในตนเอง</div><div class="pd">ตรงต่อเวลา ปฏิบัติตามกฎระเบียบ นำองค์กรด้วยความมีวินัยในฐานะผู้นำ</div><span class="ps" style="background:#eaf3fb;color:#2e6da4;">๕ คะแนน</span></div>
+      <div class="pillar p2"><div class="icon">🌿</div><div class="pt">คุณธรรม จริยธรรม</div><div class="pd">ซื่อสัตย์สุจริต เสียสละ บริหารงานโปร่งใส อุทิศตนเพื่อประโยชน์ของผู้เรียน</div><span class="ps" style="background:#eafaf1;color:#27ae60;">๕ คะแนน</span></div>
+      <div class="pillar p3"><div class="icon">📜</div><div class="pt">จรรยาบรรณวิชาชีพ</div><div class="pd">ปฏิบัติตามมาตรฐานจรรยาบรรณคุรุสภา ๕ ข้อ รักษาเกียรติวิชาชีพผู้บริหาร</div><span class="ps" style="background:#f5eef8;color:#8e44ad;">๕ คะแนน</span></div>
+      <div class="pillar p4"><div class="icon">🌟</div><div class="pt">การเป็นแบบอย่างที่ดี</div><div class="pd">เป็นแบบอย่างแก่ครู นักเรียน ชุมชน สร้างวัฒนธรรมองค์กรดีงามอย่างยั่งยืน</div><span class="ps" style="background:#fef9e7;color:#c8900a;">๕ คะแนน</span></div>
+    </div>
+  </div>
+  </section>
+
+  <!-- D2: วินัย -->
+  <section class="sec alt">
+  <div class="wrap">
+    <div class="slabel sl-blue">มิติที่ ๑ · ๕ คะแนน</div>
+    <h2 class="stitle">๒. การรักษาวินัยในตนเอง ในฐานะผู้นำสถานศึกษา</h2>
+    <p class="ssub">การปฏิบัติตนเป็นแบบอย่างในการรักษาวินัยเพื่อเป็นต้นแบบแก่ครูและบุคลากรทั้งองค์กร</p>
+    <div class="tl">
+      <div class="tli">
+        <div class="tldot dot-bl">⏰</div>
+        <div class="tlbody"><span class="tltag" style="background:#eaf3fb;color:#2e6da4;">การตรงต่อเวลา</span><h4>ปฏิบัติราชการตรงต่อเวลาสม่ำเสมอตลอดปีการศึกษา</h4><p>ปฏิบัติราชการตรงตามเวลาราชการทุกวัน ปฏิบัติหน้าที่เวรยามครบถ้วน เข้าร่วมประชุม อบรม กิจกรรมของ สพป.นครนายก ครบตามนัดหมาย การตรงต่อเวลาของผู้บริหารนำมาซึ่งวัฒนธรรมองค์กรที่มีวินัยโดยไม่ต้องออกคำสั่ง</p></div>
+      </div>
+      <div class="tli">
+        <div class="tldot dot-bl">📋</div>
+        <div class="tlbody"><span class="tltag" style="background:#eaf3fb;color:#2e6da4;">การปฏิบัติงาน</span><h4>บริหารงานสถานศึกษา ๔ ด้านครบถ้วนตามที่ได้รับมอบหมาย</h4><p>ดำเนินการบริหารงานวิชาการ งบประมาณ บุคคล และงานทั่วไป จัดทำแผนพัฒนาสถานศึกษา รายงานผลการดำเนินงานต่อต้นสังกัด ส่งเอกสารราชการตามกำหนดเวลาอย่างสม่ำเสมอ ไม่มีประวัติบกพร่องในงานที่ได้รับมอบหมาย</p></div>
+      </div>
+      <div class="tli">
+        <div class="tldot dot-gr">📌</div>
+        <div class="tlbody"><span class="tltag" style="background:#eafaf1;color:#27ae60;">กฎระเบียบ</span><h4>ปฏิบัติตาม พ.ร.บ. ระเบียบข้าราชการครูและบุคลากรทางการศึกษาอย่างเคร่งครัด</h4><p>ปฏิบัติตาม พ.ร.บ.ระเบียบข้าราชการครูฯ พ.ศ. ๒๕๔๗ มาตรฐานการปฏิบัติงานผู้บริหารสถานศึกษา และระเบียบ สพฐ. ทุกฉบับ ตลอดปีการศึกษา ๒๕๖๘ ไม่มีประวัติถูกร้องเรียน ตักเตือน หรือสอบสวนทางวินัยใดๆ</p></div>
+      </div>
+      <div class="tli">
+        <div class="tldot dot-pu">🏫</div>
+        <div class="tlbody"><span class="tltag" style="background:#f5eef8;color:#8e44ad;">ผู้นำวินัยองค์กร</span><h4>สร้างระบบและวัฒนธรรมวินัยในโรงเรียนอย่างเป็นรูปธรรม</h4><p>กำหนดระบบตารางสอนออนไลน์ให้ครูทุกคน (10/10) มีตารางสอนที่ชัดเจนตรวจสอบได้ พัฒนาระบบติดตามนักเรียนจบการศึกษาเพื่อแสดงผลลัพธ์อย่างโปร่งใส สะท้อนวินัยของผู้บริหารในการสร้างระบบที่ดีสำหรับองค์กร</p></div>
+      </div>
+    </div>
+    <div class="sbox"><p>✅ <strong>สรุป:</strong> ปฏิบัติราชการด้วยความมีวินัย ตรงต่อเวลา ปฏิบัติงานครบถ้วนตามบทบาทผู้บริหาร ไม่มีประวัติกระทำผิดวินัยใดๆ และสร้างวัฒนธรรมวินัยในองค์กรผ่านระบบและนวัตกรรม</p></div>
+  </div>
+  </section>
+
+  <!-- D3: คุณธรรม -->
+  <section class="sec">
+  <div class="wrap">
+    <div class="slabel sl-green">มิติที่ ๒ · ๕ คะแนน</div>
+    <h2 class="stitle">๓. การมีคุณธรรม จริยธรรม ในการบริหารสถานศึกษา</h2>
+    <p class="ssub">บริหารงานด้วยความซื่อสัตย์ โปร่งใส เสียสละ และอุทิศตนเพื่อประโยชน์ของผู้เรียนและชุมชน</p>
+    <div class="cgrid">
+      <div class="ccard" style="border-left:4px solid #2e6da4;"><div class="ci">🤝</div><div class="ct">ความซื่อสัตย์สุจริตในการบริหาร</div><div class="cd">บริหารงบประมาณด้วยความโปร่งใส รอบคอบ ตรวจสอบได้ ดำเนินการจัดซื้อจัดจ้างตามระเบียบกระทรวงการคลังอย่างเคร่งครัด ไม่มีประวัติร้องเรียนด้านการเงินหรือทรัพย์สินราชการ</div></div>
+      <div class="ccard" style="border-left:4px solid #27ae60;"><div class="ci">💪</div><div class="ct">การเสียสละและอุทิศตนเพื่อนักเรียน</div><div class="cd">อุทิศเวลานอกเวลาราชการพัฒนาโรงเรียน ประสานปรับปรุงสนาม ไหล่ทาง ระบบไฟฟ้า และสุขาภิบาลอาหาร ลงพื้นที่เยี่ยมบ้านนักเรียนยากจนเพื่อติดตามการมอบทุน กสศ. อย่างต่อเนื่อง</div></div>
+      <div class="ccard" style="border-left:4px solid #8e44ad;"><div class="ci">⚖️</div><div class="ct">ความยุติธรรมในการบริหาร</div><div class="cd">ปฏิบัติต่อครู บุคลากร และนักเรียนทุกคนด้วยความเสมอภาค ไม่เลือกปฏิบัติ ประเมินผลการปฏิบัติงานครูตามหลักฐานเชิงประจักษ์อย่างยุติธรรม</div></div>
+      <div class="ccard" style="border-left:4px solid #c8900a;"><div class="ci">🌱</div><div class="ct">การส่งเสริมคุณธรรมในองค์กร</div><div class="cd">สร้างบรรยากาศโรงเรียนที่เอื้อต่อคุณธรรม ผ่านกิจกรรมหน้าเสาธง โครงการโรงเรียนคุณธรรม และประสานวัดในชุมชนปลูกฝังศีลธรรมนักเรียนอย่างต่อเนื่อง</div></div>
+      <div class="ccard" style="border-left:4px solid #27ae60;"><div class="ci">🤲</div><div class="ct">จิตสาธารณะและดูแลนักเรียนครบวงจร</div><div class="cd">ติดตามและกำชับการมอบทุนนักเรียนยากจน กสศ. ครบ ๑๐๐% ประสานงานกับวัด ชุมชน และผู้ปกครอง ส่งผลให้นักเรียนกลุ่มเป้าหมายทุกคนได้รับทุนตามสิทธิ์</div></div>
+      <div class="ccard" style="border-left:4px solid #2e6da4;"><div class="ci">📈</div><div class="ct">การพัฒนาตนเองอย่างต่อเนื่อง</div><div class="cd">แสวงหาความรู้ด้านการบริหารการศึกษาอย่างต่อเนื่อง เข้าร่วมประชุม อบรม สัมมนาของ สพป. และ สพฐ. ประยุกต์ใช้ความรู้พัฒนาระบบบริหารและนวัตกรรมสถานศึกษา</div></div>
+    </div>
+    <div class="sbox"><p>✅ <strong>สรุป:</strong> บริหารด้วยความซื่อสัตย์ โปร่งใส เสียสละ อุทิศตนเพื่อนักเรียนและชุมชน หลักฐานปรากฏในภาคผนวก ค หัวข้อ ค.๒–ค.๖ ทุกรายการ</p></div>
+  </div>
+  </section>
+
+  <!-- D4: จรรยาบรรณ -->
+  <section class="sec alt">
+  <div class="wrap">
+    <div class="slabel sl-purple">มิติที่ ๓ · ๕ คะแนน</div>
+    <h2 class="stitle">๔. การปฏิบัติตามจรรยาบรรณวิชาชีพผู้บริหารสถานศึกษา</h2>
+    <p class="ssub">ตามมาตรฐานจรรยาบรรณของคุรุสภา ๕ ข้อ พ.ศ. ๒๕๕๖</p>
+    <table class="tbl thead-purple">
+      <thead><tr><th style="width:50px;text-align:center;">ข้อ</th><th style="width:185px;">มาตรฐาน</th><th>การปฏิบัติในฐานะผู้อำนวยการโรงเรียน</th></tr></thead>
+      <tbody>
+        <tr><td style="text-align:center;font-weight:700;color:#8e44ad;font-size:16px;">๑</td><td><strong>ต่อตนเอง</strong><br><small style="color:#888;">พัฒนาตนเอง มีวินัย</small></td><td>ริเริ่มพัฒนาระบบตารางสอนออนไลน์และระบบติดตามนักเรียน แสดงถึงความมุ่งมั่นพัฒนาตนเองเพื่อประสิทธิภาพของสถานศึกษา</td></tr>
+        <tr><td style="text-align:center;font-weight:700;color:#8e44ad;font-size:16px;">๒</td><td><strong>ต่อวิชาชีพ</strong><br><small style="color:#888;">รักษาเกียรติยศ</small></td><td>รักษาภาพลักษณ์วิชาชีพผู้บริหาร ประพฤติตนเป็นแบบอย่างที่ดีทั้งในและนอกเวลาราชการ ไม่กระทำการใดที่นำมาซึ่งความเสื่อมเสียแก่วิชาชีพ</td></tr>
+        <tr><td style="text-align:center;font-weight:700;color:#8e44ad;font-size:16px;">๓</td><td><strong>ต่อผู้รับบริการ</strong><br><small style="color:#888;">รักและเมตตาศิษย์</small></td><td>ให้ความสำคัญกับสวัสดิภาพนักเรียนทุกคน โดยเฉพาะกลุ่มยากจน ติดตามมอบทุน กสศ. ครบ ๑๐๐% ประสานตรวจสุขาภิบาลอาหารประจำเดือน ดูแลสุขภาวะนักเรียนครบวงจร</td></tr>
+        <tr><td style="text-align:center;font-weight:700;color:#8e44ad;font-size:16px;">๔</td><td><strong>ต่อเพื่อนวิชาชีพ</strong><br><small style="color:#888;">ช่วยเหลือ เกื้อกูล</small></td><td>สนับสนุนครูทุกคนให้มีศักยภาพสูงสุด ส่งผลให้ครู ๗ ท่านได้รับรางวัล ๑๐ รางวัล ครูดีเด่น ๒ ท่าน และครู ๑ ท่านเลื่อน คศ.๑ สร้างขวัญกำลังใจในองค์กร</td></tr>
+        <tr><td style="text-align:center;font-weight:700;color:#8e44ad;font-size:16px;">๕</td><td><strong>ต่อสังคม</strong><br><small style="color:#888;">ประพฤติตนเป็นสมาชิกที่ดี</small></td><td>สร้างเครือข่ายความร่วมมือระหว่างโรงเรียน วัด ชุมชน รพ.สต. อบต. สาธารณสุขอำเภอ และมหาวิทยาลัยราชภัฏพระนคร ในการพัฒนาสถานศึกษาให้เป็นศูนย์กลางชุมชน</td></tr>
+      </tbody>
+    </table>
+    <div class="purplebox"><p>📜 ข้าพเจ้าได้ยึดถือและปฏิบัติตามมาตรฐานจรรยาบรรณทั้ง ๕ ข้อ อย่างเคร่งครัด โดยมีหลักฐานเชิงประจักษ์ปรากฏในเอกสารภาคผนวก ก–ง ทุกรายการ</p></div>
+  </div>
+  </section>
+
+  <!-- D5: แบบอย่าง -->
+  <section class="sec">
+  <div class="wrap">
+    <div class="slabel sl-gold">มิติที่ ๔ · ๕ คะแนน</div>
+    <h2 class="stitle">๕. การเป็นแบบอย่างที่ดีแก่ครู นักเรียน ผู้ปกครอง และชุมชน</h2>
+    <p class="ssub">พฤติกรรมที่สร้างวัฒนธรรมองค์กรที่ดี และเสริมสร้างความไว้วางใจจากทุกภาคส่วน</p>
+    <table class="tbl">
+      <thead><tr><th style="width:40px;text-align:center;">#</th><th>พฤติกรรมที่แสดงออกอย่างเป็นรูปธรรม</th><th style="width:150px;">กลุ่มเป้าหมาย</th><th style="width:120px;">หลักฐาน</th></tr></thead>
+      <tbody>
+        <tr><td class="num">1</td><td>ประพฤติตนเป็นแบบอย่างด้านวินัยและการแต่งกาย นำองค์กรด้วยความมีวินัยในตนเองก่อนสั่งการ</td><td><span class="tag" style="background:#eaf3fb;color:#2e6da4;">ครู · นักเรียน</span></td><td>ภาพกิจกรรม</td></tr>
+        <tr><td class="num">2</td><td>เสียสละเวลาส่วนตัวพัฒนาโรงเรียน ประสานปรับสนาม ไหล่ทาง ไฟฟ้า สุขาภิบาล สะท้อนจิตสาธารณะแท้จริง</td><td><span class="tag" style="background:#fef9e7;color:#c8900a;">ชุมชน · ครู</span></td><td>ภาคผนวก ค</td></tr>
+        <tr><td class="num">3</td><td>ดูแลนักเรียนด้วยความเมตตา ติดตามมอบทุน กสศ. ลงพื้นที่เยี่ยมบ้าน ประสานวัดช่วยเหลือนักเรียนขาดโอกาส</td><td><span class="tag" style="background:#eafaf1;color:#27ae60;">นักเรียน · ผู้ปกครอง</span></td><td>ภาคผนวก ค.๒</td></tr>
+        <tr><td class="num">4</td><td>ส่งเสริมและยกย่องครูผู้มีผลงานดีเด่น สร้างขวัญกำลังใจในองค์กร ส่งผลให้ครูทุ่มเทพัฒนานักเรียนอย่างต่อเนื่อง</td><td><span class="tag" style="background:#eaf3fb;color:#2e6da4;">ครู · บุคลากร</span></td><td>ภาคผนวก ข</td></tr>
+        <tr><td class="num">5</td><td>สร้างเครือข่ายโรงเรียน วัด ชุมชน บนพื้นฐานความสัมพันธ์ที่ดี ทำให้ชุมชนไว้วางใจและสนับสนุนโรงเรียน</td><td><span class="tag" style="background:#fef9e7;color:#c8900a;">ชุมชน · วัด</span></td><td>ภาคผนวก ค</td></tr>
+        <tr><td class="num">6</td><td>นำนวัตกรรมมาพัฒนาองค์กร เป็นแบบอย่างของการเรียนรู้และการนำเทคโนโลยีสร้างคุณค่าให้แก่สถานศึกษา</td><td><span class="tag" style="background:#f5eef8;color:#8e44ad;">ครู · นักเรียน</span></td><td>ภาคผนวก ง.๓</td></tr>
+        <tr><td class="num">7</td><td>รักษาอัตราการศึกษาต่อนักเรียน ๑๐๐% นักเรียนจบ ป.๖ ทั้ง ๒๗ คน ได้รับโอกาสศึกษาต่อในระดับมัธยมศึกษา</td><td><span class="tag" style="background:#eafaf1;color:#27ae60;">นักเรียน · สังคม</span></td><td>ระบบติดตาม</td></tr>
+      </tbody>
+    </table>
+  </div>
+  </section>
+
+  <!-- D6: สรุป -->
+  <section class="sec alt">
+  <div class="wrap">
+    <div class="slabel sl-green">สรุปการประเมินตนเอง</div>
+    <h2 class="stitle">๖. สรุปผลการประเมินตนเององค์ประกอบที่ ๓ (ผู้บริหาร)</h2>
+    <table class="tbl thead-green">
+      <thead><tr><th>มิติ</th><th style="text-align:center;width:100px;">คะแนนเต็ม</th><th style="text-align:center;width:130px;">ระดับ</th><th>สรุปพฤติกรรมสำคัญ</th></tr></thead>
+      <tbody>
+        <tr><td><strong>มิติที่ ๑</strong> วินัยในตนเอง</td><td style="text-align:center;font-weight:700;color:#2e6da4;font-size:16px;">5</td><td style="text-align:center;"><span class="tag" style="background:#eafaf1;color:#27ae60;">ดีเด่น</span></td><td>ตรงต่อเวลา ปฏิบัติงานครบ สร้างระบบวินัยองค์กร ไม่มีประวัติวินัย</td></tr>
+        <tr><td><strong>มิติที่ ๒</strong> คุณธรรม จริยธรรม</td><td style="text-align:center;font-weight:700;color:#2e6da4;font-size:16px;">5</td><td style="text-align:center;"><span class="tag" style="background:#eafaf1;color:#27ae60;">ดีเด่น</span></td><td>ซื่อสัตย์ โปร่งใส เสียสละ ดูแลนักเรียนยากจนครบวงจร</td></tr>
+        <tr><td><strong>มิติที่ ๓</strong> จรรยาบรรณวิชาชีพ</td><td style="text-align:center;font-weight:700;color:#2e6da4;font-size:16px;">5</td><td style="text-align:center;"><span class="tag" style="background:#eafaf1;color:#27ae60;">ดีเด่น</span></td><td>ปฏิบัติตามมาตรฐานคุรุสภา ๕ ข้อ มีหลักฐานเชิงประจักษ์ครบ</td></tr>
+        <tr><td><strong>มิติที่ ๔</strong> การเป็นแบบอย่างที่ดี</td><td style="text-align:center;font-weight:700;color:#2e6da4;font-size:16px;">5</td><td style="text-align:center;"><span class="tag" style="background:#eafaf1;color:#27ae60;">ดีเด่น</span></td><td>เป็นแบบอย่างแก่ครู นักเรียน ชุมชน สร้างเครือข่ายและนวัตกรรม</td></tr>
+        <tr style="background:#eaf3fb;"><td style="font-size:15px;"><strong>รวมองค์ประกอบที่ ๓</strong></td><td style="text-align:center;font-size:22px;font-weight:800;color:#1a3a5c;">20</td><td style="text-align:center;"><span class="tag" style="background:#27ae60;color:#fff;font-size:14px;padding:5px 14px;">ดีเด่น</span></td><td style="font-weight:600;color:#1a3a5c;">รักษาวินัย คุณธรรม จรรยาบรรณ และเป็นแบบอย่างที่ดีครบทุกมิติอย่างต่อเนื่องตลอดปีการศึกษา ๒๕๖๘</td></tr>
+      </tbody>
+    </table>
+    <div class="sbox"><p>✅ <strong>สรุป:</strong> ข้าพเจ้าในฐานะผู้อำนวยการโรงเรียนบ้านเขาหัวนา ได้ปฏิบัติตนในการรักษาวินัย คุณธรรม จริยธรรม และจรรยาบรรณวิชาชีพ ด้วยความมุ่งมั่นสม่ำเสมอตลอดปีการศึกษา ๒๕๖๘ ผลลัพธ์ปรากฏในทุกภาคผนวก ได้แก่ O-NET คณิตศาสตร์สูงกว่าค่าเฉลี่ยประเทศ อัตราการศึกษาต่อ ๑๐๐% รางวัลครู ๑๐ รางวัล การพัฒนาสภาพแวดล้อม การดูแลนักเรียนยากจน และนวัตกรรมการบริหาร</p></div>
+    <div class="goldbox"><p>📝 <strong>หมายเหตุ:</strong> หลักฐานเชิงประจักษ์ทั้งหมดสามารถตรวจสอบได้ในเอกสารภาคผนวก ก–ง และแฟ้มงานที่จัดเก็บ ณ โรงเรียนบ้านเขาหัวนา</p></div>
+  </div>
+  </section>
+
+  <div class="foot foot-dir">
+    <p><strong>องค์ประกอบที่ ๓ · ผู้อำนวยการโรงเรียนบ้านเขาหัวนา</strong></p>
+    <p style="margin-top:6px;">อำเภอบ้านนา จังหวัดนครนายก · สพป.นครนายก · ปีการศึกษา ๒๕๖๘ · คะแนนเต็ม ๒๐ คะแนน</p>
+  </div>
+</div><!-- end panel-director -->
+
+
+<!-- ════════════════════════════════════════════
+     PANEL B: ครูผู้สอน
+════════════════════════════════════════════ -->
+<div id="panel-teacher" class="tab-panel">
+
+  <div class="hdr hdr-tch">
+    <div class="badge">แบบประเมินผลการปฏิบัติราชการ · ว23 · ข้าราชการครู</div>
+    <h1>องค์ประกอบที่ ๓<br>
+    <em>การปฏิบัติตนในการรักษาวินัย คุณธรรม จริยธรรม</em><br>
+    <em>และจรรยาบรรณวิชาชีพ</em></h1>
+    <div class="meta">ครูผู้สอน โรงเรียนบ้านเขาหัวนา · อำเภอบ้านนา จังหวัดนครนายก · ปีการศึกษา ๒๕๖๘</div>
+    <div class="score-pill">คะแนนเต็ม ๒๐ คะแนน</div>
+  </div>
+
+  <!-- T1: กรอบ -->
+  <section class="sec">
+  <div class="wrap">
+    <div class="slabel sl-green">กรอบแนวคิด</div>
+    <h2 class="stitle">๑. ภาพรวมองค์ประกอบที่ ๓ (ครูผู้สอน)</h2>
+    <p class="ssub">หลักการประเมินพฤติกรรมการปฏิบัติตนของครูวิชาชีพใน ๔ มิติหลัก</p>
+    <div class="ibox">
+      <p>สำหรับ<strong>ครูผู้สอน</strong> องค์ประกอบที่ ๓ มุ่งประเมินพฤติกรรมที่แสดงออกจริงในการปฏิบัติงาน ไม่ใช่ความรู้ทางทฤษฎี ผู้รับการประเมินจำเป็นต้องแสดงหลักฐานเชิงประจักษ์ที่สะท้อนคุณลักษณะที่พึงประสงค์ของครูวิชาชีพ ทั้งด้านวินัยในตนเอง คุณธรรมจริยธรรม จรรยาบรรณวิชาชีพ และการเป็นแบบอย่างที่ดีแก่นักเรียนและชุมชน</p>
+    </div>
+    <div class="pillars">
+      <div class="pillar p1"><div class="icon">⏰</div><div class="pt">วินัยในตนเอง</div><div class="pd">การตรงต่อเวลา ปฏิบัติงานครบถ้วน ปฏิบัติตามระเบียบ กฎข้อบังคับราชการ</div><span class="ps" style="background:#eaf3fb;color:#2e6da4;">๕ คะแนน</span></div>
+      <div class="pillar p2"><div class="icon">🌿</div><div class="pt">คุณธรรม จริยธรรม</div><div class="pd">ความซื่อสัตย์สุจริต เสียสละ อุทิศตน ปฏิบัติตนด้วยความเที่ยงธรรม</div><span class="ps" style="background:#eafaf1;color:#27ae60;">๕ คะแนน</span></div>
+      <div class="pillar p3"><div class="icon">📜</div><div class="pt">จรรยาบรรณวิชาชีพ</div><div class="pd">ปฏิบัติตามมาตรฐานจรรยาบรรณคุรุสภา รักษาเกียรติและศักดิ์ศรีวิชาชีพครู</div><span class="ps" style="background:#f5eef8;color:#8e44ad;">๕ คะแนน</span></div>
+      <div class="pillar p4"><div class="icon">🌟</div><div class="pt">การเป็นแบบอย่างที่ดี</div><div class="pd">เป็นแบบอย่างแก่นักเรียนและชุมชน บำเพ็ญประโยชน์ สร้างความสัมพันธ์อันดี</div><span class="ps" style="background:#fef9e7;color:#c8900a;">๕ คะแนน</span></div>
+    </div>
+  </div>
+  </section>
+
+  <!-- T2: วินัย -->
+  <section class="sec alt">
+  <div class="wrap">
+    <div class="slabel sl-blue">มิติที่ ๑ · ๕ คะแนน</div>
+    <h2 class="stitle">๒. การรักษาวินัยในตนเอง</h2>
+    <p class="ssub">การปฏิบัติตามระเบียบ กฎเกณฑ์ และข้อบังคับของทางราชการอย่างเคร่งครัด</p>
+    <div class="tl">
+      <div class="tli">
+        <div class="tldot dot-bl">⏰</div>
+        <div class="tlbody"><span class="tltag" style="background:#eaf3fb;color:#2e6da4;">การตรงต่อเวลา</span><h4>มาปฏิบัติราชการตรงต่อเวลาและสม่ำเสมอตลอดปีการศึกษา</h4><p>ปฏิบัติหน้าที่ครบตามเวลาราชการ เข้าเวรยามตามกำหนด เข้าร่วมกิจกรรมของโรงเรียนอย่างสม่ำเสมอ ไม่มีบันทึกการมาสายหรือขาดราชการโดยไม่มีเหตุผลอันสมควร</p></div>
+      </div>
+      <div class="tli">
+        <div class="tldot dot-bl">📋</div>
+        <div class="tlbody"><span class="tltag" style="background:#eaf3fb;color:#2e6da4;">การปฏิบัติงาน</span><h4>ปฏิบัติงานที่ได้รับมอบหมายครบถ้วนตามหน้าที่ครู</h4><p>จัดทำแผนการจัดการเรียนรู้ บันทึกหลังสอน และเอกสารการสอนครบถ้วนตามที่กำหนด ปฏิบัติงานพิเศษที่ได้รับมอบหมายด้วยความรับผิดชอบ ทั้งงานกิจกรรม งานอาคารสถานที่ และงานชุมชนสัมพันธ์</p></div>
+      </div>
+      <div class="tli">
+        <div class="tldot dot-gr">📌</div>
+        <div class="tlbody"><span class="tltag" style="background:#eafaf1;color:#27ae60;">ระเบียบวินัย</span><h4>ปฏิบัติตามพระราชบัญญัติและระเบียบข้าราชการครูฯ อย่างเคร่งครัด</h4><p>ปฏิบัติตาม พ.ร.บ.ระเบียบข้าราชการครูและบุคลากรทางการศึกษา พ.ศ. ๒๕๔๗ มาตรฐานการปฏิบัติงาน และระเบียบ สพฐ. ตลอดปีการศึกษา ๒๕๖๘ ไม่มีประวัติถูกร้องเรียน ตักเตือน หรือสอบสวนทางวินัย</p></div>
+      </div>
+      <div class="tli">
+        <div class="tldot dot-go">🏫</div>
+        <div class="tlbody"><span class="tltag" style="background:#fef9e7;color:#c8900a;">กิจกรรมสถานศึกษา</span><h4>เข้าร่วมกิจกรรมสำคัญของโรงเรียนและหน่วยงานครบถ้วน</h4><p>เข้าร่วมกิจกรรมวันสำคัญของชาติและศาสนา ประชุมผู้ปกครอง การแข่งขันศิลปหัตถกรรม และกิจกรรมส่งเสริมคุณธรรมนักเรียน ทำหน้าที่ครูผู้ฝึกสอนนักเรียนเข้าแข่งขันและสร้างผลงานระดับเหรียญทองชนะเลิศ</p></div>
+      </div>
+    </div>
+    <div class="sbox"><p>✅ <strong>สรุป:</strong> ปฏิบัติราชการด้วยความมีวินัย ตรงต่อเวลา ปฏิบัติงานครบถ้วน ไม่มีประวัติกระทำผิดวินัยใดๆ ตลอดปีการศึกษา ๒๕๖๘</p></div>
+  </div>
+  </section>
+
+  <!-- T3: คุณธรรม -->
+  <section class="sec">
+  <div class="wrap">
+    <div class="slabel sl-green">มิติที่ ๒ · ๕ คะแนน</div>
+    <h2 class="stitle">๓. การมีคุณธรรม จริยธรรม</h2>
+    <p class="ssub">ความซื่อสัตย์ เสียสละ อุทิศตน และปฏิบัติตนด้วยความเที่ยงธรรม</p>
+    <div class="cgrid">
+      <div class="ccard" style="border-left:4px solid #2e6da4;"><div class="ci">🤝</div><div class="ct">ความซื่อสัตย์สุจริต</div><div class="cd">ปฏิบัติหน้าที่ด้วยความซื่อสัตย์ ไม่แสวงหาผลประโยชน์ส่วนตนจากตำแหน่งหน้าที่ราชการ บริหารจัดการงบประมาณที่รับผิดชอบด้วยความรอบคอบและตรวจสอบได้</div></div>
+      <div class="ccard" style="border-left:4px solid #27ae60;"><div class="ci">💪</div><div class="ct">ความเสียสละและอุทิศตน</div><div class="cd">อุทิศเวลาและความพยายามพัฒนาคุณภาพนักเรียน ช่วยเหลือนักเรียนที่ต้องการความดูแลพิเศษ รวมถึงการลงพื้นที่เยี่ยมบ้านและติดตามทุนนักเรียนยากจน กสศ.</div></div>
+      <div class="ccard" style="border-left:4px solid #8e44ad;"><div class="ci">⚖️</div><div class="ct">ความยุติธรรมและเที่ยงธรรม</div><div class="cd">ปฏิบัติต่อนักเรียนและผู้ปกครองทุกคนด้วยความเสมอภาค ไม่เลือกปฏิบัติ ให้โอกาสนักเรียนทุกกลุ่มได้รับการพัฒนาตามศักยภาพอย่างเท่าเทียม</div></div>
+      <div class="ccard" style="border-left:4px solid #c8900a;"><div class="ci">🙏</div><div class="ct">การส่งเสริมคุณธรรมนักเรียน</div><div class="cd">เป็นแกนนำจัดกิจกรรมส่งเสริมคุณธรรม จริยธรรม และค่านิยมที่ดีแก่นักเรียน ผ่านกิจกรรมหน้าเสาธง กิจกรรมคุณธรรมประจำสัปดาห์ และการปลูกฝังวินัยในห้องเรียน</div></div>
+      <div class="ccard" style="border-left:4px solid #27ae60;"><div class="ci">🌱</div><div class="ct">การพัฒนาตนเองอย่างต่อเนื่อง</div><div class="cd">แสวงหาความรู้และพัฒนาสมรรถนะวิชาชีพอย่างต่อเนื่อง เข้ารับการอบรมและพัฒนาตนเองตามที่หน่วยงานจัดและตามความสมัครใจ เพื่อยกระดับคุณภาพการสอน</div></div>
+      <div class="ccard" style="border-left:4px solid #2e6da4;"><div class="ci">🤲</div><div class="ct">การมีจิตสาธารณะ</div><div class="cd">มีส่วนร่วมในกิจกรรมพัฒนาชุมชนและสังคม ร่วมบำเพ็ญประโยชน์ กิจกรรมทางศาสนา และสนับสนุนโครงการชุมชนต่างๆ ที่โรงเรียนเป็นศูนย์กลาง</div></div>
+    </div>
+    <div class="sbox"><p>✅ <strong>สรุป:</strong> แสดงออกถึงคุณธรรมจริยธรรมผ่านการปฏิบัติงานจริง ทั้งความซื่อสัตย์ การเสียสละ ความยุติธรรม และการส่งเสริมคุณธรรมนักเรียนอย่างต่อเนื่อง</p></div>
+  </div>
+  </section>
+
+  <!-- T4: จรรยาบรรณ -->
+  <section class="sec alt">
+  <div class="wrap">
+    <div class="slabel sl-purple">มิติที่ ๓ · ๕ คะแนน</div>
+    <h2 class="stitle">๔. การปฏิบัติตามจรรยาบรรณวิชาชีพครู</h2>
+    <p class="ssub">ตามมาตรฐานจรรยาบรรณของคุรุสภา ข้อบังคับคุรุสภาว่าด้วยจรรยาบรรณของวิชาชีพ พ.ศ. ๒๕๕๖</p>
+    <table class="tbl thead-purple">
+      <thead><tr><th style="width:50px;text-align:center;">ข้อ</th><th style="width:180px;">มาตรฐาน</th><th>การปฏิบัติในฐานะครูผู้สอน</th></tr></thead>
+      <tbody>
+        <tr><td style="text-align:center;font-weight:700;color:#8e44ad;font-size:16px;">๑</td><td><strong>ต่อตนเอง</strong><br><small style="color:#888;">พัฒนาตนเอง มีวินัย</small></td><td>พัฒนาทักษะการสอนอย่างต่อเนื่อง เข้ารับการอบรม PLC และ PLN ตามที่ สพฐ. และหน่วยงานจัดให้ เพื่อพัฒนากระบวนการจัดการเรียนรู้ที่ตอบสนองความต้องการนักเรียน</td></tr>
+        <tr><td style="text-align:center;font-weight:700;color:#8e44ad;font-size:16px;">๒</td><td><strong>ต่อวิชาชีพ</strong><br><small style="color:#888;">รักษาชื่อเสียง เกียรติยศ</small></td><td>ประพฤติตนเป็นแบบอย่างที่ดี รักษาภาพลักษณ์และเกียรติยศวิชาชีพครู ไม่กระทำการใดที่นำมาซึ่งความเสื่อมเสียแก่วิชาชีพ ชุมชน และสถานศึกษา</td></tr>
+        <tr><td style="text-align:center;font-weight:700;color:#8e44ad;font-size:16px;">๓</td><td><strong>ต่อผู้รับบริการ</strong><br><small style="color:#888;">รักและเมตตาศิษย์</small></td><td>ให้ความรัก ความเมตตาต่อนักเรียนอย่างเสมอเหมือน ดูแลทั้งด้านวิชาการ อารมณ์ สังคม และสุขภาพ รวมถึงลงพื้นที่เยี่ยมบ้านนักเรียนกลุ่มเสี่ยงและกลุ่มยากจน</td></tr>
+        <tr><td style="text-align:center;font-weight:700;color:#8e44ad;font-size:16px;">๔</td><td><strong>ต่อเพื่อนวิชาชีพ</strong><br><small style="color:#888;">ช่วยเหลือ เกื้อกูล</small></td><td>ให้ความร่วมมือ ช่วยเหลือ และสนับสนุนเพื่อนครูในการพัฒนาการสอน แลกเปลี่ยนเรียนรู้ผ่านกิจกรรม PLC เพื่อยกระดับคุณภาพการศึกษาของโรงเรียน</td></tr>
+        <tr><td style="text-align:center;font-weight:700;color:#8e44ad;font-size:16px;">๕</td><td><strong>ต่อสังคม</strong><br><small style="color:#888;">ประพฤติตนเป็นสมาชิกที่ดี</small></td><td>มีส่วนร่วมในกิจกรรมพัฒนาชุมชนและสังคม สนับสนุนโครงการที่เป็นประโยชน์ต่อชุมชน และร่วมมือกับหน่วยงานท้องถิ่นในการพัฒนาสิ่งแวดล้อมและคุณภาพชีวิตนักเรียน</td></tr>
+      </tbody>
+    </table>
+    <div class="purplebox"><p>📜 ข้าพเจ้าได้ยึดถือและปฏิบัติตามมาตรฐานจรรยาบรรณทั้ง ๕ ข้อ ตามข้อบังคับคุรุสภาว่าด้วยจรรยาบรรณของวิชาชีพ พ.ศ. ๒๕๕๖ อย่างเคร่งครัดตลอดปีการศึกษา ๒๕๖๘</p></div>
+  </div>
+  </section>
+
+  <!-- T5: แบบอย่าง -->
+  <section class="sec">
+  <div class="wrap">
+    <div class="slabel sl-gold">มิติที่ ๔ · ๕ คะแนน</div>
+    <h2 class="stitle">๕. การเป็นแบบอย่างที่ดีแก่นักเรียนและชุมชน</h2>
+    <p class="ssub">พฤติกรรมที่แสดงออกผ่านการปฏิบัติจริงในชีวิตประจำวันและในการปฏิบัติหน้าที่ครู</p>
+    <table class="tbl">
+      <thead><tr><th style="width:40px;text-align:center;">#</th><th>พฤติกรรมที่แสดงออก</th><th style="width:130px;">ด้าน</th><th style="width:120px;">หลักฐาน</th></tr></thead>
+      <tbody>
+        <tr><td class="num">1</td><td>แต่งกายถูกระเบียบ เรียบร้อย สุภาพ เป็นแบบอย่างด้านการแต่งกายแก่นักเรียนทุกโอกาส</td><td><span class="tag" style="background:#eaf3fb;color:#2e6da4;">วินัย</span></td><td>ภาพกิจกรรม</td></tr>
+        <tr><td class="num">2</td><td>ร่วมกิจกรรมส่งเสริมคุณธรรมและจริยธรรมนักเรียน ทั้งกิจกรรมหน้าเสาธง วันสำคัญทางศาสนา และโครงการโรงเรียนคุณธรรม</td><td><span class="tag" style="background:#eafaf1;color:#27ae60;">คุณธรรม</span></td><td>บันทึกกิจกรรม</td></tr>
+        <tr><td class="num">3</td><td>ประสานความร่วมมือกับผู้ปกครอง ชุมชน และวัดในการสนับสนุนนักเรียนที่ต้องการความช่วยเหลือพิเศษ เช่น การมอบทุน กสศ.</td><td><span class="tag" style="background:#fef9e7;color:#c8900a;">เครือข่าย</span></td><td>ภาพมอบทุน</td></tr>
+        <tr><td class="num">4</td><td>นำนักเรียนเข้าแข่งขันศิลปหัตถกรรม ครั้งที่ ๗๓ และสามารถคว้ารางวัลระดับเหรียญทองชนะเลิศในกิจกรรมที่รับผิดชอบ</td><td><span class="tag" style="background:#eaf3fb;color:#2e6da4;">วิชาชีพ</span></td><td>เกียรติบัตร</td></tr>
+        <tr><td class="num">5</td><td>ส่งเสริมนักเรียนให้มีนิสัยรักการอ่านผ่านโครงการนักอ่านบ้านนา และสนับสนุนกิจกรรมส่งเสริมทักษะชีวิตทุกด้าน</td><td><span class="tag" style="background:#eafaf1;color:#27ae60;">การพัฒนา</span></td><td>บันทึกโครงการ</td></tr>
+      </tbody>
+    </table>
+    <div class="sbox"><p>✅ <strong>สรุป:</strong> แสดงพฤติกรรมที่เป็นแบบอย่างแก่นักเรียนและชุมชนอย่างชัดเจนผ่านการปฏิบัติจริง ทั้งด้านวินัย คุณธรรม การพัฒนานักเรียน และการร่วมมือกับเครือข่าย</p></div>
+  </div>
+  </section>
+
+  <!-- T6: สรุป -->
+  <section class="sec alt">
+  <div class="wrap">
+    <div class="slabel sl-green">สรุปการประเมินตนเอง</div>
+    <h2 class="stitle">๖. สรุปผลการประเมินตนเององค์ประกอบที่ ๓ (ครูผู้สอน)</h2>
+    <table class="tbl thead-green">
+      <thead><tr><th>มิติ</th><th style="text-align:center;width:100px;">คะแนนเต็ม</th><th style="text-align:center;width:130px;">ระดับ</th><th>สรุปพฤติกรรมสำคัญ</th></tr></thead>
+      <tbody>
+        <tr><td><strong>มิติที่ ๑</strong> วินัยในตนเอง</td><td style="text-align:center;font-weight:700;color:#27ae60;font-size:16px;">5</td><td style="text-align:center;"><span class="tag" style="background:#eafaf1;color:#27ae60;">ดีเด่น</span></td><td>ตรงต่อเวลา ปฏิบัติงานครบ ไม่มีประวัติวินัย เข้าร่วมกิจกรรมสม่ำเสมอ</td></tr>
+        <tr><td><strong>มิติที่ ๒</strong> คุณธรรม จริยธรรม</td><td style="text-align:center;font-weight:700;color:#27ae60;font-size:16px;">5</td><td style="text-align:center;"><span class="tag" style="background:#eafaf1;color:#27ae60;">ดีเด่น</span></td><td>ซื่อสัตย์ เสียสละ ดูแลนักเรียนยากจน ส่งเสริมคุณธรรมในห้องเรียน</td></tr>
+        <tr><td><strong>มิติที่ ๓</strong> จรรยาบรรณวิชาชีพ</td><td style="text-align:center;font-weight:700;color:#27ae60;font-size:16px;">5</td><td style="text-align:center;"><span class="tag" style="background:#eafaf1;color:#27ae60;">ดีเด่น</span></td><td>ปฏิบัติตามมาตรฐานคุรุสภา ๕ ข้อ รักษาเกียรติวิชาชีพครู</td></tr>
+        <tr><td><strong>มิติที่ ๔</strong> การเป็นแบบอย่างที่ดี</td><td style="text-align:center;font-weight:700;color:#27ae60;font-size:16px;">5</td><td style="text-align:center;"><span class="tag" style="background:#eafaf1;color:#27ae60;">ดีเด่น</span></td><td>เป็นแบบอย่างแก่นักเรียน ชุมชน คว้ารางวัลเหรียญทองชนะเลิศ</td></tr>
+        <tr style="background:#eafaf1;"><td style="font-size:15px;"><strong>รวมองค์ประกอบที่ ๓</strong></td><td style="text-align:center;font-size:22px;font-weight:800;color:#1a5732;">20</td><td style="text-align:center;"><span class="tag" style="background:#27ae60;color:#fff;font-size:14px;padding:5px 14px;">ดีเด่น</span></td><td style="font-weight:600;color:#1a5732;">รักษาวินัย คุณธรรม จรรยาบรรณ และเป็นแบบอย่างที่ดีครบทุกมิติตลอดปีการศึกษา ๒๕๖๘</td></tr>
+      </tbody>
+    </table>
+    <div class="sbox"><p>✅ <strong>สรุป:</strong> ข้าพเจ้าในฐานะครูผู้สอนโรงเรียนบ้านเขาหัวนา ได้ปฏิบัติตนในการรักษาวินัย คุณธรรม จริยธรรม และจรรยาบรรณวิชาชีพอย่างสม่ำเสมอตลอดปีการศึกษา ๒๕๖๘ หลักฐานปรากฏผ่านรางวัลจากการแข่งขันศิลปหัตถกรรม การดูแลนักเรียนยากจน การเข้าร่วมกิจกรรมโรงเรียนและชุมชน และการพัฒนาทักษะวิชาชีพอย่างต่อเนื่อง</p></div>
+    <div class="goldbox"><p>📝 <strong>หมายเหตุ:</strong> หลักฐานเชิงประจักษ์สามารถตรวจสอบได้ในเอกสารภาคผนวก ก–ง และแฟ้มการปฏิบัติงานของข้าพเจ้า</p></div>
+  </div>
+  </section>
+
+  <div class="foot foot-tch">
+    <p><strong>องค์ประกอบที่ ๓ · ครูผู้สอนโรงเรียนบ้านเขาหัวนา</strong></p>
+    <p style="margin-top:6px;">อำเภอบ้านนา จังหวัดนครนายก · สพป.นครนายก · ปีการศึกษา ๒๕๖๘ · คะแนนเต็ม ๒๐ คะแนน</p>
+  </div>
+</div><!-- end panel-teacher -->
+
+<script>
+function switchTab(role) {
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('panel-' + role).classList.add('active');
+  document.querySelector('.tab-btn.' + role).classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+</script>
+</body>
+</html>
