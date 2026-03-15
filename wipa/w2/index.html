@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>แบบทดสอบคณิตศาสตร์ ป.4</title>
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;600;700;800&family=Noto+Serif+Thai:wght@600;700&display=swap" rel="stylesheet">
+<script>
+// ════════════════════════════════════════════════════
+//  ✏️ ZONE 1 — แก้เฉพาะส่วนนี้เพื่อสร้างวิชาใหม่
+// ════════════════════════════════════════════════════
+var GAS_URL    = 'https://script.google.com/macros/s/AKfycbw9JpFpKb1jVVIu-HyKy8-l5RzCagm9aPlB9tiMI1XRGBq1nre-Eda_e-WHvka_TLn1Og/exec'; // ← URL หลัง Deploy
+var API_KEY    = 'EXAM2024-2';              // ← ต้องตรงกับใน GAS (ค่า API_KEY)
+var SHEET_NAME = 'คณิตศาสตร์_ป4';        // ← ชื่อ Sheet ที่จะบันทึกคะแนน
+var SUBJECT    = 'คณิตศาสตร์';           // ← ชื่อวิชาแสดงหน้าข้อสอบ
+var LEVEL      = 'ชั้นประถมศึกษาปีที่ 4 ภาคเรียนที่ 2';
+var MAX_SCORE  = 30;                      // ← คะแนนเต็ม
+</script>
+<style>
+:root{
+  --nv:#0d1b4b;--ry:#1a3a8f;--gd:#c9972b;--gl:#f0c860;
+  --cm:#fdf8ee;--rd:#c0392b;--gn:#1a7a4a;--gr:#6b7280;
+  --lt:#eef2ff;--sh:0 4px 20px rgba(13,27,75,.12);
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Sarabun',sans-serif;background:linear-gradient(145deg,#0a1540,#1a3a8f 50%,#0d1b4b);min-height:100vh;padding:16px 10px 48px;}
+.hdr{text-align:center;padding:24px 14px 12px;margin-bottom:20px;}
+.hbg{display:inline-flex;align-items:center;gap:6px;background:rgba(201,151,43,.17);border:1.5px solid var(--gd);border-radius:50px;padding:4px 14px;font-size:11.5px;color:var(--gl);margin-bottom:10px;}
+.hdr h1{font-family:'Noto Serif Thai',serif;font-size:clamp(1.2rem,4vw,1.8rem);color:#fff;line-height:1.45;text-shadow:0 2px 8px rgba(0,0,0,.4);}
+.hdr h1 span{color:var(--gl);}
+.hmeta{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-top:9px;}
+.hmeta em{background:rgba(255,255,255,.1);border-radius:18px;padding:3px 11px;color:#c8d4ff;font-size:11.5px;font-style:normal;}
+.card{background:#fff;border-radius:15px;box-shadow:var(--sh);overflow:hidden;max-width:840px;margin:0 auto 18px;}
+.ch{background:linear-gradient(135deg,var(--nv),var(--ry));padding:13px 20px;display:flex;align-items:center;gap:10px;}
+.ci{width:36px;height:36px;background:rgba(201,151,43,.2);border:2px solid var(--gd);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;}
+.ch h2{color:#fff;font-size:.92rem;font-weight:700;}
+.ch p{color:#b0c0ff;font-size:.74rem;margin-top:1px;}
+.cb{padding:18px 20px;}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:11px;}
+.g2 .full{grid-column:1/-1;}
+.fi label{display:block;font-size:.76rem;font-weight:600;color:var(--nv);margin-bottom:4px;}
+.fi .req{color:var(--rd);}
+.fi input,.fi select{width:100%;border:2px solid #dce3f5;border-radius:8px;padding:8px 11px;font-family:'Sarabun',sans-serif;font-size:.88rem;color:var(--nv);background:var(--cm);}
+.fi input:focus,.fi select:focus{outline:none;border-color:var(--ry);background:#fff;}
+.datebox{background:var(--lt);border:2px dashed #99aee8;border-radius:8px;padding:8px 11px;font-size:.83rem;color:var(--gr);display:flex;align-items:center;gap:6px;}
+.pw{max-width:840px;margin:0 auto 9px;padding:0 2px;}
+.pl{font-size:.76rem;color:#c8d4ff;margin-bottom:4px;}
+.pbg{background:rgba(255,255,255,.14);border-radius:7px;height:6px;overflow:hidden;}
+.pb{height:100%;background:linear-gradient(90deg,var(--gl),var(--gd));border-radius:7px;transition:width .4s;width:0%;}
+.qb{background:var(--cm);border:1.5px solid #dde5ff;border-radius:10px;padding:13px 15px;margin-bottom:10px;transition:border-color .2s;}
+.qb:hover{border-color:#8fa5e8;}.qb.ok{border-color:var(--ry);}
+.qno{display:inline-flex;align-items:center;justify-content:center;width:23px;height:23px;background:var(--ry);color:#fff;border-radius:50%;font-size:.73rem;font-weight:700;flex-shrink:0;margin-right:8px;}
+.qt{font-size:.9rem;font-weight:600;color:var(--nv);display:flex;align-items:flex-start;line-height:1.5;margin-bottom:10px;}
+.cs{display:flex;flex-direction:column;gap:5px;padding-left:8px;}
+.cl{display:flex;align-items:flex-start;gap:7px;cursor:pointer;padding:7px 10px;border-radius:7px;border:1.5px solid transparent;background:#fff;font-size:.86rem;color:#1e2a5a;line-height:1.4;transition:all .13s;}
+.cl:hover{background:var(--lt);border-color:#99aee8;}
+.cl input{display:none;}
+.cl input:checked+.cd{background:var(--ry);border-color:var(--ry);}
+.cl:has(input:checked){background:var(--lt);border-color:var(--ry);font-weight:600;}
+.cd{width:15px;height:15px;min-width:15px;border-radius:50%;border:2px solid #aab8e0;display:flex;align-items:center;justify-content:center;margin-top:2px;}
+.cd::after{content:'';width:6px;height:6px;border-radius:50%;background:#fff;}
+.cc{font-weight:700;color:var(--ry);min-width:14px;}
+.eatxt{width:100%;min-height:120px;border:2px solid #dce3f5;border-radius:8px;padding:9px 12px;font-family:'Sarabun',sans-serif;font-size:.88rem;color:var(--nv);background:var(--cm);resize:vertical;line-height:1.7;}
+.eatxt:focus{outline:none;border-color:var(--ry);background:#fff;}
+.bsub{width:100%;background:linear-gradient(135deg,var(--nv),var(--ry));color:#fff;border:none;border-radius:10px;padding:13px;font-family:'Sarabun',sans-serif;font-size:.99rem;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:7px;transition:all .2s;box-shadow:0 4px 14px rgba(26,58,143,.28);}
+.bsub:hover{transform:translateY(-2px);}.bsub:disabled{opacity:.6;cursor:not-allowed;transform:none;}
+.ov{position:fixed;inset:0;background:rgba(0,0,0,.55);backdrop-filter:blur(4px);display:none;align-items:center;justify-content:center;z-index:1000;padding:14px;}
+.ov.on{display:flex;}
+.mdl{background:#fff;border-radius:16px;max-width:420px;width:100%;animation:mup .28s ease;}
+@keyframes mup{from{opacity:0;transform:translateY(18px);}to{opacity:1;transform:none;}}
+.mb{padding:22px 24px 16px;text-align:center;}
+.sring{width:100px;height:100px;border-radius:50%;border:6px solid var(--ry);display:flex;flex-direction:column;align-items:center;justify-content:center;margin:0 auto 11px;background:var(--lt);}
+.sring .big{font-size:1.85rem;font-weight:800;color:var(--nv);line-height:1;}
+.sring .dn{font-size:.77rem;color:var(--gr);}
+.mb h3{font-size:1rem;font-weight:700;color:var(--nv);}
+.mb .sub{color:var(--gr);font-size:.8rem;margin-top:3px;}
+.gp{display:inline-block;padding:4px 16px;border-radius:16px;font-weight:800;font-size:.88rem;margin:8px 0;}
+.gA{background:#e8f5e9;color:#1a7a4a;}.gB{background:#e3f2fd;color:#1565c0;}
+.gC{background:#fff8e1;color:#c49000;}.gF{background:#fde8e8;color:var(--rd);}
+.st{width:100%;border-collapse:collapse;margin:7px 0;text-align:left;}
+.st td{padding:6px 10px;border-bottom:1px solid #eee;font-size:.82rem;}
+.st td:last-child{font-weight:700;color:var(--nv);text-align:right;}
+.mf{padding:0 24px 20px;}
+.bm{width:100%;padding:10px;border-radius:8px;border:none;font-family:'Sarabun',sans-serif;font-size:.87rem;font-weight:600;cursor:pointer;background:var(--ry);color:#fff;}
+.bm:hover{background:var(--nv);}
+.done-w{max-width:840px;margin:0 auto;}
+.done-c{background:#fff;border-radius:15px;padding:44px 20px;text-align:center;}
+.done-c .di{font-size:52px;margin-bottom:11px;}
+.done-c h2{font-size:1.25rem;font-weight:800;color:var(--nv);margin-bottom:7px;}
+.done-c p{color:var(--gr);}
+.closed-c{background:rgba(255,255,255,.08);border-radius:15px;padding:44px 20px;text-align:center;max-width:840px;margin:0 auto;}
+.closed-c .di{font-size:52px;margin-bottom:11px;}
+.closed-c h2{color:#fff;font-size:1.2rem;font-weight:700;}
+.closed-c p{color:#c8d4ff;}
+.load-c{background:rgba(255,255,255,.07);border-radius:15px;padding:44px 20px;text-align:center;max-width:840px;margin:0 auto;}
+.load-c p{color:#c8d4ff;font-size:.94rem;}
+#aPanel{position:fixed;inset:0;background:linear-gradient(145deg,#0a1540,#1a3a8f);display:none;align-items:center;justify-content:center;z-index:2000;}
+#aPanel.on{display:flex;}
+.lbox{background:#fff;border-radius:16px;padding:32px 26px;max-width:330px;width:100%;text-align:center;}
+.lbox .ico{font-size:1.9rem;margin-bottom:6px;}
+.lbox h2{font-size:1.08rem;font-weight:800;color:var(--nv);margin-bottom:2px;}
+.lbox p{color:var(--gr);font-size:.78rem;margin-bottom:18px;}
+.lf{text-align:left;margin-bottom:10px;}
+.lf label{font-size:.75rem;font-weight:600;color:var(--nv);display:block;margin-bottom:3px;}
+.lf input{width:100%;border:2px solid #dce3f5;border-radius:8px;padding:8px 11px;font-family:'Sarabun',sans-serif;font-size:.88rem;color:var(--nv);}
+.lf input:focus{outline:none;border-color:var(--ry);}
+.lerr{color:var(--rd);font-size:.75rem;min-height:14px;margin-bottom:7px;}
+.blogin{width:100%;background:linear-gradient(135deg,var(--nv),var(--ry));color:#fff;border:none;border-radius:8px;padding:10px;font-family:'Sarabun',sans-serif;font-size:.9rem;font-weight:700;cursor:pointer;}
+#dash{position:fixed;inset:0;background:#f0f4ff;display:none;flex-direction:column;z-index:2000;}
+#dash.on{display:flex;}
+.dbar{background:linear-gradient(135deg,var(--nv),var(--ry));padding:10px 18px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;flex-shrink:0;}
+.dbar h1{color:#fff;font-size:.93rem;font-weight:700;}
+.dbar p{color:#8fa8ff;font-size:.7rem;}
+.dbr{display:flex;gap:5px;flex-wrap:wrap;}
+.ds{background:rgba(255,255,255,.11);color:#fff;border:1px solid rgba(255,255,255,.26);border-radius:6px;padding:5px 11px;font-family:'Sarabun',sans-serif;font-size:.74rem;cursor:pointer;white-space:nowrap;}
+.ds:hover{background:rgba(255,255,255,.2);}
+.ds.go{background:rgba(201,151,43,.22);border-color:rgba(201,151,43,.48);}
+.ds.da{background:rgba(192,57,43,.22);border-color:rgba(192,57,43,.48);}
+.dtabs{background:#1e2f6b;padding:0 18px;display:flex;gap:1px;overflow-x:auto;flex-shrink:0;scrollbar-width:none;}
+.dtabs::-webkit-scrollbar{display:none;}
+.tab{padding:9px 14px;color:#5878b0;font-family:'Sarabun',sans-serif;font-size:.78rem;font-weight:600;border:none;background:transparent;cursor:pointer;border-bottom:3px solid transparent;white-space:nowrap;transition:all .15s;}
+.tab:hover{color:#a0c0ff;}.tab.on{color:#fff;border-bottom-color:var(--gl);}
+.tab.sp{color:var(--gl);}.tab.sp.on{border-bottom-color:var(--gl);}
+.dbody{flex:1;overflow-y:auto;padding:14px 16px;}
+.sr{display:grid;grid-template-columns:repeat(auto-fit,minmax(100px,1fr));gap:10px;margin-bottom:14px;}
+.sc{background:#fff;border-radius:10px;padding:12px 10px;text-align:center;box-shadow:0 2px 8px rgba(26,58,143,.07);border-top:4px solid var(--ry);}
+.sc.go{border-top-color:var(--gd);}.sc.gr{border-top-color:var(--gn);}.sc.rd{border-top-color:var(--rd);}
+.sc .v{font-size:1.6rem;font-weight:800;color:var(--nv);line-height:1;}
+.sc .l{font-size:.67rem;color:var(--gr);margin-top:2px;}
+.tw{background:#fff;border-radius:11px;box-shadow:0 2px 8px rgba(26,58,143,.07);overflow:hidden;margin-bottom:14px;}
+.th{background:linear-gradient(90deg,var(--nv),var(--ry));padding:10px 14px;display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;}
+.th h3{color:#fff;font-size:.86rem;font-weight:700;}
+.si{background:rgba(255,255,255,.13);border:1px solid rgba(255,255,255,.26);border-radius:6px;padding:5px 9px;color:#fff;font-family:'Sarabun',sans-serif;font-size:.76rem;width:148px;}
+.si::placeholder{color:rgba(255,255,255,.42);}.si:focus{outline:none;background:rgba(255,255,255,.2);}
+.rt{width:100%;border-collapse:collapse;font-size:.77rem;}
+.rt th{background:var(--lt);color:var(--nv);padding:8px 9px;text-align:center;font-weight:700;font-size:.7rem;border-bottom:2px solid #dce3f5;white-space:nowrap;}
+.rt td{padding:8px 9px;text-align:center;border-bottom:1px solid #eef2ff;color:#1e2a5a;vertical-align:middle;}
+.rt tr:hover td{background:#f5f8ff;}
+.pc{display:inline-block;padding:2px 7px;border-radius:8px;font-weight:700;font-size:.69rem;}
+.pA{background:#e8f5e9;color:#1a7a4a;}.pB{background:#e3f2fd;color:#1565c0;}
+.pC{background:#fff8e1;color:#c49000;}.pF{background:#fde8e8;color:var(--rd);}
+.nd{text-align:center;padding:38px;color:var(--gr);font-size:.85rem;}
+.ep{background:#fff;border:2px solid var(--ry);border-radius:10px;padding:12px 14px;margin-bottom:12px;display:none;}
+.ep.on{display:block;}
+.eg{display:grid;grid-template-columns:repeat(auto-fit,minmax(118px,1fr));gap:7px;margin-bottom:9px;}
+.eg input{border:1.5px solid #dce3f5;border-radius:6px;padding:5px 8px;font-family:'Sarabun',sans-serif;font-size:.77rem;color:var(--nv);width:100%;}
+.eg input:focus{outline:none;border-color:var(--ry);}
+.ea{display:flex;gap:6px;}
+.bsv{background:var(--gn);color:#fff;border:none;border-radius:6px;padding:6px 13px;font-family:'Sarabun',sans-serif;font-size:.77rem;font-weight:600;cursor:pointer;}
+.bcn{background:#eee;color:var(--gr);border:none;border-radius:6px;padding:6px 11px;font-family:'Sarabun',sans-serif;font-size:.77rem;cursor:pointer;}
+.be{background:#e3f2fd;color:#1565c0;border:none;border-radius:4px;padding:2px 7px;font-size:.67rem;cursor:pointer;font-family:'Sarabun',sans-serif;}
+.bd{background:#fde8e8;color:var(--rd);border:none;border-radius:4px;padding:2px 7px;font-size:.67rem;cursor:pointer;margin-left:2px;font-family:'Sarabun',sans-serif;}
+.uf{background:#fff;border:2px solid var(--gd);border-radius:10px;padding:13px 14px;margin-bottom:13px;}
+.uf h4{font-size:.8rem;font-weight:700;color:var(--nv);margin-bottom:9px;}
+.ug{display:grid;grid-template-columns:repeat(auto-fit,minmax(118px,1fr));gap:7px;margin-bottom:9px;}
+.ug input,.ug select{border:1.5px solid #dce3f5;border-radius:6px;padding:5px 8px;font-family:'Sarabun',sans-serif;font-size:.77rem;color:var(--nv);width:100%;}
+.br{display:inline-block;padding:2px 7px;border-radius:8px;font-size:.67rem;font-weight:700;}
+.bra{background:#fff8e1;color:#c49000;}.brv{background:#e3f2fd;color:#1565c0;}
+.stO{display:inline-block;padding:2px 8px;border-radius:8px;font-size:.68rem;font-weight:700;background:#e8f5e9;color:#1a7a4a;}
+.stC{display:inline-block;padding:2px 8px;border-radius:8px;font-size:.68rem;font-weight:700;background:#fde8e8;color:var(--rd);}
+.spin{display:inline-block;width:14px;height:14px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:sp .6s linear infinite;}
+@keyframes sp{to{transform:rotate(360deg);}}
+.fab{position:fixed;bottom:18px;right:18px;background:linear-gradient(135deg,var(--nv),var(--ry));color:#fff;border:none;border-radius:50px;padding:10px 16px;font-family:'Sarabun',sans-serif;font-size:.79rem;font-weight:600;cursor:pointer;box-shadow:0 4px 12px rgba(13,27,75,.38);display:flex;align-items:center;gap:6px;z-index:900;transition:all .2s;}
+.fab:hover{transform:translateY(-2px);}
+@media(max-width:540px){.g2{grid-template-columns:1fr;}.cb,.mb,.mf{padding-left:16px;padding-right:16px;}.dbody{padding:11px;}.sr{grid-template-columns:1fr 1fr;}}
+</style>
+</head>
+<body>
+
+<div id="loadW"><div class="load-c" style="margin-top:60px;"><p>⏳ กำลังโหลด...</p></div></div>
+<div id="examW" style="display:none">
+  <div class="hdr">
+    <div class="hbg">🏫 แบบทดสอบออนไลน์</div>
+    <h1>วิชา<span id="hSub"></span><br><span id="hLv" style="font-family:'Sarabun',sans-serif;font-size:.78em;font-weight:500;color:#c8d4ff;"></span></h1>
+    <div class="hmeta"><em id="hQ"></em><em>⭐ เต็ม <span id="hMax"></span> คะแนน</em></div>
+  </div>
+  <div class="card">
+    <div class="ch"><div class="ci">👤</div><div><h2>ข้อมูลผู้สอบ</h2><p>กรอกให้ครบก่อนทำข้อสอบ</p></div></div>
+    <div class="cb">
+      <div class="g2">
+        <div class="fi"><label>ชื่อ <span class="req">*</span></label><input id="fn" placeholder="ชื่อ (ไม่ต้องใส่คำนำหน้า)" maxlength="50"></div>
+        <div class="fi"><label>นามสกุล <span class="req">*</span></label><input id="ln" placeholder="นามสกุล" maxlength="50"></div>
+        <div class="fi"><label>ชั้น <span class="req">*</span></label>
+          <select id="cl"><option value="">-- เลือกชั้น --</option>
+            <optgroup label="ประถมศึกษา">
+              <option>ป.1</option>
+              <option>ป.2</option>
+              <option>ป.3</option>
+              <option>ป.4</option>
+              <option>ป.5</option>
+              <option>ป.6</option>
+              <option>ป.6</option>
+            </optgroup>
+            <optgroup label="มัธยมศึกษาตอนต้น">
+              <option>ม.1</option>
+              <option>ม.2</option>
+              <option>ม.3</option>
+            </optgroup>
+          </select>
+        </div>
+        <div class="fi"><label>เลขที่ <span class="req">*</span></label><input id="sn" type="number" placeholder="เลขที่" min="1" max="60"></div>
+        <div class="fi full"><label>วันที่สอบ</label><div class="datebox">📅 <span id="edt"></span></div></div>
+      </div>
+    </div>
+  </div>
+  <div class="pw"><div class="pl" id="pl">ตอบแล้ว 0 / 0 ข้อ</div><div class="pbg"><div class="pb" id="pb"></div></div></div>
+  <div id="mcqW"></div>
+  <div id="essW"></div>
+  <div style="max-width:840px;margin:0 auto 28px;padding:0 2px;">
+    <button class="bsub" id="subBtn" onclick="submitExam()">📤 ส่งข้อสอบ</button>
+  </div>
+</div>
+<div id="closedW" style="display:none"><div class="closed-c" style="margin-top:60px;"><div class="di">🔒</div><h2>ปิดรับคำตอบแล้ว</h2><p style="margin-top:8px;">กรุณาติดต่อครูผู้สอน</p></div></div>
+<div id="doneW" style="display:none"><div class="done-w"><div class="done-c"><div class="di">✅</div><h2>ส่งข้อสอบเรียบร้อยแล้ว</h2><p id="doneTx" style="margin-top:9px;font-size:.94rem;"></p><p style="margin-top:15px;color:#bbb;font-size:.77rem;">ปิดหน้าต่างนี้ได้เลยครับ</p></div></div></div>
+
+<div class="ov" id="resOv">
+  <div class="mdl">
+    <div class="mb">
+      <div class="sring"><span class="big" id="rSc">—</span><span class="dn" id="rDn">/21</span></div>
+      <h3 id="rNm"></h3><div class="sub" id="rCl"></div><span class="gp" id="rGr"></span>
+      <table class="st" id="rTbl"></table>
+    </div>
+    <div class="mf"><button class="bm" onclick="confirmDone()">✅ รับทราบ — ปิด</button></div>
+  </div>
+</div>
+
+<div id="aPanel">
+  <div class="lbox">
+    <div class="ico">🔐</div><h2>ระบบผู้ดูแล</h2><p>เข้าสู่ระบบเพื่อดูและจัดการผลการสอบ</p>
+    <div class="lf"><label>ชื่อผู้ใช้</label><input id="au" placeholder="username" autocomplete="username"></div>
+    <div class="lf"><label>รหัสผ่าน</label><input id="ap" type="password" placeholder="password" onkeydown="if(event.key==='Enter')doLogin()"></div>
+    <div class="lerr" id="le"></div>
+    <button class="blogin" id="lbtn" onclick="doLogin()">เข้าสู่ระบบ</button>
+    <div style="margin-top:10px;"><button style="background:none;border:none;color:#aaa;font-size:.74rem;cursor:pointer;" onclick="G('aPanel').classList.remove('on')">← กลับ</button></div>
+  </div>
+</div>
+
+<div id="dash">
+  <div class="dbar">
+    <div><h1>📊 Admin Dashboard</h1><p id="dInfo">ระบบจัดการผลสอบ</p></div>
+    <div class="dbr">
+      <button class="ds go" onclick="expCSV()">⬇ CSV</button>
+      <button class="ds go" onclick="expPDF()">🖨 PDF</button>
+      <button class="ds" onclick="loadTab()">🔄 รีเฟรช</button>
+      <button class="ds da" onclick="closeDash()">✕ ออก</button>
+    </div>
+  </div>
+  <div class="dtabs" id="dtabs"></div>
+  <div class="dbody" id="dbody"><div class="nd">⏳ กำลังโหลด...</div></div>
+</div>
+<button class="fab" id="fab" onclick="showLogin()">🔐 ผู้ดูแล</button>
+
+<!-- ════════════════════════════════════════════════
+     ✏️ ZONE 2 — ข้อสอบ แก้ DEF object ด้านล่าง
+════════════════════════════════════════════════ -->
+<script>
+var DEF = {
+  questions: [
+    // ─── หน่วย: เศษส่วน (ข้อ 1-10) ───
+    {q:"เศษส่วน 3/4 หมายความว่าอะไร?",c:["แบ่งสิ่งของออกเป็น 3 ส่วนเท่ากัน นำมา 4 ส่วน","แบ่งสิ่งของออกเป็น 4 ส่วนเท่ากัน นำมา 3 ส่วน","แบ่งสิ่งของออกเป็น 7 ส่วนเท่ากัน","แบ่งสิ่งของออกเป็น 12 ส่วนเท่ากัน"]},
+    {q:"เศษส่วนใดต่อไปนี้เป็นเศษแท้?",c:["7/3","5/5","2/7","9/4"]},
+    {q:"เศษเกิน 11/4 เขียนในรูปจำนวนคละได้เท่าไร?",c:["2 และ 1/4","2 และ 3/4","3 และ 1/4","3 และ 3/4"]},
+    {q:"เศษส่วน 12/18 เมื่อทำให้เป็นเศษส่วนอย่างต่ำได้เท่าไร?",c:["1/2","2/3","3/4","4/6"]},
+    {q:"1/4 + 1/2 มีค่าเท่าไร?",c:["2/6","2/8","3/4","1/2"]},
+    {q:"3/4 - 1/4 มีค่าเท่าไร?",c:["2/4","1/4","1/2","ก และ ค ถูก"]},
+    {q:"เรียงเศษส่วนจากน้อยไปมาก: 1/2, 3/4, 1/4",c:["1/2, 3/4, 1/4","1/4, 1/2, 3/4","3/4, 1/2, 1/4","1/4, 3/4, 1/2"]},
+    {q:"มะลิซื้อผ้า 2 ชิ้น ชิ้นที่หนึ่งยาว 3/5 เมตร ชิ้นที่สองยาว 1/5 เมตร มะลิซื้อผ้าทั้งหมดกี่เมตร?",c:["2/5 เมตร","3/10 เมตร","4/5 เมตร","1 เมตร"]},
+    {q:"ถังน้ำมีน้ำอยู่ 7/8 ถัง ใช้ไป 3/8 ถัง เหลือน้ำกี่ส่วนของถัง?",c:["3/8 ถัง","4/8 ถัง","1/2 ถัง","ข และ ค ถูก"]},
+    {q:"ข้อใดต่อไปนี้เป็นเศษเกิน?",c:["3/5","7/9","5/5","5/3"]},
+    // ─── หน่วย: ทศนิยม (ข้อ 11-20) ───
+    {q:"ตัวเลข 3 ในจำนวน 45.306 อยู่ในหลักใด?",c:["หลักหน่วย","หลักสิบ","หลักส่วนสิบ","หลักส่วนร้อย"]},
+    {q:"3.42 + 5.3 มีค่าเท่าไร?",c:["8.45","8.72","8.47","8.74"]},
+    {q:"9.45 - 1.54 มีค่าเท่าไร?",c:["7.81","7.91","8.01","7.99"]},
+    {q:"ทศนิยมใดมีค่ามากที่สุด?",c:["4.59","4.509","4.5","4.590"]},
+    {q:"เรียงทศนิยมจากน้อยไปมาก: 2.84, 0.95, 1.56",c:["2.84, 1.56, 0.95","0.95, 2.84, 1.56","0.95, 1.56, 2.84","1.56, 0.95, 2.84"]},
+    {q:"0.39 เขียนในรูปเศษส่วนได้เท่าไร?",c:["39/10","39/100","39/1000","3.9/10"]},
+    {q:"ป้าแยมขายส้มได้ 67.4 กิโลกรัม ขายมะละกอได้ 27.6 กิโลกรัม ขายส้มมากกว่ามะละกอกี่กิโลกรัม?",c:["39.2 กิโลกรัม","40.2 กิโลกรัม","39.8 กิโลกรัม","40.8 กิโลกรัม"]},
+    {q:"แม่มีน้ำส้มคั้น 3.5 ลิตร ต้องใช้ 5.85 ลิตร ต้องเพิ่มอีกอย่างน้อยกี่ลิตร?",c:["2.25 ลิตร","2.35 ลิตร","2.45 ลิตร","2.55 ลิตร"]},
+    {q:"ช่างตัดเสื้อมีผ้าสีขาว 9.45 เมตร ตัดเสื้อ 1 ตัว ใช้ผ้า 1.54 เมตร เหลือผ้ากี่เมตร?",c:["7.71 เมตร","7.81 เมตร","7.91 เมตร","8.01 เมตร"]},
+    {q:"ข้อใดถูกต้อง?",c:["0.59 > 0.594","1.23 < 1.232","8.433 < 8.343","9.167 > 9.176"]},
+    // ─── หน่วย: เรขาคณิต (ข้อ 21-24) ───
+    {q:"รูปสี่เหลี่ยมผืนผ้ากว้าง 5 เซนติเมตร ยาว 8 เซนติเมตร มีพื้นที่เท่าไร?",c:["13 ตร.ซม.","26 ตร.ซม.","40 ตร.ซม.","45 ตร.ซม."]},
+    {q:"รูปสี่เหลี่ยมจัตุรัสมีด้านยาวด้านละ 6 เซนติเมตร มีความยาวรอบรูปเท่าไร?",c:["12 เซนติเมตร","24 เซนติเมตร","36 เซนติเมตร","48 เซนติเมตร"]},
+    {q:"มุมขนาด 90 องศา เรียกว่ามุมอะไร?",c:["มุมแหลม","มุมป้าน","มุมฉาก","มุมตรง"]},
+    {q:"รูปสี่เหลี่ยมผืนผ้ากว้าง 10 เมตร ยาว 25 เมตร มีพื้นที่เท่าไร?",c:["35 ตร.ม.","70 ตร.ม.","250 ตร.ม.","500 ตร.ม."]},
+    // ─── หน่วย: แบบรูป (ข้อ 25-27) ───
+    {q:"แบบรูปต่อไปนี้: 11, 22, 33, 44, ___ จำนวนถัดไปคือเท่าไร?",c:["54","55","56","66"]},
+    {q:"แบบรูป: 3, 6, 9, 12, 15, ... จำนวนที่ 10 คือเท่าไร?",c:["20","25","30","35"]},
+    {q:"แบบรูป: 222, 202, 182, ___, 142 จำนวนที่หายไปคือเท่าไร?",c:["162","160","158","172"]},
+    // ─── หน่วย: สถิติ (ข้อ 28-30) ───
+    {q:"นักเรียนเลือกชมรมหมากรุก 10 คน ชมรมดนตรีน้อยกว่า 3 คน นักเรียนเลือกชมรมดนตรีกี่คน?",c:["5 คน","7 คน","13 คน","3 คน"]},
+    {q:"จากตารางขายปลา พบว่าขายปลาช่อนได้ 32 กิโลกรัม ขายปลาดุกได้ 85 กิโลกรัม รวมขายปลาสองชนิดได้กี่กิโลกรัม?",c:["107 กิโลกรัม","117 กิโลกรัม","53 กิโลกรัม","127 กิโลกรัม"]},
+    {q:"แผนภูมิแท่งแสดงปริมาณวิตามินซีในผัก: กะหล่ำม่วง 32 มก., กะหล่ำปลี 30 มก., บล็อกโคลี่ 35 มก. ผักชนิดใดมีวิตามินซีมากที่สุด?",c:["กะหล่ำม่วง","กะหล่ำปลี","บล็อกโคลี่","เท่ากันทุกชนิด"]}
+  ],
+  answerKey:['ข','ค','ข','ข','ค','ง','ข','ค','ง','ง','ค','ข','ข','ก','ค','ข','ค','ข','ค','ข','ค','ข','ค','ค','ข','ค','ก','ข','ข','ค'],
+  essay:{show:false}
+};</script>
+
+<!-- ════ ENGINE ════ (ไม่ต้องแก้) -->
+<script>
+var C=['ก','ข','ค','ง'],LU='',LP='',LR='',ATAB='',ASH=[],AR=[],MS=0;
+function G(id){return document.getElementById(id);}
+function V(id){return(G(id)?G(id).value:'').trim();}
+function post(p){return fetch(GAS_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(p)}).then(function(r){return r.json();});}
+
+function boot(){
+  G('edt').textContent=new Date().toLocaleString('th-TH',{weekday:'long',year:'numeric',month:'long',day:'numeric',hour:'2-digit',minute:'2-digit',timeZone:'Asia/Bangkok'});
+  post({action:'getConfig'})
+    .then(function(r){
+      var cfg=null;
+      if(r.ok&&r.data){for(var i=0;i<r.data.length;i++){if(r.data[i].sheetName===SHEET_NAME){cfg=r.data[i];break;}}}
+      MS=(cfg&&cfg.maxScore>0)?cfg.maxScore:MAX_SCORE;
+      if(cfg&&cfg.status==='closed'){G('loadW').style.display='none';G('closedW').style.display='block';return;}
+      showExam();
+    })
+    .catch(function(){MS=MAX_SCORE;showExam();});
+}
+
+function showExam(){
+  G('hSub').textContent=SUBJECT;G('hLv').textContent=LEVEL;G('hMax').textContent=MS;
+  var tot=DEF.questions.length+(DEF.essay&&DEF.essay.show?1:0);
+  G('hQ').textContent='📝 '+tot+' ข้อ';
+  buildExam();
+  G('loadW').style.display='none';G('examW').style.display='block';
+}
+
+function buildExam(){
+  if(DEF.questions.length){
+    var h='<div class="card"><div class="ch"><div class="ci">📋</div><div><h2>ส่วนที่ 1 — ปรนัย</h2><p>เลือกคำตอบถูกต้องเพียงข้อเดียว (ข้อ 1–'+DEF.questions.length+') ข้อละ 1 คะแนน</p></div></div><div class="cb">';
+    DEF.questions.forEach(function(q,i){
+      h+='<div class="qb" id="qb'+i+'"><div class="qt"><span class="qno">'+(i+1)+'</span>'+q.q+'</div><div class="cs">';
+      q.c.forEach(function(c,j){h+='<label class="cl"><input type="radio" name="q'+i+'" value="'+C[j]+'" onchange="updP()"><span class="cd"></span><span class="cc">'+C[j]+'.</span><span>'+c+'</span></label>';});
+      h+='</div></div>';
+    });
+    G('mcqW').innerHTML=h+'</div></div>';
+  }
+  if(DEF.essay&&DEF.essay.show){
+    var n=DEF.questions.length+1;
+    G('essW').innerHTML='<div class="card"><div class="ch"><div class="ci">✍️</div><div><h2>ส่วนที่ 2 — อัตนัย</h2><p>ข้อ '+n+' — '+DEF.essay.points+' คะแนน</p></div></div><div class="cb"><div class="qb"><div class="qt"><span class="qno">'+n+'</span>'+DEF.essay.label+'</div><textarea id="esA" class="eatxt" placeholder="เขียนคำตอบที่นี่... (อย่างน้อย 2-3 ประโยค)" oninput="updP()"></textarea><p style="font-size:.73rem;color:var(--gr);margin-top:5px;">💡 ตอบอย่างน้อย 2-3 ประโยค</p></div></div></div>';
+  }
+  updP();
+}
+
+function updP(){
+  var n=DEF.questions.length,d=0;
+  for(var i=0;i<n;i++){var ok=!!document.querySelector('input[name="q'+i+'"]:checked');if(ok)d++;var b=G('qb'+i);if(b)b.classList.toggle('ok',ok);}
+  var hE=DEF.essay&&DEF.essay.show;
+  if(hE&&G('esA')&&G('esA').value.trim().length>5)d++;
+  var t=n+(hE?1:0);
+  G('pb').style.width=(t?Math.round(d/t*100):0)+'%';
+  G('pl').textContent='ตอบแล้ว '+d+' / '+t+' ข้อ';
+}
+
+function submitExam(){
+  var fn=V('fn'),ln=V('ln'),cl=V('cl'),sn=V('sn');
+  if(!fn||!ln||!cl||!sn){alert('⚠️ กรุณากรอกข้อมูลให้ครบ');G('fn').scrollIntoView({behavior:'smooth'});return;}
+  var ans=[],un=[];
+  for(var i=0;i<DEF.questions.length;i++){var s=document.querySelector('input[name="q'+i+'"]:checked');ans.push(s?s.value:'');if(!s)un.push(i+1);}
+  if(un.length&&!confirm('⚠️ ยังไม่ได้ตอบข้อ: '+un.join(', ')+'\nต้องการส่งเลยหรือไม่?'))return;
+  var mc=0;ans.forEach(function(a,i){if(a===DEF.answerKey[i])mc++;});
+  var et=(G('esA')?G('esA').value.trim():'');
+  var ess=(DEF.essay&&DEF.essay.show&&et.length>10)?DEF.essay.points:0;
+  var tot=mc+ess;
+  var ts=new Date().toLocaleString('th-TH',{timeZone:'Asia/Bangkok',year:'numeric',month:'long',day:'numeric',hour:'2-digit',minute:'2-digit',second:'2-digit'});
+  var btn=G('subBtn');btn.disabled=true;btn.innerHTML='<span class="spin"></span> กำลังส่ง...';
+  post({action:'saveScore',apiKey:API_KEY,sheetName:SHEET_NAME,subjectName:SUBJECT,
+    student:{firstName:fn,lastName:ln,classroom:cl,studentNo:sn},
+    score:tot,maxScore:MS,timestamp:ts,
+    extra:{mcScore:mc,essayScore:ess,answers:ans.map(function(a,i){return a+(a===DEF.answerKey[i]?'✓':'✗');}).join(','),essay:et}
+  }).then(function(r){
+    if(r.ok){showModal({fn:fn,ln:ln,cl:cl,sn:sn,score:tot,mc:mc,ess:ess});}
+    else{alert('❌ GAS ตอบ: '+r.msg+'\n\nหากเป็น "Invalid API key" ให้ตรวจว่า API_KEY ใน HTML ตรงกับใน GAS หรือไม่');btn.disabled=false;btn.innerHTML='📤 ส่งข้อสอบ';}
+  }).catch(function(e){alert('❌ '+e.message+'\n\nตรวจสอบ GAS_URL และการ Deploy');btn.disabled=false;btn.innerHTML='📤 ส่งข้อสอบ';});
+}
+
+function showModal(r){
+  var p=Math.round(r.score/MS*100);
+  G('rSc').textContent=r.score;G('rDn').textContent='/'+MS;
+  G('rNm').textContent=r.fn+' '+r.ln;G('rCl').textContent='ชั้น '+r.cl+' เลขที่ '+r.sn;
+  var g,gc;
+  if(p>=80){g='ยอดเยี่ยม 🌟';gc='gA';}else if(p>=70){g='ดีมาก 👍';gc='gB';}
+  else if(p>=50){g='ผ่าน ✅';gc='gC';}else{g='ต้องปรับปรุง 📚';gc='gF';}
+  G('rGr').textContent=g;G('rGr').className='gp '+gc;
+  G('rTbl').innerHTML=[['📋 ปรนัย',r.mc+'/'+DEF.questions.length],['✍️ อัตนัย',r.ess+'/'+(DEF.essay?DEF.essay.points:0)],['⭐ รวม',r.score+'/'+MS],['📊 %',p+'%']].map(function(x){return'<tr><td>'+x[0]+'</td><td>'+x[1]+'</td></tr>';}).join('');
+  window._R=r;G('resOv').classList.add('on');
+}
+
+function confirmDone(){
+  G('resOv').classList.remove('on');G('examW').style.display='none';G('doneW').style.display='block';G('fab').style.display='none';
+  var r=window._R||{};var p=r.score?Math.round(r.score/MS*100):0;
+  G('doneTx').textContent=r.fn+' '+r.ln+' — ชั้น '+r.cl+' เลขที่ '+r.sn+' | คะแนน '+r.score+'/'+MS+' ('+p+'%)';
+}
+
+function showLogin(){G('aPanel').classList.add('on');setTimeout(function(){G('au').focus();},80);}
+
+function doLogin(){
+  var u=V('au'),p=V('ap'),err=G('le'),btn=G('lbtn');
+  if(!u||!p){err.textContent='กรุณากรอกข้อมูล';return;}
+  btn.innerHTML='<span class="spin"></span>';btn.disabled=true;err.textContent='';
+  post({action:'login',apiKey:API_KEY,username:u,password:p})
+    .then(function(r){
+      if(r.ok){LU=u;LP=p;LR=r.role;G('dInfo').textContent='ยินดีต้อนรับ '+r.name+' ('+r.role+')';G('aPanel').classList.remove('on');G('dash').classList.add('on');loadSheets();}
+      else{err.textContent=r.msg||'เข้าสู่ระบบไม่ได้';}
+    }).catch(function(e){err.textContent=''+e.message;})
+    .finally(function(){btn.textContent='เข้าสู่ระบบ';btn.disabled=false;});
+}
+
+function loadSheets(){
+  post({action:'getSheets',apiKey:API_KEY,username:LU,password:LP}).then(function(r){
+    ASH=r.sheets||[];ATAB=ASH.length?ASH[0].sheetName:'';renderTabs();loadTab();
+  });
+}
+
+function renderTabs(){
+  var tc=G('dtabs');tc.innerHTML='';
+  ASH.forEach(function(s){
+    var b=document.createElement('button');b.className='tab'+(s.sheetName===ATAB?' on':'');
+    b.textContent='📋 '+(s.subjectName||s.sheetName)+(s.status==='closed'?' 🔒':'');
+    b.onclick=(function(sn){return function(){sw(sn);};})(s.sheetName);tc.appendChild(b);
+  });
+  if(LR==='admin'){[{id:'__cfg',lbl:'⚙️ Config'},{id:'__usr',lbl:'👥 Users'}].forEach(function(x){
+    var b=document.createElement('button');b.className='tab sp'+(ATAB===x.id?' on':'');
+    b.textContent=x.lbl;b.onclick=(function(id){return function(){sw(id);};})(x.id);tc.appendChild(b);
+  });}
+}
+
+function sw(s){ATAB=s;renderTabs();loadTab();}
+function loadTab(){
+  if(ATAB==='__cfg'){loadCfg();return;}if(ATAB==='__usr'){loadUsr();return;}
+  if(!ATAB){G('dbody').innerHTML='<div class="nd">📭 ไม่มี Sheet</div>';return;}
+  loadRes(ATAB);
+}
+
+function loadRes(sn){
+  G('dbody').innerHTML='<div class="nd">⏳ กำลังโหลด...</div>';
+  post({action:'getResults',apiKey:API_KEY,username:LU,password:LP,sheetName:sn}).then(function(r){
+    if(!r.ok){G('dbody').innerHTML='<div class="nd">❌ '+r.msg+'</div>';return;}
+    AR=r.data||[];var s=r.summary||{},adm=LR==='admin';
+    G('dbody').innerHTML='<div class="sr"><div class="sc"><div class="v">'+(s.count||0)+'</div><div class="l">ผู้สอบ</div></div><div class="sc go"><div class="v">'+(s.avg||0)+'</div><div class="l">เฉลี่ย</div></div><div class="sc"><div class="v">'+(s.avgPct||0)+'%</div><div class="l">เฉลี่ย %</div></div><div class="sc gr"><div class="v">'+(s.pass||0)+'</div><div class="l">ผ่าน ≥50%</div></div><div class="sc rd"><div class="v">'+(s.fail||0)+'</div><div class="l">ไม่ผ่าน</div></div><div class="sc"><div class="v">'+(s.max||0)+'</div><div class="l">สูงสุด</div></div></div><div id="ep" class="ep"></div><div class="tw"><div class="th"><h3>รายชื่อผู้สอบ — '+sn+'</h3><div><input class="si" id="srch" placeholder="🔍 ค้นหา..." oninput="fR()"></div></div><div style="overflow-x:auto;"><table class="rt"><thead><tr><th>#</th><th>ชื่อ-นามสกุล</th><th>ชั้น</th><th>เลขที่</th><th>คะแนน</th><th>เต็ม</th><th>%</th><th>ระดับ</th><th>วันเวลา</th>'+(adm?'<th>จัดการ</th>':'')+'</tr></thead><tbody id="rtb"></tbody></table></div></div>';
+    rnR(AR);
+  }).catch(function(e){G('dbody').innerHTML='<div class="nd">❌ '+e.message+'</div>';});
+}
+
+function rnR(data){
+  var tb=G('rtb');if(!tb)return;
+  if(!data.length){tb.innerHTML='<tr><td colspan="11" class="nd">📭 ยังไม่มีข้อมูล</td></tr>';return;}
+  var adm=LR==='admin';
+  tb.innerHTML=data.map(function(r,i){
+    var p=parseInt(String(r.percent||'0'))||0,pc,lv;
+    if(p>=80){pc='pA';lv='ยอดเยี่ยม';}else if(p>=70){pc='pB';lv='ดีมาก';}else if(p>=50){pc='pC';lv='ผ่าน';}else{pc='pF';lv='ปรับปรุง';}
+    var ac=adm?'<td><button class="be" onclick="stE('+r._rowIndex+')">✏️</button><button class="bd" onclick="dR('+r._rowIndex+')">🗑</button></td>':'';
+    return '<tr><td>'+(i+1)+'</td><td style="text-align:left;font-weight:600">'+(r.firstName||'')+' '+(r.lastName||'')+'</td><td>'+(r.classroom||'')+'</td><td>'+(r.studentNo||'')+'</td><td style="font-weight:800;color:var(--nv)">'+(r.score||'')+'</td><td>'+(r.maxScore||'')+'</td><td><span class="pc '+pc+'">'+(r.percent||'')+'</span></td><td><span class="pc '+pc+'">'+lv+'</span></td><td style="font-size:.7rem;color:#888">'+String(r.timestamp||'').substring(0,16)+'</td>'+ac+'</tr>';
+  }).join('');
+}
+function fR(){var q=(G('srch')||{value:''}).value.toLowerCase();rnR(AR.filter(function(r){return[r.firstName,r.lastName,r.classroom,r.studentNo].join(' ').toLowerCase().indexOf(q)!==-1;}));}
+
+function stE(ri){
+  var r=null;for(var i=0;i<AR.length;i++){if(AR[i]._rowIndex===ri){r=AR[i];break;}}if(!r)return;
+  var ep=G('ep');ep.classList.add('on');
+  ep.innerHTML='<div style="font-size:.82rem;font-weight:700;color:var(--nv);margin-bottom:8px;">✏️ แก้ไขแถว '+ri+' — '+(r.firstName||'')+' '+(r.lastName||'')+'</div><div class="eg"><div><label style="font-size:.67rem;color:var(--gr)">ชื่อ</label><input id="e0" value="'+(r.firstName||'')+'"></div><div><label style="font-size:.67rem;color:var(--gr)">นามสกุล</label><input id="e1" value="'+(r.lastName||'')+'"></div><div><label style="font-size:.67rem;color:var(--gr)">ชั้น</label><input id="e2" value="'+(r.classroom||'')+'"></div><div><label style="font-size:.67rem;color:var(--gr)">เลขที่</label><input id="e3" value="'+(r.studentNo||'')+'"></div><div><label style="font-size:.67rem;color:var(--gr)">คะแนน</label><input id="e4" type="number" value="'+(r.score||0)+'"></div><div><label style="font-size:.67rem;color:var(--gr)">เต็ม</label><input id="e5" type="number" value="'+(r.maxScore||0)+'"></div></div><div class="ea"><button class="bsv" onclick="svE('+ri+')">💾 บันทึก</button><button class="bcn" onclick="cnE()">ยกเลิก</button></div>';
+  ep.scrollIntoView({behavior:'smooth'});
+}
+function svE(ri){post({action:'updateRow',apiKey:API_KEY,username:LU,password:LP,sheetName:ATAB,rowIndex:ri,updates:{firstName:V('e0'),lastName:V('e1'),classroom:V('e2'),studentNo:V('e3'),score:V('e4'),maxScore:V('e5')}}).then(function(r){if(r.ok){cnE();loadTab();}else alert('❌ '+r.msg);});}
+function cnE(){var ep=G('ep');if(ep){ep.classList.remove('on');ep.innerHTML='';}}
+function dR(ri){if(!confirm('⚠️ ลบแถวนี้?'))return;post({action:'deleteRow',apiKey:API_KEY,username:LU,password:LP,sheetName:ATAB,rowIndex:ri}).then(function(r){if(r.ok)loadTab();else alert('❌ '+r.msg);});}
+
+function loadCfg(){
+  G('dbody').innerHTML='<div class="nd">⏳ กำลังโหลด...</div>';
+  post({action:'getConfig'}).then(function(r){
+    var d=r.data||[];
+    G('dbody').innerHTML='<div class="uf"><h4>➕ เพิ่ม / แก้ไข Config (ใช้ sheetName เดิม = แก้ไข)</h4><div class="ug"><div><label style="font-size:.67rem;color:var(--gr)">sheetName *</label><input id="c0" placeholder="คณิตศาสตร์_ป6"></div><div><label style="font-size:.67rem;color:var(--gr)">ชื่อวิชา</label><input id="c1" placeholder="คณิตศาสตร์"></div><div><label style="font-size:.67rem;color:var(--gr)">maxScore *</label><input id="c2" type="number" placeholder="20"></div><div><label style="font-size:.67rem;color:var(--gr)">Status</label><select id="c3"><option value="open">open (เปิดรับ)</option><option value="closed">closed (ปิดรับ)</option></select></div></div><div style="display:flex;gap:6px;"><button class="bsv" onclick="svCfg()">💾 บันทึก</button></div><div id="ce" style="color:var(--rd);font-size:.74rem;margin-top:5px;"></div></div><div class="tw"><div class="th"><h3>⚙️ Config ปัจจุบัน</h3></div><div style="overflow-x:auto;"><table class="rt"><thead><tr><th>#</th><th>sheetName</th><th>ชื่อวิชา</th><th>maxScore</th><th>Status</th><th>สลับ</th></tr></thead><tbody>'+(d.length?d.map(function(c,i){return'<tr><td>'+(i+1)+'</td><td style="font-weight:700">'+c.sheetName+'</td><td>'+c.subjectName+'</td><td>'+c.maxScore+'</td><td><span class="'+(c.status==='open'?'stO':'stC')+'">'+c.status+'</span></td><td><button class="be" onclick="tgSt(\''+c.sheetName+'\',\''+c.subjectName+'\','+c.maxScore+',\''+(c.status==='open'?'closed':'open')+'\')">'+(c.status==='open'?'🔒 ปิด':'🔓 เปิด')+'</button></td></tr>';}).join(''):'<tr><td colspan="6" class="nd">📭 ยังไม่มี config</td></tr>')+'</tbody></table></div></div>';
+  });
+}
+function svCfg(){var sn=V('c0'),nm=V('c1'),ms=V('c2'),st=G('c3').value;G('ce').textContent='';if(!sn||!ms){G('ce').textContent='กรุณากรอก sheetName และ maxScore';return;}post({action:'setConfig',apiKey:API_KEY,username:LU,password:LP,sheetName:sn,subjectName:nm||sn,maxScore:Number(ms),status:st}).then(function(r){if(r.ok){G('c0').value='';G('c1').value='';G('c2').value='';loadCfg();}else G('ce').textContent=r.msg;});}
+function tgSt(sn,nm,ms,ns){post({action:'setConfig',apiKey:API_KEY,username:LU,password:LP,sheetName:sn,subjectName:nm,maxScore:ms,status:ns}).then(function(r){if(r.ok)loadCfg();else alert('❌ '+r.msg);});}
+
+function loadUsr(){
+  G('dbody').innerHTML='<div class="nd">⏳ กำลังโหลด...</div>';
+  post({action:'getUsers',apiKey:API_KEY,username:LU,password:LP}).then(function(r){
+    var us=r.data||[];
+    G('dbody').innerHTML='<div class="uf"><h4>➕ เพิ่มผู้ใช้ใหม่</h4><div class="ug"><div><label style="font-size:.67rem;color:var(--gr)">Username *</label><input id="u0" placeholder="username"></div><div><label style="font-size:.67rem;color:var(--gr)">Password *</label><input id="u1" placeholder="password"></div><div><label style="font-size:.67rem;color:var(--gr)">ชื่อแสดง</label><input id="u2" placeholder="ชื่อ-นามสกุล"></div><div><label style="font-size:.67rem;color:var(--gr)">Role</label><select id="u3"><option value="viewer">viewer</option><option value="admin">admin</option></select></div></div><div style="display:flex;gap:6px;"><button class="bsv" onclick="addUsr()">➕ เพิ่ม</button></div><div id="ue" style="color:var(--rd);font-size:.74rem;margin-top:5px;"></div></div><div class="tw"><div class="th"><h3>👥 รายชื่อผู้ใช้</h3></div><div style="overflow-x:auto;"><table class="rt"><thead><tr><th>#</th><th>Username</th><th>Password</th><th>ชื่อ</th><th>Role</th><th>จัดการ</th></tr></thead><tbody id="utb"></tbody></table></div></div>';
+    rnU([{_rowIndex:0,username:'admin',password:'(ซ่อน)',displayName:'Administrator',role:'admin',locked:true}].concat(us));
+  });
+}
+function rnU(us){var tb=G('utb');if(!tb)return;tb.innerHTML=us.map(function(u,i){var rb='<span class="br '+(u.role==='admin'?'bra':'brv')+'">'+u.role+'</span>';var ac=u.locked?'<span style="color:#ccc;font-size:.7rem;">🔒</span>':'<button class="be" onclick="edU('+u._rowIndex+')">✏️</button><button class="bd" onclick="dlU('+u._rowIndex+')">🗑</button>';return'<tr id="ur'+u._rowIndex+'"><td>'+(i+1)+'</td><td style="font-weight:700">'+u.username+'</td><td style="color:#bbb">'+(u.locked?'*****':u.password)+'</td><td>'+u.displayName+'</td><td>'+rb+'</td><td>'+ac+'</td></tr>';}).join('');}
+function addUsr(){var u=V('u0'),p=V('u1'),n=V('u2'),r=G('u3').value;G('ue').textContent='';if(!u||!p){G('ue').textContent='กรุณากรอก Username และ Password';return;}post({action:'addUser',apiKey:API_KEY,username:LU,password:LP,newUsername:u,newPassword:p,newDisplayName:n||u,newRole:r}).then(function(r){if(r.ok){G('u0').value='';G('u1').value='';G('u2').value='';loadUsr();}else G('ue').textContent=r.msg;});}
+function edU(ri){var row=G('ur'+ri);if(!row)return;var td=row.querySelectorAll('td');var cu=td[1].textContent,cp=td[2].textContent==='*****'?'':td[2].textContent,cn=td[3].textContent,cr=td[4].querySelector('.br').textContent;row.innerHTML='<td>'+td[0].textContent+'</td><td><input id="eu0" value="'+cu+'" style="border:1.5px solid #dce3f5;border-radius:5px;padding:4px 7px;font-size:.75rem;width:100%;"></td><td><input id="eu1" value="'+cp+'" placeholder="รหัสใหม่" style="border:1.5px solid #dce3f5;border-radius:5px;padding:4px 7px;font-size:.75rem;width:100%;"></td><td><input id="eu2" value="'+cn+'" style="border:1.5px solid #dce3f5;border-radius:5px;padding:4px 7px;font-size:.75rem;width:100%;"></td><td><select id="eu3" style="border:1.5px solid #dce3f5;border-radius:5px;padding:4px 7px;font-size:.75rem;"><option value="viewer"'+(cr==='viewer'?' selected':'')+'>viewer</option><option value="admin"'+(cr==='admin'?' selected':'')+'>admin</option></select></td><td><button class="bsv" style="padding:3px 8px;font-size:.7rem;" onclick="svU('+ri+')">💾</button><button class="bcn" style="padding:3px 8px;font-size:.7rem;" onclick="loadUsr()">✕</button></td>';}
+function svU(ri){var p=V('eu1')||undefined;post({action:'updateUser',apiKey:API_KEY,username:LU,password:LP,rowIndex:ri,newUsername:V('eu0'),newPassword:p,newDisplayName:V('eu2'),newRole:G('eu3').value}).then(function(r){if(r.ok)loadUsr();else alert('❌ '+r.msg);});}
+function dlU(ri){if(!confirm('⚠️ ลบผู้ใช้นี้?'))return;post({action:'deleteUser',apiKey:API_KEY,username:LU,password:LP,rowIndex:ri}).then(function(r){if(r.ok)loadUsr();else alert('❌ '+r.msg);});}
+
+function expCSV(){if(!AR.length){alert('ไม่มีข้อมูล');return;}var h=['#','ชื่อ','นามสกุล','ชั้น','เลขที่','คะแนน','เต็ม','%','วันเวลา'];var rows=AR.map(function(r){return[r['#']||'',r.firstName,r.lastName,r.classroom,r.studentNo,r.score,r.maxScore,r.percent,r.timestamp];});var csv='\uFEFF'+[h].concat(rows).map(function(r){return r.map(function(c){return'"'+String(c||'').replace(/"/g,'""')+'"';}).join(',');}).join('\n');var a=document.createElement('a');a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(csv);a.download='ผลสอบ_'+ATAB+'_'+new Date().toLocaleDateString('th-TH').replace(/\//g,'-')+'.csv';a.click();}
+function expPDF(){if(!AR.length){alert('ไม่มีข้อมูล');return;}var w=window.open('','_blank');var rows=AR.map(function(r,i){var p=parseInt(String(r.percent||'0'))||0,col=p>=80?'#1a7a4a':p>=70?'#1565c0':p>=50?'#c49000':'#c0392b';return'<tr style="background:'+(i%2?'#f5f8ff':'#fff')+'"><td>'+(i+1)+'</td><td>'+(r.firstName||'')+' '+(r.lastName||'')+'</td><td>'+(r.classroom||'')+'</td><td>'+(r.studentNo||'')+'</td><td style="font-weight:700">'+(r.score||'')+'</td><td>'+(r.maxScore||'')+'</td><td style="color:'+col+';font-weight:700">'+(r.percent||'')+'</td><td style="font-size:10px;color:#888">'+String(r.timestamp||'').substring(0,16)+'</td></tr>';}).join('');w.document.write('<!DOCTYPE html><html><head><meta charset="UTF-8"><title>ผลสอบ — '+ATAB+'</title><link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;600;700&display=swap" rel="stylesheet"><style>body{font-family:\'Sarabun\',sans-serif;padding:20px;}h2{color:#0d1b4b;}p{color:#666;font-size:11px;margin:3px 0 10px;}table{width:100%;border-collapse:collapse;font-size:11px;}th{background:#1a3a8f;color:#fff;padding:6px 8px;text-align:center;}td{padding:5px 8px;border-bottom:1px solid #eee;text-align:center;}@media print{.np{display:none!important;}}</style></head><body><h2>📋 ผลการสอบ — '+ATAB+'</h2><p>พิมพ์ '+new Date().toLocaleDateString('th-TH',{year:'numeric',month:'long',day:'numeric'})+' | '+AR.length+' คน</p><button class="np" onclick="window.print()" style="background:#1a3a8f;color:#fff;border:none;border-radius:6px;padding:6px 14px;font-size:11px;cursor:pointer;margin-bottom:8px;">🖨 พิมพ์</button><table><thead><tr><th>#</th><th>ชื่อ-นามสกุล</th><th>ชั้น</th><th>เลขที่</th><th>คะแนน</th><th>เต็ม</th><th>%</th><th>วันเวลา</th></tr></thead><tbody>'+rows+'</tbody></table></body></html>');w.document.close();}
+
+function closeDash(){G('dash').classList.remove('on');LU='';LP='';LR='';AR=[];ASH=[];ATAB='';G('au').value='';G('ap').value='';}
+boot();
+</script>
+</body>
+</html>
