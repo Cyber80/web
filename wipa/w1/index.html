@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="th">
 <head>
@@ -15,12 +14,12 @@
 <script>
 const CFG = {
   apiUrl    : 'https://script.google.com/macros/s/AKfycbw9JpFpKb1jVVIu-HyKy8-l5RzCagm9aPlB9tiMI1XRGBq1nre-Eda_e-WHvka_TLn1Og/exec',
-  apiKey    : 'EXAM_API_2024',       // ← ต้องตรงกับ Sheet config
-  sheetName : 'ตานทุจริต_ป6',        // ← ชื่อ Sheet (ต้องมีใน config)
+  apiKey    : 'EXAM_API_2024',       // ← ต้องตรงกับ Sheet config คอลัมน์ apiKey
+  sheetName : 'ตานทุจริต_ป6',        // ← ชื่อ Sheet ที่บันทึกคะแนน
   subject   : 'ต้านทุจริตศึกษา',     // ← ชื่อวิชาแสดงผล
   level     : 'ชั้นประถมศึกษาปีที่ 6',
+  maxScore  : 21,                     // ← fallback ถ้า Sheet config ยังไม่มีแถวนี้
 };
-// maxScore จะโหลดจาก Sheet config อัตโนมัติ ไม่ต้องกำหนดที่นี่
 </script>
 <!-- END ZONE 1/2 -->
 
@@ -395,21 +394,25 @@ const CODES=['ก','ข','ค','ง'];
 let LU='',LP='',LR='',MAXSCORE=0;
 let ATAB='',ASHEETS=[],ARES=[];
 
-// ── BOOT: โหลด config จาก Sheet แล้วตัดสินใจว่าจะแสดงอะไร ──────
+// ── BOOT: โหลด config จาก Sheet (PUBLIC — ไม่ต้องการ apiKey) ──────
 async function boot(){
   try {
-    const r = await post({ action:'getConfig', apiKey:CFG.apiKey });
+    // getConfig เป็น PUBLIC ใน v4.1 — ไม่ต้องส่ง apiKey
+    const r = await post({ action:'getConfig' });
     if(!r.success) throw new Error(r.message);
 
     const sheetCfg = (r.data||[]).find(c=>c.sheetName===CFG.sheetName);
-    if(!sheetCfg) throw new Error('ไม่พบการตั้งค่า sheetName: '+CFG.sheetName+' ใน Sheet config');
 
-    MAXSCORE = sheetCfg.maxScore || 21;
-
-    if(sheetCfg.status === 'closed'){
-      el('loadingWrap').style.display='none';
-      el('closedWrap').style.display='block';
-      return;
+    // ถ้าไม่มีใน config → ใช้ค่า default จาก CFG และแสดงข้อสอบได้เลย
+    if(!sheetCfg){
+      MAXSCORE = CFG.maxScore || DEF.questions.length + (DEF.essay?.show ? DEF.essay.points : 0);
+    } else {
+      MAXSCORE = sheetCfg.maxScore || CFG.maxScore || 21;
+      if(sheetCfg.status === 'closed'){
+        el('loadingWrap').style.display='none';
+        el('closedWrap').style.display='block';
+        return;
+      }
     }
 
     // แสดงข้อสอบ
@@ -543,10 +546,12 @@ async function doLogin(){
 }
 
 async function loadSheets(){
+  // ดึง getSheets ก่อน แล้ว parallel โหลด tab แรกพร้อมกัน
   const r=await post({action:'getSheets',apiKey:CFG.apiKey,username:LU,password:LP});
   ASHEETS=r.sheets||[];
   ATAB=ASHEETS.length?ASHEETS[0].sheetName:'';
   renderTabs();
+  // โหลด tab แรกทันที
   await loadTab();
 }
 
@@ -669,7 +674,8 @@ async function delRow(ri){
 // ── CONFIG TAB ────────────────────────────────────────────────────
 async function loadConfigTab(){
   el('dbody').innerHTML='<div class="nd">⏳ กำลังโหลด...</div>';
-  const r=await post({action:'getConfig',apiKey:CFG.apiKey});
+  // getConfig เป็น PUBLIC ใน v4.1
+  const r=await post({action:'getConfig'});
   if(!r.success){el('dbody').innerHTML=`<div class="nd">❌ ${r.message}</div>`;return;}
   const cfgData=r.data||[];
   el('dbody').innerHTML=`
