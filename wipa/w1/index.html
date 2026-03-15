@@ -3,256 +3,185 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ระบบข้อสอบออนไลน์</title>
-<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700;800&family=Noto+Serif+Thai:wght@600;700&display=swap" rel="stylesheet">
-
-<!--
-╔══════════════════════════════════════════════════════════════════╗
-║  ✏️  ZONE 1/2 — แก้เฉพาะตรงนี้เพื่อสร้างวิชาใหม่                ║
-╚══════════════════════════════════════════════════════════════════╝
--->
+<title>แบบทดสอบออนไลน์</title>
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;600;700;800&family=Noto+Serif+Thai:wght@600;700&display=swap" rel="stylesheet">
 <script>
-const CFG = {
-  apiUrl    : 'https://script.google.com/macros/s/AKfycbw9JpFpKb1jVVIu-HyKy8-l5RzCagm9aPlB9tiMI1XRGBq1nre-Eda_e-WHvka_TLn1Og/exec',
-  apiKey    : 'EXAM_API_2024',       // ← ต้องตรงกับ Sheet config คอลัมน์ apiKey
-  sheetName : 'ตานทุจริต_ป6',        // ← ชื่อ Sheet ที่บันทึกคะแนน
-  subject   : 'ต้านทุจริตศึกษา',     // ← ชื่อวิชาแสดงผล
-  level     : 'ชั้นประถมศึกษาปีที่ 6',
-  maxScore  : 21,                     // ← fallback ถ้า Sheet config ยังไม่มีแถวนี้
-};
+// ════════════════════════════════════════════════════
+//  ✏️ ZONE 1 — แก้เฉพาะส่วนนี้เพื่อสร้างวิชาใหม่
+// ════════════════════════════════════════════════════
+var GAS_URL    = 'https://script.google.com/macros/s/AKfycbw9JpFpKb1jVVIu-HyKy8-l5RzCagm9aPlB9tiMI1XRGBq1nre-Eda_e-WHvka_TLn1Og/exec'; // ← URL หลัง Deploy
+var API_KEY    = 'EXAM2024';          // ← ต้องตรงกับใน GAS (ค่า API_KEY)
+var SHEET_NAME = 'ต้านทุจริต_ป6';      // ← ชื่อ Sheet ที่จะบันทึกคะแนน
+var SUBJECT    = 'ต้านทุจริตศึกษา';   // ← ชื่อวิชาแสดงหน้าข้อสอบ
+var LEVEL      = 'ชั้นประถมศึกษาปีที่ 6';
+var MAX_SCORE  = 21;                   // ← คะแนนเต็ม (fallback ถ้า config ยังไม่มี)
 </script>
-<!-- END ZONE 1/2 -->
-
 <style>
 :root{
   --nv:#0d1b4b;--ry:#1a3a8f;--gd:#c9972b;--gl:#f0c860;
   --cm:#fdf8ee;--rd:#c0392b;--gn:#1a7a4a;--gr:#6b7280;
-  --lt:#eef2ff;--w:#fff;--sh:0 4px 22px rgba(13,27,75,.12);
+  --lt:#eef2ff;--sh:0 4px 20px rgba(13,27,75,.12);
 }
 *{box-sizing:border-box;margin:0;padding:0;}
-body{font-family:'Sarabun',sans-serif;background:linear-gradient(145deg,#0a1540,#1a3a8f 50%,#0d1b4b);min-height:100vh;padding:18px 12px 50px;}
-
-/* HEADER */
-.hdr{text-align:center;margin-bottom:24px;padding:26px 16px 12px;}
-.hbg{display:inline-flex;align-items:center;gap:7px;background:rgba(201,151,43,.18);border:1.5px solid var(--gd);border-radius:50px;padding:5px 15px;font-size:12px;color:var(--gl);margin-bottom:11px;}
-.hdr h1{font-family:'Noto Serif Thai',serif;font-size:clamp(1.25rem,4vw,1.85rem);color:#fff;line-height:1.4;text-shadow:0 2px 8px rgba(0,0,0,.4);}
+body{font-family:'Sarabun',sans-serif;background:linear-gradient(145deg,#0a1540,#1a3a8f 50%,#0d1b4b);min-height:100vh;padding:16px 10px 48px;}
+.hdr{text-align:center;padding:24px 14px 12px;margin-bottom:20px;}
+.hbg{display:inline-flex;align-items:center;gap:6px;background:rgba(201,151,43,.17);border:1.5px solid var(--gd);border-radius:50px;padding:4px 14px;font-size:11.5px;color:var(--gl);margin-bottom:10px;}
+.hdr h1{font-family:'Noto Serif Thai',serif;font-size:clamp(1.2rem,4vw,1.8rem);color:#fff;line-height:1.45;text-shadow:0 2px 8px rgba(0,0,0,.4);}
 .hdr h1 span{color:var(--gl);}
-.hm{display:flex;justify-content:center;gap:12px;flex-wrap:wrap;margin-top:9px;}
-.hm em{background:rgba(255,255,255,.1);border-radius:20px;padding:3px 12px;color:#c8d4ff;font-size:12px;font-style:normal;}
-
-/* CARD */
-.card{background:#fff;border-radius:16px;box-shadow:var(--sh);overflow:hidden;max-width:860px;margin:0 auto 20px;}
-.ch{background:linear-gradient(135deg,var(--nv),var(--ry));padding:14px 22px;display:flex;align-items:center;gap:11px;}
-.ci{width:38px;height:38px;background:rgba(201,151,43,.22);border:2px solid var(--gd);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0;}
-.ch h2{color:#fff;font-size:.95rem;font-weight:700;}
-.ch p{color:#b0c0ff;font-size:.76rem;margin-top:2px;}
-.cb{padding:20px 22px;}
-
-/* FORM */
-.g2{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.hmeta{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-top:9px;}
+.hmeta em{background:rgba(255,255,255,.1);border-radius:18px;padding:3px 11px;color:#c8d4ff;font-size:11.5px;font-style:normal;}
+.card{background:#fff;border-radius:15px;box-shadow:var(--sh);overflow:hidden;max-width:840px;margin:0 auto 18px;}
+.ch{background:linear-gradient(135deg,var(--nv),var(--ry));padding:13px 20px;display:flex;align-items:center;gap:10px;}
+.ci{width:36px;height:36px;background:rgba(201,151,43,.2);border:2px solid var(--gd);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;}
+.ch h2{color:#fff;font-size:.92rem;font-weight:700;}
+.ch p{color:#b0c0ff;font-size:.74rem;margin-top:1px;}
+.cb{padding:18px 20px;}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:11px;}
 .g2 .full{grid-column:1/-1;}
-.fi label{display:block;font-size:.78rem;font-weight:600;color:var(--nv);margin-bottom:4px;}
-.fi .r{color:var(--rd);}
-.fi input,.fi select{width:100%;border:2px solid #dce3f5;border-radius:9px;padding:8px 12px;font-family:'Sarabun',sans-serif;font-size:.9rem;color:var(--nv);background:var(--cm);transition:border-color .2s;}
+.fi label{display:block;font-size:.76rem;font-weight:600;color:var(--nv);margin-bottom:4px;}
+.fi .req{color:var(--rd);}
+.fi input,.fi select{width:100%;border:2px solid #dce3f5;border-radius:8px;padding:8px 11px;font-family:'Sarabun',sans-serif;font-size:.88rem;color:var(--nv);background:var(--cm);}
 .fi input:focus,.fi select:focus{outline:none;border-color:var(--ry);background:#fff;}
-.db{background:var(--lt);border:2px dashed #99aee8;border-radius:9px;padding:8px 12px;font-size:.84rem;color:var(--gr);display:flex;align-items:center;gap:7px;}
-
-/* PROGRESS */
-.pw{max-width:860px;margin:0 auto 9px;padding:0 4px;}
-.pl{font-size:.78rem;color:#c8d4ff;margin-bottom:4px;}
-.pb-w{background:rgba(255,255,255,.14);border-radius:8px;height:7px;overflow:hidden;}
-.pb{height:100%;background:linear-gradient(90deg,var(--gl),var(--gd));border-radius:8px;transition:width .4s;width:0%;}
-
-/* QUESTION */
-.qb{background:var(--cm);border:1.5px solid #e0e8ff;border-radius:11px;padding:14px 16px;margin-bottom:11px;transition:border-color .2s;}
+.datebox{background:var(--lt);border:2px dashed #99aee8;border-radius:8px;padding:8px 11px;font-size:.83rem;color:var(--gr);display:flex;align-items:center;gap:6px;}
+.pw{max-width:840px;margin:0 auto 9px;padding:0 2px;}
+.pl{font-size:.76rem;color:#c8d4ff;margin-bottom:4px;}
+.pbg{background:rgba(255,255,255,.14);border-radius:7px;height:6px;overflow:hidden;}
+.pb{height:100%;background:linear-gradient(90deg,var(--gl),var(--gd));border-radius:7px;transition:width .4s;width:0%;}
+.qb{background:var(--cm);border:1.5px solid #dde5ff;border-radius:10px;padding:13px 15px;margin-bottom:10px;transition:border-color .2s;}
 .qb:hover{border-color:#8fa5e8;}.qb.ok{border-color:var(--ry);}
-.qn{display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;background:var(--ry);color:#fff;border-radius:50%;font-size:.74rem;font-weight:700;flex-shrink:0;margin-right:8px;}
-.qt{font-size:.91rem;font-weight:600;color:var(--nv);display:flex;align-items:flex-start;line-height:1.5;margin-bottom:10px;}
-.cs{display:flex;flex-direction:column;gap:6px;padding-left:9px;}
-.cl{display:flex;align-items:flex-start;gap:8px;cursor:pointer;padding:7px 11px;border-radius:7px;border:1.5px solid transparent;background:#fff;font-size:.88rem;color:#1e2a5a;line-height:1.4;transition:all .14s;}
+.qno{display:inline-flex;align-items:center;justify-content:center;width:23px;height:23px;background:var(--ry);color:#fff;border-radius:50%;font-size:.73rem;font-weight:700;flex-shrink:0;margin-right:8px;}
+.qt{font-size:.9rem;font-weight:600;color:var(--nv);display:flex;align-items:flex-start;line-height:1.5;margin-bottom:10px;}
+.cs{display:flex;flex-direction:column;gap:5px;padding-left:8px;}
+.cl{display:flex;align-items:flex-start;gap:7px;cursor:pointer;padding:7px 10px;border-radius:7px;border:1.5px solid transparent;background:#fff;font-size:.86rem;color:#1e2a5a;line-height:1.4;transition:all .13s;}
 .cl:hover{background:var(--lt);border-color:#99aee8;}
-.cl input[type=radio]{display:none;}
+.cl input{display:none;}
 .cl input:checked+.cd{background:var(--ry);border-color:var(--ry);}
 .cl:has(input:checked){background:var(--lt);border-color:var(--ry);font-weight:600;}
-.cd{width:16px;height:16px;min-width:16px;border-radius:50%;border:2px solid #aab8e0;display:flex;align-items:center;justify-content:center;margin-top:2px;transition:all .14s;}
+.cd{width:15px;height:15px;min-width:15px;border-radius:50%;border:2px solid #aab8e0;display:flex;align-items:center;justify-content:center;margin-top:2px;}
 .cd::after{content:'';width:6px;height:6px;border-radius:50%;background:#fff;}
 .cc{font-weight:700;color:var(--ry);min-width:14px;}
-
-/* ESSAY */
-.ea{width:100%;min-height:125px;border:2px solid #dce3f5;border-radius:9px;padding:10px 13px;font-family:'Sarabun',sans-serif;font-size:.9rem;color:var(--nv);background:var(--cm);resize:vertical;line-height:1.7;transition:border-color .2s;}
-.ea:focus{outline:none;border-color:var(--ry);background:#fff;}
-
-/* SUBMIT */
-.bsb{width:100%;background:linear-gradient(135deg,var(--nv),var(--ry));color:#fff;border:none;border-radius:11px;padding:14px;font-family:'Sarabun',sans-serif;font-size:1.02rem;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:all .2s;box-shadow:0 4px 14px rgba(26,58,143,.3);}
-.bsb:hover{transform:translateY(-2px);}.bsb:disabled{opacity:.6;cursor:not-allowed;transform:none;}
-
-/* OVERLAY / MODAL */
-.ov{position:fixed;inset:0;background:rgba(0,0,0,.56);backdrop-filter:blur(4px);display:none;align-items:center;justify-content:center;z-index:1000;padding:16px;}
+.eatxt{width:100%;min-height:120px;border:2px solid #dce3f5;border-radius:8px;padding:9px 12px;font-family:'Sarabun',sans-serif;font-size:.88rem;color:var(--nv);background:var(--cm);resize:vertical;line-height:1.7;}
+.eatxt:focus{outline:none;border-color:var(--ry);background:#fff;}
+.bsub{width:100%;background:linear-gradient(135deg,var(--nv),var(--ry));color:#fff;border:none;border-radius:10px;padding:13px;font-family:'Sarabun',sans-serif;font-size:.99rem;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:7px;transition:all .2s;box-shadow:0 4px 14px rgba(26,58,143,.28);}
+.bsub:hover{transform:translateY(-2px);}.bsub:disabled{opacity:.6;cursor:not-allowed;transform:none;}
+.ov{position:fixed;inset:0;background:rgba(0,0,0,.55);backdrop-filter:blur(4px);display:none;align-items:center;justify-content:center;z-index:1000;padding:14px;}
 .ov.on{display:flex;}
-.mdl{background:#fff;border-radius:16px;max-width:440px;width:100%;box-shadow:0 18px 56px rgba(0,0,0,.28);animation:up .3s ease;}
-@keyframes up{from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:none;}}
+.mdl{background:#fff;border-radius:16px;max-width:420px;width:100%;animation:mup .28s ease;}
+@keyframes mup{from{opacity:0;transform:translateY(18px);}to{opacity:1;transform:none;}}
 .mb{padding:22px 24px 16px;text-align:center;}
-.sr{width:104px;height:104px;border-radius:50%;border:6px solid var(--ry);display:flex;flex-direction:column;align-items:center;justify-content:center;margin:0 auto 12px;background:var(--lt);}
-.sr .big{font-size:1.9rem;font-weight:800;color:var(--nv);line-height:1;}
-.sr .dn{font-size:.78rem;color:var(--gr);}
-.mb h3{font-size:1.05rem;font-weight:700;color:var(--nv);}
-.mb .sub{color:var(--gr);font-size:.82rem;margin-top:3px;}
-.gp{display:inline-block;padding:4px 17px;border-radius:18px;font-weight:800;font-size:.9rem;margin:8px 0;}
+.sring{width:100px;height:100px;border-radius:50%;border:6px solid var(--ry);display:flex;flex-direction:column;align-items:center;justify-content:center;margin:0 auto 11px;background:var(--lt);}
+.sring .big{font-size:1.85rem;font-weight:800;color:var(--nv);line-height:1;}
+.sring .dn{font-size:.77rem;color:var(--gr);}
+.mb h3{font-size:1rem;font-weight:700;color:var(--nv);}
+.mb .sub{color:var(--gr);font-size:.8rem;margin-top:3px;}
+.gp{display:inline-block;padding:4px 16px;border-radius:16px;font-weight:800;font-size:.88rem;margin:8px 0;}
 .gA{background:#e8f5e9;color:#1a7a4a;}.gB{background:#e3f2fd;color:#1565c0;}
 .gC{background:#fff8e1;color:#c49000;}.gF{background:#fde8e8;color:var(--rd);}
-.st{width:100%;border-collapse:collapse;margin:6px 0;text-align:left;}
-.st td{padding:6px 11px;border-bottom:1px solid #eee;font-size:.83rem;}
+.st{width:100%;border-collapse:collapse;margin:7px 0;text-align:left;}
+.st td{padding:6px 10px;border-bottom:1px solid #eee;font-size:.82rem;}
 .st td:last-child{font-weight:700;color:var(--nv);text-align:right;}
-.mf{padding:0 24px 20px;display:flex;gap:8px;}
-.bm{flex:1;padding:10px;border-radius:9px;border:none;font-family:'Sarabun',sans-serif;font-size:.88rem;font-weight:600;cursor:pointer;}
-.bmp{background:var(--ry);color:#fff;}.bmp:hover{background:var(--nv);}
-
-/* DONE */
-.done-w{max-width:860px;margin:0 auto;}
-.done-c{background:#fff;border-radius:16px;padding:46px 22px;text-align:center;}
-.done-c .di{font-size:56px;margin-bottom:12px;}
-.done-c h2{font-size:1.3rem;font-weight:800;color:var(--nv);margin-bottom:7px;}
+.mf{padding:0 24px 20px;}
+.bm{width:100%;padding:10px;border-radius:8px;border:none;font-family:'Sarabun',sans-serif;font-size:.87rem;font-weight:600;cursor:pointer;background:var(--ry);color:#fff;}
+.bm:hover{background:var(--nv);}
+.done-w{max-width:840px;margin:0 auto;}
+.done-c{background:#fff;border-radius:15px;padding:44px 20px;text-align:center;}
+.done-c .di{font-size:52px;margin-bottom:11px;}
+.done-c h2{font-size:1.25rem;font-weight:800;color:var(--nv);margin-bottom:7px;}
 .done-c p{color:var(--gr);}
-
-/* LOADING SCREEN */
-.loading-w{max-width:860px;margin:0 auto;}
-.loading-c{background:rgba(255,255,255,.1);border-radius:16px;padding:46px 22px;text-align:center;}
-.loading-c .di{font-size:48px;margin-bottom:12px;}
-.loading-c p{color:#c8d4ff;font-size:1rem;}
-
-/* ADMIN LOGIN */
-#aLog{position:fixed;inset:0;background:linear-gradient(145deg,#0a1540,#1a3a8f);display:none;align-items:center;justify-content:center;z-index:2000;}
-#aLog.on{display:flex;}
-.lb{background:#fff;border-radius:16px;padding:34px 28px;max-width:340px;width:100%;text-align:center;}
-.lb .li{font-size:2rem;margin-bottom:6px;}
-.lb h2{font-size:1.1rem;font-weight:800;color:var(--nv);margin-bottom:3px;}
-.lb p{color:var(--gr);font-size:.8rem;margin-bottom:20px;}
-.lf{text-align:left;margin-bottom:11px;}
-.lf label{font-size:.77rem;font-weight:600;color:var(--nv);display:block;margin-bottom:4px;}
-.lf input{width:100%;border:2px solid #dce3f5;border-radius:9px;padding:8px 12px;font-family:'Sarabun',sans-serif;font-size:.9rem;color:var(--nv);}
+.closed-c{background:rgba(255,255,255,.08);border-radius:15px;padding:44px 20px;text-align:center;max-width:840px;margin:0 auto;}
+.closed-c .di{font-size:52px;margin-bottom:11px;}
+.closed-c h2{color:#fff;font-size:1.2rem;font-weight:700;}
+.closed-c p{color:#c8d4ff;}
+.load-c{background:rgba(255,255,255,.07);border-radius:15px;padding:44px 20px;text-align:center;max-width:840px;margin:0 auto;}
+.load-c p{color:#c8d4ff;font-size:.94rem;}
+#aPanel{position:fixed;inset:0;background:linear-gradient(145deg,#0a1540,#1a3a8f);display:none;align-items:center;justify-content:center;z-index:2000;}
+#aPanel.on{display:flex;}
+.lbox{background:#fff;border-radius:16px;padding:32px 26px;max-width:330px;width:100%;text-align:center;}
+.lbox .ico{font-size:1.9rem;margin-bottom:6px;}
+.lbox h2{font-size:1.08rem;font-weight:800;color:var(--nv);margin-bottom:2px;}
+.lbox p{color:var(--gr);font-size:.78rem;margin-bottom:18px;}
+.lf{text-align:left;margin-bottom:10px;}
+.lf label{font-size:.75rem;font-weight:600;color:var(--nv);display:block;margin-bottom:3px;}
+.lf input{width:100%;border:2px solid #dce3f5;border-radius:8px;padding:8px 11px;font-family:'Sarabun',sans-serif;font-size:.88rem;color:var(--nv);}
 .lf input:focus{outline:none;border-color:var(--ry);}
-.le{color:var(--rd);font-size:.77rem;min-height:15px;margin-bottom:7px;}
-.blog{width:100%;background:linear-gradient(135deg,var(--nv),var(--ry));color:#fff;border:none;border-radius:9px;padding:11px;font-family:'Sarabun',sans-serif;font-size:.93rem;font-weight:700;cursor:pointer;}
-.blog:hover{opacity:.9;}
-
-/* DASHBOARD */
+.lerr{color:var(--rd);font-size:.75rem;min-height:14px;margin-bottom:7px;}
+.blogin{width:100%;background:linear-gradient(135deg,var(--nv),var(--ry));color:#fff;border:none;border-radius:8px;padding:10px;font-family:'Sarabun',sans-serif;font-size:.9rem;font-weight:700;cursor:pointer;}
 #dash{position:fixed;inset:0;background:#f0f4ff;display:none;flex-direction:column;z-index:2000;}
 #dash.on{display:flex;}
-.db{background:linear-gradient(135deg,var(--nv),var(--ry));padding:11px 20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;flex-shrink:0;}
-.db-l h1{color:#fff;font-size:.96rem;font-weight:700;}
-.db-l p{color:#8fa8ff;font-size:.72rem;}
-.db-r{display:flex;gap:6px;flex-wrap:wrap;}
-.dsm{background:rgba(255,255,255,.11);color:#fff;border:1px solid rgba(255,255,255,.26);border-radius:7px;padding:5px 12px;font-family:'Sarabun',sans-serif;font-size:.76rem;cursor:pointer;white-space:nowrap;transition:background .17s;}
-.dsm:hover{background:rgba(255,255,255,.2);}
-.dsm.go{background:rgba(201,151,43,.23);border-color:rgba(201,151,43,.5);}
-.dsm.da{background:rgba(192,57,43,.23);border-color:rgba(192,57,43,.5);}
-
-/* TABS */
-.dt{background:#1e2f6b;padding:0 20px;display:flex;gap:1px;overflow-x:auto;flex-shrink:0;scrollbar-width:none;}
-.dt::-webkit-scrollbar{display:none;}
-.tab{padding:9px 15px;color:#6080bb;font-family:'Sarabun',sans-serif;font-size:.79rem;font-weight:600;border:none;background:transparent;cursor:pointer;border-bottom:3px solid transparent;white-space:nowrap;transition:all .15s;}
-.tab:hover{color:#b0c8ff;}.tab.on{color:#fff;border-bottom-color:var(--gl);}
-.tab.tu,.tab.tc{color:var(--gl);}.tab.tu.on,.tab.tc.on{border-bottom-color:var(--gl);}
-
-/* DASH BODY */
-.dby{flex:1;overflow-y:auto;padding:14px 18px;}
-
-/* STATS */
-.sr2{display:grid;grid-template-columns:repeat(auto-fit,minmax(105px,1fr));gap:10px;margin-bottom:14px;}
-.sc{background:#fff;border-radius:11px;padding:12px 10px;text-align:center;box-shadow:0 2px 9px rgba(26,58,143,.07);border-top:4px solid var(--ry);}
+.dbar{background:linear-gradient(135deg,var(--nv),var(--ry));padding:10px 18px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;flex-shrink:0;}
+.dbar h1{color:#fff;font-size:.93rem;font-weight:700;}
+.dbar p{color:#8fa8ff;font-size:.7rem;}
+.dbr{display:flex;gap:5px;flex-wrap:wrap;}
+.ds{background:rgba(255,255,255,.11);color:#fff;border:1px solid rgba(255,255,255,.26);border-radius:6px;padding:5px 11px;font-family:'Sarabun',sans-serif;font-size:.74rem;cursor:pointer;white-space:nowrap;}
+.ds:hover{background:rgba(255,255,255,.2);}
+.ds.go{background:rgba(201,151,43,.22);border-color:rgba(201,151,43,.48);}
+.ds.da{background:rgba(192,57,43,.22);border-color:rgba(192,57,43,.48);}
+.dtabs{background:#1e2f6b;padding:0 18px;display:flex;gap:1px;overflow-x:auto;flex-shrink:0;scrollbar-width:none;}
+.dtabs::-webkit-scrollbar{display:none;}
+.tab{padding:9px 14px;color:#5878b0;font-family:'Sarabun',sans-serif;font-size:.78rem;font-weight:600;border:none;background:transparent;cursor:pointer;border-bottom:3px solid transparent;white-space:nowrap;transition:all .15s;}
+.tab:hover{color:#a0c0ff;}.tab.on{color:#fff;border-bottom-color:var(--gl);}
+.tab.sp{color:var(--gl);}.tab.sp.on{border-bottom-color:var(--gl);}
+.dbody{flex:1;overflow-y:auto;padding:14px 16px;}
+.sr{display:grid;grid-template-columns:repeat(auto-fit,minmax(100px,1fr));gap:10px;margin-bottom:14px;}
+.sc{background:#fff;border-radius:10px;padding:12px 10px;text-align:center;box-shadow:0 2px 8px rgba(26,58,143,.07);border-top:4px solid var(--ry);}
 .sc.go{border-top-color:var(--gd);}.sc.gr{border-top-color:var(--gn);}.sc.rd{border-top-color:var(--rd);}
-.sc .v{font-size:1.65rem;font-weight:800;color:var(--nv);line-height:1;}
-.sc .l{font-size:.69rem;color:var(--gr);margin-top:3px;}
-
-/* TABLE */
-.tw{background:#fff;border-radius:12px;box-shadow:0 2px 9px rgba(26,58,143,.07);overflow:hidden;margin-bottom:14px;}
-.th{background:linear-gradient(90deg,var(--nv),var(--ry));padding:10px 15px;display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;}
-.th h3{color:#fff;font-size:.88rem;font-weight:700;}
-.th-r{display:flex;gap:6px;align-items:center;}
-.si{background:rgba(255,255,255,.13);border:1px solid rgba(255,255,255,.26);border-radius:7px;padding:5px 10px;color:#fff;font-family:'Sarabun',sans-serif;font-size:.77rem;width:155px;}
-.si::placeholder{color:rgba(255,255,255,.42);}
-.si:focus{outline:none;background:rgba(255,255,255,.2);}
-.rt{width:100%;border-collapse:collapse;font-size:.79rem;}
-.rt th{background:var(--lt);color:var(--nv);padding:8px 9px;text-align:center;font-weight:700;font-size:.72rem;border-bottom:2px solid #dce3f5;white-space:nowrap;}
+.sc .v{font-size:1.6rem;font-weight:800;color:var(--nv);line-height:1;}
+.sc .l{font-size:.67rem;color:var(--gr);margin-top:2px;}
+.tw{background:#fff;border-radius:11px;box-shadow:0 2px 8px rgba(26,58,143,.07);overflow:hidden;margin-bottom:14px;}
+.th{background:linear-gradient(90deg,var(--nv),var(--ry));padding:10px 14px;display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;}
+.th h3{color:#fff;font-size:.86rem;font-weight:700;}
+.si{background:rgba(255,255,255,.13);border:1px solid rgba(255,255,255,.26);border-radius:6px;padding:5px 9px;color:#fff;font-family:'Sarabun',sans-serif;font-size:.76rem;width:148px;}
+.si::placeholder{color:rgba(255,255,255,.42);}.si:focus{outline:none;background:rgba(255,255,255,.2);}
+.rt{width:100%;border-collapse:collapse;font-size:.77rem;}
+.rt th{background:var(--lt);color:var(--nv);padding:8px 9px;text-align:center;font-weight:700;font-size:.7rem;border-bottom:2px solid #dce3f5;white-space:nowrap;}
 .rt td{padding:8px 9px;text-align:center;border-bottom:1px solid #eef2ff;color:#1e2a5a;vertical-align:middle;}
 .rt tr:hover td{background:#f5f8ff;}
-.pc{display:inline-block;padding:2px 8px;border-radius:9px;font-weight:700;font-size:.71rem;}
+.pc{display:inline-block;padding:2px 7px;border-radius:8px;font-weight:700;font-size:.69rem;}
 .pA{background:#e8f5e9;color:#1a7a4a;}.pB{background:#e3f2fd;color:#1565c0;}
 .pC{background:#fff8e1;color:#c49000;}.pF{background:#fde8e8;color:var(--rd);}
-.nd{text-align:center;padding:40px;color:var(--gr);font-size:.87rem;}
-
-/* EDIT PANEL */
-.ep{background:#fff;border:2px solid var(--ry);border-radius:11px;padding:13px 15px;margin-bottom:13px;display:none;}
+.nd{text-align:center;padding:38px;color:var(--gr);font-size:.85rem;}
+.ep{background:#fff;border:2px solid var(--ry);border-radius:10px;padding:12px 14px;margin-bottom:12px;display:none;}
 .ep.on{display:block;}
-.eg{display:grid;grid-template-columns:repeat(auto-fit,minmax(125px,1fr));gap:8px;margin-bottom:9px;}
-.eg input{border:1.5px solid #dce3f5;border-radius:7px;padding:6px 9px;font-family:'Sarabun',sans-serif;font-size:.79rem;color:var(--nv);width:100%;}
+.eg{display:grid;grid-template-columns:repeat(auto-fit,minmax(118px,1fr));gap:7px;margin-bottom:9px;}
+.eg input{border:1.5px solid #dce3f5;border-radius:6px;padding:5px 8px;font-family:'Sarabun',sans-serif;font-size:.77rem;color:var(--nv);width:100%;}
 .eg input:focus{outline:none;border-color:var(--ry);}
-.ea2{display:flex;gap:6px;}
-.bsv{background:var(--gn);color:#fff;border:none;border-radius:7px;padding:6px 14px;font-family:'Sarabun',sans-serif;font-size:.79rem;font-weight:600;cursor:pointer;}
-.bcl{background:#eee;color:var(--gr);border:none;border-radius:7px;padding:6px 12px;font-family:'Sarabun',sans-serif;font-size:.79rem;cursor:pointer;}
-.be{background:#e3f2fd;color:#1565c0;border:none;border-radius:5px;padding:2px 8px;font-size:.69rem;cursor:pointer;font-family:'Sarabun',sans-serif;}
-.bd{background:#fde8e8;color:var(--rd);border:none;border-radius:5px;padding:2px 8px;font-size:.69rem;cursor:pointer;margin-left:3px;font-family:'Sarabun',sans-serif;}
-
-/* USER / CONFIG FORM */
-.uf{background:#fff;border:2px solid var(--gd);border-radius:11px;padding:13px 15px;margin-bottom:13px;}
-.uf h4{font-size:.83rem;font-weight:700;color:var(--nv);margin-bottom:10px;}
-.ug{display:grid;grid-template-columns:repeat(auto-fit,minmax(125px,1fr));gap:8px;margin-bottom:10px;}
-.ug input,.ug select{border:1.5px solid #dce3f5;border-radius:7px;padding:6px 9px;font-family:'Sarabun',sans-serif;font-size:.79rem;color:var(--nv);width:100%;}
-.br{display:inline-block;padding:2px 8px;border-radius:9px;font-size:.69rem;font-weight:700;}
+.ea{display:flex;gap:6px;}
+.bsv{background:var(--gn);color:#fff;border:none;border-radius:6px;padding:6px 13px;font-family:'Sarabun',sans-serif;font-size:.77rem;font-weight:600;cursor:pointer;}
+.bcn{background:#eee;color:var(--gr);border:none;border-radius:6px;padding:6px 11px;font-family:'Sarabun',sans-serif;font-size:.77rem;cursor:pointer;}
+.be{background:#e3f2fd;color:#1565c0;border:none;border-radius:4px;padding:2px 7px;font-size:.67rem;cursor:pointer;font-family:'Sarabun',sans-serif;}
+.bd{background:#fde8e8;color:var(--rd);border:none;border-radius:4px;padding:2px 7px;font-size:.67rem;cursor:pointer;margin-left:2px;font-family:'Sarabun',sans-serif;}
+.uf{background:#fff;border:2px solid var(--gd);border-radius:10px;padding:13px 14px;margin-bottom:13px;}
+.uf h4{font-size:.8rem;font-weight:700;color:var(--nv);margin-bottom:9px;}
+.ug{display:grid;grid-template-columns:repeat(auto-fit,minmax(118px,1fr));gap:7px;margin-bottom:9px;}
+.ug input,.ug select{border:1.5px solid #dce3f5;border-radius:6px;padding:5px 8px;font-family:'Sarabun',sans-serif;font-size:.77rem;color:var(--nv);width:100%;}
+.br{display:inline-block;padding:2px 7px;border-radius:8px;font-size:.67rem;font-weight:700;}
 .bra{background:#fff8e1;color:#c49000;}.brv{background:#e3f2fd;color:#1565c0;}
-.stt{display:inline-block;padding:2px 9px;border-radius:9px;font-size:.7rem;font-weight:700;}
-.stt-o{background:#e8f5e9;color:#1a7a4a;}.stt-c{background:#fde8e8;color:var(--rd);}
-
-/* SPINNER */
-.sp{display:inline-block;width:14px;height:14px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spi .6s linear infinite;}
-@keyframes spi{to{transform:rotate(360deg);}}
-
-/* FAB */
-.fab{position:fixed;bottom:20px;right:20px;background:linear-gradient(135deg,var(--nv),var(--ry));color:#fff;border:none;border-radius:50px;padding:10px 17px;font-family:'Sarabun',sans-serif;font-size:.81rem;font-weight:600;cursor:pointer;box-shadow:0 4px 14px rgba(13,27,75,.4);display:flex;align-items:center;gap:7px;z-index:900;transition:all .2s;}
+.stO{display:inline-block;padding:2px 8px;border-radius:8px;font-size:.68rem;font-weight:700;background:#e8f5e9;color:#1a7a4a;}
+.stC{display:inline-block;padding:2px 8px;border-radius:8px;font-size:.68rem;font-weight:700;background:#fde8e8;color:var(--rd);}
+.spin{display:inline-block;width:14px;height:14px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:sp .6s linear infinite;}
+@keyframes sp{to{transform:rotate(360deg);}}
+.fab{position:fixed;bottom:18px;right:18px;background:linear-gradient(135deg,var(--nv),var(--ry));color:#fff;border:none;border-radius:50px;padding:10px 16px;font-family:'Sarabun',sans-serif;font-size:.79rem;font-weight:600;cursor:pointer;box-shadow:0 4px 12px rgba(13,27,75,.38);display:flex;align-items:center;gap:6px;z-index:900;transition:all .2s;}
 .fab:hover{transform:translateY(-2px);}
-
-@media(max-width:560px){
-  .g2{grid-template-columns:1fr;}
-  .cb,.mb,.mf{padding-left:16px;padding-right:16px;}
-  .dby{padding:12px 12px;}
-  .sr2{grid-template-columns:1fr 1fr;}
-}
+@media(max-width:540px){.g2{grid-template-columns:1fr;}.cb,.mb,.mf{padding-left:16px;padding-right:16px;}.dbody{padding:11px;}.sr{grid-template-columns:1fr 1fr;}}
 </style>
 </head>
 <body>
 
-<!-- ═══ LOADING ═══════════════════════════════════════════════════ -->
-<div id="loadingWrap">
-  <div class="loading-w">
-    <div class="loading-c">
-      <div class="di">⏳</div>
-      <p>กำลังโหลดข้อมูลวิชา...</p>
-    </div>
-  </div>
-</div>
-
-<!-- ═══ EXAM ══════════════════════════════════════════════════════ -->
-<div id="examWrap" style="display:none;">
+<div id="loadW"><div class="load-c" style="margin-top:60px;"><p>⏳ กำลังโหลด...</p></div></div>
+<div id="examW" style="display:none">
   <div class="hdr">
     <div class="hbg">🏫 แบบทดสอบออนไลน์</div>
-    <h1>วิชา<span id="hSub"></span><br>
-      <span id="hLv" style="font-family:'Sarabun',sans-serif;font-size:.8em;font-weight:500;color:#c8d4ff;"></span>
-    </h1>
-    <div class="hm"><em id="hQ"></em><em>⭐ คะแนนเต็ม <span id="hMax"></span> คะแนน</em></div>
+    <h1>วิชา<span id="hSub"></span><br><span id="hLv" style="font-family:'Sarabun',sans-serif;font-size:.78em;font-weight:500;color:#c8d4ff;"></span></h1>
+    <div class="hmeta"><em id="hQ"></em><em>⭐ เต็ม <span id="hMax"></span> คะแนน</em></div>
   </div>
-
   <div class="card">
-    <div class="ch"><div class="ci">👤</div>
-      <div><h2>ข้อมูลผู้สอบ</h2><p>กรอกข้อมูลให้ครบก่อนทำข้อสอบ</p></div>
-    </div>
+    <div class="ch"><div class="ci">👤</div><div><h2>ข้อมูลผู้สอบ</h2><p>กรอกให้ครบก่อนทำข้อสอบ</p></div></div>
     <div class="cb">
       <div class="g2">
-        <div class="fi"><label>ชื่อ <span class="r">*</span></label><input id="fn" placeholder="ชื่อ (ไม่ต้องใส่คำนำหน้า)" maxlength="50"></div>
-        <div class="fi"><label>นามสกุล <span class="r">*</span></label><input id="ln" placeholder="นามสกุล" maxlength="50"></div>
-        <div class="fi">
-          <label>ชั้น <span class="r">*</span></label>
-          <select id="cl">
-            <option value="">-- เลือกชั้น --</option>
+        <div class="fi"><label>ชื่อ <span class="req">*</span></label><input id="fn" placeholder="ชื่อ (ไม่ต้องใส่คำนำหน้า)" maxlength="50"></div>
+        <div class="fi"><label>นามสกุล <span class="req">*</span></label><input id="ln" placeholder="นามสกุล" maxlength="50"></div>
+        <div class="fi"><label>ชั้น <span class="req">*</span></label>
+          <select id="cl"><option value="">-- เลือกชั้น --</option>
             <optgroup label="ประถมศึกษา">
               <option>ป.1/1</option><option>ป.1/2</option><option>ป.1/3</option>
               <option>ป.2/1</option><option>ป.2/2</option><option>ป.2/3</option>
@@ -269,103 +198,72 @@ body{font-family:'Sarabun',sans-serif;background:linear-gradient(145deg,#0a1540,
             </optgroup>
           </select>
         </div>
-        <div class="fi"><label>เลขที่ <span class="r">*</span></label><input id="sn" type="number" placeholder="เลขที่" min="1" max="60"></div>
-        <div class="fi full"><label>วันที่-เวลาสอบ</label><div class="db">📅 <span id="examDt"></span></div></div>
+        <div class="fi"><label>เลขที่ <span class="req">*</span></label><input id="sn" type="number" placeholder="เลขที่" min="1" max="60"></div>
+        <div class="fi full"><label>วันที่สอบ</label><div class="datebox">📅 <span id="edt"></span></div></div>
       </div>
     </div>
   </div>
-
-  <div class="pw">
-    <div class="pl" id="pl">ตอบแล้ว 0 / 0 ข้อ</div>
-    <div class="pb-w"><div class="pb" id="pb"></div></div>
-  </div>
-
+  <div class="pw"><div class="pl" id="pl">ตอบแล้ว 0 / 0 ข้อ</div><div class="pbg"><div class="pb" id="pb"></div></div></div>
   <div id="mcqW"></div>
   <div id="essW"></div>
-
-  <div style="max-width:860px;margin:0 auto 30px;padding:0 4px;">
-    <button class="bsb" id="subBtn" onclick="submitExam()">📤 ส่งข้อสอบ</button>
+  <div style="max-width:840px;margin:0 auto 28px;padding:0 2px;">
+    <button class="bsub" id="subBtn" onclick="submitExam()">📤 ส่งข้อสอบ</button>
   </div>
 </div>
+<div id="closedW" style="display:none"><div class="closed-c" style="margin-top:60px;"><div class="di">🔒</div><h2>ปิดรับคำตอบแล้ว</h2><p style="margin-top:8px;">กรุณาติดต่อครูผู้สอน</p></div></div>
+<div id="doneW" style="display:none"><div class="done-w"><div class="done-c"><div class="di">✅</div><h2>ส่งข้อสอบเรียบร้อยแล้ว</h2><p id="doneTx" style="margin-top:9px;font-size:.94rem;"></p><p style="margin-top:15px;color:#bbb;font-size:.77rem;">ปิดหน้าต่างนี้ได้เลยครับ</p></div></div></div>
 
-<!-- ═══ CLOSED SCREEN ════════════════════════════════════════════ -->
-<div id="closedWrap" style="display:none;">
-  <div class="done-w"><div class="done-c">
-    <div class="di">🔒</div>
-    <h2>ปิดรับคำตอบแล้ว</h2>
-    <p>วิชานี้ปิดรับการส่งคำตอบแล้ว กรุณาติดต่อครูผู้สอน</p>
-  </div></div>
-</div>
-
-<!-- ═══ DONE ══════════════════════════════════════════════════════ -->
-<div id="doneWrap" style="display:none;">
-  <div class="done-w"><div class="done-c">
-    <div class="di">✅</div>
-    <h2>ส่งข้อสอบเรียบร้อยแล้ว</h2>
-    <p id="doneTx" style="margin-top:9px;font-size:.96rem;"></p>
-    <p style="margin-top:16px;color:#bbb;font-size:.79rem;">ปิดหน้าต่างนี้ได้เลยครับ</p>
-  </div></div>
-</div>
-
-<!-- ═══ RESULT MODAL ══════════════════════════════════════════════ -->
 <div class="ov" id="resOv">
   <div class="mdl">
     <div class="mb">
-      <div class="sr"><span class="big" id="rSc">—</span><span class="dn" id="rDn">/21</span></div>
-      <h3 id="rNm"></h3><div class="sub" id="rCl"></div>
-      <span class="gp" id="rGr"></span>
-      <table class="st" id="rTb"></table>
+      <div class="sring"><span class="big" id="rSc">—</span><span class="dn" id="rDn">/21</span></div>
+      <h3 id="rNm"></h3><div class="sub" id="rCl"></div><span class="gp" id="rGr"></span>
+      <table class="st" id="rTbl"></table>
     </div>
-    <div class="mf"><button class="bm bmp" onclick="confirmDone()">✅ รับทราบ — ปิด</button></div>
+    <div class="mf"><button class="bm" onclick="confirmDone()">✅ รับทราบ — ปิด</button></div>
   </div>
 </div>
 
-<!-- ═══ ADMIN LOGIN ════════════════════════════════════════════════ -->
-<div id="aLog">
-  <div class="lb">
-    <div class="li">🔐</div><h2>ระบบผู้ดูแล</h2>
-    <p>เข้าสู่ระบบเพื่อดูและจัดการผลการสอบ</p>
+<div id="aPanel">
+  <div class="lbox">
+    <div class="ico">🔐</div><h2>ระบบผู้ดูแล</h2><p>เข้าสู่ระบบเพื่อดูและจัดการผลการสอบ</p>
     <div class="lf"><label>ชื่อผู้ใช้</label><input id="au" placeholder="username" autocomplete="username"></div>
     <div class="lf"><label>รหัสผ่าน</label><input id="ap" type="password" placeholder="password" onkeydown="if(event.key==='Enter')doLogin()"></div>
-    <div class="le" id="le2"></div>
-    <button class="blog" id="lbtn" onclick="doLogin()">เข้าสู่ระบบ</button>
-    <div style="margin-top:11px;"><button style="background:none;border:none;color:#99a;font-size:.76rem;cursor:pointer;" onclick="closeLg()">← กลับหน้าข้อสอบ</button></div>
+    <div class="lerr" id="le"></div>
+    <button class="blogin" id="lbtn" onclick="doLogin()">เข้าสู่ระบบ</button>
+    <div style="margin-top:10px;"><button style="background:none;border:none;color:#aaa;font-size:.74rem;cursor:pointer;" onclick="G('aPanel').classList.remove('on')">← กลับ</button></div>
   </div>
 </div>
 
-<!-- ═══ DASHBOARD ═════════════════════════════════════════════════ -->
 <div id="dash">
-  <div class="db">
-    <div class="db-l"><h1>📊 Admin Dashboard</h1><p id="dInfo">ระบบจัดการผลสอบ</p></div>
-    <div class="db-r">
-      <button class="dsm go" onclick="expCSV()">⬇ CSV</button>
-      <button class="dsm go" onclick="expPDF()">🖨 PDF</button>
-      <button class="dsm" onclick="loadTab()">🔄 รีเฟรช</button>
-      <button class="dsm da" onclick="closeDash()">✕ ออก</button>
+  <div class="dbar">
+    <div><h1>📊 Admin Dashboard</h1><p id="dInfo">ระบบจัดการผลสอบ</p></div>
+    <div class="dbr">
+      <button class="ds go" onclick="expCSV()">⬇ CSV</button>
+      <button class="ds go" onclick="expPDF()">🖨 PDF</button>
+      <button class="ds" onclick="loadTab()">🔄 รีเฟรช</button>
+      <button class="ds da" onclick="closeDash()">✕ ออก</button>
     </div>
   </div>
-  <div class="dt" id="dtabs"></div>
-  <div class="dby" id="dbody"><div class="nd">⏳ กำลังโหลด...</div></div>
+  <div class="dtabs" id="dtabs"></div>
+  <div class="dbody" id="dbody"><div class="nd">⏳ กำลังโหลด...</div></div>
 </div>
+<button class="fab" id="fab" onclick="showLogin()">🔐 ผู้ดูแล</button>
 
-<button class="fab" id="fab" onclick="showLg()">🔐 ผู้ดูแล</button>
-
-<!--
-╔══════════════════════════════════════════════════════════════════╗
-║  ✏️  ZONE 2/2 — นิยามข้อสอบ  แก้เฉพาะ DEF object               ║
-╚══════════════════════════════════════════════════════════════════╝
--->
+<!-- ════════════════════════════════════════════════
+     ✏️ ZONE 2 — ข้อสอบ แก้ DEF object ด้านล่าง
+════════════════════════════════════════════════ -->
 <script>
-const DEF = {
+var DEF = {
   questions: [
     {q:"การทุจริตประเภท 'การฟอกเงิน' คืออะไร?",c:["การซักเสื้อผ้าในโรงงาน","กระบวนการปิดบังที่มาของเงินที่ได้มาอย่างผิดกฎหมาย","การโอนเงินผ่านธนาคาร","การแลกเปลี่ยนเงินตราต่างประเทศ"]},
     {q:"อนุสัญญาสหประชาชาติว่าด้วยการต่อต้านการทุจริต (UNCAC) มีเป้าหมายหลักคืออะไร?",c:["ส่งเสริมการค้าระหว่างประเทศ","กำหนดมาตรฐานและความร่วมมือระหว่างประเทศเพื่อป้องกันและปราบปรามการทุจริต","ปกป้องสิทธิเด็กทั่วโลก","ควบคุมอาวุธนิวเคลียร์"]},
     {q:"หลักการ 'ธรรมาภิบาล' ประกอบด้วยข้อใดบ้าง?",c:["ความลับ ความรวดเร็ว และความยืดหยุ่น","ความโปร่งใส ความรับผิดชอบ ความมีส่วนร่วม และนิติธรรม","ความมั่งคั่ง ความแข็งแกร่ง และอำนาจ","ความเร็ว ประสิทธิภาพ และผลกำไร"]},
     {q:"บทบาทของ ป.ป.ช. ในการต้านทุจริตคือข้อใด?",c:["สร้างถนนและสาธารณูปโภค","ไต่สวนและดำเนินคดีเจ้าหน้าที่รัฐที่ทุจริต","จัดการศึกษาขั้นพื้นฐาน","ออกกฎหมายภาษี"]},
-    {q:"การ 'เรียกรับสินบน' แตกต่างจาก 'การรับของขวัญ' อย่างไร?",c:["ไม่แตกต่างกัน ทั้งสองอย่างเหมือนกัน","การรับสินบนมีเงื่อนไขให้ผู้รับทำหรือละเว้นการทำหน้าที่ ส่วนของขวัญเป็นการให้โดยไม่มีเงื่อนไข","ของขวัญมีมูลค่าสูงกว่าสินบนเสมอ","สินบนให้ได้เฉพาะเจ้าหน้าที่รัฐ ส่วนของขวัญให้ใครก็ได้"]},
+    {q:"การ 'เรียกรับสินบน' แตกต่างจาก 'การรับของขวัญ' อย่างไร?",c:["ไม่แตกต่างกัน","การรับสินบนมีเงื่อนไขให้ผู้รับทำหรือละเว้นการทำหน้าที่ ส่วนของขวัญเป็นการให้โดยไม่มีเงื่อนไข","ของขวัญมีมูลค่าสูงกว่าสินบนเสมอ","สินบนให้ได้เฉพาะเจ้าหน้าที่รัฐ"]},
     {q:"กลไกใดในระบอบประชาธิปไตยที่ช่วยป้องกันการทุจริตของรัฐบาล?",c:["การรวมอำนาจไว้ที่คนเดียว","การแบ่งแยกอำนาจ นิติบัญญัติ บริหาร ตุลาการ และการตรวจสอบถ่วงดุล","การห้ามประชาชนวิจารณ์รัฐบาล","การที่รัฐบาลควบคุมสื่อทั้งหมด"]},
     {q:"ข้อใดคือผลกระทบของการทุจริตต่อสิทธิมนุษยชน?",c:["ประชาชนได้รับบริการที่ดีขึ้น","ทำให้ประชาชนไม่ได้รับบริการสาธารณะอย่างเท่าเทียม ละเมิดสิทธิขั้นพื้นฐาน","รัฐมีงบประมาณเพิ่มขึ้น","ทำให้กฎหมายมีความยุติธรรมมากขึ้น"]},
-    {q:"'Whistleblower' หรือ 'ผู้แจ้งเบาะแส' ควรได้รับการคุ้มครองอย่างไร?",c:["ไม่ควรได้รับการคุ้มครอง เพราะแทรกแซงผู้อื่น","ควรได้รับความคุ้มครองทางกฎหมายจากการตอบโต้และการข่มขู่","ควรได้รับโทษเพราะเปิดเผยความลับ","ไม่มีกฎหมายคุ้มครอง"]},
+    {q:"'Whistleblower' หรือ 'ผู้แจ้งเบาะแส' ควรได้รับการคุ้มครองอย่างไร?",c:["ไม่ควรได้รับการคุ้มครอง","ควรได้รับความคุ้มครองทางกฎหมายจากการตอบโต้และการข่มขู่","ควรได้รับโทษเพราะเปิดเผยความลับ","ไม่มีกฎหมายคุ้มครอง"]},
     {q:"เทคโนโลยี Blockchain สามารถช่วยต้านทุจริตได้อย่างไร?",c:["เพิ่มความเร็วในการประมวลผล","สร้างบันทึกธุรกรรมที่โปร่งใสและไม่สามารถแก้ไขย้อนหลังได้","ช่วยให้การโกงเป็นเรื่องง่ายขึ้น","ลดต้นทุนการพิมพ์เอกสาร"]},
     {q:"ประเทศที่มีดัชนี CPI สูงแสดงว่าอย่างไร?",c:["มีการทุจริตมาก","มีการทุจริตน้อย มีความโปร่งใสสูง","มีประชากรมาก","มีรายได้ต่อหัวต่ำ"]},
     {q:"การที่นักการเมืองประกาศบัญชีทรัพย์สินต่อสาธารณะมีประโยชน์อย่างไร?",c:["ทำให้ประชาชนอยากเป็นนักการเมือง","เพิ่มความโปร่งใสและช่วยตรวจสอบการร่ำรวยผิดปกติ","ช่วยให้นักการเมืองวางแผนภาษี","ทำให้ประเทศมีรายได้เพิ่มขึ้น"]},
@@ -379,463 +277,207 @@ const DEF = {
     {q:"ในฐานะนักเรียน ป.6 จะมีส่วนร่วมสร้าง 'เครือข่ายต้านทุจริต' ได้อย่างไร?",c:["สอดส่องและแจ้งโทษครูทุกครั้ง","ชักชวนเพื่อน ๆ ร่วมโครงการต้านทุจริต ประพฤติเป็นแบบอย่างที่ดีและเผยแพร่ความรู้","ปกปิดการทุจริตเพื่อไม่ให้โรงเรียนเสียชื่อ","รอให้ผู้ใหญ่แก้ปัญหาเอง"]},
     {q:"ข้อใดสรุปสาระสำคัญของวิชาต้านทุจริตศึกษาได้ถูกต้องที่สุด?",c:["สอนให้นักเรียนจับผิดผู้อื่น","ปลูกฝังคุณธรรม ค่านิยม และจิตสำนึกในการไม่ทุจริต รู้จักปกป้องประโยชน์ส่วนรวม","สอนวิธีหลีกเลี่ยงกฎหมาย","เน้นความรู้ทางกฎหมายเพื่อไปเป็นทนาย"]}
   ],
-  answerKey: ['ข','ข','ข','ข','ข','ข','ข','ข','ข','ข','ข','ข','ข','ข','ข','ข','ข','ข','ข','ข'],
-  essay: {
-    show:true, points:1,
-    label:'จงวิเคราะห์ว่า "การทุจริตส่งผลกระทบต่อการพัฒนาประเทศอย่างยั่งยืนอย่างไร" พร้อมเสนอแนวทางที่นักเรียนในฐานะพลเมืองรุ่นใหม่จะมีส่วนร่วมแก้ปัญหาการทุจริตได้อย่างเป็นรูปธรรม'
-  }
+  answerKey:['ข','ข','ข','ข','ข','ข','ข','ข','ข','ข','ข','ข','ข','ข','ข','ข','ข','ข','ข','ข'],
+  essay:{show:true,points:1,label:'จงวิเคราะห์ว่า "การทุจริตส่งผลกระทบต่อการพัฒนาประเทศอย่างยั่งยืนอย่างไร" พร้อมเสนอแนวทางที่นักเรียนในฐานะพลเมืองรุ่นใหม่จะมีส่วนร่วมแก้ปัญหาการทุจริตได้อย่างเป็นรูปธรรม'}
 };
 </script>
-<!-- END ZONE 2/2 -->
 
-<!-- ════ ENGINE ═══════════════════════════════════════════════════ -->
+<!-- ════ ENGINE ════ (ไม่ต้องแก้) -->
 <script>
-const CODES=['ก','ข','ค','ง'];
-let LU='',LP='',LR='',MAXSCORE=0;
-let ATAB='',ASHEETS=[],ARES=[];
+var C=['ก','ข','ค','ง'],LU='',LP='',LR='',ATAB='',ASH=[],AR=[],MS=0;
+function G(id){return document.getElementById(id);}
+function V(id){return(G(id)?G(id).value:'').trim();}
+function post(p){return fetch(GAS_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(p)}).then(function(r){return r.json();});}
 
-// ── BOOT: โหลด config จาก Sheet (PUBLIC — ไม่ต้องการ apiKey) ──────
-async function boot(){
-  try {
-    // getConfig เป็น PUBLIC ใน v4.1 — ไม่ต้องส่ง apiKey
-    const r = await post({ action:'getConfig' });
-    if(!r.success) throw new Error(r.message);
+function boot(){
+  G('edt').textContent=new Date().toLocaleString('th-TH',{weekday:'long',year:'numeric',month:'long',day:'numeric',hour:'2-digit',minute:'2-digit',timeZone:'Asia/Bangkok'});
+  post({action:'getConfig'})
+    .then(function(r){
+      var cfg=null;
+      if(r.ok&&r.data){for(var i=0;i<r.data.length;i++){if(r.data[i].sheetName===SHEET_NAME){cfg=r.data[i];break;}}}
+      MS=(cfg&&cfg.maxScore>0)?cfg.maxScore:MAX_SCORE;
+      if(cfg&&cfg.status==='closed'){G('loadW').style.display='none';G('closedW').style.display='block';return;}
+      showExam();
+    })
+    .catch(function(){MS=MAX_SCORE;showExam();});
+}
 
-    const sheetCfg = (r.data||[]).find(c=>c.sheetName===CFG.sheetName);
-
-    // ถ้าไม่มีใน config → ใช้ค่า default จาก CFG และแสดงข้อสอบได้เลย
-    if(!sheetCfg){
-      MAXSCORE = CFG.maxScore || DEF.questions.length + (DEF.essay?.show ? DEF.essay.points : 0);
-    } else {
-      MAXSCORE = sheetCfg.maxScore || CFG.maxScore || 21;
-      if(sheetCfg.status === 'closed'){
-        el('loadingWrap').style.display='none';
-        el('closedWrap').style.display='block';
-        return;
-      }
-    }
-
-    // แสดงข้อสอบ
-    el('hSub').textContent  = CFG.subject;
-    el('hLv').textContent   = CFG.level;
-    el('hMax').textContent  = MAXSCORE;
-    const tot = DEF.questions.length + (DEF.essay?.show?1:0);
-    el('hQ').textContent = `📝 ${tot} ข้อ`;
-    el('examDt').textContent = new Date().toLocaleString('th-TH',{weekday:'long',year:'numeric',month:'long',day:'numeric',hour:'2-digit',minute:'2-digit',timeZone:'Asia/Bangkok'});
-
-    buildExam();
-    el('loadingWrap').style.display='none';
-    el('examWrap').style.display='block';
-  } catch(e) {
-    el('loadingWrap').innerHTML=`<div class="loading-w"><div class="done-c" style="background:rgba(255,255,255,.1)"><div class="di">❌</div><p style="color:#fbb">${e.message}</p></div></div>`;
-  }
+function showExam(){
+  G('hSub').textContent=SUBJECT;G('hLv').textContent=LEVEL;G('hMax').textContent=MS;
+  var tot=DEF.questions.length+(DEF.essay&&DEF.essay.show?1:0);
+  G('hQ').textContent='📝 '+tot+' ข้อ';
+  buildExam();
+  G('loadW').style.display='none';G('examW').style.display='block';
 }
 
 function buildExam(){
   if(DEF.questions.length){
-    let h=`<div class="card"><div class="ch"><div class="ci">📋</div><div><h2>ส่วนที่ 1 — ปรนัย</h2><p>เลือกคำตอบถูกต้องเพียงข้อเดียว (ข้อ 1–${DEF.questions.length}) ข้อละ 1 คะแนน</p></div></div><div class="cb">`;
-    DEF.questions.forEach((q,i)=>{
-      h+=`<div class="qb" id="qb${i}"><div class="qt"><span class="qn">${i+1}</span>${q.q}</div><div class="cs">`;
-      q.c.forEach((c,j)=>{ h+=`<label class="cl"><input type="radio" name="q${i}" value="${CODES[j]}" onchange="updP()"><span class="cd"></span><span class="cc">${CODES[j]}.</span><span>${c}</span></label>`; });
-      h+=`</div></div>`;
+    var h='<div class="card"><div class="ch"><div class="ci">📋</div><div><h2>ส่วนที่ 1 — ปรนัย</h2><p>เลือกคำตอบถูกต้องเพียงข้อเดียว (ข้อ 1–'+DEF.questions.length+') ข้อละ 1 คะแนน</p></div></div><div class="cb">';
+    DEF.questions.forEach(function(q,i){
+      h+='<div class="qb" id="qb'+i+'"><div class="qt"><span class="qno">'+(i+1)+'</span>'+q.q+'</div><div class="cs">';
+      q.c.forEach(function(c,j){h+='<label class="cl"><input type="radio" name="q'+i+'" value="'+C[j]+'" onchange="updP()"><span class="cd"></span><span class="cc">'+C[j]+'.</span><span>'+c+'</span></label>';});
+      h+='</div></div>';
     });
-    h+=`</div></div>`;
-    el('mcqW').innerHTML=h;
+    G('mcqW').innerHTML=h+'</div></div>';
   }
-  if(DEF.essay?.show){
-    const n=DEF.questions.length+1;
-    el('essW').innerHTML=`<div class="card"><div class="ch"><div class="ci">✍️</div><div><h2>ส่วนที่ 2 — อัตนัย</h2><p>ข้อ ${n} — ${DEF.essay.points} คะแนน</p></div></div><div class="cb"><div class="qb"><div class="qt"><span class="qn">${n}</span>${DEF.essay.label}</div><textarea id="esA" class="ea" placeholder="เขียนคำตอบ... (อย่างน้อย 2-3 ประโยค)" oninput="updP()"></textarea><p style="font-size:.75rem;color:var(--gr);margin-top:6px;">💡 ตอบอย่างน้อย 2-3 ประโยค</p></div></div></div>`;
+  if(DEF.essay&&DEF.essay.show){
+    var n=DEF.questions.length+1;
+    G('essW').innerHTML='<div class="card"><div class="ch"><div class="ci">✍️</div><div><h2>ส่วนที่ 2 — อัตนัย</h2><p>ข้อ '+n+' — '+DEF.essay.points+' คะแนน</p></div></div><div class="cb"><div class="qb"><div class="qt"><span class="qno">'+n+'</span>'+DEF.essay.label+'</div><textarea id="esA" class="eatxt" placeholder="เขียนคำตอบที่นี่... (อย่างน้อย 2-3 ประโยค)" oninput="updP()"></textarea><p style="font-size:.73rem;color:var(--gr);margin-top:5px;">💡 ตอบอย่างน้อย 2-3 ประโยค</p></div></div></div>';
   }
   updP();
 }
 
 function updP(){
-  const n=DEF.questions.length; let d=0;
-  for(let i=0;i<n;i++){
-    const ok=!!document.querySelector(`input[name="q${i}"]:checked`);
-    if(ok)d++;
-    const b=el('qb'+i); if(b)b.classList.toggle('ok',ok);
-  }
-  const hE=DEF.essay?.show;
-  if(hE&&(el('esA')?.value||'').trim().length>5)d++;
-  const t=n+(hE?1:0);
-  el('pb').style.width=t?Math.round(d/t*100)+'%':'0%';
-  el('pl').textContent=`ตอบแล้ว ${d} / ${t} ข้อ`;
+  var n=DEF.questions.length,d=0;
+  for(var i=0;i<n;i++){var ok=!!document.querySelector('input[name="q'+i+'"]:checked');if(ok)d++;var b=G('qb'+i);if(b)b.classList.toggle('ok',ok);}
+  var hE=DEF.essay&&DEF.essay.show;
+  if(hE&&G('esA')&&G('esA').value.trim().length>5)d++;
+  var t=n+(hE?1:0);
+  G('pb').style.width=(t?Math.round(d/t*100):0)+'%';
+  G('pl').textContent='ตอบแล้ว '+d+' / '+t+' ข้อ';
 }
 
-// ── SUBMIT ────────────────────────────────────────────────────────
-async function submitExam(){
-  const fn=v('fn'),ln=v('ln'),cl=v('cl'),sn=v('sn');
-  if(!fn||!ln||!cl||!sn){alert('⚠️ กรุณากรอกข้อมูลให้ครบ');el('fn').scrollIntoView({behavior:'smooth'});return;}
-  const answers=[],un=[];
-  for(let i=0;i<DEF.questions.length;i++){
-    const s=document.querySelector(`input[name="q${i}"]:checked`);
-    answers.push(s?s.value:'');
-    if(!s)un.push(i+1);
-  }
-  if(un.length&&!confirm(`⚠️ ยังไม่ได้ตอบข้อ: ${un.join(', ')}\nต้องการส่งเลยหรือไม่?`))return;
-
-  let mc=0; answers.forEach((a,i)=>{ if(a===DEF.answerKey[i])mc++; });
-  const essTx=(el('esA')?.value||'').trim();
-  const ess=DEF.essay?.show?(essTx.length>10?DEF.essay.points:0):0;
-  const tot=mc+ess;
-  const ts=new Date().toLocaleString('th-TH',{timeZone:'Asia/Bangkok',year:'numeric',month:'long',day:'numeric',hour:'2-digit',minute:'2-digit',second:'2-digit'});
-
-  const btn=el('subBtn');
-  btn.disabled=true; btn.innerHTML='<span class="sp"></span> กำลังส่ง...';
-
-  const r=await post({
-    action:'saveScore', apiKey:CFG.apiKey, sheetName:CFG.sheetName,
+function submitExam(){
+  var fn=V('fn'),ln=V('ln'),cl=V('cl'),sn=V('sn');
+  if(!fn||!ln||!cl||!sn){alert('⚠️ กรุณากรอกข้อมูลให้ครบ');G('fn').scrollIntoView({behavior:'smooth'});return;}
+  var ans=[],un=[];
+  for(var i=0;i<DEF.questions.length;i++){var s=document.querySelector('input[name="q'+i+'"]:checked');ans.push(s?s.value:'');if(!s)un.push(i+1);}
+  if(un.length&&!confirm('⚠️ ยังไม่ได้ตอบข้อ: '+un.join(', ')+'\nต้องการส่งเลยหรือไม่?'))return;
+  var mc=0;ans.forEach(function(a,i){if(a===DEF.answerKey[i])mc++;});
+  var et=(G('esA')?G('esA').value.trim():'');
+  var ess=(DEF.essay&&DEF.essay.show&&et.length>10)?DEF.essay.points:0;
+  var tot=mc+ess;
+  var ts=new Date().toLocaleString('th-TH',{timeZone:'Asia/Bangkok',year:'numeric',month:'long',day:'numeric',hour:'2-digit',minute:'2-digit',second:'2-digit'});
+  var btn=G('subBtn');btn.disabled=true;btn.innerHTML='<span class="spin"></span> กำลังส่ง...';
+  post({action:'saveScore',apiKey:API_KEY,sheetName:SHEET_NAME,subjectName:SUBJECT,
     student:{firstName:fn,lastName:ln,classroom:cl,studentNo:sn},
-    score:tot, maxScore:MAXSCORE, timestamp:ts,
-    extra:{mcScore:mc,essayScore:ess,
-      answers:answers.map((a,i)=>a+(a===DEF.answerKey[i]?'✓':'✗')).join(','),essay:essTx}
-  });
-
-  if(r.success){
-    showModal({fn,ln,cl,sn,score:tot,mc,ess,ts});
-  } else {
-    alert('❌ '+r.message);
-    btn.disabled=false; btn.innerHTML='📤 ส่งข้อสอบ';
-  }
+    score:tot,maxScore:MS,timestamp:ts,
+    extra:{mcScore:mc,essayScore:ess,answers:ans.map(function(a,i){return a+(a===DEF.answerKey[i]?'✓':'✗');}).join(','),essay:et}
+  }).then(function(r){
+    if(r.ok){showModal({fn:fn,ln:ln,cl:cl,sn:sn,score:tot,mc:mc,ess:ess});}
+    else{alert('❌ GAS ตอบ: '+r.msg+'\n\nหากเป็น "Invalid API key" ให้ตรวจว่า API_KEY ใน HTML ตรงกับใน GAS หรือไม่');btn.disabled=false;btn.innerHTML='📤 ส่งข้อสอบ';}
+  }).catch(function(e){alert('❌ '+e.message+'\n\nตรวจสอบ GAS_URL และการ Deploy');btn.disabled=false;btn.innerHTML='📤 ส่งข้อสอบ';});
 }
 
 function showModal(r){
-  const pct=Math.round(r.score/MAXSCORE*100);
-  el('rSc').textContent=r.score; el('rDn').textContent='/'+MAXSCORE;
-  el('rNm').textContent=`${r.fn} ${r.ln}`; el('rCl').textContent=`ชั้น ${r.cl} เลขที่ ${r.sn}`;
-  let g,gc;
-  if(pct>=80){g='ยอดเยี่ยม 🌟';gc='gA';}else if(pct>=70){g='ดีมาก 👍';gc='gB';}
-  else if(pct>=50){g='ผ่าน ✅';gc='gC';}else{g='ต้องปรับปรุง 📚';gc='gF';}
-  el('rGr').textContent=g; el('rGr').className='gp '+gc;
-  el('rTb').innerHTML=[
-    ['📋 ปรนัย',`${r.mc}/${DEF.questions.length}`],
-    ['✍️ อัตนัย',`${r.ess}/${DEF.essay?.points||0}`],
-    ['⭐ รวม',`${r.score}/${MAXSCORE}`],
-    ['📊 %',pct+'%']
-  ].map(([k,v2])=>`<tr><td>${k}</td><td>${v2}</td></tr>`).join('');
-  window._R=r; el('resOv').classList.add('on');
+  var p=Math.round(r.score/MS*100);
+  G('rSc').textContent=r.score;G('rDn').textContent='/'+MS;
+  G('rNm').textContent=r.fn+' '+r.ln;G('rCl').textContent='ชั้น '+r.cl+' เลขที่ '+r.sn;
+  var g,gc;
+  if(p>=80){g='ยอดเยี่ยม 🌟';gc='gA';}else if(p>=70){g='ดีมาก 👍';gc='gB';}
+  else if(p>=50){g='ผ่าน ✅';gc='gC';}else{g='ต้องปรับปรุง 📚';gc='gF';}
+  G('rGr').textContent=g;G('rGr').className='gp '+gc;
+  G('rTbl').innerHTML=[['📋 ปรนัย',r.mc+'/'+DEF.questions.length],['✍️ อัตนัย',r.ess+'/'+(DEF.essay?DEF.essay.points:0)],['⭐ รวม',r.score+'/'+MS],['📊 %',p+'%']].map(function(x){return'<tr><td>'+x[0]+'</td><td>'+x[1]+'</td></tr>';}).join('');
+  window._R=r;G('resOv').classList.add('on');
 }
 
 function confirmDone(){
-  el('resOv').classList.remove('on');
-  el('examWrap').style.display='none';
-  el('doneWrap').style.display='block';
-  el('fab').style.display='none';
-  const r=window._R||{};
-  el('doneTx').textContent=`${r.fn} ${r.ln} — ชั้น ${r.cl} เลขที่ ${r.sn} | คะแนน ${r.score}/${MAXSCORE} (${Math.round(r.score/MAXSCORE*100)}%)`;
+  G('resOv').classList.remove('on');G('examW').style.display='none';G('doneW').style.display='block';G('fab').style.display='none';
+  var r=window._R||{};var p=r.score?Math.round(r.score/MS*100):0;
+  G('doneTx').textContent=r.fn+' '+r.ln+' — ชั้น '+r.cl+' เลขที่ '+r.sn+' | คะแนน '+r.score+'/'+MS+' ('+p+'%)';
 }
 
-// ── ADMIN ─────────────────────────────────────────────────────────
-function showLg(){el('aLog').classList.add('on');setTimeout(()=>el('au').focus(),80);}
-function closeLg(){el('aLog').classList.remove('on');}
+function showLogin(){G('aPanel').classList.add('on');setTimeout(function(){G('au').focus();},80);}
 
-async function doLogin(){
-  const u=v('au'),p=v('ap');
-  const err=el('le2'),btn=el('lbtn');
+function doLogin(){
+  var u=V('au'),p=V('ap'),err=G('le'),btn=G('lbtn');
   if(!u||!p){err.textContent='กรุณากรอกข้อมูล';return;}
-  btn.innerHTML='<span class="sp"></span>'; btn.disabled=true; err.textContent='';
-  const r=await post({action:'login',apiKey:CFG.apiKey,username:u,password:p});
-  if(r.success){
-    LU=u;LP=p;LR=r.role;
-    el('dInfo').textContent=`ยินดีต้อนรับ ${r.displayName} (${r.role})`;
-    closeLg(); el('dash').classList.add('on');
-    await loadSheets();
-  } else { err.textContent=r.message||'เข้าสู่ระบบไม่ได้'; }
-  btn.textContent='เข้าสู่ระบบ'; btn.disabled=false;
+  btn.innerHTML='<span class="spin"></span>';btn.disabled=true;err.textContent='';
+  post({action:'login',apiKey:API_KEY,username:u,password:p})
+    .then(function(r){
+      if(r.ok){LU=u;LP=p;LR=r.role;G('dInfo').textContent='ยินดีต้อนรับ '+r.name+' ('+r.role+')';G('aPanel').classList.remove('on');G('dash').classList.add('on');loadSheets();}
+      else{err.textContent=r.msg||'เข้าสู่ระบบไม่ได้';}
+    }).catch(function(e){err.textContent=''+e.message;})
+    .finally(function(){btn.textContent='เข้าสู่ระบบ';btn.disabled=false;});
 }
 
-async function loadSheets(){
-  // ดึง getSheets ก่อน แล้ว parallel โหลด tab แรกพร้อมกัน
-  const r=await post({action:'getSheets',apiKey:CFG.apiKey,username:LU,password:LP});
-  ASHEETS=r.sheets||[];
-  ATAB=ASHEETS.length?ASHEETS[0].sheetName:'';
-  renderTabs();
-  // โหลด tab แรกทันที
-  await loadTab();
+function loadSheets(){
+  post({action:'getSheets',apiKey:API_KEY,username:LU,password:LP}).then(function(r){
+    ASH=r.sheets||[];ATAB=ASH.length?ASH[0].sheetName:'';renderTabs();loadTab();
+  });
 }
 
 function renderTabs(){
-  const tc=el('dtabs'); tc.innerHTML='';
-  ASHEETS.forEach(s=>{
-    const b=document.createElement('button');
-    const isOn=s.sheetName===ATAB;
-    b.className='tab'+(isOn?' on':'');
-    const stBadge=s.status==='closed'?' 🔒':'';
-    b.textContent=`📋 ${s.subjectName||s.sheetName}${stBadge}`;
-    b.onclick=()=>switchTab(s.sheetName);
-    tc.appendChild(b);
+  var tc=G('dtabs');tc.innerHTML='';
+  ASH.forEach(function(s){
+    var b=document.createElement('button');b.className='tab'+(s.sheetName===ATAB?' on':'');
+    b.textContent='📋 '+(s.subjectName||s.sheetName)+(s.status==='closed'?' 🔒':'');
+    b.onclick=(function(sn){return function(){sw(sn);};})(s.sheetName);tc.appendChild(b);
   });
-  if(LR==='admin'){
-    ['__config','__users'].forEach(id=>{
-      const b=document.createElement('button');
-      const isOn=ATAB===id;
-      b.className=`tab ${id==='__config'?'tc':'tu'}`+(isOn?' on':'');
-      b.textContent=id==='__config'?'⚙️ Config':'👥 Users';
-      b.onclick=()=>switchTab(id);
-      tc.appendChild(b);
-    });
-  }
+  if(LR==='admin'){[{id:'__cfg',lbl:'⚙️ Config'},{id:'__usr',lbl:'👥 Users'}].forEach(function(x){
+    var b=document.createElement('button');b.className='tab sp'+(ATAB===x.id?' on':'');
+    b.textContent=x.lbl;b.onclick=(function(id){return function(){sw(id);};})(x.id);tc.appendChild(b);
+  });}
 }
 
-async function switchTab(s){ATAB=s;renderTabs();await loadTab();}
-
-async function loadTab(){
-  if(ATAB==='__users'){await loadUsers();return;}
-  if(ATAB==='__config'){await loadConfigTab();return;}
-  if(!ATAB){el('dbody').innerHTML='<div class="nd">📭 ไม่มี Sheet</div>';return;}
-  await loadResults(ATAB);
+function sw(s){ATAB=s;renderTabs();loadTab();}
+function loadTab(){
+  if(ATAB==='__cfg'){loadCfg();return;}if(ATAB==='__usr'){loadUsr();return;}
+  if(!ATAB){G('dbody').innerHTML='<div class="nd">📭 ไม่มี Sheet</div>';return;}
+  loadRes(ATAB);
 }
 
-// ── RESULTS ───────────────────────────────────────────────────────
-async function loadResults(sn){
-  el('dbody').innerHTML='<div class="nd">⏳ กำลังโหลด...</div>';
-  const r=await post({action:'getResults',apiKey:CFG.apiKey,username:LU,password:LP,sheetName:sn});
-  if(!r.success){el('dbody').innerHTML=`<div class="nd">❌ ${r.message}</div>`;return;}
-  ARES=r.data||[]; const s=r.summary||{};
-  const adm=LR==='admin';
-  el('dbody').innerHTML=`
-  <div class="sr2">
-    <div class="sc"><div class="v">${s.count||0}</div><div class="l">ผู้สอบ</div></div>
-    <div class="sc go"><div class="v">${s.avg||0}</div><div class="l">คะแนนเฉลี่ย</div></div>
-    <div class="sc"><div class="v">${s.avgPct||0}%</div><div class="l">เฉลี่ย %</div></div>
-    <div class="sc gr"><div class="v">${s.pass||0}</div><div class="l">ผ่าน ≥50%</div></div>
-    <div class="sc rd"><div class="v">${s.fail||0}</div><div class="l">ไม่ผ่าน</div></div>
-    <div class="sc"><div class="v">${s.max||0}</div><div class="l">สูงสุด</div></div>
-  </div>
-  <div id="ep" class="ep"></div>
-  <div class="tw">
-    <div class="th"><h3>รายชื่อผู้สอบ — ${sn}</h3>
-      <div class="th-r"><input class="si" id="srch" placeholder="🔍 ค้นหา..." oninput="filterR()"></div>
-    </div>
-    <div style="overflow-x:auto;">
-      <table class="rt"><thead><tr>
-        <th>#</th><th>ชื่อ-นามสกุล</th><th>ชั้น</th><th>เลขที่</th>
-        <th>คะแนน</th><th>เต็ม</th><th>%</th><th>ระดับ</th><th>วันเวลา</th>
-        ${adm?'<th>จัดการ</th>':''}
-      </tr></thead><tbody id="rtb"></tbody></table>
-    </div>
-  </div>`;
-  renderR(ARES);
+function loadRes(sn){
+  G('dbody').innerHTML='<div class="nd">⏳ กำลังโหลด...</div>';
+  post({action:'getResults',apiKey:API_KEY,username:LU,password:LP,sheetName:sn}).then(function(r){
+    if(!r.ok){G('dbody').innerHTML='<div class="nd">❌ '+r.msg+'</div>';return;}
+    AR=r.data||[];var s=r.summary||{},adm=LR==='admin';
+    G('dbody').innerHTML='<div class="sr"><div class="sc"><div class="v">'+(s.count||0)+'</div><div class="l">ผู้สอบ</div></div><div class="sc go"><div class="v">'+(s.avg||0)+'</div><div class="l">เฉลี่ย</div></div><div class="sc"><div class="v">'+(s.avgPct||0)+'%</div><div class="l">เฉลี่ย %</div></div><div class="sc gr"><div class="v">'+(s.pass||0)+'</div><div class="l">ผ่าน ≥50%</div></div><div class="sc rd"><div class="v">'+(s.fail||0)+'</div><div class="l">ไม่ผ่าน</div></div><div class="sc"><div class="v">'+(s.max||0)+'</div><div class="l">สูงสุด</div></div></div><div id="ep" class="ep"></div><div class="tw"><div class="th"><h3>รายชื่อผู้สอบ — '+sn+'</h3><div><input class="si" id="srch" placeholder="🔍 ค้นหา..." oninput="fR()"></div></div><div style="overflow-x:auto;"><table class="rt"><thead><tr><th>#</th><th>ชื่อ-นามสกุล</th><th>ชั้น</th><th>เลขที่</th><th>คะแนน</th><th>เต็ม</th><th>%</th><th>ระดับ</th><th>วันเวลา</th>'+(adm?'<th>จัดการ</th>':'')+'</tr></thead><tbody id="rtb"></tbody></table></div></div>';
+    rnR(AR);
+  }).catch(function(e){G('dbody').innerHTML='<div class="nd">❌ '+e.message+'</div>';});
 }
 
-function renderR(data){
-  const tb=el('rtb'); if(!tb)return;
-  if(!data.length){tb.innerHTML=`<tr><td colspan="11" class="nd">📭 ยังไม่มีข้อมูล</td></tr>`;return;}
-  const adm=LR==='admin';
-  tb.innerHTML=data.map((r,i)=>{
-    const p=parseInt(String(r.percent||'0'))||0;
-    let pc,lv;
-    if(p>=80){pc='pA';lv='ยอดเยี่ยม';}else if(p>=70){pc='pB';lv='ดีมาก';}
-    else if(p>=50){pc='pC';lv='ผ่าน';}else{pc='pF';lv='ปรับปรุง';}
-    const ac=adm?`<td><button class="be" onclick="stEdit(${r._rowIndex})">✏️</button><button class="bd" onclick="delRow(${r._rowIndex})">🗑</button></td>`:'';
-    return `<tr><td>${i+1}</td><td style="text-align:left;font-weight:600">${r.firstName||''} ${r.lastName||''}</td>
-    <td>${r.classroom||''}</td><td>${r.studentNo||''}</td>
-    <td style="font-weight:800;color:var(--nv)">${r.score||''}</td><td>${r.maxScore||''}</td>
-    <td><span class="pc ${pc}">${r.percent||''}</span></td>
-    <td><span class="pc ${pc}">${lv}</span></td>
-    <td style="font-size:.72rem;color:#888">${String(r.timestamp||'').substring(0,16)}</td>${ac}</tr>`;
+function rnR(data){
+  var tb=G('rtb');if(!tb)return;
+  if(!data.length){tb.innerHTML='<tr><td colspan="11" class="nd">📭 ยังไม่มีข้อมูล</td></tr>';return;}
+  var adm=LR==='admin';
+  tb.innerHTML=data.map(function(r,i){
+    var p=parseInt(String(r.percent||'0'))||0,pc,lv;
+    if(p>=80){pc='pA';lv='ยอดเยี่ยม';}else if(p>=70){pc='pB';lv='ดีมาก';}else if(p>=50){pc='pC';lv='ผ่าน';}else{pc='pF';lv='ปรับปรุง';}
+    var ac=adm?'<td><button class="be" onclick="stE('+r._rowIndex+')">✏️</button><button class="bd" onclick="dR('+r._rowIndex+')">🗑</button></td>':'';
+    return '<tr><td>'+(i+1)+'</td><td style="text-align:left;font-weight:600">'+(r.firstName||'')+' '+(r.lastName||'')+'</td><td>'+(r.classroom||'')+'</td><td>'+(r.studentNo||'')+'</td><td style="font-weight:800;color:var(--nv)">'+(r.score||'')+'</td><td>'+(r.maxScore||'')+'</td><td><span class="pc '+pc+'">'+(r.percent||'')+'</span></td><td><span class="pc '+pc+'">'+lv+'</span></td><td style="font-size:.7rem;color:#888">'+String(r.timestamp||'').substring(0,16)+'</td>'+ac+'</tr>';
   }).join('');
 }
+function fR(){var q=(G('srch')||{value:''}).value.toLowerCase();rnR(AR.filter(function(r){return[r.firstName,r.lastName,r.classroom,r.studentNo].join(' ').toLowerCase().indexOf(q)!==-1;}));}
 
-function filterR(){
-  const q=(el('srch')||{value:''}).value.toLowerCase();
-  renderR(ARES.filter(r=>[r.firstName,r.lastName,r.classroom,r.studentNo].join(' ').toLowerCase().includes(q)));
-}
-
-function stEdit(ri){
-  const r=ARES.find(x=>x._rowIndex===ri); if(!r)return;
-  const ep=el('ep'); ep.classList.add('on');
-  ep.innerHTML=`<div style="font-size:.83rem;font-weight:700;color:var(--nv);margin-bottom:8px;">✏️ แก้ไขแถว ${ri} — ${r.firstName} ${r.lastName}</div>
-  <div class="eg">
-    <div><label style="font-size:.69rem;color:var(--gr)">ชื่อ</label><input id="ef0" value="${r.firstName||''}"></div>
-    <div><label style="font-size:.69rem;color:var(--gr)">นามสกุล</label><input id="ef1" value="${r.lastName||''}"></div>
-    <div><label style="font-size:.69rem;color:var(--gr)">ชั้น</label><input id="ef2" value="${r.classroom||''}"></div>
-    <div><label style="font-size:.69rem;color:var(--gr)">เลขที่</label><input id="ef3" value="${r.studentNo||''}"></div>
-    <div><label style="font-size:.69rem;color:var(--gr)">คะแนน</label><input id="ef4" type="number" value="${r.score||0}"></div>
-    <div><label style="font-size:.69rem;color:var(--gr)">คะแนนเต็ม</label><input id="ef5" type="number" value="${r.maxScore||0}"></div>
-  </div>
-  <div class="ea2"><button class="bsv" onclick="svEdit(${ri})">💾 บันทึก</button><button class="bcl" onclick="canEdit()">ยกเลิก</button></div>`;
+function stE(ri){
+  var r=null;for(var i=0;i<AR.length;i++){if(AR[i]._rowIndex===ri){r=AR[i];break;}}if(!r)return;
+  var ep=G('ep');ep.classList.add('on');
+  ep.innerHTML='<div style="font-size:.82rem;font-weight:700;color:var(--nv);margin-bottom:8px;">✏️ แก้ไขแถว '+ri+' — '+(r.firstName||'')+' '+(r.lastName||'')+'</div><div class="eg"><div><label style="font-size:.67rem;color:var(--gr)">ชื่อ</label><input id="e0" value="'+(r.firstName||'')+'"></div><div><label style="font-size:.67rem;color:var(--gr)">นามสกุล</label><input id="e1" value="'+(r.lastName||'')+'"></div><div><label style="font-size:.67rem;color:var(--gr)">ชั้น</label><input id="e2" value="'+(r.classroom||'')+'"></div><div><label style="font-size:.67rem;color:var(--gr)">เลขที่</label><input id="e3" value="'+(r.studentNo||'')+'"></div><div><label style="font-size:.67rem;color:var(--gr)">คะแนน</label><input id="e4" type="number" value="'+(r.score||0)+'"></div><div><label style="font-size:.67rem;color:var(--gr)">เต็ม</label><input id="e5" type="number" value="'+(r.maxScore||0)+'"></div></div><div class="ea"><button class="bsv" onclick="svE('+ri+')">💾 บันทึก</button><button class="bcn" onclick="cnE()">ยกเลิก</button></div>';
   ep.scrollIntoView({behavior:'smooth'});
 }
+function svE(ri){post({action:'updateRow',apiKey:API_KEY,username:LU,password:LP,sheetName:ATAB,rowIndex:ri,updates:{firstName:V('e0'),lastName:V('e1'),classroom:V('e2'),studentNo:V('e3'),score:V('e4'),maxScore:V('e5')}}).then(function(r){if(r.ok){cnE();loadTab();}else alert('❌ '+r.msg);});}
+function cnE(){var ep=G('ep');if(ep){ep.classList.remove('on');ep.innerHTML='';}}
+function dR(ri){if(!confirm('⚠️ ลบแถวนี้?'))return;post({action:'deleteRow',apiKey:API_KEY,username:LU,password:LP,sheetName:ATAB,rowIndex:ri}).then(function(r){if(r.ok)loadTab();else alert('❌ '+r.msg);});}
 
-async function svEdit(ri){
-  const r=await post({action:'updateRow',apiKey:CFG.apiKey,username:LU,password:LP,sheetName:ATAB,rowIndex:ri,
-    updates:{firstName:v('ef0'),lastName:v('ef1'),classroom:v('ef2'),studentNo:v('ef3'),score:v('ef4'),maxScore:v('ef5')}});
-  if(r.success){canEdit();await loadTab();}else alert('❌ '+r.message);
+function loadCfg(){
+  G('dbody').innerHTML='<div class="nd">⏳ กำลังโหลด...</div>';
+  post({action:'getConfig'}).then(function(r){
+    var d=r.data||[];
+    G('dbody').innerHTML='<div class="uf"><h4>➕ เพิ่ม / แก้ไข Config (ใช้ sheetName เดิม = แก้ไข)</h4><div class="ug"><div><label style="font-size:.67rem;color:var(--gr)">sheetName *</label><input id="c0" placeholder="คณิตศาสตร์_ป6"></div><div><label style="font-size:.67rem;color:var(--gr)">ชื่อวิชา</label><input id="c1" placeholder="คณิตศาสตร์"></div><div><label style="font-size:.67rem;color:var(--gr)">maxScore *</label><input id="c2" type="number" placeholder="20"></div><div><label style="font-size:.67rem;color:var(--gr)">Status</label><select id="c3"><option value="open">open (เปิดรับ)</option><option value="closed">closed (ปิดรับ)</option></select></div></div><div style="display:flex;gap:6px;"><button class="bsv" onclick="svCfg()">💾 บันทึก</button></div><div id="ce" style="color:var(--rd);font-size:.74rem;margin-top:5px;"></div></div><div class="tw"><div class="th"><h3>⚙️ Config ปัจจุบัน</h3></div><div style="overflow-x:auto;"><table class="rt"><thead><tr><th>#</th><th>sheetName</th><th>ชื่อวิชา</th><th>maxScore</th><th>Status</th><th>สลับ</th></tr></thead><tbody>'+(d.length?d.map(function(c,i){return'<tr><td>'+(i+1)+'</td><td style="font-weight:700">'+c.sheetName+'</td><td>'+c.subjectName+'</td><td>'+c.maxScore+'</td><td><span class="'+(c.status==='open'?'stO':'stC')+'">'+c.status+'</span></td><td><button class="be" onclick="tgSt(\''+c.sheetName+'\',\''+c.subjectName+'\','+c.maxScore+',\''+(c.status==='open'?'closed':'open')+'\')">'+(c.status==='open'?'🔒 ปิด':'🔓 เปิด')+'</button></td></tr>';}).join(''):'<tr><td colspan="6" class="nd">📭 ยังไม่มี config</td></tr>')+'</tbody></table></div></div>';
+  });
 }
-function canEdit(){const ep=el('ep');if(ep){ep.classList.remove('on');ep.innerHTML='';}}
-async function delRow(ri){
-  if(!confirm('⚠️ ลบแถวนี้?'))return;
-  const r=await post({action:'deleteRow',apiKey:CFG.apiKey,username:LU,password:LP,sheetName:ATAB,rowIndex:ri});
-  if(r.success)await loadTab();else alert('❌ '+r.message);
-}
+function svCfg(){var sn=V('c0'),nm=V('c1'),ms=V('c2'),st=G('c3').value;G('ce').textContent='';if(!sn||!ms){G('ce').textContent='กรุณากรอก sheetName และ maxScore';return;}post({action:'setConfig',apiKey:API_KEY,username:LU,password:LP,sheetName:sn,subjectName:nm||sn,maxScore:Number(ms),status:st}).then(function(r){if(r.ok){G('c0').value='';G('c1').value='';G('c2').value='';loadCfg();}else G('ce').textContent=r.msg;});}
+function tgSt(sn,nm,ms,ns){post({action:'setConfig',apiKey:API_KEY,username:LU,password:LP,sheetName:sn,subjectName:nm,maxScore:ms,status:ns}).then(function(r){if(r.ok)loadCfg();else alert('❌ '+r.msg);});}
 
-// ── CONFIG TAB ────────────────────────────────────────────────────
-async function loadConfigTab(){
-  el('dbody').innerHTML='<div class="nd">⏳ กำลังโหลด...</div>';
-  // getConfig เป็น PUBLIC ใน v4.1
-  const r=await post({action:'getConfig'});
-  if(!r.success){el('dbody').innerHTML=`<div class="nd">❌ ${r.message}</div>`;return;}
-  const cfgData=r.data||[];
-  el('dbody').innerHTML=`
-  <div class="uf"><h4>➕ เพิ่ม / แก้ไข Config วิชา</h4>
-  <div class="ug">
-    <div><label style="font-size:.69rem;color:var(--gr)">sheetName *</label><input id="cc0" placeholder="คณิตศาสตร์_ป6"></div>
-    <div><label style="font-size:.69rem;color:var(--gr)">ชื่อวิชา</label><input id="cc1" placeholder="คณิตศาสตร์"></div>
-    <div><label style="font-size:.69rem;color:var(--gr)">maxScore *</label><input id="cc2" type="number" placeholder="20"></div>
-    <div><label style="font-size:.69rem;color:var(--gr)">Status</label>
-      <select id="cc3"><option value="open">open (เปิดรับ)</option><option value="closed">closed (ปิดรับ)</option></select>
-    </div>
-  </div>
-  <div style="display:flex;gap:6px;"><button class="bsv" onclick="saveConfig()">💾 บันทึก Config</button></div>
-  <div id="cfgErr" style="color:var(--rd);font-size:.77rem;margin-top:6px;"></div>
-  </div>
-  <div class="tw">
-    <div class="th"><h3>⚙️ Config ทั้งหมด (อ่านจาก Sheet)</h3></div>
-    <div style="overflow-x:auto;"><table class="rt">
-      <thead><tr><th>#</th><th>sheetName</th><th>ชื่อวิชา</th><th>maxScore</th><th>Status</th><th>แก้ไขด่วน</th></tr></thead>
-      <tbody>${cfgData.length?cfgData.map((c,i)=>`<tr>
-        <td>${i+1}</td><td style="font-weight:700">${c.sheetName}</td><td>${c.subjectName}</td>
-        <td>${c.maxScore}</td>
-        <td><span class="stt ${c.status==='open'?'stt-o':'stt-c'}">${c.status}</span></td>
-        <td><button class="be" onclick="quickToggle('${c.sheetName}','${c.subjectName}',${c.maxScore},'${c.status==='open'?'closed':'open'}')">${c.status==='open'?'🔒 ปิด':'🔓 เปิด'}</button></td>
-      </tr>`).join(''):'<tr><td colspan="6" class="nd">📭 ยังไม่มี config</td></tr>'}</tbody>
-    </table></div>
-  </div>`;
+function loadUsr(){
+  G('dbody').innerHTML='<div class="nd">⏳ กำลังโหลด...</div>';
+  post({action:'getUsers',apiKey:API_KEY,username:LU,password:LP}).then(function(r){
+    var us=r.data||[];
+    G('dbody').innerHTML='<div class="uf"><h4>➕ เพิ่มผู้ใช้ใหม่</h4><div class="ug"><div><label style="font-size:.67rem;color:var(--gr)">Username *</label><input id="u0" placeholder="username"></div><div><label style="font-size:.67rem;color:var(--gr)">Password *</label><input id="u1" placeholder="password"></div><div><label style="font-size:.67rem;color:var(--gr)">ชื่อแสดง</label><input id="u2" placeholder="ชื่อ-นามสกุล"></div><div><label style="font-size:.67rem;color:var(--gr)">Role</label><select id="u3"><option value="viewer">viewer</option><option value="admin">admin</option></select></div></div><div style="display:flex;gap:6px;"><button class="bsv" onclick="addUsr()">➕ เพิ่ม</button></div><div id="ue" style="color:var(--rd);font-size:.74rem;margin-top:5px;"></div></div><div class="tw"><div class="th"><h3>👥 รายชื่อผู้ใช้</h3></div><div style="overflow-x:auto;"><table class="rt"><thead><tr><th>#</th><th>Username</th><th>Password</th><th>ชื่อ</th><th>Role</th><th>จัดการ</th></tr></thead><tbody id="utb"></tbody></table></div></div>';
+    rnU([{_rowIndex:0,username:'admin',password:'(ซ่อน)',displayName:'Administrator',role:'admin',locked:true}].concat(us));
+  });
 }
+function rnU(us){var tb=G('utb');if(!tb)return;tb.innerHTML=us.map(function(u,i){var rb='<span class="br '+(u.role==='admin'?'bra':'brv')+'">'+u.role+'</span>';var ac=u.locked?'<span style="color:#ccc;font-size:.7rem;">🔒</span>':'<button class="be" onclick="edU('+u._rowIndex+')">✏️</button><button class="bd" onclick="dlU('+u._rowIndex+')">🗑</button>';return'<tr id="ur'+u._rowIndex+'"><td>'+(i+1)+'</td><td style="font-weight:700">'+u.username+'</td><td style="color:#bbb">'+(u.locked?'*****':u.password)+'</td><td>'+u.displayName+'</td><td>'+rb+'</td><td>'+ac+'</td></tr>';}).join('');}
+function addUsr(){var u=V('u0'),p=V('u1'),n=V('u2'),r=G('u3').value;G('ue').textContent='';if(!u||!p){G('ue').textContent='กรุณากรอก Username และ Password';return;}post({action:'addUser',apiKey:API_KEY,username:LU,password:LP,newUsername:u,newPassword:p,newDisplayName:n||u,newRole:r}).then(function(r){if(r.ok){G('u0').value='';G('u1').value='';G('u2').value='';loadUsr();}else G('ue').textContent=r.msg;});}
+function edU(ri){var row=G('ur'+ri);if(!row)return;var td=row.querySelectorAll('td');var cu=td[1].textContent,cp=td[2].textContent==='*****'?'':td[2].textContent,cn=td[3].textContent,cr=td[4].querySelector('.br').textContent;row.innerHTML='<td>'+td[0].textContent+'</td><td><input id="eu0" value="'+cu+'" style="border:1.5px solid #dce3f5;border-radius:5px;padding:4px 7px;font-size:.75rem;width:100%;"></td><td><input id="eu1" value="'+cp+'" placeholder="รหัสใหม่" style="border:1.5px solid #dce3f5;border-radius:5px;padding:4px 7px;font-size:.75rem;width:100%;"></td><td><input id="eu2" value="'+cn+'" style="border:1.5px solid #dce3f5;border-radius:5px;padding:4px 7px;font-size:.75rem;width:100%;"></td><td><select id="eu3" style="border:1.5px solid #dce3f5;border-radius:5px;padding:4px 7px;font-size:.75rem;"><option value="viewer"'+(cr==='viewer'?' selected':'')+'>viewer</option><option value="admin"'+(cr==='admin'?' selected':'')+'>admin</option></select></td><td><button class="bsv" style="padding:3px 8px;font-size:.7rem;" onclick="svU('+ri+')">💾</button><button class="bcn" style="padding:3px 8px;font-size:.7rem;" onclick="loadUsr()">✕</button></td>';}
+function svU(ri){var p=V('eu1')||undefined;post({action:'updateUser',apiKey:API_KEY,username:LU,password:LP,rowIndex:ri,newUsername:V('eu0'),newPassword:p,newDisplayName:V('eu2'),newRole:G('eu3').value}).then(function(r){if(r.ok)loadUsr();else alert('❌ '+r.msg);});}
+function dlU(ri){if(!confirm('⚠️ ลบผู้ใช้นี้?'))return;post({action:'deleteUser',apiKey:API_KEY,username:LU,password:LP,rowIndex:ri}).then(function(r){if(r.ok)loadUsr();else alert('❌ '+r.msg);});}
 
-async function saveConfig(){
-  const sn=v('cc0'),nm=v('cc1'),ms=v('cc2'),st=el('cc3').value;
-  const err=el('cfgErr'); err.textContent='';
-  if(!sn||!ms){err.textContent='กรุณากรอก sheetName และ maxScore';return;}
-  const r=await post({action:'setConfig',apiKey:CFG.apiKey,username:LU,password:LP,sheetName:sn,subjectName:nm||sn,maxScore:Number(ms),status:st});
-  if(r.success){el('cc0').value='';el('cc1').value='';el('cc2').value='';await loadConfigTab();}
-  else err.textContent=r.message;
-}
+function expCSV(){if(!AR.length){alert('ไม่มีข้อมูล');return;}var h=['#','ชื่อ','นามสกุล','ชั้น','เลขที่','คะแนน','เต็ม','%','วันเวลา'];var rows=AR.map(function(r){return[r['#']||'',r.firstName,r.lastName,r.classroom,r.studentNo,r.score,r.maxScore,r.percent,r.timestamp];});var csv='\uFEFF'+[h].concat(rows).map(function(r){return r.map(function(c){return'"'+String(c||'').replace(/"/g,'""')+'"';}).join(',');}).join('\n');var a=document.createElement('a');a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(csv);a.download='ผลสอบ_'+ATAB+'_'+new Date().toLocaleDateString('th-TH').replace(/\//g,'-')+'.csv';a.click();}
+function expPDF(){if(!AR.length){alert('ไม่มีข้อมูล');return;}var w=window.open('','_blank');var rows=AR.map(function(r,i){var p=parseInt(String(r.percent||'0'))||0,col=p>=80?'#1a7a4a':p>=70?'#1565c0':p>=50?'#c49000':'#c0392b';return'<tr style="background:'+(i%2?'#f5f8ff':'#fff')+'"><td>'+(i+1)+'</td><td>'+(r.firstName||'')+' '+(r.lastName||'')+'</td><td>'+(r.classroom||'')+'</td><td>'+(r.studentNo||'')+'</td><td style="font-weight:700">'+(r.score||'')+'</td><td>'+(r.maxScore||'')+'</td><td style="color:'+col+';font-weight:700">'+(r.percent||'')+'</td><td style="font-size:10px;color:#888">'+String(r.timestamp||'').substring(0,16)+'</td></tr>';}).join('');w.document.write('<!DOCTYPE html><html><head><meta charset="UTF-8"><title>ผลสอบ — '+ATAB+'</title><link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;600;700&display=swap" rel="stylesheet"><style>body{font-family:\'Sarabun\',sans-serif;padding:20px;}h2{color:#0d1b4b;}p{color:#666;font-size:11px;margin:3px 0 10px;}table{width:100%;border-collapse:collapse;font-size:11px;}th{background:#1a3a8f;color:#fff;padding:6px 8px;text-align:center;}td{padding:5px 8px;border-bottom:1px solid #eee;text-align:center;}@media print{.np{display:none!important;}}</style></head><body><h2>📋 ผลการสอบ — '+ATAB+'</h2><p>พิมพ์ '+new Date().toLocaleDateString('th-TH',{year:'numeric',month:'long',day:'numeric'})+' | '+AR.length+' คน</p><button class="np" onclick="window.print()" style="background:#1a3a8f;color:#fff;border:none;border-radius:6px;padding:6px 14px;font-size:11px;cursor:pointer;margin-bottom:8px;">🖨 พิมพ์</button><table><thead><tr><th>#</th><th>ชื่อ-นามสกุล</th><th>ชั้น</th><th>เลขที่</th><th>คะแนน</th><th>เต็ม</th><th>%</th><th>วันเวลา</th></tr></thead><tbody>'+rows+'</tbody></table></body></html>');w.document.close();}
 
-async function quickToggle(sn,nm,ms,newStatus){
-  const r=await post({action:'setConfig',apiKey:CFG.apiKey,username:LU,password:LP,sheetName:sn,subjectName:nm,maxScore:ms,status:newStatus});
-  if(r.success)await loadConfigTab();else alert('❌ '+r.message);
-}
-
-// ── USERS ─────────────────────────────────────────────────────────
-async function loadUsers(){
-  el('dbody').innerHTML='<div class="nd">⏳ กำลังโหลด...</div>';
-  const r=await post({action:'getUsers',apiKey:CFG.apiKey,username:LU,password:LP});
-  if(!r.success){el('dbody').innerHTML=`<div class="nd">❌ ${r.message}</div>`;return;}
-  el('dbody').innerHTML=`
-  <div class="uf"><h4>➕ เพิ่มผู้ใช้ใหม่</h4>
-  <div class="ug">
-    <div><label style="font-size:.69rem;color:var(--gr)">Username *</label><input id="nu0" placeholder="username"></div>
-    <div><label style="font-size:.69rem;color:var(--gr)">Password *</label><input id="nu1" placeholder="password"></div>
-    <div><label style="font-size:.69rem;color:var(--gr)">ชื่อแสดง</label><input id="nu2" placeholder="ชื่อ-นามสกุล"></div>
-    <div><label style="font-size:.69rem;color:var(--gr)">Role</label>
-      <select id="nu3"><option value="viewer">viewer</option><option value="admin">admin</option></select>
-    </div>
-  </div>
-  <div style="display:flex;gap:6px;"><button class="bsv" onclick="addUser()">➕ เพิ่ม</button></div>
-  <div id="ue" style="color:var(--rd);font-size:.77rem;margin-top:6px;"></div></div>
-  <div class="tw"><div class="th"><h3>👥 รายชื่อผู้ใช้</h3></div>
-  <div style="overflow-x:auto;"><table class="rt"><thead><tr>
-    <th>#</th><th>Username</th><th>Password</th><th>ชื่อ</th><th>Role</th><th>จัดการ</th>
-  </tr></thead><tbody id="utb"></tbody></table></div></div>`;
-  renderUsers([{_rowIndex:0,username:'admin',password:'(ซ่อน)',displayName:'Administrator',role:'admin',locked:true},...(r.data||[])]);
-}
-
-function renderUsers(u){
-  const tb=el('utb'); if(!tb)return;
-  tb.innerHTML=u.map((x,i)=>{
-    const rb=`<span class="br ${x.role==='admin'?'bra':'brv'}">${x.role}</span>`;
-    const ac=x.locked?'<span style="color:#ccc;font-size:.73rem;">🔒</span>'
-      :`<button class="be" onclick="edUser(${x._rowIndex})">✏️</button><button class="bd" onclick="dlUser(${x._rowIndex})">🗑</button>`;
-    return `<tr id="ur${x._rowIndex}"><td>${i+1}</td><td style="font-weight:700">${x.username}</td><td style="color:#bbb">${x.locked?'*****':x.password}</td><td>${x.displayName}</td><td>${rb}</td><td>${ac}</td></tr>`;
-  }).join('');
-}
-
-async function addUser(){
-  const u=v('nu0'),p=v('nu1'),n=v('nu2'),r2=el('nu3').value;
-  const ue=el('ue'); ue.textContent='';
-  if(!u||!p){ue.textContent='กรุณากรอก Username และ Password';return;}
-  const r=await post({action:'addUser',apiKey:CFG.apiKey,username:LU,password:LP,newUsername:u,newPassword:p,newDisplayName:n||u,newRole:r2});
-  if(r.success){el('nu0').value='';el('nu1').value='';el('nu2').value='';await loadUsers();}
-  else ue.textContent=r.message;
-}
-
-function edUser(ri){
-  const row=el('ur'+ri); if(!row)return;
-  const td=row.querySelectorAll('td');
-  const cu=td[1].textContent,cp=td[2].textContent==='*****'?'':td[2].textContent,cn=td[3].textContent,cr=td[4].querySelector('.br').textContent;
-  row.innerHTML=`<td>${td[0].textContent}</td>
-  <td><input id="eu0" value="${cu}" style="border:1.5px solid #dce3f5;border-radius:6px;padding:4px 8px;font-size:.77rem;width:100%;"></td>
-  <td><input id="eu1" value="${cp}" placeholder="รหัสใหม่" style="border:1.5px solid #dce3f5;border-radius:6px;padding:4px 8px;font-size:.77rem;width:100%;"></td>
-  <td><input id="eu2" value="${cn}" style="border:1.5px solid #dce3f5;border-radius:6px;padding:4px 8px;font-size:.77rem;width:100%;"></td>
-  <td><select id="eu3" style="border:1.5px solid #dce3f5;border-radius:6px;padding:4px 8px;font-size:.77rem;">
-    <option value="viewer"${cr==='viewer'?' selected':''}>viewer</option>
-    <option value="admin"${cr==='admin'?' selected':''}>admin</option>
-  </select></td>
-  <td><button class="bsv" style="padding:3px 9px;font-size:.72rem;" onclick="svUser(${ri})">💾</button>
-      <button class="bcl" style="padding:3px 9px;font-size:.72rem;" onclick="loadUsers()">✕</button></td>`;
-}
-
-async function svUser(ri){
-  const r=await post({action:'updateUser',apiKey:CFG.apiKey,username:LU,password:LP,rowIndex:ri,
-    newUsername:v('eu0'),newPassword:v('eu1')||undefined,newDisplayName:v('eu2'),newRole:el('eu3').value});
-  if(r.success)await loadUsers();else alert('❌ '+r.message);
-}
-async function dlUser(ri){
-  if(!confirm('⚠️ ลบผู้ใช้นี้?'))return;
-  const r=await post({action:'deleteUser',apiKey:CFG.apiKey,username:LU,password:LP,rowIndex:ri});
-  if(r.success)await loadUsers();else alert('❌ '+r.message);
-}
-
-// ── EXPORT ────────────────────────────────────────────────────────
-function expCSV(){
-  if(!ARES.length){alert('ไม่มีข้อมูล');return;}
-  const h=['#','ชื่อ','นามสกุล','ชั้น','เลขที่','คะแนน','เต็ม','%','วันเวลา'];
-  const rows=ARES.map(r=>[r['#']||'',r.firstName,r.lastName,r.classroom,r.studentNo,r.score,r.maxScore,r.percent,r.timestamp]);
-  const csv='\uFEFF'+[h,...rows].map(r=>r.map(c=>'"'+String(c||'').replace(/"/g,'""')+'"').join(',')).join('\n');
-  const a=document.createElement('a'); a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(csv);
-  a.download=`ผลสอบ_${ATAB}_${new Date().toLocaleDateString('th-TH').replace(/\//g,'-')}.csv`; a.click();
-}
-
-function expPDF(){
-  if(!ARES.length){alert('ไม่มีข้อมูล');return;}
-  const w=window.open('','_blank');
-  const rows=ARES.map((r,i)=>{
-    const p=parseInt(String(r.percent||'0'))||0;
-    const col=p>=80?'#1a7a4a':p>=70?'#1565c0':p>=50?'#c49000':'#c0392b';
-    return `<tr style="background:${i%2?'#f5f8ff':'#fff'}"><td>${i+1}</td><td>${r.firstName||''} ${r.lastName||''}</td>
-    <td>${r.classroom||''}</td><td>${r.studentNo||''}</td>
-    <td style="font-weight:700">${r.score||''}</td><td>${r.maxScore||''}</td>
-    <td style="color:${col};font-weight:700">${r.percent||''}</td>
-    <td style="font-size:10px;color:#888">${String(r.timestamp||'').substring(0,16)}</td></tr>`;
-  }).join('');
-  w.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>ผลสอบ — ${ATAB}</title>
-  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;600;700&display=swap" rel="stylesheet">
-  <style>body{font-family:'Sarabun',sans-serif;padding:20px;}h2{color:#0d1b4b;}p{color:#666;font-size:11px;margin:3px 0 11px;}
-  table{width:100%;border-collapse:collapse;font-size:11px;}th{background:#1a3a8f;color:#fff;padding:6px 8px;text-align:center;}
-  td{padding:6px 8px;border-bottom:1px solid #eee;text-align:center;}@media print{.np{display:none!important;}}</style>
-  </head><body>
-  <h2>📋 ผลการสอบ — ${ATAB}</h2>
-  <p>พิมพ์วันที่ ${new Date().toLocaleDateString('th-TH',{year:'numeric',month:'long',day:'numeric'})} | ${ARES.length} คน</p>
-  <button class="np" onclick="window.print()" style="background:#1a3a8f;color:#fff;border:none;border-radius:7px;padding:6px 15px;font-size:11px;cursor:pointer;margin-bottom:9px;">🖨 พิมพ์</button>
-  <table><thead><tr><th>#</th><th>ชื่อ-นามสกุล</th><th>ชั้น</th><th>เลขที่</th><th>คะแนน</th><th>เต็ม</th><th>%</th><th>วันเวลา</th></tr></thead>
-  <tbody>${rows}</tbody></table></body></html>`);
-  w.document.close();
-}
-
-function closeDash(){
-  el('dash').classList.remove('on');
-  LU='';LP='';LR='';ARES=[];ASHEETS=[];ATAB='';
-  el('au').value='';el('ap').value='';
-}
-
-// ── UTILS ─────────────────────────────────────────────────────────
-async function post(p){const r=await fetch(CFG.apiUrl,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify(p)});return await r.json();}
-function el(id){return document.getElementById(id);}
-function v(id){return(el(id)?.value||'').trim();}
-
+function closeDash(){G('dash').classList.remove('on');LU='';LP='';LR='';AR=[];ASH=[];ATAB='';G('au').value='';G('ap').value='';}
 boot();
 </script>
 </body>
