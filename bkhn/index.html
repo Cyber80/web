@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BKHN Unified Portal - โรงเรียนบ้านเขาหัวนา</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Sarabun', 'sans-serif'] },
+                    colors: {
+                        primary: '#8b0000', 
+                        secondary: '#d4af37', 
+                        dark: '#1a1a1a'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { background-color: #f3f4f6; }
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .module-card:hover { transform: translateY(-5px); }
+    </style>
+</head>
+<body class="text-gray-800 antialiased">
+
+    <nav class="bg-dark text-white shadow-lg sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-20">
+                <div class="flex items-center">
+                    <img src="assets/logo.jpg" alt="โลโก้โรงเรียน" class="h-14 w-14 rounded-full border-2 border-secondary object-cover" onerror="this.src='https://via.placeholder.com/60/000000/FFFFFF?text=Logo'">
+                    <div class="ml-4">
+                        <span class="font-bold text-xl tracking-wide text-secondary">BKHN Unified Portal</span>
+                        <span class="block text-sm text-gray-300">ระบบสารสนเทศกลาง โรงเรียนบ้านเขาหัวนา</span>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-4" id="nav-user-area">
+                    <a href="#" class="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition flex items-center">
+                        <i class="fas fa-globe mr-2"></i> กลับเว็บไซต์หลัก
+                    </a>
+                    <button id="btnLogin" onclick="toggleLoginModal()" class="bg-primary hover:bg-red-800 text-white px-5 py-2.5 rounded-md font-medium transition shadow-md flex items-center">
+                        <i class="fas fa-sign-in-alt mr-2"></i> เข้าสู่ระบบ
+                    </button>
+                    <div id="userProfile" class="hidden items-center space-x-3 bg-gray-800 px-4 py-2 rounded-full border border-gray-700">
+                        <img id="userAvatar" src="" alt="Profile" class="w-8 h-8 rounded-full">
+                        <span id="userName" class="text-sm font-medium text-white"></span>
+                        <button onclick="logout()" class="text-red-400 hover:text-red-300 ml-2" title="ออกจากระบบ"><i class="fas fa-sign-out-alt"></i></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="bg-gradient-to-r from-primary to-red-900 pb-24">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-10 pb-16">
+            <h1 class="text-3xl font-bold text-white mb-2">ยินดีต้อนรับสู่ ศูนย์ปฏิบัติการดิจิทัล (Digital Operation Center)</h1>
+            <p class="text-red-100 text-lg">จัดการและเข้าถึงระบบสารสนเทศทั้งหมดของโรงเรียนด้วย Single Sign-On (SSO)</p>
+        </div>
+    </div>
+
+    <main class="-mt-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-12">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+            <div class="glass-panel rounded-lg p-6 shadow-md border-l-4 border-secondary">
+                <div class="flex items-center">
+                    <div class="p-3 rounded-full bg-blue-100 text-blue-600"><i class="fas fa-cubes fa-2x"></i></div>
+                    <div class="ml-4">
+                        <p class="text-sm font-medium text-gray-500">จำนวนระบบทั้งหมด</p>
+                        <p class="text-2xl font-bold text-gray-900">38 <span class="text-sm font-normal">Modules</span></p>
+                    </div>
+                </div>
+            </div>
+            <div class="glass-panel md:col-span-3 rounded-lg p-6 shadow-md border-l-4 border-primary">
+                <p class="text-sm font-medium text-gray-500 mb-3"><i class="fas fa-fire text-red-500 mr-2"></i>ระบบที่เปิดใช้งานสูงสุด 3 อันดับ (สัปดาห์นี้)</p>
+                <div class="flex flex-wrap gap-4">
+                    <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-red-100 text-red-800">1. ระบบตารางสอน (1,245 views)</span>
+                    <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">2. ระบบ HR บุคลากร (890 views)</span>
+                    <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800">3. ระบบติดตามงาน (654 views)</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="space-y-10">
+            <section>
+                <h2 class="text-xl font-bold text-gray-800 border-b-2 border-gray-200 pb-2 mb-6 flex items-center">
+                    <i class="fas fa-book-reader text-primary mr-3"></i> 1. ฝ่ายบริหารงานวิชาการ
+                </h2>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+                    <a href="#schedule" class="module-card glass-panel rounded-xl p-5 text-center shadow-sm transition duration-300 border border-gray-100 block">
+                        <div class="h-16 w-16 mx-auto bg-blue-50 text-blue-600 rounded-full flex items-center justify-center mb-4 shadow-inner"><i class="fas fa-calendar-alt text-2xl"></i></div>
+                        <h3 class="font-semibold text-gray-800">ระบบตารางสอน</h3>
+                    </a>
+                    <a href="#alumni" class="module-card glass-panel rounded-xl p-5 text-center shadow-sm transition duration-300 border border-gray-100 block">
+                        <div class="h-16 w-16 mx-auto bg-indigo-50 text-indigo-600 rounded-full flex items-center justify-center mb-4 shadow-inner"><i class="fas fa-user-graduate text-2xl"></i></div>
+                        <h3 class="font-semibold text-gray-800">ระบบติดตามนักเรียนจบ</h3>
+                    </a>
+                    <a href="authen.html" class="module-card glass-panel rounded-xl p-5 text-center shadow-sm transition duration-300 border border-gray-100 block">
+                        <div class="h-16 w-16 mx-auto bg-yellow-50 text-yellow-600 rounded-full flex items-center justify-center mb-4 shadow-inner"><i class="fas fa-award text-2xl"></i></div>
+                        <h3 class="font-semibold text-gray-800">ระบบคลังเกียรติบัตร</h3>
+                    </a>
+                    <a href="#elearning" class="module-card glass-panel rounded-xl p-5 text-center shadow-sm transition duration-300 border border-gray-100 block">
+                        <div class="h-16 w-16 mx-auto bg-purple-50 text-purple-600 rounded-full flex items-center justify-center mb-4 shadow-inner"><i class="fas fa-laptop-code text-2xl"></i></div>
+                        <h3 class="font-semibold text-gray-800">E-Learning</h3>
+                    </a>
+                </div>
+            </section>
+
+            <section>
+                <h2 class="text-xl font-bold text-gray-800 border-b-2 border-gray-200 pb-2 mb-6 flex items-center">
+                    <i class="fas fa-users-cog text-primary mr-3"></i> 2. ฝ่ายบริหารงานบุคคล
+                </h2>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+                    <a href="#hr" class="module-card glass-panel rounded-xl p-5 text-center shadow-sm transition duration-300 border border-gray-100 block">
+                        <div class="h-16 w-16 mx-auto bg-teal-50 text-teal-600 rounded-full flex items-center justify-center mb-4 shadow-inner"><i class="fas fa-id-card text-2xl"></i></div>
+                        <h3 class="font-semibold text-gray-800">ระบบ HR บุคลากร</h3>
+                    </a>
+                    <a href="#orders" class="module-card glass-panel rounded-xl p-5 text-center shadow-sm transition duration-300 border border-gray-100 block">
+                        <div class="h-16 w-16 mx-auto bg-red-50 text-red-600 rounded-full flex items-center justify-center mb-4 shadow-inner"><i class="fas fa-file-signature text-2xl"></i></div>
+                        <h3 class="font-semibold text-gray-800">ระบบคลังคำสั่งโรงเรียน</h3>
+                    </a>
+                    <a href="#training" class="module-card glass-panel rounded-xl p-5 text-center shadow-sm transition duration-300 border border-gray-100 block">
+                        <div class="h-16 w-16 mx-auto bg-orange-50 text-orange-600 rounded-full flex items-center justify-center mb-4 shadow-inner"><i class="fas fa-chalkboard-teacher text-2xl"></i></div>
+                        <h3 class="font-semibold text-gray-800">ระบบข้อมูลอบรมพัฒนา</h3>
+                    </a>
+                </div>
+            </section>
+
+            <section>
+                <h2 class="text-xl font-bold text-gray-800 border-b-2 border-gray-200 pb-2 mb-6 flex items-center">
+                    <i class="fas fa-chart-pie text-primary mr-3"></i> 3. ฝ่ายบริหารงบประมาณ
+                </h2>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+                    <a href="#scholarship" class="module-card glass-panel rounded-xl p-5 text-center shadow-sm transition duration-300 border border-gray-100 block">
+                        <div class="h-16 w-16 mx-auto bg-green-50 text-green-600 rounded-full flex items-center justify-center mb-4 shadow-inner"><i class="fas fa-hand-holding-usd text-2xl"></i></div>
+                        <h3 class="font-semibold text-gray-800">ระบบติดตามทุน</h3>
+                    </a>
+                </div>
+            </section>
+
+            <section>
+                <h2 class="text-xl font-bold text-gray-800 border-b-2 border-gray-200 pb-2 mb-6 flex items-center">
+                    <i class="fas fa-tasks text-primary mr-3"></i> 4. ฝ่ายบริหารงานทั่วไป
+                </h2>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+                    <a href="#task" class="module-card glass-panel rounded-xl p-5 text-center shadow-sm transition duration-300 border border-gray-100 block">
+                        <div class="h-16 w-16 mx-auto bg-cyan-50 text-cyan-600 rounded-full flex items-center justify-center mb-4 shadow-inner"><i class="fas fa-clipboard-list text-2xl"></i></div>
+                        <h3 class="font-semibold text-gray-800">ระบบติดตามงาน</h3>
+                    </a>
+                    <a href="#homevisit" class="module-card glass-panel rounded-xl p-5 text-center shadow-sm transition duration-300 border border-gray-100 block">
+                        <div class="h-16 w-16 mx-auto bg-pink-50 text-pink-600 rounded-full flex items-center justify-center mb-4 shadow-inner"><i class="fas fa-house-user text-2xl"></i></div>
+                        <h3 class="font-semibold text-gray-800">ระบบเยี่ยมบ้าน</h3>
+                    </a>
+                    <a href="#gallery" class="module-card glass-panel rounded-xl p-5 text-center shadow-sm transition duration-300 border border-gray-100 block">
+                        <div class="h-16 w-16 mx-auto bg-fuchsia-50 text-fuchsia-600 rounded-full flex items-center justify-center mb-4 shadow-inner"><i class="fas fa-images text-2xl"></i></div>
+                        <h3 class="font-semibold text-gray-800">ระบบเก็บภาพกิจกรรม</h3>
+                    </a>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <footer class="bg-dark text-gray-400 py-8 border-t border-gray-800 mt-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center">
+            <div class="mb-4 md:mb-0 text-center md:text-left">
+                <h4 class="text-white font-semibold mb-1">พัฒนาโดย ทีมพัฒนาระบบสารสนเทศ</h4>
+                <p class="text-sm">โรงเรียนบ้านเขาหัวนา ต.เขาเพิ่ม อ.บ้านนา จ.นครนายก</p>
+            </div>
+            <div class="text-sm">&copy; 2026 BKHN Unified Portal. All rights reserved.</div>
+        </div>
+    </footer>
+
+    <div id="loginModal" class="fixed inset-0 bg-black bg-opacity-60 hidden items-center justify-center z-[100] backdrop-blur-sm transition-opacity">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden transform transition-all scale-95" id="loginBox">
+            <div class="bg-primary p-6 text-center relative">
+                <button onclick="toggleLoginModal()" class="absolute top-4 right-4 text-white hover:text-gray-200">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+                <div class="h-20 w-20 mx-auto bg-white rounded-full p-1 mb-3">
+                    <img src="assets/logo.jpg" alt="Logo" class="rounded-full w-full h-full object-cover" onerror="this.src='https://via.placeholder.com/80/000000/FFFFFF?text=Logo'">
+                </div>
+                <h2 class="text-2xl font-bold text-white tracking-wide">เข้าสู่ระบบ</h2>
+            </div>
+            
+            <div class="p-8 text-center">
+                <p class="text-sm text-gray-600 mb-6">กรุณาเข้าสู่ระบบด้วยอีเมลของโรงเรียน<br>(@baankhaohuana.ac.th หรือ Gmail)</p>
+                
+                <div id="g_id_onload"
+                     data-client_id="725743939413-tjnb3o2hi3t5e4snroaurotu6l04u9jp.apps.googleusercontent.com"
+                     data-context="signin"
+                     data-ux_mode="popup"
+                     data-callback="handleCredentialResponse"
+                     data-auto_prompt="false">
+                </div>
+
+                <div class="flex justify-center mb-4">
+                    <div class="g_id_signin"
+                         data-type="standard"
+                         data-shape="rectangular"
+                         data-theme="outline"
+                         data-text="signin_with"
+                         data-size="large"
+                         data-logo_alignment="left">
+                    </div>
+                </div>
+                
+                <p class="text-xs text-gray-400 mt-4"><i class="fas fa-shield-alt mr-1"></i> ควบคุมสิทธิ์การเข้าถึงโดย BKHN IT Admin</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function toggleLoginModal() {
+            const modal = document.getElementById('loginModal');
+            const box = document.getElementById('loginBox');
+            if (modal.classList.contains('hidden')) {
+                modal.classList.remove('hidden');
+                modal.classList.add('flex');
+                setTimeout(() => box.classList.remove('scale-95'), 10);
+            } else {
+                box.classList.add('scale-95');
+                setTimeout(() => {
+                    modal.classList.add('hidden');
+                    modal.classList.remove('flex');
+                }, 200);
+            }
+        }
+
+        function handleCredentialResponse(response) {
+            const responsePayload = decodeJwtResponse(response.credential);
+            
+            // ตรงนี้คือจุดที่เราตั้งชื่อกล่อง LocalStorage ว่า 'bkhn_access_token'
+            localStorage.setItem('bkhn_access_token', response.credential);
+            localStorage.setItem('bkhn_user', JSON.stringify(responsePayload));
+
+            updateUIAfterLogin(responsePayload);
+            toggleLoginModal();
+            console.log("Logged in as: " + responsePayload.name);
+        }
+
+        function decodeJwtResponse(token) {
+            var base64Url = token.split('.')[1];
+            var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+            var jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+                return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+            }).join(''));
+            return JSON.parse(jsonPayload);
+        }
+
+        function updateUIAfterLogin(userData) {
+            document.getElementById('btnLogin').classList.add('hidden');
+            const profileArea = document.getElementById('userProfile');
+            profileArea.classList.remove('hidden');
+            profileArea.classList.add('flex');
+            
+            document.getElementById('userName').innerText = userData.name;
+            document.getElementById('userAvatar').src = userData.picture;
+        }
+
+        function logout() {
+            localStorage.removeItem('bkhn_access_token');
+            localStorage.removeItem('bkhn_user');
+            
+            document.getElementById('btnLogin').classList.remove('hidden');
+            document.getElementById('userProfile').classList.add('hidden');
+            document.getElementById('userProfile').classList.remove('flex');
+            
+            window.location.reload();
+        }
+
+        window.onload = function() {
+            const storedUser = localStorage.getItem('bkhn_user');
+            if (storedUser) {
+                updateUIAfterLogin(JSON.parse(storedUser));
+            }
+        };
+    </script>
+</body>
+</html>
