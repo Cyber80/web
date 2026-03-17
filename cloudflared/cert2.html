@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ระบบเกียรติบัตร - รร.บ้านเขาหัวนา</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { background-color: #f4f7f6; font-family: 'Sarabun', sans-serif; font-size: 0.9rem; }
+        .navbar { background: #2c3e50; color: white; }
+        /* ข้อมูลชิดขอบบน */
+        table td, table th { vertical-align: top !important; padding: 12px 8px !important; }
+        /* ควบคุมคอลัมน์ชื่อ */
+        .col-name { max-width: 200px; white-space: normal; word-wrap: break-word; line-height: 1.4; }
+        .col-activity { max-width: 250px; white-space: normal; }
+        
+        th { cursor: pointer; background: #eee !important; position: sticky; top: 0; z-index: 10; }
+        th:hover { background: #ddd !important; }
+        
+        .admin-only { display: none; }
+        .status-badge { border-radius: 4px; padding: 4px 8px; font-size: 0.8rem; font-weight: bold; cursor: pointer; border: none; }
+        .bg-done { background: #198754; color: white; }
+        .bg-wait { background: #dc3545; color: white; }
+        
+        .login-box { max-width: 300px; margin: 100px auto; padding: 20px; background: white; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+    </style>
+</head>
+<body>
+
+<div id="loginPage" class="login-box" style="display:none;">
+    <h5 class="text-center mb-3">Admin Login</h5>
+    <input type="text" id="user" class="form-control mb-2" placeholder="Username">
+    <input type="password" id="pass" class="form-control mb-3" placeholder="Password">
+    <button class="btn btn-primary w-100" onclick="doLogin()">เข้าสู่ระบบ</button>
+    <button class="btn btn-link btn-sm w-100 mt-2" onclick="toggleView('user')">กลับหน้าหลัก</button>
+</div>
+
+<div id="mainUI">
+    <nav class="navbar navbar-dark px-4 py-2 d-flex justify-content-between">
+        <span><i class="fas fa-medal me-2"></i>เกียรติบัตร ศิลปหัตถกรรมครั้งที่ 73</span>
+        <div>
+            <span id="adminBadge" class="badge bg-warning text-dark me-2" style="display:none;">ADMIN MODE</span>
+            <button class="btn btn-sm btn-outline-light" id="btnLogin" onclick="toggleView('login')">Admin Login</button>
+            <button class="btn btn-sm btn-danger" id="btnLogout" style="display:none;" onclick="doLogout()">Logout</button>
+        </div>
+    </nav>
+
+    <div class="container-fluid py-4">
+        <div class="row g-2 mb-3 align-items-end">
+            <div class="col-md-3">
+                <label class="small text-muted">ค้นหาข้อมูล</label>
+                <input type="text" id="search" class="form-control form-control-sm" placeholder="ค้นหาทุกอย่าง...">
+            </div>
+            <div class="col-md-6 text-center">
+                <span class="mx-2">ทั้งหมด: <b id="total">0</b></span>
+                <span class="mx-2 text-success">ได้รับ: <b id="received">0</b></span>
+                <span class="mx-2 text-danger">ค้าง: <b id="pending">0</b></span>
+            </div>
+            <div class="col-md-3 text-end">
+                <button class="btn btn-sm btn-success" onclick="exportCSV()"><i class="fas fa-file-csv"></i> Export CSV</button>
+                <button class="btn btn-sm btn-primary admin-only" onclick="showAddModal()"><i class="fas fa-plus"></i> เพิ่มข้อมูล</button>
+            </div>
+        </div>
+
+        <div class="table-responsive bg-white shadow-sm rounded">
+            <table class="table table-sm table-bordered mb-0" id="targetTable">
+                <thead>
+                    <tr>
+                        <th onclick="resort(0)">ลำดับ</th>
+                        <th onclick="resort(1)">รหัส</th>
+                        <th onclick="resort(2)">รายการกิจกรรม</th>
+                        <th onclick="resort(3)">ระดับชั้น</th>
+                        <th onclick="resort(4)">ประเภท</th>
+                        <th onclick="resort(5)">กลุ่ม</th>
+                        <th onclick="resort(6)">ชื่อ - สกุล</th>
+                        <th onclick="resort(7)">ผลการแข่งขัน</th>
+                        <th onclick="resort(8)">สถานะ(นร.)</th>
+                        <th onclick="resort(9)">สถานะ(ครู)</th>
+                        <th class="admin-only">หมายเหตุ</th>
+                        <th class="admin-only">จัดการ</th>
+                    </tr>
+                </thead>
+                <tbody id="tableBody"></tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycby8VkzCceae_GBTjCBJjoXhddmTjxToQCYzL79bQslBqwRgdHL-tyCMLQbf1xQfO_-W/exec";
+    let allData = [];
+    let isAdmin = false;
+
+    async function loadData() {
+        const resp = await fetch(`${WEB_APP_URL}?action=getData`);
+        const res = await resp.json();
+        allData = res.rows;
+        document.getElementById('total').innerText = res.stats.total;
+        document.getElementById('received').innerText = res.stats.received;
+        document.getElementById('pending').innerText = res.stats.pending;
+        renderTable(allData);
+    }
+
+    function renderTable(data) {
+        const tbody = document.getElementById('tableBody');
+        tbody.innerHTML = data.map(row => {
+            const isDone = row.c9 === 'ได้รับแล้ว';
+            return `
+            <tr>
+                <td class="text-center">${row.c1}</td>
+                <td class="text-center small">${row.c2 || '-'}</td>
+                <td class="col-activity">${row.c3}</td>
+                <td class="small">${row.c4}</td>
+                <td class="small">${row.c5 || ''}</td>
+                <td class="small">${row.c6 || ''}</td>
+                <td class="col-name"><strong>${row.c7 || ''}</strong></td>
+                <td class="small">${row.c8}</td>
+                <td class="text-center">
+                    <button class="status-badge ${isDone ? 'bg-done' : 'bg-wait'}" 
+                        onclick="${isAdmin ? `updateStatus(${row.rowNum}, 9, '${row.c9}')` : ''}">
+                        ${row.c9 || 'ยังไม่ได้รับ'}
+                    </button>
+                </td>
+                <td class="text-center small">${row.c10 || ''}</td>
+                <td class="admin-only small">${row.c11 || ''}</td>
+                <td class="admin-only text-center">
+                    <button class="btn btn-xs btn-outline-danger py-0" onclick="deleteRow(${row.rowNum})"><i class="fas fa-trash-alt"></i></button>
+                </td>
+            </tr>`;
+        }).join('');
+        applyAdminUI();
+    }
+
+    // --- Admin System ---
+    function doLogin() {
+        const u = document.getElementById('user').value;
+        const p = document.getElementById('pass').value;
+        if(u === 'admin' && p === 'admin1234') {
+            isAdmin = true;
+            toggleView('user');
+            loadData();
+        } else { alert('รหัสผ่านไม่ถูกต้อง'); }
+    }
+
+    function doLogout() {
+        isAdmin = false;
+        toggleView('user');
+        loadData();
+    }
+
+    function toggleView(mode) {
+        document.getElementById('loginPage').style.display = (mode === 'login') ? 'block' : 'none';
+        document.getElementById('mainUI').style.display = (mode === 'user') ? 'block' : 'none';
+    }
+
+    function applyAdminUI() {
+        const els = document.querySelectorAll('.admin-only');
+        els.forEach(el => el.style.display = isAdmin ? 'table-cell' : 'none');
+        if (isAdmin === true) {
+            document.querySelectorAll('button.admin-only').forEach(el => el.style.display = 'inline-block');
+        }
+        document.getElementById('adminBadge').style.display = isAdmin ? 'inline' : 'none';
+        document.getElementById('btnLogin').style.display = isAdmin ? 'none' : 'inline-block';
+        document.getElementById('btnLogout').style.display = isAdmin ? 'inline-block' : 'none';
+    }
+
+    // --- Table Actions ---
+    async function updateStatus(rowNum, col, current) {
+        const next = current === 'ได้รับแล้ว' ? 'ยังไม่ได้รับ' : 'ได้รับแล้ว';
+        await fetch(`${WEB_APP_URL}?action=updateField&rowNum=${rowNum}&col=${col}&newValue=${encodeURIComponent(next)}`);
+        loadData();
+    }
+
+    async function deleteRow(rowNum) {
+        if(confirm('ลบแถวนี้ใช่หรือไม่?')) {
+            await fetch(`${WEB_APP_URL}?action=deleteRow&rowNum=${rowNum}`);
+            loadData();
+        }
+    }
+
+    function exportCSV() {
+        let csv = ["ลำดับ,รหัส,กิจกรรม,ระดับชั้น,ประเภท,กลุ่ม,ชื่อ-สกุล,ผลการแข่งขัน,สถานะ"];
+        allData.forEach(r => csv.push(`${r.c1},${r.c2},${r.c3},${r.c4},${r.c5},${r.c6},${r.c7},${r.c8},${r.c9}`));
+        const blob = new Blob(["\ufeff" + csv.join("\n")], { type: 'text/csv;charset=utf-8;' });
+        const link = document.createElement("a");
+        link.href = URL.createObjectURL(blob);
+        link.download = "data_ศิลปหัตถกรรม_73.csv";
+        link.click();
+    }
+
+    // --- Sorting & Searching ---
+    function resort(n) {
+        const table = document.getElementById("targetTable");
+        let rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
+        switching = true; dir = "asc";
+        while (switching) {
+            switching = false; rows = table.rows;
+            for (i = 1; i < (rows.length - 1); i++) {
+                shouldSwitch = false;
+                x = rows[i].getElementsByTagName("TD")[n];
+                y = rows[i + 1].getElementsByTagName("TD")[n];
+                if (dir == "asc") {
+                    if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) { shouldSwitch = true; break; }
+                } else if (dir == "desc") {
+                    if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) { shouldSwitch = true; break; }
+                }
+            }
+            if (shouldSwitch) { rows[i].parentNode.insertBefore(rows[i + 1], rows[i]); switching = true; switchcount ++; }
+            else if (switchcount == 0 && dir == "asc") { dir = "desc"; switching = true; }
+        }
+    }
+
+    document.getElementById('search').addEventListener('input', function(e) {
+        const v = e.target.value.toLowerCase();
+        const filtered = allData.filter(r => Object.values(r).some(val => String(val).toLowerCase().includes(v)));
+        renderTable(filtered);
+    });
+
+    window.onload = loadData;
+</script>
+</body>
+</html>
