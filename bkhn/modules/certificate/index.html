@@ -107,7 +107,9 @@
 </div>
 
 <script>
+    // 🚨 สำคัญ: นำ URL ที่ได้จากการ Deploy ใหม่มาวางตรงนี้
     const WEB_APP_URL = "apibkhn.happydee.net";
+    
     let allData = [];
     let sortOrders = {};
 
@@ -116,17 +118,37 @@
         loadData();
     };
 
+    // ปรับปรุงฟังก์ชัน loadData ให้แสดง Error ชัดเจน
     async function loadData() {
         const tbody = document.getElementById('tableBody');
         tbody.innerHTML = '<tr><td colspan="8" class="text-center py-20 text-slate-400 font-bold"><i class="fas fa-sync fa-spin me-2"></i>กำลังดึงข้อมูล...</td></tr>';
         try {
             const resp = await fetch(`${WEB_APP_URL}?action=getData`);
-            const res = await resp.json();
-            allData = res.rows || [];
-            updateStats();
-            renderTable(allData);
+            const textResult = await resp.text(); // อ่านเป็น Text ก่อนเพื่อดัก Error
+
+            try {
+                const res = JSON.parse(textResult);
+                
+                if (res.error) {
+                    throw new Error(res.error);
+                }
+
+                allData = res.rows || [];
+                updateStats();
+                renderTable(allData);
+
+            } catch (jsonError) {
+                console.error("ไม่ใช่ JSON ตอบกลับมา:", textResult);
+                throw new Error("ข้อมูลตอบกลับผิดพลาด (ตรวจสอบการ Deploy เป็น Anyone หรือลองใช้ Gmail ธรรมดาสร้าง API)");
+            }
+
         } catch (e) {
-            tbody.innerHTML = '<tr><td colspan="8" class="text-center py-20 text-rose-500 font-bold">ไม่สามารถโหลดข้อมูลได้ (เช็คการ Deploy เป็น Anyone)</td></tr>';
+            console.error("Fetch Error:", e);
+            tbody.innerHTML = `<tr><td colspan="8" class="text-center py-20 text-rose-500 font-bold bg-rose-50">
+                <i class="fas fa-exclamation-triangle text-2xl mb-2"></i><br>
+                ไม่สามารถโหลดข้อมูลได้<br>
+                <span class="text-sm font-normal text-slate-600">สาเหตุ: ${e.message}</span>
+            </td></tr>`;
         }
     }
 
@@ -169,7 +191,8 @@
         const total = allData.length;
         const received = allData.filter(r => r.c9 === 'ได้รับแล้ว').length;
         document.getElementById('countAll').innerText = total;
-        document.getElementById('countReceived').innerText = received;
+        // Check if countReceived exists, if not, skip it (it wasn't in your original HTML header, but countPending was)
+        if(document.getElementById('countReceived')) document.getElementById('countReceived').innerText = received;
         document.getElementById('countPending').innerText = total - received;
     }
 
