@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BKHN Unified Portal - โรงเรียนบ้านเขาหัวนา</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Sarabun', 'sans-serif'] },
+                    colors: {
+                        primary: '#8b0000', 
+                        secondary: '#d4af37', 
+                        dark: '#1a1a1a'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { background-color: #f3f4f6; }
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .module-card:hover { transform: translateY(-5px); }
+    </style>
+</head>
+<body class="text-gray-800 antialiased">
+
+    <nav class="bg-dark text-white shadow-lg sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-20">
+                <div class="flex items-center">
+                    <img src="assets/logo.jpg" alt="โลโก้โรงเรียน" class="h-14 w-14 rounded-full border-2 border-secondary object-cover" onerror="this.src='https://via.placeholder.com/60/000000/FFFFFF?text=Logo'">
+                    <div class="ml-4">
+                        <span class="font-bold text-xl tracking-wide text-secondary">BKHN Unified Portal</span>
+                        <span class="block text-sm text-gray-300">ระบบสารสนเทศกลาง โรงเรียนบ้านเขาหัวนา</span>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-4" id="nav-user-area">
+                    <a href="#" class="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition flex items-center">
+                        <i class="fas fa-globe mr-2"></i> กลับเว็บไซต์หลัก
+                    </a>
+                    <button id="btnLogin" onclick="toggleLoginModal()" class="bg-primary hover:bg-red-800 text-white px-5 py-2.5 rounded-md font-medium transition shadow-md flex items-center">
+                        <i class="fas fa-sign-in-alt mr-2"></i> เข้าสู่ระบบ
+                    </button>
+                    <div id="userProfile" class="hidden items-center space-x-3 bg-gray-800 px-4 py-2 rounded-full border border-gray-700">
+                        <img id="userAvatar" src="" alt="Profile" class="w-8 h-8 rounded-full">
+                        <span id="userName" class="text-sm font-medium text-white"></span>
+                        <button onclick="logout()" class="text-red-400 hover:text-red-300 ml-2" title="ออกจากระบบ"><i class="fas fa-sign-out-alt"></i></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="bg-gradient-to-r from-primary to-red-900 pb-24">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-10 pb-16">
+            <h1 class="text-3xl font-bold text-white mb-2">ศูนย์ปฏิบัติการดิจิทัล (Digital Operation Center)</h1>
+            <p class="text-red-100 text-lg">จัดการและเข้าถึงระบบสารสนเทศทั้งหมดด้วยบัญชีอีเมลองค์กร</p>
+        </div>
+    </div>
+
+    <main class="-mt-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-12">
+        </main>
+
+    <div id="loginModal" class="fixed inset-0 bg-black bg-opacity-60 hidden items-center justify-center z-[100] backdrop-blur-sm transition-opacity">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden transform transition-all scale-95" id="loginBox">
+            <div class="bg-primary p-6 text-center relative">
+                <button onclick="toggleLoginModal()" class="absolute top-4 right-4 text-white hover:text-gray-200">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+                <div class="h-20 w-20 mx-auto bg-white rounded-full p-1 mb-3">
+                    <img src="assets/logo.jpg" alt="Logo" class="rounded-full w-full h-full object-cover" onerror="this.src='https://via.placeholder.com/80/000000/FFFFFF?text=Logo'">
+                </div>
+                <h2 class="text-2xl font-bold text-white tracking-wide">เข้าสู่ระบบ</h2>
+            </div>
+            
+            <div class="p-8 text-center">
+                <p class="text-sm text-gray-600 mb-6">กรุณาเข้าสู่ระบบด้วยอีเมลของโรงเรียน<br>(@baankhaohuana.ac.th หรือ Gmail)</p>
+                
+                <div id="g_id_onload"
+                     data-client_id="YOUR_GOOGLE_CLIENT_ID_HERE.apps.googleusercontent.com"
+                     data-context="signin"
+                     data-ux_mode="popup"
+                     data-callback="handleCredentialResponse"
+                     data-auto_prompt="false">
+                </div>
+
+                <div class="flex justify-center mb-4">
+                    <div class="g_id_signin"
+                         data-type="standard"
+                         data-shape="rectangular"
+                         data-theme="outline"
+                         data-text="signin_with"
+                         data-size="large"
+                         data-logo_alignment="left">
+                    </div>
+                </div>
+                
+                <p class="text-xs text-gray-400 mt-4"><i class="fas fa-shield-alt mr-1"></i> ควบคุมสิทธิ์การเข้าถึงโดย BKHN IT Admin</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 1. ควบคุม Modal
+        function toggleLoginModal() {
+            const modal = document.getElementById('loginModal');
+            const box = document.getElementById('loginBox');
+            if (modal.classList.contains('hidden')) {
+                modal.classList.remove('hidden');
+                modal.classList.add('flex');
+                setTimeout(() => box.classList.remove('scale-95'), 10);
+            } else {
+                box.classList.add('scale-95');
+                setTimeout(() => {
+                    modal.classList.add('hidden');
+                    modal.classList.remove('flex');
+                }, 200);
+            }
+        }
+
+        // 2. ฟังก์ชันจัดการข้อมูลเมื่อ Login สำเร็จ
+        function handleCredentialResponse(response) {
+            // response.credential คือ JWT (JSON Web Token)
+            const responsePayload = decodeJwtResponse(response.credential);
+
+            // บันทึก Token ลง LocalStorage เพื่อใช้ทำ SSO กับ Module ย่อย
+            localStorage.setItem('bkhn_access_token', response.credential);
+            localStorage.setItem('bkhn_user', JSON.stringify(responsePayload));
+
+            // ตรวจสอบโดเมน (ถ้าต้องการจำกัดเฉพาะอีเมลโรงเรียน)
+            /*
+            if(responsePayload.hd !== 'baankhaohuana.ac.th'){
+                alert('กรุณาใช้อีเมลของโรงเรียนเท่านั้น');
+                logout();
+                return;
+            }
+            */
+
+            // อัปเดต UI 
+            updateUIAfterLogin(responsePayload);
+            toggleLoginModal();
+            console.log("Logged in as: " + responsePayload.name);
+        }
+
+        // 3. ฟังก์ชันถอดรหัส JWT (เพื่ออ่านข้อมูลฝั่ง Frontend)
+        function decodeJwtResponse(token) {
+            var base64Url = token.split('.')[1];
+            var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+            var jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+                return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+            }).join(''));
+            return JSON.parse(jsonPayload);
+        }
+
+        // 4. อัปเดตหน้าจอเมื่อ Login แล้ว
+        function updateUIAfterLogin(userData) {
+            document.getElementById('btnLogin').classList.add('hidden');
+            const profileArea = document.getElementById('userProfile');
+            profileArea.classList.remove('hidden');
+            profileArea.classList.add('flex');
+            
+            document.getElementById('userName').innerText = userData.name;
+            document.getElementById('userAvatar').src = userData.picture;
+        }
+
+        // 5. ฟังก์ชันออกจากระบบ
+        function logout() {
+            localStorage.removeItem('bkhn_access_token');
+            localStorage.removeItem('bkhn_user');
+            
+            // รีเซ็ต UI
+            document.getElementById('btnLogin').classList.remove('hidden');
+            document.getElementById('userProfile').classList.add('hidden');
+            document.getElementById('userProfile').classList.remove('flex');
+            
+            // รีโหลดหน้าเพื่อให้ Module อื่นๆ รับทราบว่าหลุด Session
+            window.location.reload();
+        }
+
+        // 6. ตรวจสอบสถานะตอนเปิดหน้าเว็บ
+        window.onload = function() {
+            const storedUser = localStorage.getItem('bkhn_user');
+            if (storedUser) {
+                updateUIAfterLogin(JSON.parse(storedUser));
+            }
+        };
+    </script>
+</body>
+</html>
