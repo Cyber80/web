@@ -1,101 +1,143 @@
 <!DOCTYPE html>
-<html>
+<html lang="th">
 <head>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
-  <style>
-    .status-done { color: green; font-weight: bold; }
-    .status-wait { color: red; }
-  </style>
+    <meta charset="UTF-8">
+    <title>Admin - ระบบเกียรติบัตร รร.บ้านเขาหัวนา</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { background-color: #f8f9fa; font-family: 'Sarabun', sans-serif; font-size: 13px; }
+        .table-main { background: white; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+        th { background: #2c3e50 !important; color: white !important; cursor: pointer; white-space: nowrap; }
+        .status-badge { cursor: pointer; padding: 5px 10px; border-radius: 20px; font-weight: bold; border: none; }
+        .btn-received { background-color: #198754; color: white; }
+        .btn-pending { background-color: #dc3545; color: white; }
+        .sticky-tools { position: sticky; top: 0; z-index: 100; background: #f8f9fa; padding: 20px 0; border-bottom: 1px solid #ddd; }
+    </style>
 </head>
 <body>
-<div class="container mt-4">
-  <h2 class="mb-3">ระบบติดตามเกียรติบัตร ศิลปหัตถกรรมครั้งที่ 73 - รร.บ้านเขาหัวนา</h2>
-  
-  <div class="row g-3 mb-3">
-    <div class="col-md-8">
-      <input type="text" id="searchInput" class="form-control" placeholder="ค้นหาชื่อนักเรียน, กิจกรรม หรือรหัสรายการ...">
-    </div>
-    <div class="col-md-4 text-end">
-      <a href="https://drive.google.com/drive/folders/1Nad7KZe3Hj3ABCcLwEGanCJFA1vFmVP7?usp=sharing" target="_blank" class="btn btn-primary">📁 ดูโฟลเดอร์เกียรติบัตร</a>
-      <button onclick="exportTableToCSV('data.csv')" class="btn btn-success">📊 Export CSV</button>
-    </div>
-  </div>
 
-  <div class="table-responsive">
-    <table class="table table-bordered table-hover">
-      <thead class="table-dark">
-        <tr>
-          <th>รหัส</th>
-          <th>กิจกรรม</th>
-          <th>ชื่อ-สกุล</th>
-          <th>ผลการแข่งขัน</th>
-          <th>เกียรติบัตร (นักเรียน)</th>
-          <th>แก้ไข</th>
-        </tr>
-      </thead>
-      <tbody id="tableBody">
-        </tbody>
-    </table>
-  </div>
+<div class="container-fluid px-4">
+    <div class="sticky-tools">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h4><i class="fas fa-tools me-2"></i>จัดการเกียรติบัตร ศิลปหัตถกรรมครั้งที่ 73</h4>
+            <div class="text-end">
+                <span class="badge bg-primary p-2">ทั้งหมด: <span id="total">0</span></span>
+                <span class="badge bg-success p-2">ได้รับแล้ว: <span id="received">0</span></span>
+                <span class="badge bg-danger p-2">ค้างส่ง: <span id="pending">0</span></span>
+            </div>
+        </div>
+        <div class="row g-2">
+            <div class="col-md-4">
+                <div class="input-group">
+                    <span class="input-group-text bg-white"><i class="fas fa-search"></i></span>
+                    <input type="text" id="globalSearch" class="form-control" placeholder="ค้นหาชื่อ, กิจกรรม, รหัส...">
+                </div>
+            </div>
+            <div class="col-md-2">
+                <select id="filterStatus" class="form-select">
+                    <option value="">-- กรองสถานะ --</option>
+                    <option value="ได้รับแล้ว">ได้รับแล้ว</option>
+                    <option value="ยังไม่ได้รับ">ยังไม่ได้รับ</option>
+                </select>
+            </div>
+            <div class="col-md-6 text-end">
+                <button class="btn btn-primary" onclick="loadData()"><i class="fas fa-sync-alt"></i> รีเฟรช</button>
+                <a href="https://drive.google.com/drive/folders/1Nad7KZe3Hj3ABCcLwEGanCJFA1vFmVP7" target="_blank" class="btn btn-dark"><i class="fas fa-folder"></i> คลังไฟล์</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="table-main mt-3">
+        <div class="table-responsive">
+            <table class="table table-hover table-bordered align-middle mb-0">
+                <thead>
+                    <tr>
+                        <th>ลำดับ</th><th>รหัส</th><th>กิจกรรม</th><th>ชั้น</th><th>ประเภท</th><th>กลุ่ม</th><th>ชื่อ - สกุล</th><th>ผลแข่งขัน</th><th>สถานะ(นร.)</th><th>สถานะ(ครู)</th><th>หมายเหตุ</th><th>ลบ</th>
+                    </tr>
+                </thead>
+                <tbody id="tableBody"></tbody>
+            </table>
+        </div>
+    </div>
 </div>
 
 <script>
-  // โหลดข้อมูลเมื่อเปิดหน้าเว็บ
-  window.onload = () => {
-    google.script.run.withSuccessHandler(renderTable).getData();
-  };
+    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycby8VkzCceae_GBTjCBJjoXhddmTjxToQCYzL79bQslBqwRgdHL-tyCMLQbf1xQfO_-W/exec";
+    let allData = [];
 
-  function renderTable(data) {
-    const tbody = document.getElementById('tableBody');
-    tbody.innerHTML = '';
-    data.forEach(item => {
-      const row = `<tr>
-        <td>${item['รหัสรายการ']}</td>
-        <td>${item['กิจกรรม']}</td>
-        <td>${item['ชื่อ - สกุล ผู้เข้าแข่งขัน']}</td>
-        <td>${item['ผลการแข่งขันและระดับเหรียญ']}</td>
-        <td class="${item['เกียรติบัตร(นักเรียน)'] === 'ได้รับแล้ว' ? 'status-done' : 'status-wait'}">
-          ${item['เกียรติบัตร(นักเรียน)']}
-        </td>
-        <td>
-          <button class="btn btn-sm btn-warning" onclick="editRow(${item.rowNum}, '${item['เกียรติบัตร(นักเรียน)']}')">เปลี่ยนสถานะ</button>
-        </td>
-      </tr>`;
-      tbody.innerHTML += row;
-    });
-  }
-
-  function editRow(rowNum, currentStatus) {
-    const newStatus = currentStatus === 'ได้รับแล้ว' ? 'ยังไม่ได้รับ' : 'ได้รับแล้ว';
-    google.script.run.withSuccessHandler(() => {
-      google.script.run.withSuccessHandler(renderTable).getData();
-    }).updateStatus(rowNum, 'เกียรติบัตร(นักเรียน)', newStatus);
-  }
-
-  // ฟังก์ชันค้นหา
-  document.getElementById('searchInput').addEventListener('keyup', function() {
-    const val = this.value.toLowerCase();
-    const rows = document.querySelectorAll('#tableBody tr');
-    rows.forEach(row => {
-      row.style.display = row.innerText.toLowerCase().includes(val) ? '' : 'none';
-    });
-  });
-
-  // ฟังก์ชัน Export
-  function exportTableToCSV(filename) {
-    let csv = [];
-    const rows = document.querySelectorAll("table tr");
-    for (let i = 0; i < rows.length; i++) {
-      let row = [], cols = rows[i].querySelectorAll("td, th");
-      for (let j = 0; j < cols.length - 1; j++) row.push(cols[j].innerText);
-      csv.push(row.join(","));
+    async function loadData() {
+        document.getElementById('tableBody').innerHTML = '<tr><td colspan="12" class="text-center p-5"><div class="spinner-border text-primary"></div><br>กำลังโหลดข้อมูล...</td></tr>';
+        try {
+            const resp = await fetch(`${WEB_APP_URL}?action=getData`);
+            const res = await resp.json();
+            allData = res.rows;
+            document.getElementById('total').innerText = res.stats.total;
+            document.getElementById('received').innerText = res.stats.received;
+            document.getElementById('pending').innerText = res.stats.pending;
+            renderTable(allData);
+        } catch (e) { alert('การเชื่อมต่อผิดพลาด!'); }
     }
-    const csvFile = new Blob([csv.join("\n")], {type: "text/csv"});
-    const downloadLink = document.createElement("a");
-    downloadLink.download = filename;
-    downloadLink.href = window.URL.createObjectURL(csvFile);
-    downloadLink.click();
-  }
+
+    function renderTable(data) {
+        const tbody = document.getElementById('tableBody');
+        tbody.innerHTML = data.map(row => {
+            const isDone = row.c9 === 'ได้รับแล้ว';
+            return `
+            <tr>
+                <td class="text-center">${row.c1}</td>
+                <td class="text-center">${row.c2 || '-'}</td>
+                <td>${row.c3}</td>
+                <td>${row.c4}</td>
+                <td><small>${row.c5 || ''}</small></td>
+                <td>${row.c6 || ''}</td>
+                <td><strong>${row.c7 || ''}</strong></td>
+                <td><small>${row.c8}</small></td>
+                <td class="text-center">
+                    <button class="status-badge ${isDone ? 'btn-received' : 'btn-pending'}" 
+                        onclick="updateStatus(${row.rowNum}, 9, '${row.c9}')">
+                        ${row.c9 || 'ยังไม่ได้รับ'}
+                    </button>
+                </td>
+                <td class="text-center">${row.c10 || ''}</td>
+                <td><small class="text-muted">${row.c11 || ''}</small></td>
+                <td class="text-center">
+                    <button class="btn btn-sm btn-outline-danger" onclick="deleteRow(${row.rowNum})"><i class="fas fa-trash"></i></button>
+                </td>
+            </tr>`;
+        }).join('');
+    }
+
+    async function updateStatus(rowNum, colIndex, current) {
+        const next = current === 'ได้รับแล้ว' ? 'ยังไม่ได้รับ' : 'ได้รับแล้ว';
+        if(confirm(`เปลี่ยนสถานะเป็น: ${next}?`)) {
+            await fetch(`${WEB_APP_URL}?action=updateField&rowNum=${rowNum}&col=${colIndex}&newValue=${encodeURIComponent(next)}`);
+            loadData();
+        }
+    }
+
+    async function deleteRow(rowNum) {
+        if(confirm('ต้องการลบข้อมูลแถวนี้ใช่หรือไม่?')) {
+            await fetch(`${WEB_APP_URL}?action=deleteRow&rowNum=${rowNum}`);
+            loadData();
+        }
+    }
+
+    document.getElementById('globalSearch').addEventListener('input', runFilters);
+    document.getElementById('filterStatus').addEventListener('change', runFilters);
+
+    function runFilters() {
+        const s = document.getElementById('globalSearch').value.toLowerCase();
+        const stat = document.getElementById('filterStatus').value;
+        const filtered = allData.filter(r => {
+            const mSearch = Object.values(r).some(v => String(v).toLowerCase().includes(s));
+            const mStat = stat === "" || r.c9 === stat;
+            return mSearch && mStat;
+        });
+        renderTable(filtered);
+    }
+
+    window.onload = loadData;
 </script>
 </body>
 </html>
