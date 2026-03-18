@@ -1,0 +1,410 @@
+<!DOCTYPE html><html><head><meta name="x-poe-datastore-behavior" content="local_only"><meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' 'unsafe-eval' data: blob: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://code.jquery.com https://unpkg.com https://d3js.org https://threejs.org https://cdn.plot.ly https://stackpath.bootstrapcdn.com https://maps.googleapis.com https://cdn.tailwindcss.com https://ajax.googleapis.com https://kit.fontawesome.com https://cdn.datatables.net https://maxcdn.bootstrapcdn.com https://code.highcharts.com https://tako-static-assets-production.s3.amazonaws.com https://www.youtube.com https://fonts.googleapis.com https://fonts.gstatic.com https://pfst.cf2.poecdn.net https://puc.poecdn.net https://i.imgur.com https://wikimedia.org https://*.icons8.com https://*.giphy.com https://picsum.photos https://images.unsplash.com; frame-src 'self' https://www.youtube.com https://trytako.com; child-src 'self'; manifest-src 'self'; worker-src 'self'; upgrade-insecure-requests; block-all-mixed-content;"><meta http-equiv="x-dns-prefetch-control" content="off"><script src="https://puc.poecdn.net/authenticated_preview_page/standard.3ef2c256959faf5a756d.js"></script>
+    <meta charset="utf-8">
+    <title>Poe</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+  <script src="https://puc.poecdn.net/authenticated_preview_page/disableWebRTC.9710cebe07429a9e8e06.js"></script><meta name="x-poe-allow-downloads" content="true"><meta name="x-poe-datastore-behavior" content="disabled"><script src="https://puc.poecdn.net/authenticated_preview_page/tw.b9024aecac666455e183.js"></script><script src="https://puc.poecdn.net/authenticated_preview_page/deps.faccd16000d314dc16d5.js"></script><script src="https://puc.poecdn.net/authenticated_preview_page/exports.b0f0f482cdeb5302b0b9.js"></script><script src="https://puc.poecdn.net/authenticated_preview_page/renderer.75c73ae6b4235f62945a.js"></script><script>Object.defineProperty(exports, "__esModule", {value: true}); function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; } function _optionalChain(ops) { let lastAccessLHS = undefined; let value = ops[0]; let i = 1; while (i < ops.length) { const op = ops[i]; const fn = ops[i + 1]; i += 2; if ((op === 'optionalAccess' || op === 'optionalCall') && value == null) { return undefined; } if (op === 'access' || op === 'optionalAccess') { lastAccessLHS = value; value = fn(value); } else if (op === 'call' || op === 'optionalCall') { value = fn((...args) => value.call(lastAccessLHS, ...args)); lastAccessLHS = undefined; } } return value; }var _react = require('react'); var _react2 = _interopRequireDefault(_react);
+
+
+
+
+
+
+
+
+
+
+var _lucidereact = require('lucide-react');
+var _framermotion = require('framer-motion');
+
+const SchoolLogo = ({ size = 80 }) => (
+  _react2.default.createElement('svg', { width: size, height: size, viewBox: "0 0 120 120"   , xmlns: "http://www.w3.org/2000/svg",}
+    , _react2.default.createElement('defs', null
+      , _react2.default.createElement('linearGradient', { id: "sg", x1: "0%", y1: "0%", x2: "0%", y2: "100%",}
+        , _react2.default.createElement('stop', { offset: "0%", stopColor: "#1e3a6e",} )
+        , _react2.default.createElement('stop', { offset: "100%", stopColor: "#0f1f3d",} )
+      )
+      , _react2.default.createElement('linearGradient', { id: "gg", x1: "0%", y1: "0%", x2: "100%", y2: "100%",}
+        , _react2.default.createElement('stop', { offset: "0%", stopColor: "#f0c850",} )
+        , _react2.default.createElement('stop', { offset: "100%", stopColor: "#c8962a",} )
+      )
+    )
+    , _react2.default.createElement('path', { d: "M60 6 L108 24 L108 62 C108 88 84 108 60 116 C36 108 12 88 12 62 L12 24 Z"                    , fill: "url(#sg)", stroke: "url(#gg)", strokeWidth: "3",})
+    , _react2.default.createElement('path', { d: "M60 16 L98 30 L98 60 C98 82 78 98 60 106 C42 98 22 82 22 60 L22 30 Z"                    , fill: "#1a3266", stroke: "#d4a843", strokeWidth: "1.5",})
+    , _react2.default.createElement('path', { d: "M38 48 L60 38 L82 48 L82 72 L60 62 L38 72 Z"            , fill: "#d4a843", opacity: "0.85",})
+    , _react2.default.createElement('line', { x1: "60", y1: "38", x2: "60", y2: "62", stroke: "#1a3266", strokeWidth: "2",})
+    , _react2.default.createElement('path', { d: "M42 50 L60 42 L60 60 L42 68 Z"        , fill: "#e8c060", opacity: "0.6",})
+    , _react2.default.createElement('polygon', { points: "60,22 63,30 71,30 65,35 67,43 60,38 53,43 55,35 49,30 57,30"         , fill: "#f0c850",})
+    , _react2.default.createElement('text', { x: "60", y: "88", textAnchor: "middle", fill: "#d4a843", fontSize: "12", fontWeight: "bold", fontFamily: "sans-serif",}, "บ.ข.น.")
+  )
+);
+
+ function KHNNexus() {
+  const [isLoggedIn, setIsLoggedIn] = _react.useState.call(void 0, false);
+  const [showLogin, setShowLogin] = _react.useState.call(void 0, false);
+  const [username, setUsername] = _react.useState.call(void 0, '');
+  const [password, setPassword] = _react.useState.call(void 0, '');
+  const [showPassword, setShowPassword] = _react.useState.call(void 0, false);
+  const [searchTerm, setSearchTerm] = _react.useState.call(void 0, '');
+  const [activeFilter, setActiveFilter] = _react.useState.call(void 0, 'all');
+  const [loginError, setLoginError] = _react.useState.call(void 0, '');
+  const [currentUser, setCurrentUser] = _react.useState.call(void 0, '');
+
+  const departments = [
+    { id: 'academic', name: 'ฝ่ายบริหารงานวิชาการ', shortName: 'วิชาการ', icon: _lucidereact.BookOpen },
+    { id: 'personnel', name: 'ฝ่ายบริหารงานบุคคล', shortName: 'บุคคล', icon: _lucidereact.Users },
+    { id: 'budget', name: 'ฝ่ายบริหารงานงบประมาณ', shortName: 'งบประมาณ', icon: _lucidereact.DollarSign },
+    { id: 'general', name: 'ฝ่ายบริหารงานทั่วไป', shortName: 'ทั่วไป', icon: _lucidereact.Building },
+  ];
+
+  const modules = [
+    { id:1,name:'ระบบตารางสอน',dept:'academic',icon:_lucidereact.Calendar,views:1245,desc:'จัดการตารางเรียนตารางสอน'},
+    { id:2,name:'ระบบติดตามนักเรียนจบการศึกษา',dept:'academic',icon:_lucidereact.GraduationCap,views:892,desc:'ติดตามข้อมูลนักเรียนที่จบ'},
+    { id:3,name:'ระบบ e-Learning',dept:'academic',icon:_lucidereact.Laptop,views:1567,desc:'ห้องเรียนออนไลน์'},
+    { id:4,name:'ระบบเยี่ยมบ้าน',dept:'academic',icon:_lucidereact.HeartHandshake,views:756,desc:'บันทึกการเยี่ยมบ้านนักเรียน'},
+    { id:5,name:'ระบบวัดผลประเมินผล',dept:'academic',icon:_lucidereact.ClipboardCheck,views:1089,desc:'วัดผลประเมินผลการเรียน'},
+    { id:6,name:'ระบบหลักสูตรสถานศึกษา',dept:'academic',icon:_lucidereact.BookOpen,views:543,desc:'บริหารจัดการหลักสูตร'},
+    { id:7,name:'ระบบแผนการจัดการเรียนรู้',dept:'academic',icon:_lucidereact.FileText,views:678,desc:'จัดทำแผนการสอน'},
+    { id:8,name:'ระบบคัดกรอง SDQ',dept:'academic',icon:_lucidereact.Brain,views:445,desc:'คัดกรองพฤติกรรมนักเรียน'},
+    { id:9,name:'ระบบรายงานผลการเรียน',dept:'academic',icon:_lucidereact.BarChart3,views:934,desc:'รายงานผลการเรียน'},
+    { id:10,name:'ระบบดูแลช่วยเหลือนักเรียน',dept:'academic',icon:_lucidereact.Shield,views:623,desc:'ระบบดูแลนักเรียนรายบุคคล'},
+
+    { id:11,name:'ระบบ HR บุคลากร',dept:'personnel',icon:_lucidereact.Users,views:1134,desc:'บริหารจัดการข้อมูลบุคลากร'},
+    { id:12,name:'ระบบอบรมพัฒนาบุคลากร',dept:'personnel',icon:_lucidereact.Award,views:867,desc:'บันทึกข้อมูลการอบรม'},
+    { id:13,name:'ระบบประเมินผลปฏิบัติงาน',dept:'personnel',icon:_lucidereact.Star,views:912,desc:'ประเมินผลการทำงาน'},
+    { id:14,name:'ระบบลาออนไลน์',dept:'personnel',icon:_lucidereact.Clock,views:1023,desc:'แจ้งลา/อนุมัติการลา'},
+    { id:15,name:'ระบบสวัสดิการบุคลากร',dept:'personnel',icon:_lucidereact.Bell,views:534,desc:'จัดการสวัสดิการ'},
+    { id:16,name:'ระบบทะเบียนประวัติ',dept:'personnel',icon:_lucidereact.UserCheck,views:678,desc:'ทะเบียนประวัติบุคลากร'},
+    { id:17,name:'ระบบวิทยฐานะ',dept:'personnel',icon:_lucidereact.CheckCircle,views:456,desc:'ติดตามวิทยฐานะครู'},
+    { id:18,name:'ระบบพัฒนาสมรรถนะครู',dept:'personnel',icon:_lucidereact.TrendingUp,views:389,desc:'พัฒนาสมรรถนะรายบุคคล'},
+
+    { id:19,name:'ระบบติดตามทุน',dept:'budget',icon:_lucidereact.Coins,views:723,desc:'ติดตามทุนการศึกษา'},
+    { id:20,name:'ระบบจัดซื้อจัดจ้าง',dept:'budget',icon:_lucidereact.Package,views:567,desc:'บริหารการจัดซื้อจัดจ้าง'},
+    { id:21,name:'ระบบพัสดุ/ครุภัณฑ์',dept:'budget',icon:_lucidereact.Database,views:645,desc:'จัดการพัสดุครุภัณฑ์'},
+    { id:22,name:'ระบบบัญชีงบประมาณ',dept:'budget',icon:_lucidereact.DollarSign,views:489,desc:'บริหารบัญชีงบประมาณ'},
+    { id:23,name:'ระบบควบคุมภายใน',dept:'budget',icon:_lucidereact.Lock,views:345,desc:'ควบคุมภายในสถานศึกษา'},
+    { id:24,name:'ระบบรายงานการเงิน',dept:'budget',icon:_lucidereact.PieChart,views:512,desc:'รายงานสถานะการเงิน'},
+    { id:25,name:'ระบบแผนปฏิบัติการประจำปี',dept:'budget',icon:_lucidereact.ClipboardList,views:678,desc:'จัดทำแผนปฏิบัติการ'},
+    { id:26,name:'ระบบบริหารสินทรัพย์',dept:'budget',icon:_lucidereact.Wallet,views:298,desc:'บริหารจัดการสินทรัพย์'},
+
+    { id:27,name:'ระบบคลังเกียรติบัตร',dept:'general',icon:_lucidereact.ScrollText,views:1456,desc:'จัดเก็บเกียรติบัตรออนไลน์'},
+    { id:28,name:'ระบบติดตามงาน',dept:'general',icon:_lucidereact.ClipboardCheck,views:1345,desc:'ติดตามความก้าวหน้างาน'},
+    { id:29,name:'ระบบคลังคำสั่งโรงเรียน',dept:'general',icon:_lucidereact.FileCheck,views:934,desc:'จัดเก็บคำสั่งโรงเรียน'},
+    { id:30,name:'ระบบเก็บภาพกิจกรรม',dept:'general',icon:_lucidereact.Camera,views:1678,desc:'คลังภาพกิจกรรมโรงเรียน'},
+    { id:31,name:'ระบบสารบรรณอิเล็กทรอนิกส์',dept:'general',icon:_lucidereact.Mail,views:823,desc:'รับ-ส่งเอกสารอิเล็กทรอนิกส์'},
+    { id:32,name:'ระบบแจ้งซ่อมบำรุง',dept:'general',icon:_lucidereact.Wrench,views:567,desc:'แจ้งซ่อมอาคารสถานที่'},
+    { id:33,name:'ระบบจองห้องประชุม',dept:'general',icon:_lucidereact.Building,views:445,desc:'จองห้องประชุมออนไลน์'},
+    { id:34,name:'ระบบประชาสัมพันธ์',dept:'general',icon:_lucidereact.Megaphone,views:712,desc:'ข่าวสารประชาสัมพันธ์'},
+    { id:35,name:'ระบบหนังสือราชการ',dept:'general',icon:_lucidereact.Send,views:634,desc:'รับ-ส่งหนังสือราชการ'},
+    { id:36,name:'ระบบอาคารสถานที่',dept:'general',icon:_lucidereact.Home,views:356,desc:'บริหารอาคารสถานที่'},
+  ];
+
+  const getIconBg = (d) => ({academic:'bg-blue-500',personnel:'bg-emerald-500',budget:'bg-amber-500',general:'bg-purple-500'}[d]||'bg-gray-500');
+  const getIconBgHover = (d) => ({academic:'group-hover:bg-blue-600',personnel:'group-hover:bg-emerald-600',budget:'group-hover:bg-amber-600',general:'group-hover:bg-purple-600'}[d]||'');
+  const getBadge = (d) => ({academic:'bg-blue-100 text-blue-700',personnel:'bg-emerald-100 text-emerald-700',budget:'bg-amber-100 text-amber-700',general:'bg-purple-100 text-purple-700'}[d]||'bg-gray-100 text-gray-700');
+  const getDeptShort = (id) => _optionalChain([departments, 'access', _ => _.find, 'call', _2 => _2(d=>d.id===id), 'optionalAccess', _3 => _3.shortName])||'';
+
+  const filteredModules = _react.useMemo.call(void 0, () => modules.filter(m => {
+    const s = m.name.toLowerCase().includes(searchTerm.toLowerCase()) || m.desc.toLowerCase().includes(searchTerm.toLowerCase());
+    const f = activeFilter==='all' || m.dept===activeFilter;
+    return s && f;
+  }), [searchTerm, activeFilter]);
+
+  const topModules = _react.useMemo.call(void 0, () => [...modules].sort((a,b)=>b.views-a.views).slice(0,3), []);
+  const medals = ['🥇','🥈','🥉'];
+
+  const handleLogin = (e) => {
+    e.preventDefault();
+    if(!username||!password){setLoginError('กรุณากรอกข้อมูลให้ครบถ้วน');return;}
+    setIsLoggedIn(true);setCurrentUser(username);setShowLogin(false);setLoginError('');setUsername('');setPassword('');
+  };
+
+  const renderCard = (mod, idx) => {
+    const Icon = mod.icon;
+    return (
+      _react2.default.createElement(_framermotion.motion.a, { key: mod.id, href: "#", initial: {opacity:0,y:20}, animate: {opacity:1,y:0}, transition: {delay:idx*0.02},
+        className: "bg-white rounded-xl shadow-sm border border-gray-100 hover:shadow-xl hover:border-gray-200 hover:-translate-y-1 transition-all duration-300 cursor-pointer group overflow-hidden"            ,}
+        , _react2.default.createElement('div', { className: `p-5 flex items-center justify-center ${getIconBg(mod.dept)} ${getIconBgHover(mod.dept)} transition-colors`,}
+          , _react2.default.createElement(Icon, { className: "w-8 h-8 text-white group-hover:scale-110 transition-transform"    ,})
+        )
+        , _react2.default.createElement('div', { className: "p-3",}
+          , _react2.default.createElement('h3', { className: "text-xs font-bold text-gray-800 leading-snug h-8 overflow-hidden"     ,}, mod.name)
+          , _react2.default.createElement('p', { className: "text-xs text-gray-400 mt-1 truncate"   ,}, mod.desc)
+          , activeFilter!=='all'? null : null
+        )
+      )
+    );
+  };
+
+  return (
+    _react2.default.createElement('div', { className: "min-h-screen bg-slate-50" , style: {fontFamily:'"Noto Sans Thai", system-ui, sans-serif'},}
+      /* Top Nav */
+      , _react2.default.createElement('div', { className: "bg-indigo-950 text-white" ,}
+        , _react2.default.createElement('div', { className: "max-w-7xl mx-auto px-4 py-2 flex items-center justify-between text-sm"       ,}
+          , _react2.default.createElement('a', { href: "#", className: "flex items-center gap-2 hover:text-amber-300 transition-colors"    ,}
+            , _react2.default.createElement(_lucidereact.ArrowLeft, { className: "w-4 h-4" ,}), _react2.default.createElement('span', { className: "hidden sm:inline" ,}, "กลับเว็บไซต์หลัก"), _react2.default.createElement('span', { className: "sm:hidden",}, "กลับ")
+          )
+          , isLoggedIn ? (
+            _react2.default.createElement('div', { className: "flex items-center gap-3"  ,}
+              , _react2.default.createElement('div', { className: "flex items-center gap-2"  ,}
+                , _react2.default.createElement('div', { className: "w-7 h-7 rounded-full bg-amber-500 flex items-center justify-center"      ,}, _react2.default.createElement(_lucidereact.User, { className: "w-4 h-4 text-white"  ,}))
+                , _react2.default.createElement('span', { className: "hidden sm:inline text-amber-300 text-xs font-semibold"    ,}, currentUser)
+              )
+              , _react2.default.createElement('button', { onClick: ()=>{setIsLoggedIn(false);setCurrentUser('');}, className: "flex items-center gap-1 px-3 py-1 rounded-full bg-red-500 hover:bg-red-600 transition-colors text-xs font-semibold"          ,}
+                , _react2.default.createElement(_lucidereact.LogOut, { className: "w-3 h-3" ,}), "ออกจากระบบ"
+              )
+            )
+          ) : (
+            _react2.default.createElement('button', { onClick: ()=>setShowLogin(true), className: "flex items-center gap-2 px-4 py-1.5 rounded-full bg-amber-500 hover:bg-amber-400 transition-colors text-indigo-950 font-bold text-xs"           ,}
+              , _react2.default.createElement(_lucidereact.LogIn, { className: "w-3 h-3" ,}), "เข้าสู่ระบบ"
+            )
+          )
+        )
+      )
+
+      /* Hero */
+      , _react2.default.createElement('div', { className: "bg-gradient-to-br from-indigo-900 via-indigo-800 to-blue-900 text-white relative overflow-hidden"      ,}
+        , _react2.default.createElement('div', { className: "absolute inset-0 opacity-5"  , style: {backgroundImage:'radial-gradient(circle at 2px 2px, white 1px, transparent 0)',backgroundSize:'32px 32px'},})
+        , _react2.default.createElement('div', { className: "relative max-w-7xl mx-auto px-4 py-10 sm:py-14 flex flex-col items-center text-center"         ,}
+          , _react2.default.createElement(_framermotion.motion.div, { initial: {scale:0.7,opacity:0}, animate: {scale:1,opacity:1}, transition: {duration:0.6,type:'spring'},}
+            , _react2.default.createElement(SchoolLogo, { size: 88,})
+          )
+          , _react2.default.createElement(_framermotion.motion.div, { initial: {y:20,opacity:0}, animate: {y:0,opacity:1}, transition: {delay:0.2}, className: "mt-4",}
+            , _react2.default.createElement('h1', { className: "text-4xl sm:text-5xl font-black tracking-tight"   ,}
+              , _react2.default.createElement('span', { className: "text-amber-400",}, "KHN"), " " , _react2.default.createElement('span', { className: "text-white",}, "NEXUS")
+            )
+            , _react2.default.createElement('p', { className: "text-blue-200 text-base sm:text-lg mt-1 font-light"    ,}, "Smart School Digital Platform"   )
+            , _react2.default.createElement('p', { className: "text-blue-300 text-xs sm:text-sm mt-1"   ,}, "ศูนย์รวมระบบสารสนเทศอัจฉริยะ โรงเรียนบ้านเขาหัวนา" )
+          )
+          , _react2.default.createElement(_framermotion.motion.div, { initial: {y:20,opacity:0}, animate: {y:0,opacity:1}, transition: {delay:0.4}, className: "mt-8 flex flex-wrap justify-center gap-4"    ,}
+            , [
+              {icon:_lucidereact.Layers,val:modules.length,label:'โมดูลทั้งหมด',c:'text-amber-400'},
+              {icon:_lucidereact.Zap,val:modules.length,label:'พัฒนาแล้ว',c:'text-green-400'},
+              {icon:_lucidereact.Globe,val:'4',label:'กลุ่มฝ่ายงาน',c:'text-cyan-400'},
+            ].map((s,i) => (
+              _react2.default.createElement('div', { key: i, className: "flex items-center gap-3 bg-white bg-opacity-10 rounded-xl px-5 py-3 backdrop-blur-sm"        ,}
+                , _react2.default.createElement(s.icon, { className: `w-6 h-6 ${s.c}`,})
+                , _react2.default.createElement('div', { className: "text-left",}
+                  , _react2.default.createElement('div', { className: `text-2xl font-black ${s.c}`,}, s.val)
+                  , _react2.default.createElement('div', { className: "text-xs text-blue-200" ,}, s.label)
+                )
+              )
+            ))
+          )
+        )
+      )
+
+      /* Popular */
+      , _react2.default.createElement('div', { className: "max-w-7xl mx-auto px-4 -mt-6 relative z-10"     ,}
+        , _react2.default.createElement(_framermotion.motion.div, { initial: {y:30,opacity:0}, animate: {y:0,opacity:1}, transition: {delay:0.5},
+          className: "bg-white rounded-2xl shadow-lg border border-gray-100 p-5 sm:p-6"      ,}
+          , _react2.default.createElement('div', { className: "flex items-center gap-2 mb-4"   ,}
+            , _react2.default.createElement(_lucidereact.Trophy, { className: "w-5 h-5 text-amber-500"  ,})
+            , _react2.default.createElement('h2', { className: "font-bold text-gray-800 text-sm sm:text-base"   ,}, "โมดูลยอดนิยมประจำสัปดาห์ Top 3"  )
+          )
+          , _react2.default.createElement('div', { className: "grid grid-cols-1 sm:grid-cols-3 gap-3"   ,}
+            , topModules.map((mod,idx) => {
+              const Icon = mod.icon;
+              return (
+                _react2.default.createElement('a', { key: mod.id, href: "#", className: "flex items-center gap-3 p-3 rounded-xl bg-slate-50 hover:bg-slate-100 transition-colors border border-slate-100"         ,}
+                  , _react2.default.createElement('span', { className: "text-2xl",}, medals[idx])
+                  , _react2.default.createElement('div', { className: `w-10 h-10 rounded-lg ${getIconBg(mod.dept)} flex items-center justify-center flex-shrink-0`,}
+                    , _react2.default.createElement(Icon, { className: "w-5 h-5 text-white"  ,})
+                  )
+                  , _react2.default.createElement('div', { className: "min-w-0 flex-1" ,}
+                    , _react2.default.createElement('div', { className: "text-sm font-bold text-gray-800 truncate"   ,}, mod.name)
+                    , _react2.default.createElement('div', { className: "text-xs text-gray-500 flex items-center gap-1"    ,}, _react2.default.createElement(_lucidereact.Eye, { className: "w-3 h-3" ,}), mod.views.toLocaleString(), " ครั้ง" )
+                  )
+                )
+              );
+            })
+          )
+        )
+      )
+
+      /* Search & Filter */
+      , _react2.default.createElement('div', { className: "max-w-7xl mx-auto px-4 mt-8"   ,}
+        , _react2.default.createElement('div', { className: "flex flex-col sm:flex-row gap-4 items-start sm:items-center"     ,}
+          , _react2.default.createElement('div', { className: "relative w-full sm:w-80"  ,}
+            , _react2.default.createElement(_lucidereact.Search, { className: "absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400"      ,})
+            , _react2.default.createElement('input', { type: "text", placeholder: "ค้นหาระบบงาน...", value: searchTerm, onChange: e=>setSearchTerm(e.target.value),
+              className: "w-full pl-10 pr-4 py-2.5 rounded-xl border border-gray-200 focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100 outline-none text-sm bg-white shadow-sm"             ,})
+          )
+          , _react2.default.createElement('div', { className: "flex flex-wrap gap-2"  ,}
+            , _react2.default.createElement('button', { onClick: ()=>setActiveFilter('all'),
+              className: `px-4 py-2 rounded-xl text-xs font-bold transition-all ${activeFilter==='all'?'bg-indigo-600 text-white shadow-md shadow-indigo-200':'bg-white text-gray-600 border border-gray-200 hover:bg-gray-50'}`,}, "ทั้งหมด ("
+               , modules.length, ")"
+            )
+            , departments.map(dept => {
+              const c = modules.filter(m=>m.dept===dept.id).length;
+              const DI = dept.icon;
+              return (
+                _react2.default.createElement('button', { key: dept.id, onClick: ()=>setActiveFilter(dept.id),
+                  className: `flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold transition-all ${activeFilter===dept.id?getIconBg(dept.id)+' text-white shadow-md':'bg-white text-gray-600 border border-gray-200 hover:bg-gray-50'}`,}
+                  , _react2.default.createElement(DI, { className: "w-3.5 h-3.5" ,}), _react2.default.createElement('span', { className: "hidden md:inline" ,}, dept.shortName), "(", c, ")"
+                )
+              );
+            })
+          )
+        )
+      )
+
+      /* Module Grid */
+      , _react2.default.createElement('div', { className: "max-w-7xl mx-auto px-4 mt-6 pb-12"    ,}
+        , activeFilter==='all' ? departments.map(dept => {
+          const dm = filteredModules.filter(m=>m.dept===dept.id);
+          if(!dm.length) return null;
+          const DI = dept.icon;
+          return (
+            _react2.default.createElement('div', { key: dept.id, className: "mb-10",}
+              , _react2.default.createElement('div', { className: "flex items-center gap-3 mb-4"   ,}
+                , _react2.default.createElement('div', { className: `w-9 h-9 rounded-lg ${getIconBg(dept.id)} flex items-center justify-center shadow-sm`,}
+                  , _react2.default.createElement(DI, { className: "w-5 h-5 text-white"  ,})
+                )
+                , _react2.default.createElement('div', null
+                  , _react2.default.createElement('h2', { className: "font-bold text-gray-800 text-sm sm:text-base"   ,}, dept.name)
+                  , _react2.default.createElement('span', { className: "text-xs text-gray-400" ,}, dm.length, " ระบบงาน" )
+                )
+              )
+              , _react2.default.createElement('div', { className: "grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 sm:gap-4"      ,}
+                , dm.map((mod,i) => renderCard(mod,i))
+              )
+            )
+          );
+        }) : (
+          _react2.default.createElement('div', null
+            , activeFilter!=='all' && (
+              _react2.default.createElement('div', { className: "flex items-center gap-3 mb-4"   ,}
+                , _react2.default.createElement('div', { className: `w-9 h-9 rounded-lg ${getIconBg(activeFilter)} flex items-center justify-center shadow-sm`,}
+                  , _react2.default.createElement(_optionalChain([departments, 'access', _4 => _4.find, 'call', _5 => _5(d=>d.id===activeFilter), 'optionalAccess', _6 => _6.icon])||_lucidereact.Building,{className:'w-5 h-5 text-white'})
+                )
+                , _react2.default.createElement('div', null
+                  , _react2.default.createElement('h2', { className: "font-bold text-gray-800" ,}, _optionalChain([departments, 'access', _7 => _7.find, 'call', _8 => _8(d=>d.id===activeFilter), 'optionalAccess', _9 => _9.name]))
+                  , _react2.default.createElement('span', { className: "text-xs text-gray-400" ,}, filteredModules.length, " ระบบงาน" )
+                )
+              )
+            )
+            , _react2.default.createElement('div', { className: "grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 sm:gap-4"      ,}
+              , filteredModules.map((mod,i) => {
+                const Icon = mod.icon;
+                return (
+                  _react2.default.createElement(_framermotion.motion.a, { key: mod.id, href: "#", initial: {opacity:0,y:20}, animate: {opacity:1,y:0}, transition: {delay:i*0.02},
+                    className: "bg-white rounded-xl shadow-sm border border-gray-100 hover:shadow-xl hover:border-gray-200 hover:-translate-y-1 transition-all duration-300 cursor-pointer group overflow-hidden"            ,}
+                    , _react2.default.createElement('div', { className: `p-5 flex items-center justify-center ${getIconBg(mod.dept)} ${getIconBgHover(mod.dept)} transition-colors`,}
+                      , _react2.default.createElement(Icon, { className: "w-8 h-8 text-white group-hover:scale-110 transition-transform"    ,})
+                    )
+                    , _react2.default.createElement('div', { className: "p-3",}
+                      , _react2.default.createElement('h3', { className: "text-xs font-bold text-gray-800 leading-snug h-8 overflow-hidden"     ,}, mod.name)
+                      , _react2.default.createElement('p', { className: "text-xs text-gray-400 mt-1 truncate"   ,}, mod.desc)
+                      , _react2.default.createElement('span', { className: `inline-block mt-2 text-xs px-2 py-0.5 rounded-full font-semibold ${getBadge(mod.dept)}`,}, getDeptShort(mod.dept))
+                    )
+                  )
+                );
+              })
+            )
+          )
+        )
+        , filteredModules.length===0 && (
+          _react2.default.createElement('div', { className: "text-center py-20" ,}
+            , _react2.default.createElement(_lucidereact.Search, { className: "w-16 h-16 text-gray-200 mx-auto mb-4"    ,})
+            , _react2.default.createElement('p', { className: "text-gray-400 text-lg" ,}, "ไม่พบระบบงานที่ค้นหา")
+            , _react2.default.createElement('p', { className: "text-gray-300 text-sm mt-1"  ,}, "ลองค้นหาด้วยคำอื่น หรือเลือกฝ่ายงาน" )
+          )
+        )
+      )
+
+      /* Footer */
+      , _react2.default.createElement('footer', { className: "bg-indigo-950 text-white" ,}
+        , _react2.default.createElement('div', { className: "max-w-7xl mx-auto px-4 py-10"   ,}
+          , _react2.default.createElement('div', { className: "flex flex-col md:flex-row items-center justify-between gap-6"     ,}
+            , _react2.default.createElement('div', { className: "flex items-center gap-4"  ,}
+              , _react2.default.createElement(SchoolLogo, { size: 56,})
+              , _react2.default.createElement('div', null
+                , _react2.default.createElement('div', { className: "font-black text-lg" ,}, _react2.default.createElement('span', { className: "text-amber-400",}, "KHN"), " NEXUS" )
+                , _react2.default.createElement('div', { className: "text-xs text-blue-300 mt-0.5"  ,}, "Smart School Digital Platform"   )
+                , _react2.default.createElement('div', { className: "text-xs text-blue-400 mt-0.5"  ,}, "© 2025–2026 All Rights Reserved"    )
+              )
+            )
+            , _react2.default.createElement('div', { className: "text-center md:text-right space-y-2"  ,}
+              , _react2.default.createElement('div', { className: "text-xs text-amber-400 font-bold uppercase tracking-wider mb-2"     ,}, "ติดต่อทีมผู้พัฒนา")
+              , _react2.default.createElement('div', { className: "flex items-center justify-center md:justify-end gap-2"    ,}
+                , _react2.default.createElement(_lucidereact.MapPin, { className: "w-4 h-4 text-amber-400 flex-shrink-0"   ,})
+                , _react2.default.createElement('span', { className: "text-blue-200 text-sm" ,}, "โรงเรียนบ้านเขาหัวนา ต.เขาเพิ่ม อ.บ้านนา จ.นครนายก"   )
+              )
+              , _react2.default.createElement('div', { className: "flex items-center justify-center md:justify-end gap-2"    ,}
+                , _react2.default.createElement(_lucidereact.Mail, { className: "w-4 h-4 text-amber-400 flex-shrink-0"   ,})
+                , _react2.default.createElement('span', { className: "text-blue-200 text-sm" ,}, "dev@khn.ac.th")
+              )
+              , _react2.default.createElement('div', { className: "flex items-center justify-center md:justify-end gap-2"    ,}
+                , _react2.default.createElement(_lucidereact.Phone, { className: "w-4 h-4 text-amber-400 flex-shrink-0"   ,})
+                , _react2.default.createElement('span', { className: "text-blue-200 text-sm" ,}, "037-xxx-xxx")
+              )
+            )
+          )
+          , _react2.default.createElement('div', { className: "border-t border-indigo-800 mt-8 pt-4 text-center text-xs text-blue-500"      ,}, "พัฒนาโดยทีมงานสารสนเทศ โรงเรียนบ้านเขาหัวนา สพป.นครนายก"
+
+          )
+        )
+      )
+
+      /* Login Modal */
+      , _react2.default.createElement(_framermotion.AnimatePresence, null
+        , showLogin && (
+          _react2.default.createElement(_framermotion.motion.div, { initial: {opacity:0}, animate: {opacity:1}, exit: {opacity:0},
+            className: "fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-60 p-4 backdrop-blur-sm"         ,
+            onClick: ()=>{setShowLogin(false);setLoginError('');},}
+            , _react2.default.createElement(_framermotion.motion.div, { initial: {scale:0.9,opacity:0,y:30}, animate: {scale:1,opacity:1,y:0}, exit: {scale:0.9,opacity:0,y:30},
+              className: "bg-white rounded-2xl shadow-2xl w-full max-w-sm overflow-hidden"     , onClick: e=>e.stopPropagation(),}
+              , _react2.default.createElement('div', { className: "bg-gradient-to-br from-indigo-900 to-blue-800 p-8 text-center relative"     ,}
+                , _react2.default.createElement('button', { onClick: ()=>{setShowLogin(false);setLoginError('');}, className: "absolute top-4 right-4 text-white hover:text-amber-300 transition-colors"     ,}
+                  , _react2.default.createElement(_lucidereact.X, { className: "w-5 h-5" ,})
+                )
+                , _react2.default.createElement('div', { className: "flex justify-center" ,}, _react2.default.createElement(SchoolLogo, { size: 72,}))
+                , _react2.default.createElement('h2', { className: "text-white font-black text-xl mt-3"   ,}, "เข้าสู่ระบบ")
+                , _react2.default.createElement('p', { className: "text-blue-300 text-xs mt-1"  ,}, _react2.default.createElement('span', { className: "text-amber-400",}, "KHN"), " NEXUS Platform"  )
+              )
+              , _react2.default.createElement('form', { onSubmit: handleLogin, className: "p-6 space-y-4" ,}
+                , loginError && (
+                  _react2.default.createElement('div', { className: "bg-red-50 text-red-600 text-sm px-4 py-2.5 rounded-xl border border-red-200 flex items-center gap-2"          ,}
+                    , _react2.default.createElement(_lucidereact.X, { className: "w-4 h-4 flex-shrink-0"  ,}), loginError
+                  )
+                )
+                , _react2.default.createElement('div', null
+                  , _react2.default.createElement('label', { className: "block text-sm font-bold text-gray-700 mb-1.5"    ,}, "ชื่อผู้ใช้งาน")
+                  , _react2.default.createElement('div', { className: "relative",}
+                    , _react2.default.createElement(_lucidereact.User, { className: "absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400"      ,})
+                    , _react2.default.createElement('input', { type: "text", value: username, onChange: e=>setUsername(e.target.value), placeholder: "กรอกชื่อผู้ใช้",
+                      className: "w-full pl-10 pr-4 py-3 rounded-xl border border-gray-200 focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100 outline-none text-sm"           ,})
+                  )
+                )
+                , _react2.default.createElement('div', null
+                  , _react2.default.createElement('label', { className: "block text-sm font-bold text-gray-700 mb-1.5"    ,}, "รหัสผ่าน")
+                  , _react2.default.createElement('div', { className: "relative",}
+                    , _react2.default.createElement(_lucidereact.Lock, { className: "absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400"      ,})
+                    , _react2.default.createElement('input', { type: showPassword?'text':'password', value: password, onChange: e=>setPassword(e.target.value), placeholder: "กรอกรหัสผ่าน",
+                      className: "w-full pl-10 pr-10 py-3 rounded-xl border border-gray-200 focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100 outline-none text-sm"           ,})
+                    , _react2.default.createElement('button', { type: "button", onClick: ()=>setShowPassword(!showPassword), className: "absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"     ,}
+                      , showPassword?_react2.default.createElement(_lucidereact.EyeOff, { className: "w-4 h-4" ,}):_react2.default.createElement(_lucidereact.Eye, { className: "w-4 h-4" ,})
+                    )
+                  )
+                )
+                , _react2.default.createElement('button', { type: "submit",
+                  className: "w-full py-3 bg-gradient-to-r from-indigo-600 to-blue-600 text-white font-bold rounded-xl hover:from-indigo-700 hover:to-blue-700 transition-all shadow-lg shadow-indigo-200 text-sm"             ,}, "เข้าสู่ระบบ"
+
+                )
+                , _react2.default.createElement('div', { className: "flex items-center gap-2 justify-center text-xs text-gray-400 pt-1"      ,}
+                  , _react2.default.createElement(_lucidereact.Lock, { className: "w-3 h-3" ,})
+                  , _react2.default.createElement('span', null, "Session ใช้งานร่วมกับทุก Module อัตโนมัติ"   )
+                )
+              )
+            )
+          )
+        )
+      )
+    )
+  );
+} exports.default = KHNNexus;
+</script></head>
+  <body>
+  
+
+<div id="preview-app"></div></body></html>
