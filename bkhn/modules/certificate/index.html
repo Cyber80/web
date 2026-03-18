@@ -7,15 +7,68 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
     <style>
-        * { font-family: 'Sarabun', sans-serif; }
-        .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
-        .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
-        td { vertical-align: top; padding-top: 12px !important; }
-        th { cursor: pointer; user-select: none; white-space: nowrap; transition: 0.2s; }
+        /* กำหนดฟอนต์หลักและขนาดพื้นฐานที่ใหญ่ขึ้น */
+        * { font-family: 'Sarabun', sans-serif; font-size: 16px; } 
+
+        .custom-scrollbar::-webkit-scrollbar { width: 8px; height: 8px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        
+        /* ปรับเนื้อหาในตารางให้ตัวใหญ่และชิดบน */
+        td { 
+            vertical-align: top; 
+            padding: 14px 8px !important; 
+            font-size: 16px !important; /* ขนาดตัวอักษรเนื้อหาตาราง */
+            line-height: 1.6;
+        }
+
+        /* ปรับหัวตารางให้เด่นชัด */
+        th { 
+            cursor: pointer; 
+            user-select: none; 
+            white-space: nowrap; 
+            transition: 0.2s; 
+            font-size: 16px !important; 
+            font-weight: 700 !important;
+            padding: 16px 8px !important;
+        }
         th:hover { color: #4f46e5; background-color: #f1f5f9; }
-        input, select, textarea { font-size: 14px !important; }
-        .col-name { min-width: 180px; max-width: 250px; white-space: normal; word-wrap: break-word; }
+
+        /* ปรับขนาดตัวอักษรในฟอร์มแก้ไข (Modal) ให้ใหญ่พิเศษเพื่อความชัดเจน */
+        input, select, textarea { 
+            font-size: 18px !important; 
+            padding: 12px !important; 
+            border-radius: 12px !important;
+        }
+
+        /* ปรับหัวข้อ (Label) ในฟอร์ม */
+        label { 
+            font-size: 15px !important; 
+            font-weight: 600; 
+            margin-bottom: 6px; 
+            display: block;
+            color: #475569;
+        }
+
+        /* ขยายความกว้างคอลัมน์ชื่อนักเรียนรองรับฟอนต์ใหญ่ */
+        .col-name { 
+            min-width: 250px; 
+            max-width: 350px; 
+            white-space: normal; 
+            word-wrap: break-word; 
+        }
+
+        /* ปรับขนาด Badge สถานะให้ใหญ่ขึ้นเล็กน้อย */
+        .status-badge {
+            font-size: 12px !important;
+            padding: 6px 12px !important;
+        }
+
+        /* ขยายขนาดปุ่มกดต่างๆ */
+        button {
+            font-size: 15px !important;
+        }
     </style>
 </head>
 <body class="h-full bg-slate-50 text-slate-800">
@@ -168,7 +221,7 @@
             <tr class="table-row-hover transition-colors border-b border-slate-50">
                 <td class="px-4 py-3 text-center text-slate-400 font-bold">${row.c1 || '-'}</td>
                 <td class="px-4 py-3"><span class="bg-indigo-50 text-indigo-500 px-2 py-1 rounded-md text-[10px] font-bold">${row.c2 || '-'}</span></td>
-                <td class="px-4 py-3 font-bold text-slate-700 leading-tight">${row.c3}</td>
+                <td class="px-4 py-3 font-bold text-slate-500 leading-tight">${row.c3}</td>
                 <td class="px-4 py-3 text-slate-500 text-[11px] font-medium">${row.c4}</td>
                 <td class="px-4 py-3 col-name"><strong class="text-slate-500">${row.c7 || ''}</strong></td>
                 <td class="px-4 py-3 text-slate-500 text-[11px]">${row.c8}</td>
