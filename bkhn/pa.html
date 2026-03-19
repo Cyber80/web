@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>V23 Digital Portfolio - ผอ.นาตยา เวชมุข</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;700&display=swap');
+        body { font-family: 'Sarabun', sans-serif; scroll-behavior: smooth; }
+        .gradient-bg { background: linear-gradient(135deg, #0f172a 0%, #1e40af 100%); }
+        .card-zoom:hover img { transform: scale(1.1); }
+        .tab-active { border-bottom: 4px solid #facc15; color: #facc15; }
+    </style>
+</head>
+<body class="bg-slate-50">
+
+    <nav class="fixed w-full z-50 gradient-bg text-white shadow-xl">
+        <div class="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
+            <span class="font-bold text-xl">PA-PORTFOLIO 2026</span>
+            <div class="hidden md:flex space-x-6 text-sm">
+                <a href="#dashboard" class="hover:text-yellow-400">แดชบอร์ด</a>
+                <a href="#standard" class="hover:text-yellow-400">มาตรฐานตำแหน่ง</a>
+                <a href="#challenge" class="hover:text-yellow-400">ประเด็นท้าทาย</a>
+                <a href="#gallery" class="hover:text-yellow-400">คลังภาพกิจกรรม</a>
+            </div>
+        </div>
+    </nav>
+
+    <header class="pt-24 pb-16 gradient-bg text-white text-center">
+        <div class="max-w-5xl mx-auto px-6">
+            <div class="relative inline-block">
+                <img src="https://via.placeholder.com/180" class="w-40 h-40 rounded-full border-4 border-yellow-400 shadow-2xl mx-auto object-cover">
+                <span class="absolute bottom-2 right-2 bg-green-500 p-2 rounded-full border-2 border-white"></span>
+            </div>
+            <h1 class="text-4xl font-extrabold mt-6">นางสาวนาตยา เวชมุข</h1>
+            <p class="text-2xl text-yellow-400 font-bold mt-2">ผู้อำนวยการโรงเรียนบ้านเขาหัวนา</p>
+            <p class="opacity-80 mt-1">วิทยฐานะชำนาญการพิเศษ | สพป.นครนายก</p>
+            <div class="flex justify-center gap-4 mt-8">
+                <div class="bg-white/10 p-4 rounded-lg backdrop-blur-md border border-white/20">
+                    <p class="text-xs uppercase opacity-70">อายุราชการ</p>
+                    <p class="text-xl font-bold">20 ปี 5 เดือน</p>
+                </div>
+                <div class="bg-white/10 p-4 rounded-lg backdrop-blur-md border border-white/20">
+                    <p class="text-xs uppercase opacity-70">วุฒิสูงสุด</p>
+                    <p class="text-xl font-bold">ศษ.ม. การบริหารการศึกษา</p>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <section id="dashboard" class="max-w-7xl mx-auto -mt-10 px-4 relative z-10">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="bg-white rounded-2xl shadow-xl p-8 border-b-8 border-blue-600">
+                <div class="flex justify-between items-center mb-6">
+                    <h3 class="font-bold text-gray-700 text-lg">ผลสัมฤทธิ์ O-NET ป.6</h3>
+                    <i class="fas fa-chart-bar text-blue-600 text-2xl"></i>
+                </div>
+                <div class="space-y-4">
+                    <div>
+                        <div class="flex justify-between text-sm mb-1"><span>คณิตศาสตร์ (รร.บ้านเขาหัวนา)</span> <span class="font-bold text-blue-600">25.46</span></div>
+                        <div class="w-full bg-gray-200 h-2 rounded-full"><div class="bg-blue-600 h-2 rounded-full" style="width: 25.46%"></div></div>
+                        <p class="text-[10px] text-gray-400 mt-1">*สูงกว่าค่าเฉลี่ยระดับประเทศ (24.90)</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-2xl shadow-xl p-8 border-b-8 border-purple-600">
+                <div class="flex justify-between items-center mb-6">
+                    <h3 class="font-bold text-gray-700 text-lg">นวัตกรรมบริหารจัดการ</h3>
+                    <i class="fas fa-microchip text-purple-600 text-2xl"></i>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="text-center p-3 bg-purple-50 rounded-xl">
+                        <p class="text-2xl font-bold text-purple-700">100%</p>
+                        <p class="text-[10px]">ระบบตารางสอนออนไลน์</p>
+                    </div>
+                    <div class="text-center p-3 bg-purple-50 rounded-xl">
+                        <p class="text-2xl font-bold text-purple-700">27 คน</p>
+                        <p class="text-[10px]">ระบบติดตามผลจบ ป.6</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-2xl shadow-xl p-8 border-b-8 border-yellow-500">
+                <div class="flex justify-between items-center mb-6">
+                    <h3 class="font-bold text-gray-700 text-lg">ความเป็นเลิศผู้เรียน</h3>
+                    <i class="fas fa-award text-yellow-500 text-2xl"></i>
+                </div>
+                <ul class="text-sm space-y-2">
+                    <li class="flex items-center"><i class="fas fa-medal text-yellow-500 mr-2"></i> เหรียญทองชนะเลิศ 4 รายการ</li>
+                    <li class="flex items-center"><i class="fas fa-medal text-slate-400 mr-2"></i> เหรียญเงินชนะเลิศ 1 รายการ</li>
+                    <li class="flex items-center"><i class="fas fa-star text-blue-400 mr-2"></i> รางวัลครูดีเด่น 2 ท่าน (วันครู)</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <section id="standard" class="max-w-7xl mx-auto py-20 px-4">
+        <h2 class="text-3xl font-bold text-slate-800 text-center mb-12 uppercase tracking-widest italic">องค์ประกอบที่ 1: มาตรฐานตำแหน่ง (60 คะแนน)</h2>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div class="bg-white p-6 rounded-xl shadow-lg hover:shadow-2xl transition-all">
+                <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mb-4">
+                    <i class="fas fa-book-reader text-blue-600 text-xl"></i>
+                </div>
+                <h4 class="font-bold text-lg mb-2">1. ด้านการบริหารวิชาการ</h4>
+                <p class="text-gray-600 text-sm leading-relaxed">พัฒนาหลักสูตรสถานศึกษา 2569 สอดคล้องกับบริบทท้องถิ่น และส่งเสริมการสอนแบบ Active Learning ทุกกลุ่มสาระ</p>
+            </div>
+
+            <div class="bg-white p-6 rounded-xl shadow-lg hover:shadow-2xl transition-all">
+                <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mb-4">
+                    <i class="fas fa-tasks text-green-600 text-xl"></i>
+                </div>
+                <h4 class="font-bold text-lg mb-2">2. ด้านการบริหารจัดการ</h4>
+                <p class="text-gray-600 text-sm leading-relaxed">บริหารงบประมาณโปร่งใส ระดมทรัพยากรจ้างบุคลากรและสนับสนุนวันเด็กกว่า 30,000 บาท และดูแลระบบความปลอดภัย CCTV ครอบคลุม</p>
+            </div>
+
+            <div class="bg-white p-6 rounded-xl shadow-lg hover:shadow-2xl transition-all">
+                <div class="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center mb-4">
+                    <i class="fas fa-lightbulb text-orange-600 text-xl"></i>
+                </div>
+                <h4 class="font-bold text-lg mb-2">3. การเปลี่ยนแปลงเชิงกลยุทธ์</h4>
+                <p class="text-gray-600 text-sm leading-relaxed">ใช้วงจรคุณภาพ PDCA นำหลักปรัชญาเศรษฐกิจพอเพียงมาสร้างภูมิคุ้มกันในการบริหารงาน</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="gallery" class="bg-slate-200 py-20 px-4">
+        <div class="max-w-7xl mx-auto">
+            <h2 class="text-3xl font-bold text-center mb-16 underline decoration-blue-500">ประจักษ์พยานเชิงกิจกรรม (Evidence Gallery)</h2>
+            
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div class="relative group overflow-hidden rounded-xl shadow-lg aspect-square bg-white card-zoom">
+                    <img src="https://via.placeholder.com/400x400?text=O-NET+ป.6" class="w-full h-full object-cover transition duration-500">
+                    <div class="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition duration-300 flex flex-col justify-center items-center text-white p-4">
+                        <p class="font-bold">ยกระดับ O-NET</p>
+                        <p class="text-xs text-center">วิชาคณิตศาสตร์สูงกว่าระดับประเทศ</p>
+                    </div>
+                </div>
+
+                <div class="relative group overflow-hidden rounded-xl shadow-lg aspect-square bg-white card-zoom">
+                    <img src="https://via.placeholder.com/400x400?text=สนามกีฬา" class="w-full h-full object-cover transition duration-500">
+                    <div class="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition duration-300 flex flex-col justify-center items-center text-white p-4">
+                        <p class="font-bold">พัฒนาอาคารสถานที่</p>
+                        <p class="text-xs text-center">ปรับปรุงสนามฟุตบอลและไหล่ทางเพื่อความปลอดภัย</p>
+                    </div>
+                </div>
+
+                <div class="relative group overflow-hidden rounded-xl shadow-lg aspect-square bg-white card-zoom">
+                    <img src="https://via.placeholder.com/400x400?text=มอบทุน+กสศ." class="w-full h-full object-cover transition duration-500">
+                    <div class="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition duration-300 flex flex-col justify-center items-center text-white p-4">
+                        <p class="font-bold">ดูแลช่วยเหลือนักเรียน</p>
+                        <p class="text-xs text-center">มอบทุน กสศ. และลงพื้นที่เยี่ยมบ้าน 100%</p>
+                    </div>
+                </div>
+
+                <div class="relative group overflow-hidden rounded-xl shadow-lg aspect-square bg-white card-zoom">
+                    <img src="https://via.placeholder.com/400x400?text=ระบบไฟฟ้า" class="w-full h-full object-cover transition duration-500">
+                    <div class="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition duration-300 flex flex-col justify-center items-center text-white p-4">
+                        <p class="font-bold">เครือข่ายความร่วมมือ</p>
+                        <p class="text-xs text-center">มรภ.พระนคร ปรับปรุงระบบไฟฟ้าในอาคาร</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="bg-slate-900 text-white py-12 px-6">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center opacity-80">
+            <div class="text-left mb-6 md:mb-0">
+                <p class="font-bold">โรงเรียนบ้านเขาหัวนา</p>
+                <p class="text-xs italic">"โรงเรียนดี วิถีพอเพียง เคียงคู่เทคโนโลยี"</p>
+            </div>
+            <div class="text-center text-xs space-y-1">
+                <p>รายงานผลการปฏิบัติงานข้าราชการครูและบุคลากรทางการศึกษา</p>
+                <p>รอบที่ 1: 1 ตุลาคม 2568 - 31 มีนาคม 2569</p>
+            </div>
+        </div>
+    </footer>
+
+</body>
+</html>
