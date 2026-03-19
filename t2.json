@@ -1,0 +1,72 @@
+{
+"name": "Generate PDF Certificate",
+"nodes": [
+{
+"parameters": {
+"path": "certificate",
+"httpMethod": "GET",
+"responseMode": "onReceived"
+},
+"id": "Webhook",
+"name": "Webhook",
+"type": "n8n-nodes-base.webhook",
+"typeVersion": 1,
+"position": [250, 300]
+},
+{
+"parameters": {
+"values": {
+"string": [
+{
+"name": "name",
+"value": "={{$json.query.name || 'John Doe'}}"
+},
+{
+"name": "course",
+"value": "={{$json.query.course || 'AI Course'}}"
+}
+]
+}
+},
+"id": "Set",
+"name": "Set Data",
+"type": "n8n-nodes-base.set",
+"typeVersion": 2,
+"position": [450, 300]
+},
+{
+"parameters": {
+"html": "<html><body style="text-align:center;font-family:sans-serif;"><h1>Certificate</h1><p>This certifies that</p><h2>{{$json.name}}</h2><p>has completed</p><h3>{{$json.course}}</h3></body></html>"
+},
+"id": "HTML",
+"name": "Generate HTML",
+"type": "n8n-nodes-base.html",
+"typeVersion": 1,
+"position": [650, 300]
+}
+],
+"connections": {
+"Webhook": {
+"main": [
+[
+{
+"node": "Set Data",
+"type": "main",
+"index": 0
+}
+]
+]
+},
+"Set Data": {
+"main": [
+[
+{
+"node": "Generate HTML",
+"type": "main",
+"index": 0
+}
+]
+]
+}
+}
+}
