@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>สรุปเหรียญรางวัล ศิลปหัตถกรรม ครั้งที่ 73</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap');
+        body { font-family: 'Prompt', sans-serif; background-color: #f8fafc; }
+        .card-hover:hover { transform: translateY(-4px); box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1); transition: all 0.3s ease; }
+        
+        /* เหรียญรางวัล Colors */
+        .medal-gold { background: linear-gradient(135deg, #fbbf24 0%, #d97706 100%); color: white; }
+        .medal-silver { background: linear-gradient(135deg, #cbd5e1 0%, #64748b 100%); color: white; }
+        .medal-bronze { background: linear-gradient(135deg, #d97706 0%, #78350f 100%); color: white; }
+    </style>
+</head>
+<body class="text-slate-800">
+
+    <header class="bg-gradient-to-r from-blue-800 to-indigo-900 text-white py-12 shadow-lg">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <h1 class="text-3xl md:text-5xl font-bold mb-4 drop-shadow-md">🏆 ทำเนียบคนเก่ง ศิลปหัตถกรรม ครั้งที่ 73</h1>
+            <p class="text-xl text-blue-200">โรงเรียนบ้านเขาหัวนา สพป.นครนายก</p>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 -mt-8">
+        
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+            <div class="bg-white rounded-xl shadow-md p-6 text-center border-b-4 border-blue-500">
+                <p class="text-sm text-slate-500 font-semibold uppercase">รางวัลทั้งหมด</p>
+                <p class="text-4xl font-bold text-blue-600 mt-2" id="stat-total">0</p>
+            </div>
+            <div class="bg-white rounded-xl shadow-md p-6 text-center border-b-4 border-yellow-400">
+                <p class="text-sm text-slate-500 font-semibold uppercase">เหรียญทอง</p>
+                <p class="text-4xl font-bold text-yellow-500 mt-2" id="stat-gold">0</p>
+            </div>
+            <div class="bg-white rounded-xl shadow-md p-6 text-center border-b-4 border-slate-400">
+                <p class="text-sm text-slate-500 font-semibold uppercase">เหรียญเงิน</p>
+                <p class="text-4xl font-bold text-slate-500 mt-2" id="stat-silver">0</p>
+            </div>
+            <div class="bg-white rounded-xl shadow-md p-6 text-center border-b-4 border-amber-700">
+                <p class="text-sm text-slate-500 font-semibold uppercase">เหรียญทองแดง</p>
+                <p class="text-4xl font-bold text-amber-700 mt-2" id="stat-bronze">0</p>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-xl shadow-md p-6 mb-8 flex flex-col md:flex-row gap-4 items-center">
+            <div class="w-full md:w-1/2 relative">
+                <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400"></i>
+                <input type="text" id="searchInput" placeholder="ค้นหาชื่อ, กิจกรรม..." class="w-full pl-10 pr-4 py-3 rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition">
+            </div>
+            <div class="w-full md:w-1/4">
+                <select id="roleFilter" class="w-full px-4 py-3 rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white">
+                    <option value="all">สถานะ (ทั้งหมด)</option>
+                    <option value="นักเรียน">นักเรียน</option>
+                    <option value="ครู">ครูผู้สอน</option>
+                </select>
+            </div>
+            <div class="w-full md:w-1/4">
+                <select id="medalFilter" class="w-full px-4 py-3 rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white">
+                    <option value="all">เหรียญ (ทั้งหมด)</option>
+                    <option value="ทอง">เหรียญทอง</option>
+                    <option value="เงิน">เหรียญเงิน</option>
+                    <option value="ทองแดง">เหรียญทองแดง</option>
+                </select>
+            </div>
+        </div>
+
+        <div id="resultsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            </div>
+
+        <div id="noResults" class="hidden text-center py-12">
+            <i class="fas fa-box-open text-6xl text-slate-300 mb-4"></i>
+            <h3 class="text-xl font-medium text-slate-600">ไม่พบข้อมูลที่ค้นหา</h3>
+            <p class="text-slate-400 mt-2">ลองเปลี่ยนคำค้นหาหรือตัวกรองใหม่</p>
+        </div>
+
+    </main>
+
+    <script>
+        // ฐานข้อมูลจำลอง (อ้างอิงจากรายงาน PDF)
+        // ผอ. สามารถนำข้อมูลจากไฟล์ CSV มาแปลงและใส่เพิ่มในรูปแบบนี้ได้เลยครับ
+        const records = [
+            // --- นักเรียน ---
+            { name: "เด็กหญิงณัฐฐวรรณ ขันทร์หอม", role: "นักเรียน", activity: "การออกแบบร่าง (Sketch Design)", level: "ป.4-6", medal: "เหรียญทองชนะเลิศ", medalType: "ทอง" },
+            { name: "เด็กชายพนธกร สีงามพริ้ง", role: "นักเรียน", activity: "วาดภาพระบายสี", level: "ป.1-3", medal: "เหรียญทองชนะเลิศ", medalType: "ทอง" },
+            { name: "เด็กหญิงหิรัณยา ไทยประเสริฐ", role: "นักเรียน", activity: "ประติมากรรม", level: "ป.4-6", medal: "เหรียญทองชนะเลิศ", medalType: "ทอง" },
+            { name: "เด็กหญิงชุติมนต์ แก้วประเสริฐ", role: "นักเรียน", activity: "จัดสวนถาดแบบแห้ง", level: "ป.4-6", medal: "เหรียญทองชนะเลิศ", medalType: "ทอง" },
+            { name: "เด็กชายกิตติศักดิ์ พรหมสุรินทร์", role: "นักเรียน", activity: "จิตรกรรมเทคนิคผสม (Mixed Media)", level: "ป.4-6", medal: "เหรียญทองรองชนะเลิศอันดับ 1", medalType: "ทอง" },
+            { name: "เด็กหญิงชุติกาญจน์ การุณวงษ์", role: "นักเรียน", activity: "จิตรกรรมเทคนิคผสม (Mixed Media)", level: "ป.1-3", medal: "เหรียญเงินรองชนะเลิศอันดับ 1", medalType: "เงิน" },
+            { name: "เด็กหญิงอรสินิ มิสิลา (และคณะ)", role: "นักเรียน", activity: "แข่งขันแอโรบิก", level: "ป.1-6", medal: "เหรียญทองรองชนะเลิศอันดับ 1", medalType: "ทอง" },
+            { name: "เด็กหญิงขวัญสุดา จันตรา", role: "นักเรียน", activity: "ร้องเพลงไทยลูกทุ่งหญิง", level: "ป.1-6", medal: "เหรียญเงินชนะเลิศ", medalType: "เงิน" },
+            
+            // --- ครูผู้สอน ---
+            { name: "นายทศพร สังประกุล", role: "ครู", activity: "การออกแบบร่าง (Sketch Design)", level: "ป.4-6", medal: "เหรียญทองชนะเลิศ", medalType: "ทอง" },
+            { name: "นายทศพร สังประกุล", role: "ครู", activity: "ประติมากรรม", level: "ป.4-6", medal: "เหรียญทองชนะเลิศ", medalType: "ทอง" },
+            { name: "นายเทพรัตน์ ยอดแก้ว", role: "ครู", activity: "ร้องเพลงไทยลูกทุ่งหญิง", level: "ป.1-6", medal: "เหรียญเงินชนะเลิศ", medalType: "เงิน" },
+            { name: "นางสาวศิรินญา เลิศณรงค์", role: "ครู", activity: "จัดสวนถาดแบบแห้ง", level: "ป.4-6", medal: "เหรียญทองชนะเลิศ", medalType: "ทอง" },
+            { name: "นางสาววิไลรัตน์ ใบศรี", role: "ครู", activity: "วาดภาพระบายสี", level: "ป.1-3", medal: "เหรียญทองชนะเลิศ", medalType: "ทอง" },
+            { name: "นางสาววิไลรัตน์ สุวรรณฉิม", role: "ครู", activity: "การแข่งขันแอโรบิก", level: "ป.1-6", medal: "เหรียญทองรองชนะเลิศ", medalType: "ทอง" },
+            { name: "นางสาวเจนจิรา ปันทนันท์", role: "ครู", activity: "จัดสวนถาดแบบแห้ง", level: "ป.4-6", medal: "เหรียญทองชนะเลิศ", medalType: "ทอง" },
+            { name: "นางสาวณัฏฐ์ณรัณ พระเพ็ชร", role: "ครู", activity: "ประติมากรรม", level: "ป.4-6", medal: "เหรียญทองชนะเลิศ", medalType: "ทอง" },
+            { name: "นางสาวพัชรินทร์ บรรดาเทา", role: "ครู", activity: "จิตรกรรมเทคนิคผสม (Mixed Media)", level: "ป.1-3", medal: "เหรียญเงินรองชนะเลิศ", medalType: "เงิน" }
+        ];
+
+        // ฟังก์ชันกำหนดสีป้ายเหรียญ
+        function getMedalClass(type) {
+            if (type === 'ทอง') return 'medal-gold';
+            if (type === 'เงิน') return 'medal-silver';
+            return 'medal-bronze';
+        }
+
+        // ฟังก์ชันสร้าง Card
+        function renderCards(data) {
+            const grid = document.getElementById('resultsGrid');
+            const noResults = document.getElementById('noResults');
+            grid.innerHTML = '';
+
+            if (data.length === 0) {
+                grid.classList.add('hidden');
+                noResults.classList.remove('hidden');
+                return;
+            }
+
+            grid.classList.remove('hidden');
+            noResults.classList.add('hidden');
+
+            data.forEach(item => {
+                const icon = item.role === 'ครู' ? 'fa-chalkboard-teacher text-indigo-500' : 'fa-user-graduate text-blue-500';
+                const roleBadge = item.role === 'ครู' ? 'bg-indigo-100 text-indigo-700' : 'bg-blue-100 text-blue-700';
+
+                const card = `
+                    <div class="bg-white rounded-xl overflow-hidden shadow-sm border border-slate-100 card-hover flex flex-col h-full">
+                        <div class="${getMedalClass(item.medalType)} px-4 py-2 text-sm font-bold flex justify-between items-center shadow-inner">
+                            <span><i class="fas fa-medal mr-2"></i> ${item.medal}</span>
+                        </div>
+                        <div class="p-6 flex-grow flex flex-col">
+                            <div class="flex items-start mb-4">
+                                <div class="w-12 h-12 rounded-full bg-slate-50 flex items-center justify-center mr-4 shrink-0">
+                                    <i class="fas ${icon} text-xl"></i>
+                                </div>
+                                <div>
+                                    <h3 class="font-bold text-lg text-slate-800 leading-tight">${item.name}</h3>
+                                    <span class="inline-block mt-1 px-2 py-0.5 rounded text-xs font-semibold ${roleBadge}">${item.role}</span>
+                                </div>
+                            </div>
+                            <div class="mt-auto pt-4 border-t border-slate-100">
+                                <p class="text-sm text-slate-600 mb-1"><i class="fas fa-star text-yellow-400 w-5"></i> <strong>กิจกรรม:</strong> ${item.activity}</p>
+                                <p class="text-sm text-slate-600"><i class="fas fa-layer-group text-blue-400 w-5"></i> <strong>ระดับชั้น:</strong> ${item.level}</p>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                grid.innerHTML += card;
+            });
+        }
+
+        // ฟังก์ชันคำนวณสถิติ
+        function updateStats(data) {
+            document.getElementById('stat-total').innerText = data.length;
+            document.getElementById('stat-gold').innerText = data.filter(d => d.medalType === 'ทอง').length;
+            document.getElementById('stat-silver').innerText = data.filter(d => d.medalType === 'เงิน').length;
+            document.getElementById('stat-bronze').innerText = data.filter(d => d.medalType === 'ทองแดง').length;
+        }
+
+        // ฟังก์ชันคัดกรองข้อมูล
+        function filterData() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const roleVal = document.getElementById('roleFilter').value;
+            const medalVal = document.getElementById('medalFilter').value;
+
+            const filtered = records.filter(item => {
+                const matchSearch = item.name.toLowerCase().includes(searchTerm) || item.activity.toLowerCase().includes(searchTerm);
+                const matchRole = roleVal === 'all' || item.role === roleVal;
+                const matchMedal = medalVal === 'all' || item.medalType === medalVal;
+                return matchSearch && matchRole && matchMedal;
+            });
+
+            renderCards(filtered);
+            updateStats(filtered);
+        }
+
+        // Event Listeners
+        document.getElementById('searchInput').addEventListener('input', filterData);
+        document.getElementById('roleFilter').addEventListener('change', filterData);
+        document.getElementById('medalFilter').addEventListener('change', filterData);
+
+        // โหลดข้อมูลครั้งแรก
+        renderCards(records);
+        updateStats(records);
+    </script>
+</body>
+</html>
