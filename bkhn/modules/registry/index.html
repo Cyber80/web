@@ -1075,7 +1075,6 @@ tr:hover td { background: #f8faff; }
 // ⚠️  เปลี่ยน URL นี้เป็น GAS Web App URL จริงของคุณ
 // ได้มาจาก: Apps Script → Deploy → Manage Deployments → Web app URL
 const API = 'https://script.google.com/macros/s/AKfycbzLWP1-13ydXCYqByjkBbcCn9ez3D4cgjCi1NLWFP2lYWulTnNrGph8sfqu5y61of26/exec';
-
 let currentUser = null;
 let currentStudent = null;
 let schoolInfo = {};
@@ -1214,19 +1213,17 @@ async function loadDashboard() {
   const r = await api({ action: 'reg_getDashboard' });
   if (r.status !== 'ok') return;
 
-  const colors = ['#0d2137','#1565c0','#2e7d32','#c0392b','#e65100','#880e4f'];
-  const icons  = ['👤','🏫','👨‍🏫','📝','🎯','📅'];
-  const stats  = [
-    ['นักเรียนทั้งหมด', r.totalStudents, '#1565c0'],
-    ['ห้องเรียน', r.totalClasses, '#2e7d32'],
-    ['ครูผู้สอน', r.totalTeachers || 0, '#c0392b'],
+  const stats = [
+    { label: 'นักเรียนทั้งหมด', num: r.totalStudents, color: '#1565c0', icon: '👤' },
+    { label: 'ห้องเรียน',        num: r.totalClasses,  color: '#2e7d32', icon: '🏫' },
+    { label: 'ครูผู้สอน',        num: r.totalTeachers || 0, color: '#c0392b', icon: '👨‍🏫' },
   ];
-  document.getElementById('dashStats').innerHTML = stats.map(([label, num, color]) => `
-    <div class="stat-card" style="border-left-color:${color}">
-      <div class="stat-icon">${icons[stats.indexOf([label,num,color])]}</div>
+  document.getElementById('dashStats').innerHTML = stats.map(s => `
+    <div class="stat-card" style="border-left-color:${s.color}">
+      <div class="stat-icon">${s.icon}</div>
       <div>
-        <div class="stat-num" style="color:${color}">${num}</div>
-        <div class="stat-label">${label}</div>
+        <div class="stat-num" style="color:${s.color}">${s.num}</div>
+        <div class="stat-label">${s.label}</div>
       </div>
     </div>
   `).join('');
