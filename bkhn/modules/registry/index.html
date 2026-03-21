@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="th">
 <head>
@@ -1073,7 +1074,7 @@ tr:hover td { background: #f8faff; }
 // =====================================================================
 // ⚠️  เปลี่ยน URL นี้เป็น GAS Web App URL จริงของคุณ
 // ได้มาจาก: Apps Script → Deploy → Manage Deployments → Web app URL
-const API = 'https://script.google.com/macros/s/AKfycbzLWP1-13ydXCYqByjkBbcCn9ez3D4cgjCi1NLWFP2lYWulTnNrGph8sfqu5y61of26/exec';
+const API = 'https://apibkhn.happydee.net';
 let currentUser = null;
 let currentStudent = null;
 let schoolInfo = {};
@@ -1084,8 +1085,17 @@ let schoolInfo = {};
 async function api(params) {
   const url = API + '?' + new URLSearchParams(params).toString();
   try {
-    const r = await fetch(url);
-    return await r.json();
+    const r = await fetch(url, {
+      redirect: 'follow',
+      headers: { 'Content-Type': 'text/plain' }
+    });
+    const text = await r.text();
+    try {
+      return JSON.parse(text);
+    } catch(_) {
+      console.error('Non-JSON response from GAS:', text.substring(0, 300));
+      return { status: 'error', message: 'GAS ตอบกลับไม่ใช่ JSON: ' + text.substring(0, 100) };
+    }
   } catch(e) {
     return { status: 'error', message: 'ไม่สามารถเชื่อมต่อ API ได้: ' + e.message };
   }
