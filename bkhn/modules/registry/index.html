@@ -1,0 +1,1970 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ระบบทะเบียนนักเรียน | Student Registry</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700;800&family=Mitr:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --primary: #0d2137;
+  --accent: #f5a623;
+  --accent2: #e8623a;
+  --cbc: #c0392b;
+  --cbc2: #e74c3c;
+  --s51: #1565c0;
+  --s51-2: #1976d2;
+  --green: #2e7d32;
+  --teal: #00695c;
+  --surface: #ffffff;
+  --bg: #f0f4f8;
+  --text: #1a1a2e;
+  --muted: #64748b;
+  --border: #e2e8f0;
+  --shadow: 0 4px 24px rgba(13,33,55,0.10);
+  --r: 14px;
+  --r-sm: 8px;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'Sarabun', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+/* ── TOP BAR ── */
+.topbar {
+  background: var(--primary);
+  color: #fff;
+  padding: 0 28px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.25);
+}
+.topbar-brand { display: flex; align-items: center; gap: 12px; }
+.topbar-logo {
+  width: 36px; height: 36px;
+  background: var(--accent);
+  border-radius: 8px;
+  display: grid; place-items: center;
+  font-weight: 700; font-size: 18px; color: var(--primary);
+}
+.topbar-title { font-family: 'Mitr', sans-serif; font-size: 17px; font-weight: 600; }
+.topbar-title span { color: var(--accent); }
+.topbar-actions { display: flex; gap: 10px; align-items: center; }
+#userBadge {
+  background: rgba(255,255,255,0.12);
+  padding: 5px 14px; border-radius: 20px;
+  font-size: 13px; display: none;
+}
+.btn-logout {
+  background: rgba(245,166,35,0.18); border: 1px solid rgba(245,166,35,0.4);
+  color: var(--accent); padding: 5px 16px; border-radius: 20px;
+  cursor: pointer; font-size: 13px; font-family: 'Sarabun', sans-serif;
+  display: none; transition: all .2s;
+}
+.btn-logout:hover { background: var(--accent); color: var(--primary); }
+#homeBtn {
+  background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2);
+  color: #fff; padding: 5px 16px; border-radius: 20px;
+  cursor: pointer; font-size: 13px; font-family: 'Sarabun', sans-serif;
+  text-decoration: none; transition: all .2s;
+}
+#homeBtn:hover { background: rgba(255,255,255,0.2); }
+
+/* ── PAGES ── */
+.page { display: none; min-height: calc(100vh - 60px); }
+.page.active { display: block; }
+
+/* ── LOGIN PAGE ── */
+#loginPage {
+  display: flex; align-items: center; justify-content: center;
+  background: linear-gradient(135deg, #0d2137 0%, #1a3a5c 50%, #0d2137 100%);
+  position: relative; overflow: hidden;
+}
+#loginPage::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+}
+.login-container {
+  position: relative; z-index: 1;
+  display: flex; flex-direction: column; align-items: center; gap: 24px;
+  width: 100%; max-width: 440px; padding: 24px;
+}
+.login-header { text-align: center; color: #fff; }
+.login-header .school-icon {
+  width: 72px; height: 72px;
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  border-radius: 20px; margin: 0 auto 16px;
+  display: grid; place-items: center; font-size: 32px;
+  box-shadow: 0 8px 24px rgba(245,166,35,0.35);
+}
+.login-header h1 { font-family: 'Mitr', sans-serif; font-size: 24px; font-weight: 700; margin-bottom: 4px; }
+.login-header p { color: rgba(255,255,255,0.65); font-size: 14px; }
+
+.login-tabs {
+  display: flex; width: 100%;
+  background: rgba(255,255,255,0.08);
+  border-radius: var(--r); padding: 4px; gap: 4px;
+}
+.login-tab {
+  flex: 1; padding: 10px; border: none;
+  background: transparent; color: rgba(255,255,255,0.65);
+  border-radius: 10px; cursor: pointer; font-family: 'Sarabun', sans-serif;
+  font-size: 14px; font-weight: 500; transition: all .2s;
+}
+.login-tab.active { background: rgba(255,255,255,0.15); color: #fff; }
+
+.login-card {
+  width: 100%;
+  background: rgba(255,255,255,0.07);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: var(--r); padding: 28px;
+}
+.login-form { display: flex; flex-direction: column; gap: 16px; }
+.form-group { display: flex; flex-direction: column; gap: 6px; }
+.form-group label { font-size: 13px; color: rgba(255,255,255,0.75); font-weight: 500; }
+.form-group input {
+  padding: 11px 16px;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.15);
+  border-radius: var(--r-sm); color: #fff;
+  font-family: 'Sarabun', sans-serif; font-size: 15px;
+  transition: border .2s;
+}
+.form-group input:focus {
+  outline: none;
+  border-color: var(--accent);
+  background: rgba(255,255,255,0.12);
+}
+.form-group input::placeholder { color: rgba(255,255,255,0.3); }
+.btn-primary {
+  padding: 12px 24px;
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  border: none; border-radius: var(--r-sm); color: var(--primary);
+  font-family: 'Mitr', sans-serif; font-size: 15px; font-weight: 600;
+  cursor: pointer; transition: all .25s;
+  box-shadow: 0 4px 14px rgba(245,166,35,0.35);
+}
+.btn-primary:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(245,166,35,0.45); }
+.btn-primary:active { transform: translateY(0); }
+.login-hint { text-align: center; font-size: 12px; color: rgba(255,255,255,0.4); }
+
+/* ── MAIN LAYOUT ── */
+.main-layout { display: flex; min-height: calc(100vh - 60px); }
+.sidebar {
+  width: 230px; flex-shrink: 0;
+  background: var(--primary);
+  padding: 20px 0;
+  position: sticky; top: 60px;
+  height: calc(100vh - 60px);
+  overflow-y: auto;
+}
+.sidebar-section { padding: 0 14px 8px; }
+.sidebar-label {
+  font-size: 10px; font-weight: 600; letter-spacing: 1.2px;
+  color: rgba(255,255,255,0.35); text-transform: uppercase;
+  padding: 8px 8px 4px;
+}
+.nav-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 9px 12px; border-radius: 8px;
+  color: rgba(255,255,255,0.7);
+  cursor: pointer; font-size: 14px; font-weight: 500;
+  transition: all .18s; margin-bottom: 2px;
+}
+.nav-item:hover { background: rgba(255,255,255,0.08); color: #fff; }
+.nav-item.active { background: rgba(245,166,35,0.18); color: var(--accent); }
+.nav-item .icon { font-size: 17px; width: 22px; text-align: center; flex-shrink: 0; }
+.nav-badge {
+  margin-left: auto; background: var(--accent);
+  color: var(--primary); border-radius: 10px;
+  padding: 1px 8px; font-size: 11px; font-weight: 700;
+}
+.nav-divider { height: 1px; background: rgba(255,255,255,0.07); margin: 8px 14px; }
+.nav-cbc { color: #ff8a65 !important; }
+.nav-cbc.active { background: rgba(192,57,43,0.2) !important; color: var(--cbc2) !important; }
+
+/* ── CONTENT AREA ── */
+.content { flex: 1; padding: 28px; max-width: 100%; overflow-x: hidden; }
+.section { display: none; }
+.section.active { display: block; }
+
+/* ── PAGE HEADER ── */
+.page-hdr {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 24px; flex-wrap: wrap; gap: 12px;
+}
+.page-hdr-left h2 {
+  font-family: 'Mitr', sans-serif; font-size: 22px;
+  font-weight: 600; color: var(--primary);
+}
+.page-hdr-left p { font-size: 13px; color: var(--muted); margin-top: 2px; }
+.breadcrumb { font-size: 12px; color: var(--muted); margin-bottom: 4px; }
+.breadcrumb span { color: var(--primary); font-weight: 600; }
+
+/* ── DASHBOARD STATS ── */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px; margin-bottom: 24px;
+}
+.stat-card {
+  background: var(--surface); border-radius: var(--r);
+  padding: 20px 22px; box-shadow: var(--shadow);
+  border-left: 4px solid var(--primary);
+  display: flex; align-items: center; gap: 16px;
+}
+.stat-icon { font-size: 30px; }
+.stat-num { font-family: 'Mitr', sans-serif; font-size: 28px; font-weight: 700; line-height: 1; }
+.stat-label { font-size: 13px; color: var(--muted); }
+
+/* ── CARD ── */
+.card {
+  background: var(--surface); border-radius: var(--r);
+  box-shadow: var(--shadow); margin-bottom: 20px; overflow: hidden;
+}
+.card-header {
+  padding: 16px 22px; border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+  background: linear-gradient(90deg, var(--primary) 0%, #1a3a5c 100%);
+  color: #fff;
+}
+.card-header h3 { font-family: 'Mitr', sans-serif; font-size: 16px; font-weight: 600; }
+.card-header.cbc { background: linear-gradient(90deg, var(--cbc) 0%, #c0392b 100%); }
+.card-header.s51 { background: linear-gradient(90deg, var(--s51) 0%, #1976d2 100%); }
+.card-body { padding: 20px 22px; }
+
+/* ── TABLE ── */
+.tbl-wrap { overflow-x: auto; border-radius: var(--r-sm); }
+table { width: 100%; border-collapse: collapse; font-size: 14px; }
+th {
+  background: var(--primary); color: #fff;
+  padding: 10px 14px; text-align: left;
+  font-weight: 600; font-size: 13px; white-space: nowrap;
+}
+td {
+  padding: 10px 14px; border-bottom: 1px solid var(--border);
+  color: var(--text);
+}
+tr:hover td { background: #f8faff; }
+.tag {
+  display: inline-flex; align-items: center;
+  padding: 3px 10px; border-radius: 20px;
+  font-size: 12px; font-weight: 600;
+}
+.tag-blue { background: #e3f2fd; color: #1565c0; }
+.tag-green { background: #e8f5e9; color: #2e7d32; }
+.tag-red { background: #fce4ec; color: #c62828; }
+.tag-orange { background: #fff3e0; color: #e65100; }
+.tag-gray { background: #eceff1; color: #455a64; }
+
+/* ── FORMS ── */
+.form-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px; margin-bottom: 14px; }
+.field { display: flex; flex-direction: column; gap: 5px; }
+.field label { font-size: 13px; font-weight: 600; color: var(--text); }
+.field input, .field select, .field textarea {
+  padding: 9px 13px; border: 1.5px solid var(--border);
+  border-radius: var(--r-sm); font-family: 'Sarabun', sans-serif;
+  font-size: 14px; color: var(--text); transition: border .18s;
+  background: var(--surface);
+}
+.field input:focus, .field select:focus, .field textarea:focus {
+  outline: none; border-color: var(--primary);
+}
+
+/* ── BUTTONS ── */
+.btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 8px 18px; border-radius: var(--r-sm); border: none;
+  font-family: 'Sarabun', sans-serif; font-size: 14px;
+  font-weight: 600; cursor: pointer; transition: all .18s; white-space: nowrap;
+}
+.btn-blue { background: var(--s51); color: #fff; }
+.btn-blue:hover { background: var(--s51-2); }
+.btn-red { background: var(--cbc); color: #fff; }
+.btn-red:hover { background: var(--cbc2); }
+.btn-green { background: var(--green); color: #fff; }
+.btn-green:hover { background: #388e3c; }
+.btn-orange { background: var(--accent); color: var(--primary); }
+.btn-orange:hover { background: var(--accent2); color: #fff; }
+.btn-outline {
+  background: transparent; border: 1.5px solid var(--border);
+  color: var(--muted);
+}
+.btn-outline:hover { border-color: var(--primary); color: var(--primary); }
+.btn-sm { padding: 5px 12px; font-size: 13px; }
+.btn-group { display: flex; gap: 8px; flex-wrap: wrap; }
+
+/* ── ALERT ── */
+.alert {
+  padding: 12px 16px; border-radius: var(--r-sm);
+  font-size: 14px; font-weight: 500; margin-bottom: 16px;
+}
+.alert-info { background: #e3f2fd; color: #1565c0; border: 1px solid #bbdefb; }
+.alert-success { background: #e8f5e9; color: #2e7d32; border: 1px solid #c8e6c9; }
+.alert-error { background: #fce4ec; color: #c62828; border: 1px solid #f8bbd0; }
+.alert-warning { background: #fff3e0; color: #e65100; border: 1px solid #ffe0b2; }
+
+/* ── REPORT STYLES ── */
+.report-card {
+  background: var(--surface); border-radius: var(--r);
+  box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+  max-width: 800px; margin: 0 auto;
+}
+.report-header {
+  padding: 24px; border-bottom: 2px solid var(--primary);
+  text-align: center;
+}
+.report-school { font-family: 'Mitr', sans-serif; font-size: 18px; font-weight: 700; color: var(--primary); }
+.report-subtitle { font-size: 14px; color: var(--muted); }
+.report-title {
+  font-family: 'Mitr', sans-serif; font-size: 22px;
+  font-weight: 700; margin: 12px 0 4px;
+}
+.report-title.cbc { color: var(--cbc); }
+.report-title.s51 { color: var(--s51); }
+.report-body { padding: 20px 28px; }
+.report-student-info {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 8px; margin-bottom: 20px;
+  background: #f8faff; border-radius: var(--r-sm);
+  padding: 14px;
+}
+.info-row { display: flex; gap: 8px; font-size: 14px; }
+.info-row .lbl { color: var(--muted); font-weight: 600; white-space: nowrap; }
+.info-row .val { color: var(--text); }
+.report-table th { background: var(--primary); }
+.report-table.cbc th { background: var(--cbc); }
+.report-table.s51 th { background: var(--s51); }
+.signature-row {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: 20px; margin-top: 32px; padding-top: 16px;
+  border-top: 1px solid var(--border);
+}
+.sig-box { text-align: center; }
+.sig-line {
+  border-bottom: 1px solid var(--text);
+  height: 40px; margin-bottom: 6px;
+}
+.sig-label { font-size: 12px; color: var(--muted); }
+.competency-badge {
+  display: inline-flex; align-items: center;
+  padding: 4px 12px; border-radius: 20px;
+  font-size: 13px; font-weight: 600;
+}
+.level-1 { background: #ffcdd2; color: #b71c1c; }
+.level-2 { background: #fff3e0; color: #e65100; }
+.level-3 { background: #e8f5e9; color: #2e7d32; }
+.level-4 { background: #e8eaf6; color: #283593; }
+
+/* ── STUDENT PORTAL ── */
+.portal-wrap {
+  max-width: 900px; margin: 0 auto;
+}
+.portal-header {
+  background: linear-gradient(135deg, var(--primary) 0%, #1a3a5c 100%);
+  border-radius: var(--r); padding: 28px 32px;
+  color: #fff; display: flex; align-items: center; gap: 24px;
+  margin-bottom: 24px; box-shadow: var(--shadow);
+}
+.portal-avatar {
+  width: 72px; height: 72px;
+  background: rgba(255,255,255,0.15);
+  border: 3px solid rgba(245,166,35,0.6);
+  border-radius: 50%; display: grid; place-items: center;
+  font-size: 30px; flex-shrink: 0;
+}
+.portal-name { font-family: 'Mitr', sans-serif; font-size: 22px; font-weight: 700; }
+.portal-detail { color: rgba(255,255,255,0.7); font-size: 14px; margin-top: 4px; }
+
+/* ── LOADING ── */
+.loading {
+  display: flex; align-items: center; justify-content: center;
+  padding: 48px; flex-direction: column; gap: 16px; color: var(--muted);
+}
+.spinner {
+  width: 36px; height: 36px; border: 3px solid var(--border);
+  border-top-color: var(--primary); border-radius: 50%;
+  animation: spin .8s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ── MODAL ── */
+.modal-overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.5);
+  z-index: 200; display: none; align-items: center; justify-content: center;
+  padding: 20px;
+}
+.modal-overlay.open { display: flex; }
+.modal {
+  background: var(--surface); border-radius: var(--r);
+  box-shadow: 0 20px 60px rgba(0,0,0,0.25);
+  width: 100%; max-width: 600px;
+  max-height: 90vh; overflow-y: auto;
+}
+.modal-header {
+  padding: 18px 22px; border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+  background: var(--primary); color: #fff; border-radius: var(--r) var(--r) 0 0;
+}
+.modal-header h3 { font-family: 'Mitr', sans-serif; font-size: 16px; }
+.modal-close {
+  background: rgba(255,255,255,0.15); border: none;
+  color: #fff; width: 28px; height: 28px; border-radius: 6px;
+  cursor: pointer; font-size: 18px; display: grid; place-items: center;
+}
+.modal-body { padding: 22px; }
+.modal-footer {
+  padding: 14px 22px; border-top: 1px solid var(--border);
+  display: flex; justify-content: flex-end; gap: 10px;
+  background: #f8faff; border-radius: 0 0 var(--r) var(--r);
+}
+
+/* ── RESPONSIVE ── */
+@media(max-width: 768px) {
+  .sidebar { display: none; }
+  .content { padding: 16px; }
+  .stats-grid { grid-template-columns: repeat(2, 1fr); }
+  .report-student-info { grid-template-columns: 1fr; }
+  .signature-row { grid-template-columns: 1fr; }
+}
+@media print {
+  .topbar, .sidebar, .page-hdr .btn-group, #printBtn { display: none !important; }
+  .card { box-shadow: none; }
+  body { background: white; }
+}
+</style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<nav class="topbar">
+  <div class="topbar-brand">
+    <div class="topbar-logo">📚</div>
+    <div class="topbar-title">ระบบทะเบียน<span>นักเรียน</span></div>
+  </div>
+  <div class="topbar-actions">
+    <a href="../index.html" id="homeBtn">← หน้าหลัก</a>
+    <span id="userBadge"></span>
+    <button class="btn-logout" id="logoutBtn" onclick="logout()">ออกจากระบบ</button>
+  </div>
+</nav>
+
+<!-- PAGE: LOGIN -->
+<div id="loginPage" class="page active">
+  <div class="login-container">
+    <div class="login-header">
+      <div class="school-icon">🏫</div>
+      <h1>ระบบทะเบียนนักเรียน</h1>
+      <p id="loginSchoolName">กำลังโหลดข้อมูลโรงเรียน...</p>
+    </div>
+
+    <div class="login-tabs">
+      <button class="login-tab active" onclick="switchLoginTab('admin')">👤 ผู้บริหาร/ครู</button>
+      <button class="login-tab" onclick="switchLoginTab('student')">🎒 นักเรียน</button>
+    </div>
+
+    <div class="login-card">
+      <!-- Admin Login -->
+      <div id="adminLoginForm" class="login-form">
+        <div class="form-group">
+          <label>รหัสผ่านผู้ดูแลระบบ</label>
+          <input type="password" id="adminPass" placeholder="กรอกรหัสผ่าน" onkeypress="if(event.key==='Enter') doAdminLogin()">
+        </div>
+        <button class="btn-primary" onclick="doAdminLogin()">🔓 เข้าสู่ระบบ Admin</button>
+        <p class="login-hint">รหัสทดสอบ: admin1234</p>
+      </div>
+
+      <!-- Student Login -->
+      <div id="studentLoginForm" class="login-form" style="display:none">
+        <div class="form-group">
+          <label>เลขบัตรประชาชน (13 หลัก)</label>
+          <input type="text" id="studentIdCard" placeholder="1 1012 00000 00 0" maxlength="13" onkeypress="if(event.key==='Enter') doStudentLogin()">
+        </div>
+        <div class="form-group">
+          <label>รหัส PIN (กำหนดโดยโรงเรียน)</label>
+          <input type="password" id="studentPin" placeholder="รหัส PIN 8 หลัก" maxlength="8" onkeypress="if(event.key==='Enter') doStudentLogin()">
+        </div>
+        <button class="btn-primary" onclick="doStudentLogin()">📖 ดูผลการเรียน</button>
+        <p class="login-hint">รหัส PIN เริ่มต้น: 12345678</p>
+      </div>
+    </div>
+
+    <div id="loginError"></div>
+  </div>
+</div>
+
+<!-- PAGE: ADMIN MAIN -->
+<div id="adminPage" class="page">
+  <div class="main-layout">
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+      <div class="sidebar-section">
+        <div class="sidebar-label">ภาพรวม</div>
+        <div class="nav-item active" onclick="showSection('dashboard')">
+          <span class="icon">📊</span> แดชบอร์ด
+        </div>
+      </div>
+
+      <div class="sidebar-section">
+        <div class="sidebar-label">ข้อมูลนักเรียน</div>
+        <div class="nav-item" onclick="showSection('students')">
+          <span class="icon">🎒</span> ทะเบียนนักเรียน
+        </div>
+        <div class="nav-item" onclick="showSection('attendance')">
+          <span class="icon">📅</span> การมาเรียน
+        </div>
+        <div class="nav-item" onclick="showSection('behavior')">
+          <span class="icon">⭐</span> พฤติกรรมนักเรียน
+        </div>
+        <div class="nav-item" onclick="showSection('activities')">
+          <span class="icon">🏅</span> กิจกรรมพัฒนาผู้เรียน
+        </div>
+      </div>
+
+      <div class="nav-divider"></div>
+
+      <div class="sidebar-section">
+        <div class="sidebar-label">📋 หลักสูตร 2551 (ปรับปรุง)</div>
+        <div class="nav-item" onclick="showSection('grades2551')">
+          <span class="icon">📝</span> บันทึกผลการเรียน
+        </div>
+        <div class="nav-item" onclick="showSection('report2551')">
+          <span class="icon">📄</span> ใบรายงานผล
+        </div>
+      </div>
+
+      <div class="nav-divider"></div>
+
+      <div class="sidebar-section">
+        <div class="sidebar-label">🆕 หลักสูตร CBC 2567</div>
+        <div class="nav-item nav-cbc" onclick="showSection('gradesCBC')">
+          <span class="icon">🎯</span> บันทึกสมรรถนะ
+        </div>
+        <div class="nav-item nav-cbc" onclick="showSection('reportCBC')">
+          <span class="icon">📋</span> รายงานสมรรถนะ
+        </div>
+      </div>
+
+      <div class="nav-divider"></div>
+
+      <div class="sidebar-section">
+        <div class="sidebar-label">รายงานรายชั้น</div>
+        <div class="nav-item" onclick="showSection('classReport')">
+          <span class="icon">🏫</span> รายงานรายชั้น 2551
+        </div>
+        <div class="nav-item nav-cbc" onclick="showSection('classReportCBC')">
+          <span class="icon">🏫</span> รายงานรายชั้น CBC
+        </div>
+      </div>
+
+      <div class="nav-divider"></div>
+
+      <div class="sidebar-section">
+        <div class="sidebar-label">จัดการระบบ</div>
+        <div class="nav-item" onclick="showSection('teachers')">
+          <span class="icon">👨‍🏫</span> ข้อมูลครู
+        </div>
+        <div class="nav-item" onclick="showSection('subjects')">
+          <span class="icon">📚</span> รายวิชา
+        </div>
+        <div class="nav-item" onclick="showSection('schoolInfo')">
+          <span class="icon">⚙️</span> ข้อมูลโรงเรียน
+        </div>
+        <div class="nav-item" onclick="showSection('setupSheet')">
+          <span class="icon">🛠️</span> ตั้งค่า Sheets
+        </div>
+      </div>
+    </aside>
+
+    <!-- CONTENT -->
+    <main class="content">
+
+      <!-- DASHBOARD -->
+      <section id="dashboard" class="section active">
+        <div class="page-hdr">
+          <div class="page-hdr-left">
+            <div class="breadcrumb">ระบบทะเบียนนักเรียน › <span>แดชบอร์ด</span></div>
+            <h2>ภาพรวมระบบ</h2>
+            <p>ข้อมูลสรุปทั้งหมดของโรงเรียน</p>
+          </div>
+          <div class="btn-group">
+            <button class="btn btn-blue" onclick="loadDashboard()">🔄 รีเฟรช</button>
+          </div>
+        </div>
+
+        <div class="stats-grid" id="dashStats">
+          <div class="loading"><div class="spinner"></div></div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
+          <div class="card">
+            <div class="card-header"><h3>📋 ข้อมูลห้องเรียน</h3></div>
+            <div class="card-body" id="dashClasses">กำลังโหลด...</div>
+          </div>
+          <div class="card">
+            <div class="card-header cbc"><h3>🆕 หลักสูตร CBC 2567</h3></div>
+            <div class="card-body">
+              <div class="alert alert-warning">
+                ปัจจุบันประเทศไทยเริ่มใช้<strong>หลักสูตรฐานสมรรถนะ (CBC) พ.ศ. 2567</strong> ควบคู่กับหลักสูตรแกนกลาง 2551 (ปรับปรุง)<br><br>
+                ระบบนี้รองรับทั้งสองหลักสูตร โดยแยกการบันทึกและรายงานออกจากกันชัดเจน
+              </div>
+              <div class="alert alert-info" style="margin:0">
+                🎯 <strong>ป.4–ป.6</strong> → หลักสูตร CBC 2567<br>
+                📝 <strong>ป.1–ป.3</strong> → หลักสูตรแกนกลาง 2551
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- STUDENTS -->
+      <section id="students" class="section">
+        <div class="page-hdr">
+          <div class="page-hdr-left">
+            <h2>🎒 ทะเบียนนักเรียน</h2>
+            <p>จัดการข้อมูลนักเรียนทั้งหมด</p>
+          </div>
+          <div class="btn-group">
+            <select id="filterGrade" class="field" style="border:1.5px solid var(--border);border-radius:8px;padding:7px 12px;font-family:Sarabun;font-size:14px" onchange="loadStudents()">
+              <option value="">ทุกชั้นเรียน</option>
+              <option>ป.1</option><option>ป.2</option><option>ป.3</option>
+              <option>ป.4</option><option>ป.5</option><option>ป.6</option>
+            </select>
+            <button class="btn btn-blue" onclick="loadStudents()">🔍 ค้นหา</button>
+            <button class="btn btn-green" onclick="openAddStudentModal()">+ เพิ่มนักเรียน</button>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-body">
+            <div class="tbl-wrap" id="studentTable">
+              <div class="loading"><div class="spinner"></div><p>กำลังโหลด...</p></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- GRADES 2551 -->
+      <section id="grades2551" class="section">
+        <div class="page-hdr">
+          <div class="page-hdr-left">
+            <h2>📝 บันทึกผลการเรียน (หลักสูตร 2551)</h2>
+            <p>บันทึกคะแนนและผลการเรียนตามหลักสูตรแกนกลาง 2551</p>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header s51"><h3>📋 ค้นหาและบันทึกผล</h3></div>
+          <div class="card-body">
+            <div class="form-row">
+              <div class="field"><label>ปีการศึกษา</label>
+                <select id="g51Year"><option>2567</option><option>2566</option></select></div>
+              <div class="field"><label>ภาคเรียน</label>
+                <select id="g51Sem"><option value="1">1</option><option value="2">2</option></select></div>
+              <div class="field"><label>ชั้นเรียน</label>
+                <select id="g51Grade">
+                  <option>ป.1</option><option>ป.2</option><option>ป.3</option>
+                  <option selected>ป.4</option><option>ป.5</option><option>ป.6</option>
+                </select></div>
+              <div class="field"><label>ห้อง</label><select id="g51Room"><option>1</option></select></div>
+            </div>
+            <button class="btn btn-blue" onclick="loadGrades2551Table()">🔍 ดูรายการ</button>
+            <div id="grades2551Table" style="margin-top:16px"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- GRADES CBC -->
+      <section id="gradesCBC" class="section">
+        <div class="page-hdr">
+          <div class="page-hdr-left">
+            <h2>🎯 บันทึกสมรรถนะ (หลักสูตร CBC 2567)</h2>
+            <p>ประเมินสมรรถนะผู้เรียนตามหลักสูตรฐานสมรรถนะ พ.ศ. 2567</p>
+          </div>
+        </div>
+        <div class="alert alert-warning" style="max-width:700px">
+          🆕 <strong>หลักสูตรฐานสมรรถนะ (CBC)</strong> ประเมินโดยใช้ระดับ 1–4<br>
+          1 = เริ่มต้น &nbsp; 2 = กำลังพัฒนา &nbsp; 3 = ผ่าน &nbsp; 4 = ดีเลิศ
+        </div>
+        <div class="card">
+          <div class="card-header cbc"><h3>🎯 บันทึกสมรรถนะ</h3></div>
+          <div class="card-body">
+            <div class="form-row">
+              <div class="field"><label>ปีการศึกษา</label>
+                <select id="cbcYear"><option>2567</option></select></div>
+              <div class="field"><label>ภาคเรียน</label>
+                <select id="cbcSem"><option value="1">1</option><option value="2">2</option></select></div>
+              <div class="field"><label>ชั้นเรียน</label>
+                <select id="cbcGrade"><option>ป.4</option><option>ป.5</option><option>ป.6</option></select></div>
+              <div class="field"><label>ห้อง</label><select id="cbcRoom"><option>1</option></select></div>
+            </div>
+            <button class="btn btn-red" onclick="loadCBCTable()">🔍 ดูรายการ</button>
+            <div id="cbcTable" style="margin-top:16px"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ATTENDANCE -->
+      <section id="attendance" class="section">
+        <div class="page-hdr">
+          <div class="page-hdr-left"><h2>📅 การมาเรียน</h2></div>
+        </div>
+        <div class="card">
+          <div class="card-header"><h3>📅 บันทึกและดูสถิติการมาเรียน</h3></div>
+          <div class="card-body">
+            <div class="form-row">
+              <div class="field"><label>ปีการศึกษา</label>
+                <select id="attYear"><option>2567</option></select></div>
+              <div class="field"><label>ภาคเรียน</label>
+                <select id="attSem"><option>1</option><option>2</option></select></div>
+              <div class="field"><label>ชั้นเรียน</label>
+                <select id="attGrade">
+                  <option>ป.1</option><option>ป.2</option><option>ป.3</option>
+                  <option selected>ป.4</option><option>ป.5</option><option>ป.6</option>
+                </select></div>
+            </div>
+            <button class="btn btn-blue" onclick="loadAttendanceTable()">🔍 ดู</button>
+            <div id="attendanceTable" style="margin-top:16px"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- BEHAVIOR -->
+      <section id="behavior" class="section">
+        <div class="page-hdr">
+          <div class="page-hdr-left"><h2>⭐ พฤติกรรมนักเรียน</h2><p>บันทึกผลการประเมินพฤติกรรมตามคุณลักษณะอันพึงประสงค์</p></div>
+        </div>
+        <div class="card">
+          <div class="card-header"><h3>⭐ ประเมินพฤติกรรม 6 ด้าน</h3></div>
+          <div class="card-body">
+            <div class="form-row">
+              <div class="field"><label>ปีการศึกษา</label><select id="behYear"><option>2567</option></select></div>
+              <div class="field"><label>ภาคเรียน</label><select id="behSem"><option>1</option><option>2</option></select></div>
+              <div class="field"><label>ชั้น</label>
+                <select id="behGrade">
+                  <option>ป.1</option><option>ป.2</option><option>ป.3</option>
+                  <option selected>ป.4</option><option>ป.5</option><option>ป.6</option>
+                </select></div>
+            </div>
+            <button class="btn btn-blue" onclick="loadBehaviorTable()">🔍 ดู</button>
+            <div id="behaviorTable" style="margin-top:16px"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ACTIVITIES -->
+      <section id="activities" class="section">
+        <div class="page-hdr">
+          <div class="page-hdr-left"><h2>🏅 กิจกรรมพัฒนาผู้เรียน</h2></div>
+        </div>
+        <div class="card">
+          <div class="card-header"><h3>🏅 ลูกเสือ/เนตรนารี • ชมรม • แนะแนว</h3></div>
+          <div class="card-body">
+            <div class="form-row">
+              <div class="field"><label>ปีการศึกษา</label><select id="actYear"><option>2567</option></select></div>
+              <div class="field"><label>ภาคเรียน</label><select id="actSem"><option>1</option><option>2</option></select></div>
+              <div class="field"><label>ชั้น</label>
+                <select id="actGrade">
+                  <option>ป.1</option><option>ป.2</option><option>ป.3</option>
+                  <option selected>ป.4</option><option>ป.5</option><option>ป.6</option>
+                </select></div>
+            </div>
+            <button class="btn btn-blue" onclick="loadActivitiesTable()">🔍 ดู</button>
+            <div id="activitiesTable" style="margin-top:16px"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- REPORT 2551 -->
+      <section id="report2551" class="section">
+        <div class="page-hdr">
+          <div class="page-hdr-left">
+            <h2>📄 ใบรายงานผล (หลักสูตร 2551)</h2>
+            <p>ป.พ.1 ป.พ.5 ป.พ.6 ป.พ.7 ระเบียบกระทรวงศึกษาธิการ พ.ศ. 2551</p>
+          </div>
+        </div>
+        <div class="card" style="margin-bottom:16px">
+          <div class="card-header s51"><h3>📄 เลือกรายงาน</h3></div>
+          <div class="card-body">
+            <div class="form-row">
+              <div class="field"><label>ประเภทรายงาน</label>
+                <select id="rpt51Type">
+                  <option value="por1">ป.พ.1 — ระเบียนแสดงผลการเรียน</option>
+                  <option value="por5">ป.พ.5 — สมุดบันทึกผลการเรียน (รายชั้น)</option>
+                  <option value="por6">ป.พ.6 — ระเบียนสะสม</option>
+                  <option value="por7">ป.พ.7 — ใบรับรองผลการเรียน</option>
+                  <option value="por8">ป.พ.8 — รายงานผลการพัฒนาคุณภาพ</option>
+                  <option value="por9">ป.พ.9 — เอกสารรายงานผลการเรียนอิเล็กทรอนิกส์</option>
+                </select></div>
+              <div class="field"><label>รหัสนักเรียน (ป.พ.1,6,7)</label>
+                <input id="rpt51StudentId" placeholder="เช่น S6701001"></div>
+              <div class="field"><label>ชั้นเรียน (ป.พ.5)</label>
+                <select id="rpt51Grade">
+                  <option value="">-- เลือก --</option>
+                  <option>ป.1</option><option>ป.2</option><option>ป.3</option>
+                  <option>ป.4</option><option>ป.5</option><option>ป.6</option>
+                </select></div>
+              <div class="field"><label>ปีการศึกษา</label>
+                <select id="rpt51Year"><option>2567</option><option>2566</option></select></div>
+            </div>
+            <div class="btn-group">
+              <button class="btn btn-blue" onclick="generateReport2551()">📄 สร้างรายงาน</button>
+              <button class="btn btn-outline" id="printBtn51" onclick="window.print()" style="display:none">🖨️ พิมพ์</button>
+            </div>
+          </div>
+        </div>
+        <div id="report2551Output"></div>
+      </section>
+
+      <!-- REPORT CBC -->
+      <section id="reportCBC" class="section">
+        <div class="page-hdr">
+          <div class="page-hdr-left">
+            <h2>📋 ใบรายงานสมรรถนะ (หลักสูตร CBC 2567)</h2>
+            <p>รายงานผลการเรียนรู้ตามหลักสูตรฐานสมรรถนะ พ.ศ. 2567</p>
+          </div>
+        </div>
+        <div class="card" style="margin-bottom:16px">
+          <div class="card-header cbc"><h3>📋 เลือกรายงาน CBC</h3></div>
+          <div class="card-body">
+            <div class="form-row">
+              <div class="field"><label>ประเภทรายงาน</label>
+                <select id="rptCBCType">
+                  <option value="cbcIndividual">รายงานสมรรถนะรายบุคคล</option>
+                  <option value="cbcClass">รายงานสมรรถนะรายชั้น</option>
+                </select></div>
+              <div class="field"><label>รหัสนักเรียน (รายบุคคล)</label>
+                <input id="rptCBCStudentId" placeholder="เช่น S6702001"></div>
+              <div class="field"><label>ชั้นเรียน (รายชั้น)</label>
+                <select id="rptCBCGrade">
+                  <option value="">-- เลือก --</option>
+                  <option>ป.4</option><option>ป.5</option><option>ป.6</option>
+                </select></div>
+              <div class="field"><label>ปีการศึกษา</label>
+                <select id="rptCBCYear"><option>2567</option></select></div>
+            </div>
+            <div class="btn-group">
+              <button class="btn btn-red" onclick="generateReportCBC()">📋 สร้างรายงาน CBC</button>
+              <button class="btn btn-outline" id="printBtnCBC" onclick="window.print()" style="display:none">🖨️ พิมพ์</button>
+            </div>
+          </div>
+        </div>
+        <div id="reportCBCOutput"></div>
+      </section>
+
+      <!-- CLASS REPORT 2551 -->
+      <section id="classReport" class="section">
+        <div class="page-hdr">
+          <div class="page-hdr-left"><h2>🏫 รายงานรายชั้น (หลักสูตร 2551)</h2></div>
+        </div>
+        <div class="card">
+          <div class="card-header s51"><h3>🏫 สรุปผลรายชั้น</h3></div>
+          <div class="card-body">
+            <div class="form-row">
+              <div class="field"><label>ชั้นเรียน</label>
+                <select id="crGrade">
+                  <option>ป.1</option><option>ป.2</option><option>ป.3</option>
+                  <option selected>ป.4</option><option>ป.5</option><option>ป.6</option>
+                </select></div>
+              <div class="field"><label>ห้อง</label><select id="crRoom"><option>1</option></select></div>
+              <div class="field"><label>ปีการศึกษา</label><select id="crYear"><option>2567</option></select></div>
+            </div>
+            <button class="btn btn-blue" onclick="loadClassReport()">📊 ดูรายงาน</button>
+            <div id="classReportTable" style="margin-top:16px"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- CLASS REPORT CBC -->
+      <section id="classReportCBC" class="section">
+        <div class="page-hdr">
+          <div class="page-hdr-left"><h2>🏫 รายงานรายชั้น (หลักสูตร CBC 2567)</h2></div>
+        </div>
+        <div class="card">
+          <div class="card-header cbc"><h3>🏫 สรุปสมรรถนะรายชั้น</h3></div>
+          <div class="card-body">
+            <div class="form-row">
+              <div class="field"><label>ชั้น</label>
+                <select id="crcGrade"><option>ป.4</option><option>ป.5</option><option>ป.6</option></select></div>
+              <div class="field"><label>ห้อง</label><select id="crcRoom"><option>1</option></select></div>
+              <div class="field"><label>ปีการศึกษา</label><select id="crcYear"><option>2567</option></select></div>
+            </div>
+            <button class="btn btn-red" onclick="loadClassReportCBC()">📊 ดูรายงาน CBC</button>
+            <div id="classReportCBCTable" style="margin-top:16px"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TEACHERS -->
+      <section id="teachers" class="section">
+        <div class="page-hdr">
+          <div class="page-hdr-left"><h2>👨‍🏫 ข้อมูลครูผู้สอน</h2></div>
+          <button class="btn btn-green" onclick="loadTeachers()">🔄 โหลด</button>
+        </div>
+        <div class="card"><div class="card-body"><div id="teachersTable">
+          <div class="loading"><div class="spinner"></div></div>
+        </div></div></div>
+      </section>
+
+      <!-- SUBJECTS -->
+      <section id="subjects" class="section">
+        <div class="page-hdr">
+          <div class="page-hdr-left"><h2>📚 รายวิชา</h2></div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
+          <div class="card">
+            <div class="card-header s51"><h3>📚 รายวิชา หลักสูตร 2551</h3></div>
+            <div class="card-body"><div id="subjectsTable"><div class="loading"><div class="spinner"></div></div></div></div>
+          </div>
+          <div class="card">
+            <div class="card-header cbc"><h3>🎯 สมรรถนะ หลักสูตร CBC</h3></div>
+            <div class="card-body"><div id="subjectsCBCTable"><div class="loading"><div class="spinner"></div></div></div></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SCHOOL INFO -->
+      <section id="schoolInfo" class="section">
+        <div class="page-hdr">
+          <div class="page-hdr-left"><h2>⚙️ ข้อมูลโรงเรียน</h2></div>
+        </div>
+        <div class="card">
+          <div class="card-header"><h3>⚙️ แก้ไขข้อมูลโรงเรียน</h3></div>
+          <div class="card-body" id="schoolInfoForm">
+            <div class="loading"><div class="spinner"></div></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SETUP SHEET -->
+      <section id="setupSheet" class="section">
+        <div class="page-hdr">
+          <div class="page-hdr-left"><h2>🛠️ ตั้งค่า Google Sheets</h2></div>
+        </div>
+        <div class="card">
+          <div class="card-header"><h3>🛠️ สร้าง/รีเซ็ต Google Sheets</h3></div>
+          <div class="card-body">
+            <div class="alert alert-warning">
+              ⚠️ การกด <strong>สร้าง Sheets ใหม่</strong> จะสร้าง Sheet ทั้งหมดพร้อมข้อมูลตัวอย่าง<br>
+              ถ้า Sheet มีอยู่แล้ว จะถูกล้างข้อมูลทิ้ง กรุณาสำรองข้อมูลก่อน
+            </div>
+            <div id="setupResult"></div>
+            <button class="btn btn-orange" onclick="runSetup()">🛠️ สร้าง Sheets ทั้งหมด</button>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+</div>
+
+<!-- PAGE: STUDENT PORTAL -->
+<div id="studentPage" class="page">
+  <div class="content">
+    <div class="portal-wrap">
+      <div class="portal-header" id="portalHeader">
+        <div class="portal-avatar">🎒</div>
+        <div>
+          <div class="portal-name" id="portalName">ยินดีต้อนรับ</div>
+          <div class="portal-detail" id="portalDetail">กำลังโหลดข้อมูล...</div>
+        </div>
+      </div>
+
+      <div style="display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap">
+        <button class="btn btn-blue" onclick="showPortalTab('grades')" id="ptab-grades">📝 ผลการเรียน 2551</button>
+        <button class="btn btn-red" onclick="showPortalTab('cbc')" id="ptab-cbc">🎯 สมรรถนะ CBC</button>
+        <button class="btn btn-outline" onclick="showPortalTab('attendance')" id="ptab-attendance">📅 การมาเรียน</button>
+        <button class="btn btn-outline" onclick="showPortalTab('info')" id="ptab-info">📋 ข้อมูลส่วนตัว</button>
+      </div>
+
+      <div id="portalGrades">
+        <div class="card">
+          <div class="card-header s51"><h3>📝 ผลการเรียน (หลักสูตรแกนกลาง 2551)</h3></div>
+          <div class="card-body" id="portalGradesBody"><div class="loading"><div class="spinner"></div></div></div>
+        </div>
+      </div>
+
+      <div id="portalCBC" style="display:none">
+        <div class="card">
+          <div class="card-header cbc"><h3>🎯 สมรรถนะ (หลักสูตร CBC 2567)</h3></div>
+          <div class="card-body" id="portalCBCBody"><div class="loading"><div class="spinner"></div></div></div>
+        </div>
+      </div>
+
+      <div id="portalAttendance" style="display:none">
+        <div class="card">
+          <div class="card-header"><h3>📅 สถิติการมาเรียน</h3></div>
+          <div class="card-body" id="portalAttBody"><div class="loading"><div class="spinner"></div></div></div>
+        </div>
+      </div>
+
+      <div id="portalInfo" style="display:none">
+        <div class="card">
+          <div class="card-header"><h3>📋 ข้อมูลส่วนตัว</h3></div>
+          <div class="card-body" id="portalInfoBody"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: ADD STUDENT -->
+<div class="modal-overlay" id="modalStudent">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>+ เพิ่มนักเรียนใหม่</h3>
+      <button class="modal-close" onclick="closeModal('modalStudent')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-row">
+        <div class="field"><label>ชื่อ-นามสกุล *</label><input id="sName" placeholder="เด็กชาย/หญิง..."></div>
+        <div class="field"><label>ชื่อเล่น</label><input id="sNickname"></div>
+      </div>
+      <div class="form-row">
+        <div class="field"><label>รหัสประชาชน 13 หลัก *</label><input id="sIdCard" maxlength="13" placeholder="1101234567891"></div>
+        <div class="field"><label>เพศ</label>
+          <select id="sGender"><option>ชาย</option><option>หญิง</option></select></div>
+      </div>
+      <div class="form-row">
+        <div class="field"><label>ชั้นเรียน</label>
+          <select id="sGrade">
+            <option>ป.1</option><option>ป.2</option><option>ป.3</option>
+            <option>ป.4</option><option>ป.5</option><option>ป.6</option>
+          </select></div>
+        <div class="field"><label>ห้อง</label><input id="sRoom" value="1"></div>
+        <div class="field"><label>เลขที่</label><input id="sNumber" type="number"></div>
+      </div>
+      <div class="form-row">
+        <div class="field"><label>วันเกิด (dd/mm/yyyy)</label><input id="sBirthday" placeholder="15/05/2558"></div>
+        <div class="field"><label>ปีการศึกษา</label><input id="sYear" value="2567"></div>
+      </div>
+      <div class="form-row">
+        <div class="field"><label>ชื่อผู้ปกครอง</label><input id="sGuardianName"></div>
+        <div class="field"><label>เบอร์โทรผู้ปกครอง</label><input id="sGuardianPhone"></div>
+        <div class="field"><label>ความสัมพันธ์</label>
+          <select id="sGuardianRel"><option>บิดา</option><option>มารดา</option><option>ผู้ปกครอง</option></select></div>
+      </div>
+      <div class="field"><label>ที่อยู่</label>
+        <textarea id="sAddress" rows="2" placeholder="บ้านเลขที่ หมู่ ตำบล อำเภอ จังหวัด"></textarea></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('modalStudent')">ยกเลิก</button>
+      <button class="btn btn-green" onclick="submitAddStudent()">✅ บันทึก</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// =====================================================================
+// CONFIG
+// =====================================================================
+// ⚠️  เปลี่ยน URL นี้เป็น GAS Web App URL จริงของคุณ
+// ได้มาจาก: Apps Script → Deploy → Manage Deployments → Web app URL
+const API = 'https://script.google.com/macros/s/AKfycbzLWP1-13ydXCYqByjkBbcCn9ez3D4cgjCi1NLWFP2lYWulTnNrGph8sfqu5y61of26/exec';
+let currentUser = null;
+let currentStudent = null;
+let schoolInfo = {};
+
+// =====================================================================
+// API CALL
+// =====================================================================
+async function api(params) {
+  const url = API + '?' + new URLSearchParams(params).toString();
+  try {
+    const r = await fetch(url);
+    return await r.json();
+  } catch(e) {
+    return { status: 'error', message: 'ไม่สามารถเชื่อมต่อ API ได้: ' + e.message };
+  }
+}
+
+// =====================================================================
+// INIT
+// =====================================================================
+window.addEventListener('DOMContentLoaded', async () => {
+  const r = await api({ action: 'reg_getSchoolInfo' });
+  if (r.status === 'ok') {
+    schoolInfo = r.info;
+    document.getElementById('loginSchoolName').textContent =
+      schoolInfo['ชื่อโรงเรียน'] || 'โรงเรียนประถมศึกษา';
+  }
+});
+
+// =====================================================================
+// LOGIN
+// =====================================================================
+function switchLoginTab(tab) {
+  document.querySelectorAll('.login-tab').forEach((el, i) => {
+    el.classList.toggle('active', (i === 0 && tab==='admin') || (i===1 && tab==='student'));
+  });
+  document.getElementById('adminLoginForm').style.display = tab === 'admin' ? 'flex' : 'none';
+  document.getElementById('studentLoginForm').style.display = tab === 'student' ? 'flex' : 'none';
+}
+
+async function doAdminLogin() {
+  const pass = document.getElementById('adminPass').value;
+  const r = await api({ action: 'reg_login', password: pass });
+  if (r.status === 'ok') {
+    currentUser = { role: 'admin', name: r.name };
+    showAdminPage();
+  } else {
+    showLoginError(r.message || 'รหัสผ่านไม่ถูกต้อง');
+  }
+}
+
+async function doStudentLogin() {
+  const idCard = document.getElementById('studentIdCard').value.trim();
+  const pin = document.getElementById('studentPin').value.trim() || '12345678';
+  if (!idCard) { showLoginError('กรุณากรอกเลขบัตรประชาชน'); return; }
+  const r = await api({ action: 'reg_studentLogin', idCard, pin });
+  if (r.status === 'ok') {
+    currentStudent = r.student;
+    showStudentPage();
+  } else {
+    showLoginError(r.message || 'ไม่พบข้อมูลนักเรียน');
+  }
+}
+
+function showLoginError(msg) {
+  const el = document.getElementById('loginError');
+  el.innerHTML = `<div class="alert alert-error">❌ ${msg}</div>`;
+  setTimeout(() => { el.innerHTML = ''; }, 4000);
+}
+
+function showAdminPage() {
+  setPage('adminPage');
+  document.getElementById('userBadge').textContent = '👤 ผู้ดูแลระบบ';
+  document.getElementById('userBadge').style.display = 'block';
+  document.getElementById('logoutBtn').style.display = 'block';
+  loadDashboard();
+  loadStudents();
+}
+
+function showStudentPage() {
+  setPage('studentPage');
+  document.getElementById('userBadge').textContent = '🎒 ' + currentStudent.name;
+  document.getElementById('userBadge').style.display = 'block';
+  document.getElementById('logoutBtn').style.display = 'block';
+  document.getElementById('portalName').textContent = currentStudent.name;
+  document.getElementById('portalDetail').textContent =
+    `ชั้น ${currentStudent.grade}/${currentStudent.room} • ปีการศึกษา ${currentStudent.year}`;
+  loadPortalData();
+}
+
+function logout() {
+  currentUser = null;
+  currentStudent = null;
+  setPage('loginPage');
+  document.getElementById('userBadge').style.display = 'none';
+  document.getElementById('logoutBtn').style.display = 'none';
+  document.getElementById('adminPass').value = '';
+  document.getElementById('studentIdCard').value = '';
+  document.getElementById('studentPin').value = '';
+}
+
+function setPage(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+// =====================================================================
+// ADMIN NAV
+// =====================================================================
+function showSection(id) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(n => {
+    if (n.getAttribute('onclick') && n.getAttribute('onclick').includes(`'${id}'`)) n.classList.add('active');
+  });
+  if (id === 'teachers') loadTeachers();
+  if (id === 'subjects') { loadSubjects(); loadSubjectsCBC(); }
+  if (id === 'schoolInfo') loadSchoolInfo();
+}
+
+// =====================================================================
+// DASHBOARD
+// =====================================================================
+async function loadDashboard() {
+  document.getElementById('dashStats').innerHTML = '<div class="loading"><div class="spinner"></div></div>';
+  const r = await api({ action: 'reg_getDashboard' });
+  if (r.status !== 'ok') return;
+
+  const colors = ['#0d2137','#1565c0','#2e7d32','#c0392b','#e65100','#880e4f'];
+  const icons  = ['👤','🏫','👨‍🏫','📝','🎯','📅'];
+  const stats  = [
+    ['นักเรียนทั้งหมด', r.totalStudents, '#1565c0'],
+    ['ห้องเรียน', r.totalClasses, '#2e7d32'],
+    ['ครูผู้สอน', r.totalTeachers, '#c0392b'],
+  ];
+  document.getElementById('dashStats').innerHTML = stats.map(([label, num, color]) => `
+    <div class="stat-card" style="border-left-color:${color}">
+      <div class="stat-icon">${icons[stats.indexOf([label,num,color])]}</div>
+      <div>
+        <div class="stat-num" style="color:${color}">${num}</div>
+        <div class="stat-label">${label}</div>
+      </div>
+    </div>
+  `).join('');
+
+  const cls = r.classes || [];
+  document.getElementById('dashClasses').innerHTML = `
+    <table><thead><tr><th>ชั้น</th><th>ห้อง</th><th>จำนวน</th><th>ครูที่ปรึกษา</th><th>หลักสูตร</th></tr></thead>
+    <tbody>${cls.map(c => `
+      <tr><td>${c.grade}</td><td>${c.room}</td><td>${c.count} คน</td><td>${c.teacher}</td>
+      <td><span class="tag ${c.curriculum==='CBC'?'tag-red':'tag-blue'}">${c.curriculum}</span></td></tr>
+    `).join('')}</tbody></table>`;
+}
+
+// =====================================================================
+// STUDENTS
+// =====================================================================
+async function loadStudents() {
+  const grade = document.getElementById('filterGrade').value;
+  document.getElementById('studentTable').innerHTML = '<div class="loading"><div class="spinner"></div><p>กำลังโหลด...</p></div>';
+  const r = await api({ action: 'reg_getStudents', grade, year: '2567' });
+  if (r.status !== 'ok') { document.getElementById('studentTable').innerHTML = `<div class="alert alert-error">${r.message}</div>`; return; }
+  const s = r.students;
+  document.getElementById('studentTable').innerHTML = `
+    <table>
+      <thead><tr><th>รหัส</th><th>ชื่อ-นามสกุล</th><th>ชื่อเล่น</th><th>ชั้น/ห้อง</th><th>เพศ</th><th>ผู้ปกครอง</th><th>สถานะ</th><th>จัดการ</th></tr></thead>
+      <tbody>${s.map(x => `
+        <tr>
+          <td><code>${x.id}</code></td>
+          <td>${x.name}</td>
+          <td>${x.nickname||'-'}</td>
+          <td>${x.grade}/${x.room}</td>
+          <td><span class="tag ${x.gender==='ชาย'?'tag-blue':'tag-red'}">${x.gender}</span></td>
+          <td>${x.guardianName||'-'}<br><small style="color:var(--muted)">${x.guardianPhone||''}</small></td>
+          <td><span class="tag tag-green">${x.status}</span></td>
+          <td>
+            <button class="btn btn-outline btn-sm" onclick="viewStudentReport('${x.id}')">📄</button>
+            <button class="btn btn-outline btn-sm" onclick="editStudent('${x.id}')">✏️</button>
+          </td>
+        </tr>
+      `).join('')}</tbody>
+    </table>
+    <p style="text-align:right;font-size:13px;color:var(--muted);margin-top:8px">ทั้งหมด ${s.length} คน</p>
+  `;
+}
+
+function openAddStudentModal() { openModal('modalStudent'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+function openModal(id) { document.getElementById(id).classList.add('open'); }
+
+async function submitAddStudent() {
+  const params = {
+    action: 'reg_addStudent',
+    name: document.getElementById('sName').value,
+    nickname: document.getElementById('sNickname').value,
+    idCard: document.getElementById('sIdCard').value,
+    gender: document.getElementById('sGender').value,
+    grade: document.getElementById('sGrade').value,
+    room: document.getElementById('sRoom').value,
+    number: document.getElementById('sNumber').value,
+    birthday: document.getElementById('sBirthday').value,
+    year: document.getElementById('sYear').value,
+    guardianName: document.getElementById('sGuardianName').value,
+    guardianPhone: document.getElementById('sGuardianPhone').value,
+    guardianRelation: document.getElementById('sGuardianRel').value,
+    address: document.getElementById('sAddress').value,
+  };
+  if (!params.name || !params.idCard) { alert('กรุณากรอกชื่อและรหัสประชาชน'); return; }
+  const r = await api(params);
+  if (r.status === 'ok') {
+    closeModal('modalStudent');
+    loadStudents();
+    showToast('✅ เพิ่มนักเรียนสำเร็จ รหัส: ' + r.id);
+  } else {
+    alert('เกิดข้อผิดพลาด: ' + r.message);
+  }
+}
+
+function viewStudentReport(id) {
+  document.getElementById('rpt51StudentId').value = id;
+  showSection('report2551');
+}
+
+function editStudent(id) {
+  showToast('ฟีเจอร์แก้ไขนักเรียน: ' + id + ' (พัฒนาต่อ)');
+}
+
+// =====================================================================
+// GRADES 2551
+// =====================================================================
+async function loadGrades2551Table() {
+  const year = document.getElementById('g51Year').value;
+  const sem = document.getElementById('g51Sem').value;
+  const grade = document.getElementById('g51Grade').value;
+  const room = document.getElementById('g51Room').value;
+  document.getElementById('grades2551Table').innerHTML = '<div class="loading"><div class="spinner"></div></div>';
+  const r = await api({ action: 'reg_getGrades2551', year, semester: sem, grade, room });
+  if (r.status !== 'ok') return;
+  const g = r.grades;
+  if (!g.length) { document.getElementById('grades2551Table').innerHTML = '<div class="alert alert-info">ยังไม่มีข้อมูลผลการเรียน</div>'; return; }
+  document.getElementById('grades2551Table').innerHTML = `
+    <table>
+      <thead><tr><th>รหัส</th><th>ชื่อนักเรียน</th><th>วิชา</th><th>กลางภาค</th><th>ปลายภาค</th><th>เก็บ</th><th>รวม</th><th>เกรด</th><th>ผล</th></tr></thead>
+      <tbody>${g.map(x => `
+        <tr>
+          <td><small>${x.studentId}</small></td>
+          <td>${x.name}</td>
+          <td>${x.subjectName}<br><small class="tag tag-blue">${x.subjectCode}</small></td>
+          <td>${x.midterm}</td><td>${x.final}</td><td>${x.collected}</td>
+          <td><strong>${x.total}</strong></td>
+          <td><strong>${x.gpa}</strong></td>
+          <td><span class="tag ${x.result==='ผ่าน'?'tag-green':'tag-red'}">${x.result}</span></td>
+        </tr>
+      `).join('')}</tbody>
+    </table>
+  `;
+}
+
+// =====================================================================
+// GRADES CBC
+// =====================================================================
+async function loadCBCTable() {
+  const year = document.getElementById('cbcYear').value;
+  const sem = document.getElementById('cbcSem').value;
+  const grade = document.getElementById('cbcGrade').value;
+  document.getElementById('cbcTable').innerHTML = '<div class="loading"><div class="spinner"></div></div>';
+  const r = await api({ action: 'reg_getGradesCBC', year, semester: sem, grade });
+  if (r.status !== 'ok') return;
+  const g = r.grades;
+  if (!g.length) { document.getElementById('cbcTable').innerHTML = '<div class="alert alert-info">ยังไม่มีข้อมูลสมรรถนะ</div>'; return; }
+  document.getElementById('cbcTable').innerHTML = `
+    <table>
+      <thead><tr><th>รหัส</th><th>ชื่อนักเรียน</th><th>สมรรถนะ</th><th>กลุ่มสาระ</th><th>ระดับ</th><th>หลักฐาน</th></tr></thead>
+      <tbody>${g.map(x => `
+        <tr>
+          <td><small>${x.studentId}</small></td>
+          <td>${x.name}</td>
+          <td>${x.competencyName}</td>
+          <td>${x.subject}</td>
+          <td><span class="competency-badge level-${x.level}">${levelLabel(x.level)}</span></td>
+          <td>${x.evidence||'-'}</td>
+        </tr>
+      `).join('')}</tbody>
+    </table>
+  `;
+}
+
+function levelLabel(l) {
+  const m = {'1':'1 เริ่มต้น','2':'2 กำลังพัฒนา','3':'3 ผ่าน','4':'4 ดีเลิศ'};
+  return m[String(l)] || l;
+}
+
+// =====================================================================
+// ATTENDANCE TABLE
+// =====================================================================
+async function loadAttendanceTable() {
+  const year = document.getElementById('attYear').value;
+  const sem = document.getElementById('attSem').value;
+  const grade = document.getElementById('attGrade').value;
+  document.getElementById('attendanceTable').innerHTML = '<div class="loading"><div class="spinner"></div></div>';
+  const r = await api({ action: 'reg_getAttendance', year, semester: sem, grade });
+  if (r.status !== 'ok') return;
+  const d = r.data;
+  if (!d || !d.length) { document.getElementById('attendanceTable').innerHTML = '<div class="alert alert-info">ยังไม่มีข้อมูล</div>'; return; }
+  document.getElementById('attendanceTable').innerHTML = `
+    <table>
+      <thead><tr><th>รหัส</th><th>ชื่อนักเรียน</th><th>มา</th><th>ขาด</th><th>ลา</th><th>สาย</th><th>รวม</th><th>%มาเรียน</th></tr></thead>
+      <tbody>${d.map(x => `
+        <tr>
+          <td><small>${x.studentId}</small></td>
+          <td>${x.name}</td>
+          <td class="tag-green" style="font-weight:600">${x.present}</td>
+          <td>${x.absent}</td><td>${x.leave}</td><td>${x.late}</td>
+          <td>${x.total}</td>
+          <td><span class="tag ${x.percent>=80?'tag-green':'tag-red'}">${x.percent}%</span></td>
+        </tr>
+      `).join('')}</tbody>
+    </table>
+  `;
+}
+
+// =====================================================================
+// BEHAVIOR TABLE
+// =====================================================================
+async function loadBehaviorTable() {
+  const year = document.getElementById('behYear').value;
+  const sem = document.getElementById('behSem').value;
+  const grade = document.getElementById('behGrade').value;
+  document.getElementById('behaviorTable').innerHTML = '<div class="loading"><div class="spinner"></div></div>';
+  const r = await api({ action: 'reg_getBehavior', year, semester: sem, grade });
+  if (r.status !== 'ok') return;
+  const d = r.data;
+  if (!d || !d.length) { document.getElementById('behaviorTable').innerHTML = '<div class="alert alert-info">ยังไม่มีข้อมูล</div>'; return; }
+  document.getElementById('behaviorTable').innerHTML = `
+    <table>
+      <thead><tr><th>ชื่อนักเรียน</th><th>อยู่ร่วมกัน</th><th>จิตสาธารณะ</th><th>รับผิดชอบ</th><th>พอเพียง</th><th>สุขภาพ</th><th>คุณธรรม</th><th>รวม</th><th>ระดับ</th></tr></thead>
+      <tbody>${d.map(x => `
+        <tr>
+          <td>${x.name}</td>
+          <td>${x.social||'-'}</td><td>${x.publicMind||'-'}</td><td>${x.responsibility||'-'}</td>
+          <td>${x.sufficiency||'-'}</td><td>${x.health||'-'}</td><td>${x.moral||'-'}</td>
+          <td><strong>${x.total||'-'}</strong></td>
+          <td><span class="tag ${x.level==='ดีเยี่ยม'?'tag-blue':x.level==='ดี'?'tag-green':'tag-orange'}">${x.level||'-'}</span></td>
+        </tr>
+      `).join('')}</tbody>
+    </table>
+  `;
+}
+
+// =====================================================================
+// ACTIVITIES TABLE
+// =====================================================================
+async function loadActivitiesTable() {
+  const year = document.getElementById('actYear').value;
+  const sem = document.getElementById('actSem').value;
+  const grade = document.getElementById('actGrade').value;
+  document.getElementById('activitiesTable').innerHTML = '<div class="loading"><div class="spinner"></div></div>';
+  const r = await api({ action: 'reg_getActivities', year, semester: sem, grade });
+  if (r.status !== 'ok') return;
+  const d = r.data;
+  if (!d || !d.length) { document.getElementById('activitiesTable').innerHTML = '<div class="alert alert-info">ยังไม่มีข้อมูล</div>'; return; }
+  document.getElementById('activitiesTable').innerHTML = `
+    <table>
+      <thead><tr><th>ชื่อนักเรียน</th><th>ลูกเสือ/เนตรนารี</th><th>ผล</th><th>กิจกรรมพัฒนา</th><th>ผล</th><th>แนะแนว</th><th>ผล</th></tr></thead>
+      <tbody>${d.map(x => `
+        <tr>
+          <td>${x.name}</td>
+          <td>${x.scout||'-'}</td>
+          <td><span class="tag ${x.scoutResult==='ผ่าน'?'tag-green':'tag-orange'}">${x.scoutResult||'-'}</span></td>
+          <td>${x.club||'-'}</td>
+          <td><span class="tag ${x.clubResult==='ผ่าน'?'tag-green':'tag-orange'}">${x.clubResult||'-'}</span></td>
+          <td>${x.guidance||'-'}</td>
+          <td><span class="tag ${x.guidanceResult==='ผ่าน'?'tag-green':'tag-orange'}">${x.guidanceResult||'-'}</span></td>
+        </tr>
+      `).join('')}</tbody>
+    </table>
+  `;
+}
+
+// =====================================================================
+// REPORTS 2551
+// =====================================================================
+async function generateReport2551() {
+  const type = document.getElementById('rpt51Type').value;
+  const id = document.getElementById('rpt51StudentId').value.trim();
+  const grade = document.getElementById('rpt51Grade').value;
+  const year = document.getElementById('rpt51Year').value;
+  const out = document.getElementById('report2551Output');
+  out.innerHTML = '<div class="loading"><div class="spinner"></div><p>กำลังสร้างรายงาน...</p></div>';
+
+  let data = null;
+  if (type === 'por1' || type === 'por6' || type === 'por7') {
+    if (!id) { out.innerHTML = '<div class="alert alert-error">กรุณากรอกรหัสนักเรียน</div>'; return; }
+    const action = type === 'por1' ? 'reportPor1' : type === 'por6' ? 'reportPor6' : 'reportPor7';
+    data = await api({ action, id, year });
+  } else if (type === 'por5') {
+    if (!grade) { out.innerHTML = '<div class="alert alert-error">กรุณาเลือกชั้นเรียน</div>'; return; }
+    data = await api({ action: 'reg_reportPor5', grade, room: '1', year });
+  } else {
+    out.innerHTML = renderPor8or9(type, year);
+    document.getElementById('printBtn51').style.display = 'inline-flex';
+    return;
+  }
+
+  if (!data || data.status !== 'ok') {
+    out.innerHTML = `<div class="alert alert-error">${data?.message || 'เกิดข้อผิดพลาด'}</div>`;
+    return;
+  }
+
+  if (type === 'por1') out.innerHTML = renderPor1(data, year);
+  else if (type === 'por5') out.innerHTML = renderPor5(data, year);
+  else if (type === 'por6') out.innerHTML = renderPor6(data);
+  else if (type === 'por7') out.innerHTML = renderPor7(data, year);
+
+  document.getElementById('printBtn51').style.display = 'inline-flex';
+}
+
+function renderPor1(data, year) {
+  const s = data.student;
+  const g = data.grades || [];
+  const school = schoolInfo['ชื่อโรงเรียน'] || 'โรงเรียน';
+  const grouped = {};
+  g.forEach(x => {
+    const key = x.semester;
+    if (!grouped[key]) grouped[key] = [];
+    grouped[key].push(x);
+  });
+
+  return `
+  <div class="report-card">
+    <div class="report-header">
+      <div class="report-school">🏫 ${school}</div>
+      <div class="report-subtitle">${schoolInfo['สังกัด']||''} ${schoolInfo['เขตพื้นที่การศึกษา']||''}</div>
+      <div class="report-title s51">ป.พ.1 ระเบียนแสดงผลการเรียน</div>
+      <div>หลักสูตรแกนกลางการศึกษาขั้นพื้นฐาน พุทธศักราช 2551 (ปรับปรุง)</div>
+    </div>
+    <div class="report-body">
+      <div class="report-student-info">
+        <div class="info-row"><span class="lbl">ชื่อ-สกุล:</span><span class="val">${s.name}</span></div>
+        <div class="info-row"><span class="lbl">ชั้นเรียน:</span><span class="val">ชั้น ${s.grade}/${s.room}</span></div>
+        <div class="info-row"><span class="lbl">เลขประจำตัว:</span><span class="val">${s.id}</span></div>
+        <div class="info-row"><span class="lbl">ปีการศึกษา:</span><span class="val">${year}</span></div>
+        <div class="info-row"><span class="lbl">เพศ:</span><span class="val">${s.gender}</span></div>
+        <div class="info-row"><span class="lbl">วันเกิด:</span><span class="val">${s.birthday}</span></div>
+      </div>
+      ${[1,2].map(sem => {
+        const semGrades = grouped[sem] || grouped[String(sem)] || [];
+        return `
+        <h4 style="margin:16px 0 8px;font-family:Mitr;color:var(--s51)">ภาคเรียนที่ ${sem}</h4>
+        ${semGrades.length ? `
+        <table class="report-table s51">
+          <thead><tr><th>รหัสวิชา</th><th>ชื่อรายวิชา</th><th>กลางภาค</th><th>ปลายภาค</th><th>เก็บ</th><th>รวม</th><th>เกรด</th><th>ผล</th></tr></thead>
+          <tbody>${semGrades.map(r => `
+            <tr><td>${r.subjectCode}</td><td>${r.subjectName}</td>
+            <td>${r.midterm}</td><td>${r.final}</td><td>${r.collected}</td>
+            <td><strong>${r.total}</strong></td><td><strong>${r.gpa}</strong></td>
+            <td><span class="tag ${r.result==='ผ่าน'?'tag-green':'tag-red'}">${r.result}</span></td></tr>
+          `).join('')}</tbody>
+        </table>` : '<p style="color:var(--muted);font-size:13px">ยังไม่มีข้อมูลผลการเรียน</p>'}
+        `;
+      }).join('')}
+      <div class="signature-row">
+        <div class="sig-box"><div class="sig-line"></div><div class="sig-label">ลายมือชื่อครูที่ปรึกษา</div></div>
+        <div class="sig-box"><div class="sig-line"></div><div class="sig-label">ลายมือชื่อผู้อำนวยการ</div></div>
+        <div class="sig-box"><div class="sig-line"></div><div class="sig-label">ลายมือชื่อผู้ปกครอง</div></div>
+      </div>
+    </div>
+  </div>`;
+}
+
+function renderPor5(data, year) {
+  const students = data.students || [];
+  const grades = data.grades || [];
+  const school = schoolInfo['ชื่อโรงเรียน'] || 'โรงเรียน';
+  return `
+  <div class="report-card">
+    <div class="report-header">
+      <div class="report-school">🏫 ${school}</div>
+      <div class="report-title s51">ป.พ.5 สมุดบันทึกผลการเรียน</div>
+      <div>ชั้น ${data.grade} ห้อง ${data.room} ปีการศึกษา ${year}</div>
+    </div>
+    <div class="report-body">
+      <table class="report-table s51">
+        <thead><tr><th>เลขที่</th><th>รหัส</th><th>ชื่อ-นามสกุล</th><th>วิชา</th><th>รวม</th><th>เกรด</th></tr></thead>
+        <tbody>${grades.map(g => `
+          <tr><td>${students.find(s=>s.id===g.studentId)?.number||'-'}</td>
+          <td>${g.studentId}</td><td>${g.name}</td>
+          <td>${g.subjectName}</td><td>${g.total}</td><td>${g.gpa}</td></tr>
+        `).join('')}</tbody>
+      </table>
+    </div>
+  </div>`;
+}
+
+function renderPor6(data) {
+  const s = data.student;
+  const school = schoolInfo['ชื่อโรงเรียน'] || 'โรงเรียน';
+  return `
+  <div class="report-card">
+    <div class="report-header">
+      <div class="report-school">🏫 ${school}</div>
+      <div class="report-title s51">ป.พ.6 ระเบียนสะสม</div>
+    </div>
+    <div class="report-body">
+      <div class="report-student-info">
+        <div class="info-row"><span class="lbl">ชื่อ-สกุล:</span><span class="val">${s.name}</span></div>
+        <div class="info-row"><span class="lbl">ชั้น:</span><span class="val">${s.grade}/${s.room}</span></div>
+        <div class="info-row"><span class="lbl">เพศ:</span><span class="val">${s.gender}</span></div>
+        <div class="info-row"><span class="lbl">วันเกิด:</span><span class="val">${s.birthday}</span></div>
+        <div class="info-row"><span class="lbl">ผู้ปกครอง:</span><span class="val">${s.guardianName}</span></div>
+        <div class="info-row"><span class="lbl">ที่อยู่:</span><span class="val">${s.address}</span></div>
+      </div>
+      <div class="alert alert-info">ระเบียนสะสมประกอบด้วยผลการเรียน, พฤติกรรม, กิจกรรม และการมาเรียนตลอดระดับการศึกษา</div>
+    </div>
+  </div>`;
+}
+
+function renderPor7(data, year) {
+  const s = data.student;
+  const school = schoolInfo['ชื่อโรงเรียน'] || 'โรงเรียน';
+  const g = data.grades || [];
+  return `
+  <div class="report-card">
+    <div class="report-header">
+      <div class="report-school">🏫 ${school}</div>
+      <div class="report-title s51">ป.พ.7 ใบรับรองผลการเรียน</div>
+      <div>ปีการศึกษา ${year}</div>
+    </div>
+    <div class="report-body">
+      <p>ขอรับรองว่า <strong>${s.name}</strong> เลขบัตรประชาชน ${s.idCard} ได้ศึกษาอยู่ในชั้น ${s.grade} ห้อง ${s.room}
+      โรงเรียน${school} ในปีการศึกษา ${year} และมีผลการเรียนดังนี้</p>
+      <br>
+      <table class="report-table s51">
+        <thead><tr><th>รหัสวิชา</th><th>ชื่อรายวิชา</th><th>คะแนนรวม</th><th>เกรด</th><th>ผล</th></tr></thead>
+        <tbody>${g.map(x => `<tr><td>${x.subjectCode}</td><td>${x.subjectName}</td>
+          <td>${x.total}</td><td>${x.gpa}</td>
+          <td><span class="tag ${x.result==='ผ่าน'?'tag-green':'tag-red'}">${x.result}</span></td></tr>
+        `).join('')}</tbody>
+      </table>
+      <div class="signature-row" style="grid-template-columns:1fr 1fr">
+        <div class="sig-box"><div class="sig-line"></div><div class="sig-label">ผู้อำนวยการโรงเรียน</div></div>
+        <div class="sig-box">
+          <div style="font-size:13px;color:var(--muted);margin-bottom:8px">วันที่ออกเอกสาร: ${new Date().toLocaleDateString('th-TH')}</div>
+          <div style="font-size:12px;color:var(--muted)">ประทับตราโรงเรียน</div>
+        </div>
+      </div>
+    </div>
+  </div>`;
+}
+
+function renderPor8or9(type, year) {
+  const titles = { por8: 'ป.พ.8 รายงานผลการพัฒนาคุณภาพ', por9: 'ป.พ.9 รายงานผลการเรียนอิเล็กทรอนิกส์' };
+  return `<div class="report-card">
+    <div class="report-header">
+      <div class="report-school">🏫 ${schoolInfo['ชื่อโรงเรียน']||'โรงเรียน'}</div>
+      <div class="report-title s51">${titles[type]}</div>
+      <div>ปีการศึกษา ${year}</div>
+    </div>
+    <div class="report-body">
+      <div class="alert alert-info">
+        📋 <strong>${titles[type]}</strong><br>
+        รายงานนี้จัดทำตามระเบียบกระทรวงศึกษาธิการว่าด้วยการประเมินผลการเรียนตามหลักสูตรแกนกลาง พ.ศ. 2551<br>
+        กรุณาดูรายละเอียดจากระบบ PSIS / DMC ของสำนักงานคณะกรรมการการศึกษาขั้นพื้นฐาน
+      </div>
+    </div>
+  </div>`;
+}
+
+// =====================================================================
+// REPORT CBC
+// =====================================================================
+async function generateReportCBC() {
+  const type = document.getElementById('rptCBCType').value;
+  const id = document.getElementById('rptCBCStudentId').value.trim();
+  const grade = document.getElementById('rptCBCGrade').value;
+  const year = document.getElementById('rptCBCYear').value;
+  const out = document.getElementById('reportCBCOutput');
+  out.innerHTML = '<div class="loading"><div class="spinner"></div><p>กำลังสร้างรายงาน...</p></div>';
+
+  if (type === 'cbcIndividual') {
+    if (!id) { out.innerHTML = '<div class="alert alert-error">กรุณากรอกรหัสนักเรียน</div>'; return; }
+    const data = await api({ action: 'reg_reportCBCIndividual', id, year });
+    if (data.status !== 'ok') { out.innerHTML = `<div class="alert alert-error">${data.message}</div>`; return; }
+    out.innerHTML = renderCBCIndividual(data, year);
+  } else {
+    if (!grade) { out.innerHTML = '<div class="alert alert-error">กรุณาเลือกชั้นเรียน</div>'; return; }
+    const data = await api({ action: 'reg_reportCBCClass', grade, room: '1', year });
+    if (data.status !== 'ok') { out.innerHTML = `<div class="alert alert-error">${data.message}</div>`; return; }
+    out.innerHTML = renderCBCClass(data, grade, year);
+  }
+  document.getElementById('printBtnCBC').style.display = 'inline-flex';
+}
+
+function renderCBCIndividual(data, year) {
+  const s = data.student;
+  const g = data.grades || [];
+  const school = schoolInfo['ชื่อโรงเรียน'] || 'โรงเรียน';
+  const coreComps = g.filter(x => x.competencyCode && x.competencyCode.startsWith('CBC-1'));
+  const subjectComps = g.filter(x => x.competencyCode && !x.competencyCode.startsWith('CBC-1'));
+  return `
+  <div class="report-card">
+    <div class="report-header" style="border-bottom:2px solid var(--cbc)">
+      <div class="report-school">🏫 ${school}</div>
+      <div class="report-subtitle">${schoolInfo['สังกัด']||''}</div>
+      <div class="report-title cbc">📋 รายงานผลการเรียนรู้ตามสมรรถนะ</div>
+      <div style="color:var(--cbc);font-weight:600">หลักสูตรฐานสมรรถนะ (Competency-Based Curriculum) พ.ศ. 2567</div>
+    </div>
+    <div class="report-body">
+      <div class="report-student-info" style="background:#fff3f0">
+        <div class="info-row"><span class="lbl">ชื่อ-สกุล:</span><span class="val">${s.name}</span></div>
+        <div class="info-row"><span class="lbl">ชั้นเรียน:</span><span class="val">ชั้น ${s.grade}/${s.room}</span></div>
+        <div class="info-row"><span class="lbl">เลขประจำตัว:</span><span class="val">${s.id}</span></div>
+        <div class="info-row"><span class="lbl">ปีการศึกษา:</span><span class="val">${year}</span></div>
+      </div>
+
+      <h4 style="margin:16px 0 8px;font-family:Mitr;color:var(--cbc)">🎯 สมรรถนะหลัก 6 ด้าน</h4>
+      ${coreComps.length ? `
+      <table class="report-table cbc">
+        <thead><tr><th>สมรรถนะ</th><th>ระดับ</th><th>หลักฐาน/ชิ้นงาน</th><th>คำอธิบาย</th></tr></thead>
+        <tbody>${coreComps.map(x => `
+          <tr><td>${x.competencyName}</td>
+          <td><span class="competency-badge level-${x.level}">${levelLabel(x.level)}</span></td>
+          <td>${x.evidence||'-'}</td><td>${x.description||'-'}</td></tr>
+        `).join('')}</tbody>
+      </table>` : '<p style="color:var(--muted);font-size:13px">ยังไม่มีข้อมูลสมรรถนะหลัก</p>'}
+
+      <h4 style="margin:16px 0 8px;font-family:Mitr;color:var(--cbc)">📚 สมรรถนะตามกลุ่มสาระการเรียนรู้</h4>
+      ${subjectComps.length ? `
+      <table class="report-table cbc">
+        <thead><tr><th>กลุ่มสาระ</th><th>สมรรถนะ</th><th>ระดับ</th><th>หลักฐาน</th></tr></thead>
+        <tbody>${subjectComps.map(x => `
+          <tr><td>${x.subject}</td><td>${x.competencyName}</td>
+          <td><span class="competency-badge level-${x.level}">${levelLabel(x.level)}</span></td>
+          <td>${x.evidence||'-'}</td></tr>
+        `).join('')}</tbody>
+      </table>` : '<p style="color:var(--muted);font-size:13px">ยังไม่มีข้อมูลสมรรถนะรายวิชา</p>'}
+
+      <div style="background:#fff3f0;border-radius:8px;padding:12px;margin-top:16px;font-size:13px">
+        <strong>เกณฑ์ระดับสมรรถนะ:</strong>&nbsp;
+        <span class="competency-badge level-1">1 เริ่มต้น</span>&nbsp;
+        <span class="competency-badge level-2">2 กำลังพัฒนา</span>&nbsp;
+        <span class="competency-badge level-3">3 ผ่าน</span>&nbsp;
+        <span class="competency-badge level-4">4 ดีเลิศ</span>
+      </div>
+      <div class="signature-row">
+        <div class="sig-box"><div class="sig-line"></div><div class="sig-label">ลายมือชื่อครูที่ปรึกษา</div></div>
+        <div class="sig-box"><div class="sig-line"></div><div class="sig-label">ลายมือชื่อผู้อำนวยการ</div></div>
+        <div class="sig-box"><div class="sig-line"></div><div class="sig-label">ลายมือชื่อผู้ปกครอง</div></div>
+      </div>
+    </div>
+  </div>`;
+}
+
+function renderCBCClass(data, grade, year) {
+  const students = data.students || [];
+  const grades = data.grades || [];
+  const school = schoolInfo['ชื่อโรงเรียน'] || 'โรงเรียน';
+  return `
+  <div class="report-card">
+    <div class="report-header" style="border-bottom:2px solid var(--cbc)">
+      <div class="report-school">🏫 ${school}</div>
+      <div class="report-title cbc">สรุปสมรรถนะรายชั้น ${grade} ปีการศึกษา ${year}</div>
+      <div style="color:var(--cbc);font-weight:600">หลักสูตรฐานสมรรถนะ (CBC) พ.ศ. 2567</div>
+    </div>
+    <div class="report-body">
+      <p style="font-size:13px;color:var(--muted);margin-bottom:12px">จำนวนนักเรียนทั้งหมด ${students.length} คน</p>
+      <table class="report-table cbc">
+        <thead><tr><th>รหัส</th><th>ชื่อนักเรียน</th><th>สมรรถนะ</th><th>ระดับ</th></tr></thead>
+        <tbody>${grades.map(g => `
+          <tr><td><small>${g.studentId}</small></td>
+          <td>${g.name}</td><td>${g.competencyName}</td>
+          <td><span class="competency-badge level-${g.level}">${levelLabel(g.level)}</span></td></tr>
+        `).join('')}</tbody>
+      </table>
+    </div>
+  </div>`;
+}
+
+// =====================================================================
+// CLASS REPORTS
+// =====================================================================
+async function loadClassReport() {
+  const grade = document.getElementById('crGrade').value;
+  const room = document.getElementById('crRoom').value;
+  const year = document.getElementById('crYear').value;
+  document.getElementById('classReportTable').innerHTML = '<div class="loading"><div class="spinner"></div></div>';
+  const r = await api({ action: 'reg_classReportGrades', grade, room, year });
+  if (r.status !== 'ok') return;
+  const s = r.students || [];
+  const g = r.grades || [];
+  document.getElementById('classReportTable').innerHTML = `
+    <p style="font-size:13px;color:var(--muted);margin-bottom:8px">ชั้น ${grade}/${room} • ${year} • ${s.length} คน</p>
+    <table>
+      <thead><tr><th>ชื่อนักเรียน</th><th>วิชา</th><th>รวม</th><th>เกรด</th><th>ผล</th></tr></thead>
+      <tbody>${g.map(x => `
+        <tr><td>${x.name}</td><td>${x.subjectName}</td>
+        <td>${x.total}</td><td>${x.gpa}</td>
+        <td><span class="tag ${x.result==='ผ่าน'?'tag-green':'tag-red'}">${x.result}</span></td></tr>
+      `).join('')}</tbody>
+    </table>`;
+}
+
+async function loadClassReportCBC() {
+  const grade = document.getElementById('crcGrade').value;
+  const room = document.getElementById('crcRoom').value;
+  const year = document.getElementById('crcYear').value;
+  document.getElementById('classReportCBCTable').innerHTML = '<div class="loading"><div class="spinner"></div></div>';
+  const r = await api({ action: 'reg_reportCBCClass', grade, room, year });
+  if (r.status !== 'ok') return;
+  const g = r.grades || [];
+  document.getElementById('classReportCBCTable').innerHTML = `
+    <table>
+      <thead><tr><th>ชื่อนักเรียน</th><th>สมรรถนะ</th><th>กลุ่มสาระ</th><th>ระดับ</th></tr></thead>
+      <tbody>${g.map(x => `
+        <tr><td>${x.name}</td><td>${x.competencyName}</td><td>${x.subject}</td>
+        <td><span class="competency-badge level-${x.level}">${levelLabel(x.level)}</span></td></tr>
+      `).join('')}</tbody>
+    </table>`;
+}
+
+// =====================================================================
+// TEACHERS & SUBJECTS
+// =====================================================================
+async function loadTeachers() {
+  const r = await api({ action: 'reg_getTeachers' });
+  if (r.status !== 'ok') return;
+  const teachers = r.teachers || [];
+  if (!teachers.length) {
+    document.getElementById('teachersTable').innerHTML =
+      `<div class="alert alert-info">⚠️ ยังไม่มีข้อมูลครู<br><small>${r.note||'ระบบ Clean Slate — บุคลากร, ครู, Teachers, ครูผู้สอน'}</small></div>`;
+    return;
+  }
+  document.getElementById('teachersTable').innerHTML = `
+    <table>
+      <thead><tr><th>รหัส</th><th>ชื่อ-นามสกุล</th><th>วิชาเอก/ตำแหน่ง</th><th>เบอร์โทร</th></tr></thead>
+      <tbody>${teachers.map(t => `
+        <tr><td>${t.id||'-'}</td><td>${t.name||'-'}</td>
+        <td>${t.major||'-'}</td><td>${t.phone||'-'}</td></tr>
+      `).join('')}</tbody>
+    </table>
+    ${r.source ? `<p style="font-size:12px;color:var(--muted);margin-top:6px">📋 ดึงจาก Sheet: <strong>${r.source}</strong></p>` : ''}`;
+}
+
+async function loadSubjects() {
+  const r = await api({ action: 'reg_getSubjects' });
+  if (r.status !== 'ok') return;
+  const subjects = r.subjects || r.data || [];
+  document.getElementById('subjectsTable').innerHTML = `
+    <table><thead><tr><th>รหัส</th><th>ชื่อวิชา</th><th>กลุ่มสาระ</th><th>ชั้น</th><th>หน่วยกิต</th></tr></thead>
+    <tbody>${subjects.map(s => `<tr><td>${s.code}</td><td>${s.name}</td><td>${s.group||'-'}</td><td>${s.grade}</td><td>${s.credits}</td></tr>`).join('')}</tbody></table>`;
+}
+
+async function loadSubjectsCBC() {
+  const r = await api({ action: 'reg_getSubjectsCBC' });
+  if (r.status !== 'ok') return;
+  document.getElementById('subjectsCBCTable').innerHTML = `
+    <table><thead><tr><th>รหัส</th><th>สมรรถนะ</th><th>ระดับที่คาดหวัง</th></tr></thead>
+    <tbody>${(r.subjects||r.data||[]).map(s => `<tr><td>${s.code}</td><td>${s.name}</td><td>
+      <span class="competency-badge level-${s.expectedLevel}">${levelLabel(s.expectedLevel)}</span></td></tr>`).join('')}</tbody></table>`;
+}
+
+// =====================================================================
+// SCHOOL INFO
+// =====================================================================
+async function loadSchoolInfo() {
+  const r = await api({ action: 'reg_getSchoolInfo' });
+  if (r.status !== 'ok') return;
+  const info = r.info;
+  const fields = Object.entries(info);
+  document.getElementById('schoolInfoForm').innerHTML = `
+    <div class="form-row" style="grid-template-columns:1fr">${
+      fields.map(([k, v]) => `
+        <div style="display:flex;align-items:center;gap:12px;padding:8px 0;border-bottom:1px solid var(--border)">
+          <label style="min-width:180px;font-weight:600;font-size:13px;color:var(--muted)">${k}</label>
+          <input value="${v}" style="flex:1;padding:7px 12px;border:1.5px solid var(--border);border-radius:6px;font-family:Sarabun;font-size:14px"
+            onchange="saveSchoolField('${k}', this.value)">
+        </div>
+      `).join('')}
+    </div>
+    <p style="font-size:12px;color:var(--muted);margin-top:8px">การเปลี่ยนแปลงจะบันทึกทันทีที่แก้ไข</p>
+  `;
+}
+
+async function saveSchoolField(field, value) {
+  await api({ action: 'reg_saveSchoolInfo', field, value });
+  schoolInfo[field] = value;
+  showToast('✅ บันทึก "' + field + '" แล้ว');
+}
+
+// =====================================================================
+// SETUP
+// =====================================================================
+async function runSetup() {
+  document.getElementById('setupResult').innerHTML = '<div class="alert alert-warning">⏳ กำลังสร้าง Sheets... อาจใช้เวลา 10-20 วินาที</div>';
+  const r = await api({ action: 'reg_setupSheets' });
+  if (r.status === 'ok') {
+    document.getElementById('setupResult').innerHTML = '<div class="alert alert-success">✅ ' + r.message + '</div>';
+    loadDashboard();
+  } else {
+    document.getElementById('setupResult').innerHTML = `<div class="alert alert-error">❌ ${r.message}</div>`;
+  }
+}
+
+// =====================================================================
+// STUDENT PORTAL
+// =====================================================================
+async function loadPortalData() {
+  if (!currentStudent) return;
+  const id = currentStudent.id;
+  const year = currentStudent.year || '2567';
+
+  // Grades 2551
+  const rg = await api({ action: 'reg_getGrades2551', studentId: id, year });
+  if (rg.status === 'ok' && rg.grades.length) {
+    document.getElementById('portalGradesBody').innerHTML = `
+      <table><thead><tr><th>วิชา</th><th>รวม</th><th>เกรด</th><th>ผล</th></tr></thead>
+      <tbody>${rg.grades.map(g => `<tr>
+        <td>${g.subjectName}</td><td>${g.total}</td><td>${g.gpa}</td>
+        <td><span class="tag ${g.result==='ผ่าน'?'tag-green':'tag-red'}">${g.result}</span></td>
+      </tr>`).join('')}</tbody></table>`;
+  } else {
+    document.getElementById('portalGradesBody').innerHTML = '<div class="alert alert-info">ยังไม่มีผลการเรียน 2551</div>';
+  }
+
+  // CBC
+  const rc = await api({ action: 'reg_getGradesCBC', studentId: id, year });
+  if (rc.status === 'ok' && rc.grades.length) {
+    document.getElementById('portalCBCBody').innerHTML = `
+      <table><thead><tr><th>สมรรถนะ</th><th>กลุ่ม</th><th>ระดับ</th></tr></thead>
+      <tbody>${rc.grades.map(g => `<tr>
+        <td>${g.competencyName}</td><td>${g.subject}</td>
+        <td><span class="competency-badge level-${g.level}">${levelLabel(g.level)}</span></td>
+      </tr>`).join('')}</tbody></table>`;
+  } else {
+    document.getElementById('portalCBCBody').innerHTML = '<div class="alert alert-info">ยังไม่มีข้อมูลสมรรถนะ CBC</div>';
+  }
+
+  // Attendance
+  const ra = await api({ action: 'reg_getAttendance', studentId: id, year });
+  if (ra.status === 'ok' && ra.data && ra.data.length) {
+    const att = ra.data[0];
+    document.getElementById('portalAttBody').innerHTML = `
+      <div class="stats-grid" style="grid-template-columns:repeat(4,1fr)">
+        ${[['มาเรียน',att.present,'#2e7d32'],['ขาด',att.absent,'#c62828'],['ลา',att.leave,'#e65100'],['สาย',att.late,'#7b1fa2']]
+          .map(([l,v,c]) => `<div class="stat-card" style="border-left-color:${c}">
+            <div><div class="stat-num" style="color:${c}">${v}</div><div class="stat-label">${l}</div></div>
+          </div>`).join('')}
+      </div>
+      <div class="alert alert-${att.percent>=80?'success':'error'}" style="margin-top:12px">
+        อัตราการมาเรียน: <strong>${att.percent}%</strong> (เกณฑ์ผ่าน 80%)
+      </div>`;
+  } else {
+    document.getElementById('portalAttBody').innerHTML = '<div class="alert alert-info">ยังไม่มีข้อมูลการมาเรียน</div>';
+  }
+
+  // Info
+  const s = currentStudent;
+  document.getElementById('portalInfoBody').innerHTML = `
+    <div class="report-student-info" style="background:#f8faff">
+      <div class="info-row"><span class="lbl">ชื่อ-สกุล:</span><span class="val">${s.name}</span></div>
+      <div class="info-row"><span class="lbl">ชื่อเล่น:</span><span class="val">${s.nickname||'-'}</span></div>
+      <div class="info-row"><span class="lbl">รหัสนักเรียน:</span><span class="val">${s.id}</span></div>
+      <div class="info-row"><span class="lbl">ชั้นเรียน:</span><span class="val">ชั้น ${s.grade}/${s.room}</span></div>
+      <div class="info-row"><span class="lbl">เพศ:</span><span class="val">${s.gender}</span></div>
+      <div class="info-row"><span class="lbl">วันเกิด:</span><span class="val">${s.birthday}</span></div>
+      <div class="info-row"><span class="lbl">ผู้ปกครอง:</span><span class="val">${s.guardianName||'-'}</span></div>
+      <div class="info-row"><span class="lbl">เบอร์โทร:</span><span class="val">${s.guardianPhone||'-'}</span></div>
+    </div>`;
+}
+
+function showPortalTab(tab) {
+  ['grades','cbc','attendance','info'].forEach(t => {
+    document.getElementById('portal' + t.charAt(0).toUpperCase() + t.slice(1)).style.display = t === tab ? 'block' : 'none';
+    const btn = document.getElementById('ptab-' + t);
+    if (btn) btn.className = 'btn ' + (t === tab ? (t==='cbc'?'btn-red':'btn-blue') : 'btn-outline');
+  });
+}
+
+// =====================================================================
+// TOAST
+// =====================================================================
+function showToast(msg) {
+  const el = document.createElement('div');
+  el.style.cssText = `position:fixed;bottom:24px;right:24px;background:#0d2137;color:#fff;
+    padding:12px 20px;border-radius:10px;font-size:14px;z-index:999;
+    box-shadow:0 4px 20px rgba(0,0,0,0.3);animation:fadeIn .3s;`;
+  el.textContent = msg;
+  document.body.appendChild(el);
+  setTimeout(() => el.remove(), 3500);
+}
+</script>
+</body>
+</html>
