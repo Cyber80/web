@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="th">
 <head>
@@ -90,10 +89,11 @@ body {
 
 /* ── LOGIN PAGE ── */
 #loginPage {
-  display: flex; align-items: center; justify-content: center;
+  align-items: center; justify-content: center;
   background: linear-gradient(135deg, #0d2137 0%, #1a3a5c 50%, #0d2137 100%);
   position: relative; overflow: hidden;
 }
+#loginPage.active { display: flex; }
 #loginPage::before {
   content: '';
   position: absolute; inset: 0;
@@ -1075,6 +1075,7 @@ tr:hover td { background: #f8faff; }
 // ⚠️  เปลี่ยน URL นี้เป็น GAS Web App URL จริงของคุณ
 // ได้มาจาก: Apps Script → Deploy → Manage Deployments → Web app URL
 const API = 'https://script.google.com/macros/s/AKfycbzLWP1-13ydXCYqByjkBbcCn9ez3D4cgjCi1NLWFP2lYWulTnNrGph8sfqu5y61of26/exec';
+
 let currentUser = null;
 let currentStudent = null;
 let schoolInfo = {};
@@ -1218,7 +1219,7 @@ async function loadDashboard() {
   const stats  = [
     ['นักเรียนทั้งหมด', r.totalStudents, '#1565c0'],
     ['ห้องเรียน', r.totalClasses, '#2e7d32'],
-    ['ครูผู้สอน', r.totalTeachers, '#c0392b'],
+    ['ครูผู้สอน', r.totalTeachers || 0, '#c0392b'],
   ];
   document.getElementById('dashStats').innerHTML = stats.map(([label, num, color]) => `
     <div class="stat-card" style="border-left-color:${color}">
@@ -1478,7 +1479,7 @@ async function generateReport2551() {
   let data = null;
   if (type === 'por1' || type === 'por6' || type === 'por7') {
     if (!id) { out.innerHTML = '<div class="alert alert-error">กรุณากรอกรหัสนักเรียน</div>'; return; }
-    const action = type === 'por1' ? 'reportPor1' : type === 'por6' ? 'reportPor6' : 'reportPor7';
+    const action = type === 'por1' ? 'reg_reportPor1' : type === 'por6' ? 'reg_reportPor6' : 'reg_reportPor7';
     data = await api({ action, id, year });
   } else if (type === 'por5') {
     if (!grade) { out.innerHTML = '<div class="alert alert-error">กรุณาเลือกชั้นเรียน</div>'; return; }
