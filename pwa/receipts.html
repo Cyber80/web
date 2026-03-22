@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ใบเสร็จ — ระบบประปาหมู่บ้าน</title>
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;600;700&family=Noto+Serif+Thai:wght@700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="layout.css">
+<style>
+.period-sel{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.period-sel label{font-size:13px;font-weight:600;color:var(--gray-600);white-space:nowrap}
+.period-sel select{height:40px;padding:0 10px;border:1.5px solid var(--gray-200);border-radius:var(--r);font-family:'Sarabun',sans-serif;font-size:14px;color:var(--gray-800);background:white;outline:none;transition:all .18s}
+.period-sel select:focus{border-color:var(--blue)}
+
+.summary-row{display:flex;gap:14px}
+.sum-item{text-align:right}
+.sum-item .lbl{font-size:11px;color:var(--gray-400)}
+.sum-item .val{font-size:15px;font-weight:700;color:var(--gray-800)}
+.sum-item.green .val{color:var(--green)}
+.sum-item.amber .val{color:var(--amber)}
+
+/* Receipt modal */
+.receipt-overlay{display:none;position:fixed;inset:0;background:rgba(10,37,64,.6);z-index:200;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(4px)}
+.receipt-overlay.show{display:flex}
+.receipt-paper{background:white;width:100%;max-width:380px;border-radius:var(--r-lg);box-shadow:0 20px 60px rgba(0,0,0,.25);animation:mIn .22s ease}
+@keyframes mIn{from{opacity:0;transform:scale(.96)}to{opacity:1;transform:scale(1)}}
+.receipt-actions{padding:12px 18px;display:flex;gap:8px;justify-content:flex-end;border-bottom:1px dashed var(--gray-200)}
+.receipt-body{padding:22px 26px;font-size:13px;line-height:1.8}
+.r-center{text-align:center;margin-bottom:14px}
+.r-org{font-size:16px;font-weight:700;color:var(--gray-800)}
+.r-sub{font-size:12px;color:var(--gray-500)}
+.r-num{font-size:12px;color:var(--gray-500);margin-top:4px}
+.r-divider{border:none;border-top:1px dashed var(--gray-300);margin:10px 0}
+.r-row{display:flex;justify-content:space-between;padding:2px 0;font-size:13px}
+.r-row .lbl{color:var(--gray-500)}
+.r-row .val{font-weight:600}
+.r-total{display:flex;justify-content:space-between;font-size:17px;font-weight:700;border-top:2px solid var(--gray-800);padding-top:8px;margin-top:6px}
+.r-words{text-align:center;font-size:12px;color:var(--gray-500);padding:6px 0;border-bottom:1px solid var(--gray-200);margin-bottom:14px}
+.r-sign{display:grid;grid-template-columns:1fr 1fr;gap:20px;text-align:center;font-size:12px;color:var(--gray-500)}
+.r-sign-line{border-top:1px solid var(--gray-300);padding-top:3px;margin-top:28px}
+
+@media print{
+  body *{visibility:hidden}
+  .receipt-body,.receipt-body *{visibility:visible}
+  .receipt-body{position:fixed;left:0;top:0;width:100%;padding:16px;font-size:12px}
+  .receipt-actions{display:none!important}
+}
+</style>
+</head>
+<body>
+<div class="main">
+  <header class="topbar">
+    <div class="topbar-title">ใบเสร็จ / ชำระเงิน</div>
+    <div class="topbar-date" id="topbarDate"></div>
+    <div style="display:flex;gap:8px">
+      <button class="btn btn-outline" onclick="printAll()">
+        <svg viewBox="0 0 24 24"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+        พิมพ์ทั้งหมด
+      </button>
+      <button class="btn btn-primary" onclick="generateAll()">
+        <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        สร้างใบเสร็จทั้งหมด
+      </button>
+    </div>
+  </header>
+  <div class="content">
+    <!-- Toolbar -->
+    <div style="display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap;align-items:center">
+      <div class="period-sel">
+        <label>เดือน</label>
+        <select id="selMonth">
+          <option value="1">ม.ค.</option><option value="2">ก.พ.</option><option value="3">มี.ค.</option>
+          <option value="4">เม.ย.</option><option value="5">พ.ค.</option><option value="6">มิ.ย.</option>
+          <option value="7">ก.ค.</option><option value="8">ส.ค.</option><option value="9">ก.ย.</option>
+          <option value="10">ต.ค.</option><option value="11">พ.ย.</option><option value="12">ธ.ค.</option>
+        </select>
+        <select id="selYear"></select>
+        <button class="btn btn-outline" onclick="loadData()" style="height:40px;padding:0 14px">โหลด</button>
+      </div>
+      <div class="search-wrap">
+        <svg class="s-icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="text" id="searchInput" placeholder="ค้นหาชื่อ หรือบ้านเลขที่..." oninput="renderTable()">
+      </div>
+      <button class="filter-btn active" id="fAll"    onclick="setFilter('all')">ทั้งหมด</button>
+      <button class="filter-btn"        id="fIssued" onclick="setFilter('issued')">รอชำระ</button>
+      <button class="filter-btn"        id="fPaid"   onclick="setFilter('paid')">ชำระแล้ว</button>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">รายการใบเสร็จ</div>
+        <div class="summary-row">
+          <div class="sum-item green"><div class="lbl">ชำระแล้ว</div><div class="val" id="sumPaid">— บาท</div></div>
+          <div class="sum-item amber"><div class="lbl">รอชำระ</div><div class="val" id="sumPend">— บาท</div></div>
+        </div>
+      </div>
+      <div style="overflow-x:auto">
+        <table>
+          <thead>
+            <tr>
+              <th>เลขที่</th><th>ชื่อสมาชิก</th><th>บ้านเลขที่</th>
+              <th style="text-align:center">หน่วย</th>
+              <th style="text-align:right">จำนวนเงิน</th>
+              <th>สถานะ</th><th>จัดการ</th>
+            </tr>
+          </thead>
+          <tbody id="invTbody">
+            <tr><td colspan="7" style="text-align:center;padding:40px;color:var(--gray-400)">กำลังโหลด...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Receipt preview -->
+<div class="receipt-overlay" id="receiptOverlay" onclick="if(event.target===this)closeReceipt()">
+  <div class="receipt-paper">
+    <div class="receipt-actions">
+      <button class="btn btn-outline" onclick="closeReceipt()" style="padding:6px 14px;font-size:13px">ปิด</button>
+      <button class="btn btn-primary" onclick="window.print()" style="padding:6px 14px;font-size:13px">
+        <svg viewBox="0 0 24 24"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+        พิมพ์
+      </button>
+    </div>
+    <div class="receipt-body" id="receiptBody"></div>
+  </div>
+</div>
+
+<script src="config.js"></script>
+<script src="sidebar.js"></script>
+<script>
+let invoices = [], config = {}, staff = [], currentFilter = 'all';
+
+document.addEventListener('DOMContentLoaded', () => {
+  if (!initPage('receipts')) return;
+  const now = new Date();
+  const selM = document.getElementById('selMonth');
+  const selY = document.getElementById('selYear');
+  selM.value = now.getMonth() + 1;
+  const yr = now.getFullYear() + 543;
+  for (let y = yr; y >= yr - 3; y--) {
+    const o = document.createElement('option'); o.value = y; o.textContent = y; selY.appendChild(o);
+  }
+  selY.value = yr;
+  loadData();
+});
+
+async function loadData() {
+  const month = document.getElementById('selMonth').value;
+  const year  = document.getElementById('selYear').value;
+  try {
+    const [ir, sr] = await Promise.all([
+      apiAuth('getInvoices', { month, year }),
+      apiAuth('getSettings'),
+    ]);
+    invoices = ir.data || [];
+    config   = sr.data?.config || {};
+    staff    = sr.data?.staff  || [];
+    renderTable();
+  } catch(e) { toast('err', 'โหลดไม่ได้: ' + e.message); }
+}
+
+function renderTable() {
+  const q    = document.getElementById('searchInput').value.toLowerCase();
+  const list = invoices.filter(inv => {
+    const name = ((inv.member?.first_name || '') + (inv.member?.last_name || '') + (inv.member?.house_no || '')).toLowerCase();
+    if (!name.includes(q)) return false;
+    if (currentFilter === 'paid'   && inv.status !== 'paid')   return false;
+    if (currentFilter === 'issued' && inv.status !== 'issued') return false;
+    return true;
+  });
+
+  const totalPaid = list.filter(i => i.status === 'paid').reduce((s, i) => s + (parseFloat(i.total_amount) || 0), 0);
+  const totalPend = list.filter(i => i.status === 'issued').reduce((s, i) => s + (parseFloat(i.total_amount) || 0), 0);
+  document.getElementById('sumPaid').textContent = totalPaid.toLocaleString('th-TH') + ' บาท';
+  document.getElementById('sumPend').textContent = totalPend.toLocaleString('th-TH') + ' บาท';
+
+  const tbody = document.getElementById('invTbody');
+  if (!list.length) {
+    tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:40px;color:var(--gray-400)">ไม่พบใบเสร็จ</td></tr>';
+    return;
+  }
+  const stCls = { paid:'tag-paid', issued:'tag-issued', cancelled:'tag-draft' };
+  const stTh  = { paid:'✓ ชำระแล้ว', issued:'รอชำระ', cancelled:'ยกเลิก' };
+  tbody.innerHTML = list.map(inv => `
+    <tr>
+      <td style="font-family:monospace;font-size:13px;font-weight:700">${inv.invoice_no || '—'}</td>
+      <td style="font-weight:600">${inv.member?.first_name || ''} ${inv.member?.last_name || ''}</td>
+      <td>${inv.member?.house_no || '—'}</td>
+      <td style="text-align:center">${inv.units_used ?? 0} หน่วย</td>
+      <td style="text-align:right;font-weight:700">${(parseFloat(inv.total_amount)||0).toLocaleString('th-TH')} บาท</td>
+      <td><span class="tag ${stCls[inv.status]||'tag-draft'}">${stTh[inv.status]||inv.status}</span></td>
+      <td>
+        <div style="display:flex;gap:5px">
+          <button onclick="showReceipt('${inv.invoice_id}')"
+            style="padding:5px 10px;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;border:1.5px solid var(--blue);color:var(--blue);background:var(--blue-pale);font-family:'Sarabun',sans-serif;transition:all .15s"
+            onmouseover="this.style.background='var(--blue)';this.style.color='white'"
+            onmouseout="this.style.background='var(--blue-pale)';this.style.color='var(--blue)'">พิมพ์</button>
+          ${inv.status === 'issued' ? `<button onclick="markPaid('${inv.invoice_id}')"
+            style="padding:5px 10px;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;border:1.5px solid var(--green);color:var(--green);background:var(--green-bg);font-family:'Sarabun',sans-serif;transition:all .15s"
+            onmouseover="this.style.background='var(--green)';this.style.color='white'"
+            onmouseout="this.style.background='var(--green-bg)';this.style.color='var(--green)'">รับเงินแล้ว</button>` : ''}
+        </div>
+      </td>
+    </tr>`).join('');
+}
+
+function showReceipt(invoiceId) {
+  const inv = invoices.find(i => i.invoice_id === invoiceId);
+  if (!inv) return;
+  const m         = inv.member || {};
+  const user      = Auth.user();
+  const collector = staff.find(s => s.staff_id === inv.collector_id && s.status === 'active');
+  const treasurer = staff.find(s => s.staff_id === inv.treasurer_id && s.status === 'active');
+  const total     = parseFloat(inv.total_amount) || 0;
+  const mth       = ['','มกราคม','กุมภาพันธ์','มีนาคม','เมษายน','พฤษภาคม','มิถุนายน','กรกฎาคม','สิงหาคม','กันยายน','ตุลาคม','พฤศจิกายน','ธันวาคม'];
+
+  document.getElementById('receiptBody').innerHTML = `
+    <div class="r-center">
+      <div class="r-org">การประปา ${user.village_name || ''}</div>
+      <div class="r-sub">${user.village_area || ''}</div>
+      <div class="r-sub" style="font-size:15px;font-weight:700;margin-top:6px">ใบเสร็จรับเงิน</div>
+      <div class="r-num">เล่มที่ ${inv.book_no||'—'} &nbsp; เลขที่ ${inv.invoice_no||'—'}</div>
+    </div>
+    <hr class="r-divider">
+    <div class="r-row"><span class="lbl">วันที่</span><span class="val">${fmtDate(inv.issue_date, {day:'numeric',month:'long',year:'numeric'})}</span></div>
+    <div class="r-row"><span class="lbl">ชื่อผู้ใช้น้ำ</span><span class="val">${m.first_name||''} ${m.last_name||''}</span></div>
+    <div class="r-row"><span class="lbl">บ้านเลขที่</span><span class="val">${m.house_no||'—'}</span></div>
+    <div class="r-row"><span class="lbl">หมายเลขมิเตอร์</span><span class="val">${m.meter_id||'—'}</span></div>
+    <hr class="r-divider">
+    <div class="r-row"><span class="lbl">เลขมิเตอร์ครั้งก่อน</span><span class="val">${inv.prev_reading||0}</span></div>
+    <div class="r-row"><span class="lbl">เลขมิเตอร์ครั้งหลัง</span><span class="val">${inv.curr_reading||0}</span></div>
+    <div class="r-row" style="margin-top:6px"><span class="lbl">1. ค่าน้ำ ${inv.units_used||0} หน่วย × ${inv.rate||config.rate_per_unit||7} บาท</span><span class="val">${(parseFloat(inv.water_fee)||0).toLocaleString('th-TH')} บาท</span></div>
+    ${parseFloat(inv.maintenance_fee) > 0 ? `<div class="r-row"><span class="lbl">2. ค่ารักษามิเตอร์</span><span class="val">${(parseFloat(inv.maintenance_fee)||0).toLocaleString('th-TH')} บาท</span></div>` : ''}
+    ${parseFloat(inv.other_fee) > 0 ? `<div class="r-row"><span class="lbl">3. ค่าอื่นๆ</span><span class="val">${(parseFloat(inv.other_fee)||0).toLocaleString('th-TH')} บาท</span></div>` : ''}
+    <div class="r-total"><span>รวมเงิน</span><span>${total.toLocaleString('th-TH')} บาท</span></div>
+    <div class="r-words">(${bahtText(total)})</div>
+    <div class="r-sign">
+      <div><div class="r-sign-line">${collector?.full_name||'......................'}</div><div>ผู้เก็บเงิน</div></div>
+      <div><div class="r-sign-line">${treasurer?.full_name||'......................'}</div><div>เหรัญญิก</div></div>
+    </div>`;
+  document.getElementById('receiptOverlay').classList.add('show');
+}
+
+function closeReceipt() { document.getElementById('receiptOverlay').classList.remove('show'); }
+
+async function markPaid(invoiceId) {
+  if (!confirm('ยืนยันรับเงินค่าน้ำเรียบร้อยแล้ว?')) return;
+  const inv = invoices.find(i => i.invoice_id === invoiceId);
+  if (!inv) return;
+  try {
+    const r = await apiAuth('saveInvoice', { invoice: { ...inv, status: 'paid', paid_date: new Date().toISOString() } });
+    if (r.ok) { toast('ok', '✓ อัปเดตการชำระเงินแล้ว'); await loadData(); }
+    else toast('err', r.message || 'เกิดข้อผิดพลาด');
+  } catch(e) { toast('err', e.message); }
+}
+
+async function generateAll() {
+  if (!confirm('สร้างใบเสร็จสำหรับสมาชิกที่บันทึกมิเตอร์แล้วทั้งหมด?')) return;
+  toast('info', 'กำลังสร้างใบเสร็จ...', 5000);
+  try {
+    const r = await apiAuth('generateAllInvoices', {
+      month: document.getElementById('selMonth').value,
+      year:  document.getElementById('selYear').value,
+    });
+    if (r.ok) { toast('ok', `✓ สร้างใบเสร็จแล้ว ${r.count || ''} ใบ`); await loadData(); }
+    else toast('err', r.message || 'เกิดข้อผิดพลาด');
+  } catch(e) { toast('err', e.message); }
+}
+
+function printAll() {
+  window.location.href = `print-form.html?type=receipt&month=${document.getElementById('selMonth').value}&year=${document.getElementById('selYear').value}`;
+}
+
+function setFilter(f) {
+  currentFilter = f;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById(f === 'all' ? 'fAll' : f === 'issued' ? 'fIssued' : 'fPaid').classList.add('active');
+  renderTable();
+}
+</script>
+</body>
+</html>

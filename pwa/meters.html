@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>บันทึกมิเตอร์ — ระบบประปาหมู่บ้าน</title>
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;600;700&family=Noto+Serif+Thai:wght@700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="layout.css">
+<style>
+/* Period bar */
+.period-bar{background:white;border:1px solid var(--gray-200);border-radius:var(--r-lg);padding:14px 18px;margin-bottom:18px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;box-shadow:var(--sh)}
+.period-bar label{font-size:13px;font-weight:600;color:var(--gray-600);white-space:nowrap}
+.period-bar select{height:38px;padding:0 10px;border:1.5px solid var(--gray-200);border-radius:var(--r);font-family:'Sarabun',sans-serif;font-size:14px;color:var(--gray-800);background:var(--gray-50);outline:none;transition:all .18s}
+.period-bar select:focus{border-color:var(--blue)}
+
+/* Progress */
+.progress-card{background:white;border:1px solid var(--gray-200);border-radius:var(--r-lg);padding:16px 20px;margin-bottom:18px;box-shadow:var(--sh);display:grid;grid-template-columns:1fr auto;gap:16px;align-items:center}
+.progress-bar-wrap{height:8px;background:var(--gray-100);border-radius:20px;overflow:hidden;margin:6px 0}
+.progress-bar-fill{height:100%;border-radius:20px;background:linear-gradient(90deg,var(--blue),var(--teal));transition:width .5s ease}
+.progress-stats{display:flex;gap:18px;text-align:center}
+.ps-val{font-size:22px;font-weight:700;color:var(--gray-800);line-height:1}
+.ps-lbl{font-size:11px;color:var(--gray-400);margin-top:1px}
+.ps-done .ps-val{color:var(--green)}
+.ps-left .ps-val{color:var(--amber)}
+
+/* Cards grid */
+.cards-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px}
+
+/* Member card */
+.m-card{background:white;border:2px solid var(--gray-200);border-radius:var(--r-lg);padding:16px;transition:all .2s}
+.m-card:hover{box-shadow:var(--sh-md)}
+.m-card.recorded{border-color:#86efac}
+.m-card.pending{border-color:var(--amber)}
+
+.m-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:12px}
+.m-no{font-size:11px;font-weight:700;color:var(--gray-400);letter-spacing:.8px;text-transform:uppercase}
+.m-name{font-size:15px;font-weight:700;color:var(--gray-800);line-height:1.3;margin-top:2px}
+.m-house{font-size:12px;color:var(--gray-500);margin-top:2px}
+.m-meter{font-size:12px;color:var(--gray-400);font-family:monospace}
+
+/* Reading inputs */
+.reading-area{background:var(--gray-50);border-radius:var(--r);padding:12px}
+.r-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
+.r-lbl{font-size:11px;font-weight:700;color:var(--gray-500);margin-bottom:4px;text-transform:uppercase;letter-spacing:.4px}
+.r-input{width:100%;height:46px;padding:0 12px;border:1.5px solid var(--gray-200);border-radius:var(--r);font-family:'Sarabun',sans-serif;font-size:16px;font-weight:600;color:var(--gray-800);background:white;outline:none;transition:all .18s;text-align:center}
+.r-input:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(45,125,210,.1)}
+.r-input.curr{background:var(--blue-pale);border-color:var(--blue);font-size:18px}
+.r-input.prev{background:var(--gray-50);color:var(--gray-500)}
+
+.units-box{display:flex;align-items:center;justify-content:space-between;background:white;border:1px solid var(--gray-200);border-radius:var(--r);padding:10px 14px;margin-bottom:10px}
+.units-box .lbl{font-size:13px;color:var(--gray-500)}
+.units-box .val{font-size:20px;font-weight:700;color:var(--gray-800)}
+.units-box .money{font-size:14px;font-weight:700;color:var(--green);margin-left:8px}
+
+.date-input{width:100%;height:38px;padding:0 10px;border:1.5px solid var(--gray-200);border-radius:var(--r);font-family:'Sarabun',sans-serif;font-size:13px;color:var(--gray-800);background:white;outline:none;transition:all .18s}
+.date-input:focus{border-color:var(--blue)}
+
+.btn-save-card{width:100%;height:44px;background:linear-gradient(135deg,var(--blue),var(--teal));color:white;font-family:'Sarabun',sans-serif;font-size:15px;font-weight:700;border:none;border-radius:var(--r);cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:6px;box-shadow:0 3px 10px rgba(45,125,210,.35)}
+.btn-save-card:hover:not(:disabled){transform:translateY(-1px);box-shadow:0 5px 16px rgba(45,125,210,.45)}
+.btn-save-card:disabled{opacity:.6;cursor:not-allowed;transform:none}
+
+.recorded-box{background:var(--green-bg);border:1px solid #86efac;border-radius:var(--r);padding:12px 14px}
+.rec-row{display:flex;justify-content:space-between;font-size:13px;padding:2px 0}
+.rec-lbl{color:var(--gray-500)}
+.rec-val{font-weight:600;color:var(--gray-800)}
+.rec-total{font-size:16px;font-weight:700;color:var(--green);margin-top:6px;padding-top:6px;border-top:1px solid #bbf7d0;display:flex;justify-content:space-between}
+.btn-edit-card{width:100%;height:38px;margin-top:8px;background:white;border:1.5px solid var(--gray-200);border-radius:var(--r);font-family:'Sarabun',sans-serif;font-size:13px;font-weight:600;color:var(--gray-600);cursor:pointer;transition:all .18s}
+.btn-edit-card:hover{border-color:var(--amber);color:var(--amber)}
+
+@keyframes spin{to{transform:rotate(360deg)}}
+.spin-sm{display:inline-block;width:16px;height:16px;border:2px solid rgba(255,255,255,.3);border-top-color:white;border-radius:50%;animation:spin .6s linear infinite;vertical-align:middle;margin-right:4px}
+
+@media(max-width:640px){.cards-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="main">
+  <header class="topbar">
+    <div class="topbar-title">บันทึกมิเตอร์ประจำเดือน</div>
+    <div class="topbar-date" id="topbarDate"></div>
+    <button class="btn btn-outline" onclick="window.location.href='print-form.html?type=meter'">
+      <svg viewBox="0 0 24 24"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+      พิมพ์สมุดจด
+    </button>
+  </header>
+  <div class="content">
+
+    <!-- Period -->
+    <div class="period-bar">
+      <label>ประจำเดือน</label>
+      <select id="selMonth">
+        <option value="1">มกราคม</option><option value="2">กุมภาพันธ์</option>
+        <option value="3">มีนาคม</option><option value="4">เมษายน</option>
+        <option value="5">พฤษภาคม</option><option value="6">มิถุนายน</option>
+        <option value="7">กรกฎาคม</option><option value="8">สิงหาคม</option>
+        <option value="9">กันยายน</option><option value="10">ตุลาคม</option>
+        <option value="11">พฤศจิกายน</option><option value="12">ธันวาคม</option>
+      </select>
+      <label>พ.ศ.</label>
+      <select id="selYear"></select>
+      <button class="btn btn-primary" onclick="loadData()">
+        <svg viewBox="0 0 24 24"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3"/></svg>
+        โหลดข้อมูล
+      </button>
+    </div>
+
+    <!-- Progress -->
+    <div class="progress-card">
+      <div>
+        <div style="font-size:13px;font-weight:600;color:var(--gray-600);margin-bottom:4px">ความคืบหน้าการบันทึก</div>
+        <div class="progress-bar-wrap"><div class="progress-bar-fill" id="pFill" style="width:0%"></div></div>
+        <div style="font-size:12px;color:var(--gray-400)" id="pLabel">กำลังโหลด...</div>
+      </div>
+      <div class="progress-stats">
+        <div class="ps-done"><div class="ps-val" id="pDone">0</div><div class="ps-lbl">บันทึกแล้ว</div></div>
+        <div class="ps-left"><div class="ps-val" id="pLeft">0</div><div class="ps-lbl">คงเหลือ</div></div>
+        <div><div class="ps-val" id="pTotal">0</div><div class="ps-lbl">ทั้งหมด</div></div>
+      </div>
+    </div>
+
+    <!-- Filter -->
+    <div style="display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap">
+      <div class="search-wrap">
+        <svg class="s-icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="text" id="searchInput" placeholder="ค้นหาชื่อ หรือบ้านเลขที่..." oninput="renderCards()">
+      </div>
+      <button class="filter-btn active" id="fAll"      onclick="setFilter('all')">ทั้งหมด</button>
+      <button class="filter-btn"        id="fPending"  onclick="setFilter('pending')">ยังไม่ได้จด</button>
+      <button class="filter-btn"        id="fRecorded" onclick="setFilter('recorded')">บันทึกแล้ว</button>
+    </div>
+
+    <div class="cards-grid" id="cardsGrid"></div>
+  </div>
+</div>
+
+<script src="config.js"></script>
+<script src="sidebar.js"></script>
+<script>
+let members = [], readings = [], rate = 7, currentFilter = 'all';
+
+document.addEventListener('DOMContentLoaded', () => {
+  if (!initPage('meters')) return;
+  const now = new Date();
+  const selM = document.getElementById('selMonth');
+  const selY = document.getElementById('selYear');
+  selM.value = now.getMonth() + 1;
+  const yr = now.getFullYear() + 543;
+  for (let y = yr; y >= yr - 3; y--) {
+    const o = document.createElement('option');
+    o.value = y; o.textContent = y; selY.appendChild(o);
+  }
+  selY.value = yr;
+  loadData();
+});
+
+async function loadData() {
+  toast('info', 'กำลังโหลดข้อมูล...', 1500);
+  const month = document.getElementById('selMonth').value;
+  const year  = document.getElementById('selYear').value;
+  try {
+    const [mr, rr, sr] = await Promise.all([
+      apiAuth('getMembers'),
+      apiAuth('getReadings', { month, year }),
+      apiAuth('getSettings'),
+    ]);
+    members  = (mr.data || []).filter(m => m.status === 'active');
+    readings = rr.data || [];
+    rate     = parseFloat(sr.data?.config?.rate_per_unit) || 7;
+    renderCards();
+    updateProgress();
+  } catch(e) { toast('err', 'โหลดไม่ได้: ' + e.message); }
+}
+
+function getRdg(memberId)  { return readings.find(r => r.member_id === memberId) || null; }
+function todayStr()        { return new Date().toISOString().slice(0, 10); }
+
+function renderCards() {
+  const q   = document.getElementById('searchInput').value.toLowerCase();
+  const grid = document.getElementById('cardsGrid');
+  const list = members.filter(m => {
+    const match = (m.first_name + m.last_name + m.house_no).toLowerCase().includes(q);
+    const rdg   = getRdg(m.member_id);
+    if (currentFilter === 'pending'  && rdg)  return false;
+    if (currentFilter === 'recorded' && !rdg) return false;
+    return match;
+  });
+  if (!list.length) {
+    grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:60px;color:var(--gray-400)">ไม่พบสมาชิกที่ค้นหา</div>';
+    return;
+  }
+  grid.innerHTML = list.map((m, i) => buildCard(m, i)).join('');
+}
+
+function buildCard(m, idx) {
+  const rdg    = getRdg(m.member_id);
+  const units  = rdg ? Math.max(0, parseFloat(rdg.units_used) || 0) : 0;
+  const amount = units * rate;
+  const isRec  = !!rdg;
+
+  if (isRec) {
+    return `<div class="m-card recorded" id="card-${m.member_id}">
+      <div class="m-top">
+        <div>
+          <div class="m-no">ลำดับที่ ${idx + 1}</div>
+          <div class="m-name">${m.title||''} ${m.first_name} ${m.last_name}</div>
+          <div class="m-house">บ้านเลขที่ ${m.house_no || '—'}</div>
+          <div class="m-meter">มิเตอร์: ${m.meter_id || '—'}</div>
+        </div>
+        <span class="tag tag-active">✓ บันทึกแล้ว</span>
+      </div>
+      <div class="recorded-box">
+        <div class="rec-row"><span class="rec-lbl">เลขครั้งก่อน</span><span class="rec-val">${rdg.prev_reading ?? '—'}</span></div>
+        <div class="rec-row"><span class="rec-lbl">เลขครั้งหลัง</span><span class="rec-val">${rdg.curr_reading ?? '—'}</span></div>
+        <div class="rec-row"><span class="rec-lbl">วันที่จด</span><span class="rec-val">${fmtDate(rdg.read_date_curr)}</span></div>
+        <div class="rec-total"><span>${units} หน่วย</span><span>${amount.toLocaleString('th-TH')} บาท</span></div>
+      </div>
+      <button class="btn-edit-card" onclick="editCard('${m.member_id}')">✏️ แก้ไข</button>
+    </div>`;
+  }
+
+  return `<div class="m-card pending" id="card-${m.member_id}">
+    <div class="m-top">
+      <div>
+        <div class="m-no">ลำดับที่ ${idx + 1}</div>
+        <div class="m-name">${m.title||''} ${m.first_name} ${m.last_name}</div>
+        <div class="m-house">บ้านเลขที่ ${m.house_no || '—'}</div>
+        <div class="m-meter">มิเตอร์: ${m.meter_id || '—'}</div>
+      </div>
+      <span class="tag tag-issued">รอจด</span>
+    </div>
+    <div class="reading-area">
+      <div class="r-row">
+        <div>
+          <div class="r-lbl">เลขมิเตอร์ครั้งก่อน</div>
+          <input type="number" class="r-input prev" id="prev-${m.member_id}"
+            placeholder="0" oninput="calcUnits('${m.member_id}')">
+        </div>
+        <div>
+          <div class="r-lbl">เลขมิเตอร์ครั้งหลัง ★</div>
+          <input type="number" class="r-input curr" id="curr-${m.member_id}"
+            placeholder="0" oninput="calcUnits('${m.member_id}')">
+        </div>
+      </div>
+      <div class="units-box" id="units-${m.member_id}">
+        <span class="lbl">หน่วยที่ใช้</span>
+        <span>
+          <span class="val" id="uval-${m.member_id}" style="color:var(--gray-400)">—</span>
+          <span class="money" id="umoney-${m.member_id}"></span>
+        </span>
+      </div>
+      <div class="r-row">
+        <div>
+          <div class="r-lbl">วันที่จดครั้งก่อน</div>
+          <input type="date" class="date-input" id="dPrev-${m.member_id}">
+        </div>
+        <div>
+          <div class="r-lbl">วันที่จดครั้งหลัง</div>
+          <input type="date" class="date-input" id="dCurr-${m.member_id}" value="${todayStr()}">
+        </div>
+      </div>
+      <button class="btn-save-card" id="btnSave-${m.member_id}" onclick="saveReading('${m.member_id}')">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+        บันทึกมิเตอร์
+      </button>
+    </div>
+  </div>`;
+}
+
+function calcUnits(id) {
+  const prev  = parseFloat(document.getElementById('prev-' + id)?.value) || 0;
+  const curr  = parseFloat(document.getElementById('curr-' + id)?.value) || 0;
+  const units = Math.max(0, curr - prev);
+  const uval  = document.getElementById('uval-' + id);
+  const umoney= document.getElementById('umoney-' + id);
+  if (!uval) return;
+  uval.textContent   = units > 0 ? units + ' หน่วย' : '—';
+  uval.style.color   = units > 0 ? 'var(--gray-800)' : 'var(--gray-400)';
+  umoney.textContent = units > 0 ? (units * rate).toLocaleString('th-TH') + ' บาท' : '';
+}
+
+async function saveReading(memberId) {
+  const prev  = document.getElementById('prev-' + memberId)?.value;
+  const curr  = document.getElementById('curr-' + memberId)?.value;
+  const dPrev = document.getElementById('dPrev-' + memberId)?.value;
+  const dCurr = document.getElementById('dCurr-' + memberId)?.value;
+
+  if (!curr) { toast('err', 'กรุณากรอกเลขมิเตอร์ครั้งหลัง'); return; }
+  if (parseFloat(curr) < parseFloat(prev || 0)) { toast('err', 'เลขมิเตอร์ครั้งหลังต้องมากกว่าหรือเท่ากับครั้งก่อน'); return; }
+
+  const btn = document.getElementById('btnSave-' + memberId);
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spin-sm"></span> กำลังบันทึก...';
+
+  try {
+    const r = await apiAuth('saveReading', {
+      reading: {
+        member_id:      memberId,
+        period_month:   document.getElementById('selMonth').value,
+        period_year:    document.getElementById('selYear').value,
+        prev_reading:   parseFloat(prev) || 0,
+        curr_reading:   parseFloat(curr),
+        read_date_prev: dPrev,
+        read_date_curr: dCurr,
+      }
+    });
+    if (r.ok) {
+      readings.push({
+        member_id:     memberId,
+        prev_reading:  parseFloat(prev) || 0,
+        curr_reading:  parseFloat(curr),
+        units_used:    r.units_used,
+        read_date_curr: dCurr,
+        read_date_prev: dPrev,
+      });
+      const card = document.getElementById('card-' + memberId);
+      if (card) { card.style.opacity = '0'; card.style.transition = 'opacity .3s'; }
+      setTimeout(() => { renderCards(); updateProgress(); }, 300);
+      toast('ok', '✓ บันทึกสำเร็จ!');
+    } else {
+      toast('err', 'เกิดข้อผิดพลาด: ' + (r.message || r.reason));
+      btn.disabled = false;
+      btn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> บันทึกมิเตอร์';
+    }
+  } catch(e) {
+    toast('err', 'บันทึกไม่ได้: ' + e.message);
+    btn.disabled = false;
+    btn.innerHTML = 'บันทึกมิเตอร์';
+  }
+}
+
+function editCard(memberId) {
+  const idx = readings.findIndex(r => r.member_id === memberId);
+  if (idx !== -1) readings.splice(idx, 1);
+  renderCards();
+  updateProgress();
+}
+
+function updateProgress() {
+  const done  = members.filter(m => getRdg(m.member_id)).length;
+  const total = members.length;
+  const pct   = total > 0 ? Math.round(done / total * 100) : 0;
+  document.getElementById('pFill').style.width  = pct + '%';
+  document.getElementById('pLabel').textContent = `บันทึกแล้ว ${done} จาก ${total} ครัวเรือน (${pct}%)`;
+  document.getElementById('pDone').textContent  = done;
+  document.getElementById('pLeft').textContent  = total - done;
+  document.getElementById('pTotal').textContent = total;
+}
+
+function setFilter(f) {
+  currentFilter = f;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById(f === 'all' ? 'fAll' : f === 'pending' ? 'fPending' : 'fRecorded').classList.add('active');
+  renderCards();
+}
+</script>
+</body>
+</html>

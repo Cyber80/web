@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ทะเบียนสมาชิก — ระบบประปาหมู่บ้าน</title>
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;600;700&family=Noto+Serif+Thai:wght@700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="layout.css">
+</head>
+<body>
+<div class="main">
+  <header class="topbar">
+    <div class="topbar-title">ทะเบียนสมาชิก</div>
+    <div class="topbar-date" id="topbarDate"></div>
+    <button class="btn btn-primary" onclick="openModal()">
+      <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      เพิ่มสมาชิกใหม่
+    </button>
+  </header>
+  <div class="content">
+
+    <!-- Toolbar -->
+    <div style="display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap">
+      <div class="search-wrap">
+        <svg class="s-icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="text" id="searchInput" placeholder="ค้นหาชื่อ นามสกุล บ้านเลขที่ หมายเลขมิเตอร์..." oninput="renderTable()">
+      </div>
+      <button class="filter-btn active" id="fAll"      onclick="setFilter('all')">ทั้งหมด</button>
+      <button class="filter-btn"        id="fActive"   onclick="setFilter('active')">ใช้งาน</button>
+      <button class="filter-btn"        id="fInactive" onclick="setFilter('inactive')">ยกเลิก/โอน</button>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">รายชื่อสมาชิก</div>
+        <span id="countBadge" style="background:var(--blue-pale);color:var(--blue);font-size:12px;font-weight:700;padding:2px 10px;border-radius:20px">— คน</span>
+      </div>
+      <div style="overflow-x:auto">
+        <table>
+          <thead>
+            <tr>
+              <th>#</th><th>ชื่อ-นามสกุล</th><th>บ้านเลขที่</th>
+              <th>หมายเลขมิเตอร์</th><th>เบอร์โทร</th>
+              <th>สถานะ</th><th>วันที่เข้าร่วม</th><th>จัดการ</th>
+            </tr>
+          </thead>
+          <tbody id="membersTbody">
+            <tr><td colspan="8" style="text-align:center;padding:40px;color:var(--gray-400)">กำลังโหลด...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal เพิ่ม/แก้ไขสมาชิก -->
+<div class="modal-overlay" id="modalOverlay" onclick="if(event.target===this)closeModal()">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title" id="modalTitle">เพิ่มสมาชิกใหม่</div>
+      <button class="modal-close" onclick="closeModal()">
+        <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="fMemberId">
+
+      <div style="font-size:12px;font-weight:700;color:var(--gray-400);text-transform:uppercase;letter-spacing:.8px;padding-bottom:6px;border-bottom:1px solid var(--gray-100);margin-bottom:4px">ข้อมูลส่วนตัว</div>
+
+      <div class="form-grid-2">
+        <div class="form-group">
+          <label>คำนำหน้า</label>
+          <select id="fTitle">
+            <option>นาย</option><option>นาง</option><option>น.ส.</option>
+            <option>เด็กชาย</option><option>เด็กหญิง</option><option>อื่นๆ</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>เบอร์โทรศัพท์</label>
+          <input type="tel" id="fPhone" placeholder="08x-xxx-xxxx">
+        </div>
+      </div>
+      <div class="form-grid-2">
+        <div class="form-group">
+          <label>ชื่อ <span class="req">*</span></label>
+          <input type="text" id="fFirstName" placeholder="ชื่อจริง">
+        </div>
+        <div class="form-group">
+          <label>นามสกุล <span class="req">*</span></label>
+          <input type="text" id="fLastName" placeholder="นามสกุล">
+        </div>
+      </div>
+
+      <div style="font-size:12px;font-weight:700;color:var(--gray-400);text-transform:uppercase;letter-spacing:.8px;padding-bottom:6px;border-bottom:1px solid var(--gray-100);margin-bottom:4px;margin-top:8px">ข้อมูลบ้านและมิเตอร์</div>
+
+      <div class="form-grid-2">
+        <div class="form-group">
+          <label>บ้านเลขที่</label>
+          <input type="text" id="fHouseNo" placeholder="เช่น 63/1">
+          <div class="form-hint">⚠️ บ้านเลขที่อาจเปลี่ยนได้ ระบบใช้รหัสสมาชิกแทน</div>
+        </div>
+        <div class="form-group">
+          <label>หมายเลขมิเตอร์</label>
+          <input type="text" id="fMeterId" placeholder="รหัสมิเตอร์น้ำ">
+        </div>
+      </div>
+      <div class="form-group">
+        <label>ที่อยู่เพิ่มเติม</label>
+        <textarea id="fAddress" placeholder="รายละเอียดที่อยู่ (ถ้ามี)"></textarea>
+      </div>
+
+      <div style="font-size:12px;font-weight:700;color:var(--gray-400);text-transform:uppercase;letter-spacing:.8px;padding-bottom:6px;border-bottom:1px solid var(--gray-100);margin-bottom:4px;margin-top:8px">วันที่และสถานะ</div>
+
+      <div class="form-grid-2">
+        <div class="form-group">
+          <label>วันที่เข้าร่วม <span class="req">*</span></label>
+          <input type="date" id="fJoinDate">
+        </div>
+        <div class="form-group">
+          <label>สถานะ</label>
+          <select id="fStatus" onchange="toggleEndDate()">
+            <option value="active">ใช้งาน (Active)</option>
+            <option value="inactive">ยกเลิก (Inactive)</option>
+            <option value="transferred">โอนย้าย (Transferred)</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group" id="endDateGroup" style="display:none">
+        <label>วันที่สิ้นสุด</label>
+        <input type="date" id="fEndDate">
+      </div>
+      <div class="form-group">
+        <label>หมายเหตุ</label>
+        <textarea id="fNotes" placeholder="หมายเหตุเพิ่มเติม"></textarea>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal()">ยกเลิก</button>
+      <button class="btn btn-primary" id="btnSave" onclick="saveMember()">
+        <svg viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/></svg>
+        บันทึกสมาชิก
+      </button>
+    </div>
+  </div>
+</div>
+
+<script src="config.js"></script>
+<script src="sidebar.js"></script>
+<script>
+let members = [], currentFilter = 'all';
+
+document.addEventListener('DOMContentLoaded', async () => {
+  if (!initPage('members')) return;
+  document.getElementById('fJoinDate').value = new Date().toISOString().slice(0, 10);
+  await loadMembers();
+});
+
+async function loadMembers() {
+  try {
+    const r = await apiAuth('getMembers');
+    members = r.data || [];
+    renderTable();
+  } catch(e) { toast('err', 'โหลดข้อมูลไม่ได้: ' + e.message); }
+}
+
+function renderTable() {
+  const q = document.getElementById('searchInput').value.toLowerCase();
+  const list = members.filter(m => {
+    const match = (m.first_name + m.last_name + m.house_no + m.meter_id).toLowerCase().includes(q);
+    if (currentFilter === 'active'   && m.status !== 'active') return false;
+    if (currentFilter === 'inactive' && m.status === 'active') return false;
+    return match;
+  });
+
+  document.getElementById('countBadge').textContent = list.length + ' คน';
+  const stCls = { active:'tag-active', inactive:'tag-inactive', transferred:'tag-inactive' };
+  const stTh  = { active:'ใช้งาน', inactive:'ยกเลิก', transferred:'โอนย้าย' };
+  const tbody = document.getElementById('membersTbody');
+
+  if (!list.length) {
+    tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;padding:40px;color:var(--gray-400)">ไม่พบสมาชิก</td></tr>';
+    return;
+  }
+  tbody.innerHTML = list.map((m, i) => `
+    <tr>
+      <td style="font-size:12px;color:var(--gray-400)">${i + 1}</td>
+      <td style="font-weight:600">${m.title||''} ${m.first_name||''} ${m.last_name||''}</td>
+      <td>${m.house_no || '—'}</td>
+      <td style="font-family:monospace;font-size:13px">${m.meter_id || '—'}</td>
+      <td>${m.phone || '—'}</td>
+      <td><span class="tag ${stCls[m.status]||'tag-inactive'}">${stTh[m.status]||m.status}</span></td>
+      <td style="font-size:13px;color:var(--gray-400)">${fmtDate(m.join_date)}</td>
+      <td>
+        <div style="display:flex;gap:6px">
+          <button onclick='editMember(${JSON.stringify(m)})'
+            style="padding:5px 11px;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;border:1.5px solid var(--blue);color:var(--blue);background:var(--blue-pale);font-family:'Sarabun',sans-serif;transition:all .15s"
+            onmouseover="this.style.background='var(--blue)';this.style.color='white'"
+            onmouseout="this.style.background='var(--blue-pale)';this.style.color='var(--blue)'">แก้ไข</button>
+          <button onclick="toggleStatus('${m.member_id}','${m.status}')"
+            style="padding:5px 11px;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;border:1.5px solid var(--gray-200);color:var(--gray-500);background:white;font-family:'Sarabun',sans-serif;transition:all .15s"
+            onmouseover="this.style.borderColor='var(--red)';this.style.color='var(--red)'"
+            onmouseout="this.style.borderColor='var(--gray-200)';this.style.color='var(--gray-500)'">${m.status === 'active' ? 'ยกเลิก' : 'เปิดใช้'}</button>
+        </div>
+      </td>
+    </tr>`).join('');
+}
+
+function openModal(m = null) {
+  document.getElementById('fMemberId').value   = m?.member_id || '';
+  document.getElementById('fTitle').value      = m?.title || 'นาย';
+  document.getElementById('fFirstName').value  = m?.first_name || '';
+  document.getElementById('fLastName').value   = m?.last_name || '';
+  document.getElementById('fPhone').value      = m?.phone || '';
+  document.getElementById('fHouseNo').value    = m?.house_no || '';
+  document.getElementById('fMeterId').value    = m?.meter_id || '';
+  document.getElementById('fAddress').value    = m?.address || '';
+  document.getElementById('fJoinDate').value   = (m?.join_date || '').slice(0, 10) || new Date().toISOString().slice(0, 10);
+  document.getElementById('fEndDate').value    = (m?.end_date || '').slice(0, 10);
+  document.getElementById('fStatus').value     = m?.status || 'active';
+  document.getElementById('fNotes').value      = m?.notes || '';
+  document.getElementById('modalTitle').textContent = m ? 'แก้ไขข้อมูลสมาชิก' : 'เพิ่มสมาชิกใหม่';
+  toggleEndDate();
+  document.getElementById('modalOverlay').classList.add('show');
+  setTimeout(() => document.getElementById('fFirstName').focus(), 100);
+}
+
+function editMember(m) { openModal(m); }
+function closeModal()  { document.getElementById('modalOverlay').classList.remove('show'); }
+function toggleEndDate() {
+  const s = document.getElementById('fStatus').value;
+  document.getElementById('endDateGroup').style.display = s !== 'active' ? 'block' : 'none';
+}
+
+async function saveMember() {
+  const fn = document.getElementById('fFirstName').value.trim();
+  const ln = document.getElementById('fLastName').value.trim();
+  if (!fn || !ln) { toast('err', 'กรุณากรอกชื่อและนามสกุล'); return; }
+
+  const btn = document.getElementById('btnSave');
+  setLoading(btn, true);
+
+  const member = {
+    member_id:  document.getElementById('fMemberId').value || undefined,
+    title:      document.getElementById('fTitle').value,
+    first_name: fn, last_name: ln,
+    phone:      document.getElementById('fPhone').value,
+    house_no:   document.getElementById('fHouseNo').value,
+    meter_id:   document.getElementById('fMeterId').value,
+    address:    document.getElementById('fAddress').value,
+    join_date:  document.getElementById('fJoinDate').value,
+    end_date:   document.getElementById('fEndDate').value,
+    status:     document.getElementById('fStatus').value,
+    notes:      document.getElementById('fNotes').value,
+  };
+
+  try {
+    const r = await apiAuth('saveMember', { member });
+    if (r.ok) {
+      toast('ok', '✓ บันทึกสำเร็จ');
+      closeModal();
+      await loadMembers();
+    } else {
+      toast('err', 'เกิดข้อผิดพลาด: ' + (r.message || r.reason));
+    }
+  } catch(e) { toast('err', 'ไม่สามารถบันทึกได้: ' + e.message); }
+  setLoading(btn, false);
+}
+
+async function toggleStatus(memberId, currentStatus) {
+  const newStatus = currentStatus === 'active' ? 'inactive' : 'active';
+  if (!confirm(newStatus === 'inactive' ? 'ยืนยันยกเลิกสมาชิกนี้?' : 'ยืนยันเปิดใช้งานอีกครั้ง?')) return;
+  const m = members.find(x => x.member_id === memberId);
+  if (!m) return;
+  try {
+    const r = await apiAuth('saveMember', { member: { ...m, status: newStatus } });
+    if (r.ok) { toast('ok', '✓ อัปเดตสถานะแล้ว'); await loadMembers(); }
+    else toast('err', r.message || 'เกิดข้อผิดพลาด');
+  } catch(e) { toast('err', e.message); }
+}
+
+function setFilter(f) {
+  currentFilter = f;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById(f === 'all' ? 'fAll' : f === 'active' ? 'fActive' : 'fInactive').classList.add('active');
+  renderTable();
+}
+</script>
+</body>
+</html>
