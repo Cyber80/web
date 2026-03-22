@@ -1,0 +1,2442 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ระบบทะเบียนนักเรียน | ปพ. System</title>
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&family=Prompt:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<style>
+:root {
+  --navy: #1a2744;
+  --navy-light: #243160;
+  --gold: #c9a227;
+  --gold-light: #e8c04a;
+  --teal: #0d7377;
+  --teal-light: #14a085;
+  --cream: #faf7f0;
+  --white: #ffffff;
+  --gray-100: #f4f4f6;
+  --gray-200: #e8e8ed;
+  --gray-400: #9999aa;
+  --gray-700: #444455;
+  --danger: #c0392b;
+  --success: #1a7a4a;
+  --sidebar-w: 260px;
+  --header-h: 64px;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: 'Sarabun', sans-serif;
+  background: var(--cream);
+  color: var(--gray-700);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ===== LOGIN ===== */
+#loginScreen {
+  position: fixed; inset: 0;
+  background: linear-gradient(135deg, var(--navy) 0%, var(--navy-light) 50%, #1a3a5c 100%);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 9999;
+  transition: opacity 0.5s;
+}
+#loginScreen::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+}
+.login-card {
+  background: rgba(255,255,255,0.07);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255,255,255,0.15);
+  border-radius: 20px;
+  padding: 48px 40px;
+  width: 400px;
+  position: relative;
+  box-shadow: 0 30px 60px rgba(0,0,0,0.4);
+}
+.login-logo {
+  text-align: center;
+  margin-bottom: 32px;
+}
+.login-logo .emblem {
+  width: 80px; height: 80px;
+  background: linear-gradient(135deg, var(--gold), var(--gold-light));
+  border-radius: 50%;
+  margin: 0 auto 16px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 36px;
+  box-shadow: 0 8px 24px rgba(201,162,39,0.4);
+}
+.login-logo h1 {
+  color: var(--white);
+  font-family: 'Prompt', sans-serif;
+  font-size: 20px;
+  font-weight: 600;
+}
+.login-logo p { color: rgba(255,255,255,0.6); font-size: 14px; margin-top: 4px; }
+.login-field { margin-bottom: 16px; }
+.login-field label { display: block; color: rgba(255,255,255,0.7); font-size: 13px; margin-bottom: 6px; }
+.login-field input {
+  width: 100%;
+  background: rgba(255,255,255,0.1);
+  border: 1px solid rgba(255,255,255,0.2);
+  border-radius: 10px;
+  padding: 12px 16px;
+  color: white;
+  font-family: 'Sarabun', sans-serif;
+  font-size: 15px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+.login-field input:focus { border-color: var(--gold-light); }
+.login-field input::placeholder { color: rgba(255,255,255,0.3); }
+.btn-login {
+  width: 100%;
+  background: linear-gradient(135deg, var(--gold), var(--gold-light));
+  color: var(--navy);
+  border: none;
+  border-radius: 10px;
+  padding: 14px;
+  font-family: 'Prompt', sans-serif;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 8px;
+  transition: transform 0.15s, box-shadow 0.15s;
+  box-shadow: 0 6px 20px rgba(201,162,39,0.4);
+}
+.btn-login:hover { transform: translateY(-2px); box-shadow: 0 10px 28px rgba(201,162,39,0.5); }
+.login-error { color: #ff7675; font-size: 13px; margin-top: 10px; text-align: center; display: none; }
+
+/* ===== MAIN APP ===== */
+#app { display: none; }
+
+/* SIDEBAR */
+.sidebar {
+  position: fixed; top: 0; left: 0;
+  width: var(--sidebar-w);
+  height: 100vh;
+  background: var(--navy);
+  z-index: 100;
+  display: flex; flex-direction: column;
+  overflow-y: auto;
+  transition: transform 0.3s;
+}
+.sidebar-header {
+  padding: 20px 20px 16px;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+  display: flex; align-items: center; gap: 12px;
+}
+.sidebar-emblem {
+  width: 42px; height: 42px;
+  background: linear-gradient(135deg, var(--gold), var(--gold-light));
+  border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 20px;
+  flex-shrink: 0;
+}
+.sidebar-title { color: white; font-family: 'Prompt', sans-serif; }
+.sidebar-title strong { display: block; font-size: 14px; font-weight: 600; }
+.sidebar-title span { font-size: 11px; color: rgba(255,255,255,0.5); }
+
+.sidebar-section { padding: 8px 12px 4px; }
+.sidebar-section-label {
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: rgba(255,255,255,0.35);
+  padding: 12px 8px 6px;
+}
+.nav-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  color: rgba(255,255,255,0.65);
+  font-size: 14px;
+  transition: all 0.15s;
+  position: relative;
+}
+.nav-item:hover { background: rgba(255,255,255,0.07); color: white; }
+.nav-item.active {
+  background: linear-gradient(135deg, var(--gold) 0%, var(--gold-light) 100%);
+  color: var(--navy);
+  font-weight: 600;
+}
+.nav-item .icon { font-size: 16px; width: 20px; text-align: center; flex-shrink: 0; }
+.nav-badge {
+  margin-left: auto;
+  background: var(--teal);
+  color: white;
+  font-size: 10px;
+  padding: 2px 6px;
+  border-radius: 10px;
+}
+.sidebar-footer {
+  margin-top: auto;
+  padding: 16px;
+  border-top: 1px solid rgba(255,255,255,0.08);
+}
+.btn-logout {
+  width: 100%;
+  background: rgba(192,57,43,0.2);
+  border: 1px solid rgba(192,57,43,0.3);
+  color: #e74c3c;
+  border-radius: 8px;
+  padding: 10px;
+  cursor: pointer;
+  font-family: 'Sarabun', sans-serif;
+  font-size: 14px;
+  transition: background 0.2s;
+}
+.btn-logout:hover { background: rgba(192,57,43,0.35); }
+
+/* MAIN */
+.main {
+  margin-left: var(--sidebar-w);
+  min-height: 100vh;
+  display: flex; flex-direction: column;
+}
+
+/* TOPBAR */
+.topbar {
+  height: var(--header-h);
+  background: white;
+  border-bottom: 1px solid var(--gray-200);
+  display: flex; align-items: center;
+  padding: 0 28px;
+  gap: 16px;
+  position: sticky; top: 0; z-index: 50;
+}
+.topbar-title {
+  font-family: 'Prompt', sans-serif;
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--navy);
+}
+.topbar-breadcrumb { color: var(--gray-400); font-size: 13px; }
+.topbar-actions { margin-left: auto; display: flex; gap: 10px; align-items: center; }
+
+/* CONTENT */
+.content { padding: 28px; flex: 1; }
+
+/* PAGES */
+.page { display: none; }
+.page.active { display: block; }
+
+/* CARDS */
+.card {
+  background: white;
+  border-radius: 14px;
+  border: 1px solid var(--gray-200);
+  overflow: hidden;
+}
+.card-header {
+  padding: 18px 24px;
+  border-bottom: 1px solid var(--gray-200);
+  display: flex; align-items: center; gap: 12px;
+}
+.card-header h3 {
+  font-family: 'Prompt', sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--navy);
+}
+.card-body { padding: 24px; }
+
+/* BUTTONS */
+.btn {
+  display: inline-flex; align-items: center; gap: 7px;
+  padding: 9px 18px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  font-family: 'Sarabun', sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.15s;
+  text-decoration: none;
+}
+.btn-primary { background: var(--navy); color: white; }
+.btn-primary:hover { background: var(--navy-light); }
+.btn-gold { background: linear-gradient(135deg, var(--gold), var(--gold-light)); color: var(--navy); font-weight: 600; }
+.btn-gold:hover { box-shadow: 0 4px 16px rgba(201,162,39,0.4); }
+.btn-teal { background: var(--teal); color: white; }
+.btn-teal:hover { background: var(--teal-light); }
+.btn-outline { background: white; border: 1.5px solid var(--gray-200); color: var(--gray-700); }
+.btn-outline:hover { border-color: var(--navy); color: var(--navy); }
+.btn-danger { background: var(--danger); color: white; }
+.btn-sm { padding: 6px 12px; font-size: 13px; }
+.btn-icon { padding: 8px; min-width: 36px; justify-content: center; }
+
+/* STATS */
+.stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px; }
+.stat-card {
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  border: 1px solid var(--gray-200);
+  display: flex; align-items: center; gap: 16px;
+}
+.stat-icon {
+  width: 48px; height: 48px;
+  border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 22px;
+}
+.stat-icon.navy { background: rgba(26,39,68,0.1); }
+.stat-icon.gold { background: rgba(201,162,39,0.15); }
+.stat-icon.teal { background: rgba(13,115,119,0.1); }
+.stat-icon.green { background: rgba(26,122,74,0.1); }
+.stat-info strong { font-family: 'Prompt', sans-serif; font-size: 26px; color: var(--navy); font-weight: 700; }
+.stat-info span { display: block; color: var(--gray-400); font-size: 13px; }
+
+/* TABLE */
+.table-wrap { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-size: 14px; }
+th {
+  background: var(--gray-100);
+  padding: 10px 14px;
+  text-align: left;
+  font-weight: 600;
+  color: var(--navy);
+  font-size: 13px;
+  border-bottom: 2px solid var(--gray-200);
+  white-space: nowrap;
+}
+td { padding: 10px 14px; border-bottom: 1px solid var(--gray-200); vertical-align: middle; }
+tr:hover td { background: rgba(26,39,68,0.02); }
+.badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 500;
+}
+.badge-blue { background: rgba(26,39,68,0.1); color: var(--navy); }
+.badge-gold { background: rgba(201,162,39,0.15); color: #8a6e10; }
+.badge-green { background: rgba(26,122,74,0.1); color: var(--success); }
+.badge-red { background: rgba(192,57,43,0.1); color: var(--danger); }
+
+/* FORMS */
+.form-row { display: grid; gap: 16px; margin-bottom: 16px; }
+.form-row.col-2 { grid-template-columns: 1fr 1fr; }
+.form-row.col-3 { grid-template-columns: 1fr 1fr 1fr; }
+.form-row.col-4 { grid-template-columns: 1fr 1fr 1fr 1fr; }
+.form-group { display: flex; flex-direction: column; gap: 6px; }
+.form-group label { font-size: 13px; font-weight: 500; color: var(--gray-700); }
+.form-group input, .form-group select, .form-group textarea {
+  border: 1.5px solid var(--gray-200);
+  border-radius: 8px;
+  padding: 9px 12px;
+  font-family: 'Sarabun', sans-serif;
+  font-size: 14px;
+  color: var(--gray-700);
+  outline: none;
+  transition: border-color 0.15s;
+  width: 100%;
+}
+.form-group input:focus, .form-group select:focus { border-color: var(--navy); }
+.form-divider { height: 1px; background: var(--gray-200); margin: 20px 0; }
+.form-section-title {
+  font-family: 'Prompt', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--navy);
+  margin-bottom: 14px;
+  padding-bottom: 8px;
+  border-bottom: 2px solid var(--gold);
+  display: inline-block;
+}
+
+/* REPORT MENU */
+.report-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+.report-card {
+  background: white;
+  border: 1.5px solid var(--gray-200);
+  border-radius: 14px;
+  padding: 24px;
+  cursor: pointer;
+  transition: all 0.2s;
+  position: relative;
+  overflow: hidden;
+}
+.report-card:hover {
+  border-color: var(--navy);
+  transform: translateY(-3px);
+  box-shadow: 0 12px 30px rgba(26,39,68,0.12);
+}
+.report-card::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0;
+  height: 4px;
+}
+.report-card.type-1::before { background: linear-gradient(90deg, var(--navy), var(--teal)); }
+.report-card.type-2::before { background: linear-gradient(90deg, var(--gold), var(--gold-light)); }
+.report-card.type-3::before { background: linear-gradient(90deg, var(--teal), #1abc9c); }
+.report-num {
+  font-family: 'Prompt', sans-serif;
+  font-size: 32px;
+  font-weight: 700;
+  color: var(--gray-200);
+  margin-bottom: 8px;
+}
+.report-card h4 { font-family: 'Prompt', sans-serif; font-size: 15px; color: var(--navy); margin-bottom: 4px; }
+.report-card p { font-size: 12px; color: var(--gray-400); }
+.report-card-actions { display: flex; gap: 8px; margin-top: 16px; }
+
+/* MODAL */
+.modal-overlay {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.55);
+  backdrop-filter: blur(4px);
+  z-index: 1000;
+  display: flex; align-items: center; justify-content: center;
+  display: none;
+}
+.modal-overlay.open { display: flex; }
+.modal {
+  background: white;
+  border-radius: 16px;
+  width: 90%;
+  max-width: 700px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 30px 60px rgba(0,0,0,0.3);
+}
+.modal-header {
+  padding: 20px 24px;
+  border-bottom: 1px solid var(--gray-200);
+  display: flex; align-items: center; justify-content: space-between;
+  position: sticky; top: 0; background: white; z-index: 5;
+}
+.modal-header h3 { font-family: 'Prompt', sans-serif; font-size: 16px; font-weight: 600; color: var(--navy); }
+.modal-close { background: none; border: none; font-size: 22px; cursor: pointer; color: var(--gray-400); }
+.modal-body { padding: 24px; }
+.modal-footer {
+  padding: 16px 24px;
+  border-top: 1px solid var(--gray-200);
+  display: flex; justify-content: flex-end; gap: 10px;
+  position: sticky; bottom: 0; background: white;
+}
+
+/* TABS */
+.tabs { display: flex; gap: 4px; border-bottom: 2px solid var(--gray-200); margin-bottom: 20px; }
+.tab {
+  padding: 10px 18px;
+  font-size: 14px;
+  cursor: pointer;
+  color: var(--gray-400);
+  border-bottom: 2px solid transparent;
+  margin-bottom: -2px;
+  transition: all 0.15s;
+  font-family: 'Sarabun', sans-serif;
+}
+.tab.active { color: var(--navy); border-bottom-color: var(--navy); font-weight: 600; }
+.tab-content { display: none; }
+.tab-content.active { display: block; }
+
+/* IMPORT ZONE */
+.import-zone {
+  border: 2.5px dashed var(--gray-200);
+  border-radius: 12px;
+  padding: 40px 24px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.import-zone:hover, .import-zone.dragover {
+  border-color: var(--navy);
+  background: rgba(26,39,68,0.03);
+}
+.import-zone .icon { font-size: 40px; margin-bottom: 12px; }
+.import-zone p { color: var(--gray-400); font-size: 14px; }
+.import-zone strong { color: var(--navy); }
+
+/* PRINT STYLES */
+@media print {
+  body { background: white; }
+  .sidebar, .topbar, .topbar-actions, .no-print { display: none !important; }
+  .main { margin-left: 0; }
+  .content { padding: 0; }
+  #printArea { display: block !important; }
+  .page { display: block !important; }
+}
+
+/* ===== ปพ.6 PRINT FORM ===== */
+.pp6-form {
+  font-family: 'Sarabun', sans-serif;
+  font-size: 12px;
+  color: #000;
+  max-width: 210mm;
+  margin: 0 auto;
+  padding: 10mm;
+  background: white;
+}
+.pp6-title {
+  text-align: center;
+  font-size: 14px;
+  font-weight: bold;
+  margin-bottom: 4px;
+}
+.pp6-subtitle { text-align: center; font-size: 12px; margin-bottom: 8px; }
+.pp6-header-row { display: flex; justify-content: space-between; margin-bottom: 4px; font-size: 12px; }
+.pp6-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 4px;
+  font-size: 11px;
+}
+.pp6-table th, .pp6-table td {
+  border: 1px solid #000;
+  padding: 3px 5px;
+  text-align: center;
+  vertical-align: middle;
+}
+.pp6-table th { background: #f0f0f0; font-weight: bold; }
+.pp6-table td.left { text-align: left; }
+.pp6-section-header td {
+  background: #e0e0e0 !important;
+  font-weight: bold;
+  text-align: left !important;
+}
+.pp6-summary { margin-top: 6px; }
+.pp6-summary table { width: 100%; border-collapse: collapse; }
+.pp6-summary td { border: 1px solid #000; padding: 4px 8px; font-size: 11px; }
+.pp6-sign-row {
+  display: flex; justify-content: space-between; margin-top: 12px;
+  font-size: 11px;
+}
+.pp6-sign-box { text-align: center; min-width: 150px; }
+
+/* NOTIFICATION */
+.toast-container {
+  position: fixed;
+  bottom: 24px; right: 24px;
+  z-index: 9999;
+  display: flex; flex-direction: column; gap: 10px;
+}
+.toast {
+  background: var(--navy);
+  color: white;
+  padding: 12px 18px;
+  border-radius: 10px;
+  font-size: 14px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+  animation: slideIn 0.3s ease;
+  max-width: 320px;
+}
+.toast.success { background: var(--success); }
+.toast.error { background: var(--danger); }
+@keyframes slideIn { from { transform: translateX(100px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+
+/* AVATAR / IMAGE UPLOAD */
+.logo-upload-box {
+  width: 80px; height: 80px;
+  border: 2px dashed var(--gray-200);
+  border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  overflow: hidden;
+  position: relative;
+  background: var(--gray-100);
+  transition: border-color 0.2s;
+  flex-shrink: 0;
+}
+.logo-upload-box:hover { border-color: var(--navy); }
+.logo-upload-box img { width: 100%; height: 100%; object-fit: contain; }
+.logo-upload-box .upload-hint {
+  text-align: center;
+  color: var(--gray-400);
+  font-size: 11px;
+  line-height: 1.4;
+}
+
+.search-bar {
+  display: flex; align-items: center; gap: 8px;
+  background: var(--gray-100);
+  border: 1.5px solid var(--gray-200);
+  border-radius: 8px;
+  padding: 8px 14px;
+}
+.search-bar input {
+  border: none; background: none; outline: none;
+  font-family: 'Sarabun', sans-serif; font-size: 14px;
+  width: 220px;
+}
+
+.score-input {
+  width: 60px;
+  border: 1px solid var(--gray-200);
+  border-radius: 6px;
+  padding: 4px 6px;
+  text-align: center;
+  font-family: 'Sarabun', sans-serif;
+  font-size: 13px;
+}
+.grade-badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 6px;
+  font-weight: 700;
+  font-size: 13px;
+}
+</style>
+</head>
+<body>
+
+<!-- LOGIN SCREEN -->
+<div id="loginScreen">
+  <div class="login-card">
+    <div class="login-logo">
+      <div class="emblem">📚</div>
+      <h1>ระบบทะเบียนนักเรียน</h1>
+      <p>Academic Records Management System</p>
+    </div>
+    <div class="login-field">
+      <label>ชื่อผู้ใช้ (Username)</label>
+      <input type="text" id="loginUser" placeholder="กรอกชื่อผู้ใช้" value="admin">
+    </div>
+    <div class="login-field">
+      <label>รหัสผ่าน (Password)</label>
+      <input type="password" id="loginPass" placeholder="กรอกรหัสผ่าน" value="admin1234" onkeydown="if(event.key==='Enter')doLogin()">
+    </div>
+    <button class="btn-login" onclick="doLogin()">🔐 เข้าสู่ระบบ</button>
+    <div class="login-error" id="loginError">❌ ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง</div>
+    <p style="text-align:center;color:rgba(255,255,255,0.35);font-size:12px;margin-top:20px">ระบบจัดการทะเบียนผลการเรียน ปพ.1–ปพ.9</p>
+  </div>
+</div>
+
+<!-- MAIN APP -->
+<div id="app">
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <div class="sidebar-emblem">📚</div>
+      <div class="sidebar-title">
+        <strong id="sidebarSchoolName">โรงเรียน</strong>
+        <span>ระบบทะเบียน ปพ.</span>
+      </div>
+    </div>
+
+    <div class="sidebar-section">
+      <div class="sidebar-section-label">หน้าหลัก</div>
+      <div class="nav-item active" onclick="showPage('dashboard', this)">
+        <span class="icon">🏠</span> แดชบอร์ด
+      </div>
+    </div>
+
+    <div class="sidebar-section">
+      <div class="sidebar-section-label">ข้อมูลนักเรียน</div>
+      <div class="nav-item" onclick="showPage('students', this)">
+        <span class="icon">👤</span> ทะเบียนนักเรียน
+      </div>
+      <div class="nav-item" onclick="showPage('classes', this)">
+        <span class="icon">🏫</span> ห้องเรียน / ชั้น
+      </div>
+      <div class="nav-item" onclick="showPage('subjects', this)">
+        <span class="icon">📖</span> รายวิชา
+      </div>
+      <div class="nav-item" onclick="showPage('scores', this)">
+        <span class="icon">📝</span> บันทึกผลการเรียน
+      </div>
+    </div>
+
+    <div class="sidebar-section">
+      <div class="sidebar-section-label">รายงาน ปพ.</div>
+      <div class="nav-item" onclick="showPage('reports', this)">
+        <span class="icon">📋</span> เลือกรายงาน
+        <span class="nav-badge">9</span>
+      </div>
+      <div class="nav-item" onclick="showPage('pp6', this)">
+        <span class="icon">📄</span> ปพ.6 (รายงานผลรายภาค)
+      </div>
+      <div class="nav-item" onclick="showPage('import', this)">
+        <span class="icon">📥</span> นำเข้าข้อมูล Excel
+      </div>
+    </div>
+
+    <div class="sidebar-section">
+      <div class="sidebar-section-label">ระบบ</div>
+      <div class="nav-item" onclick="showPage('settings', this)">
+        <span class="icon">⚙️</span> ตั้งค่าโรงเรียน
+      </div>
+      <div class="nav-item" onclick="showPage('teachers', this)">
+        <span class="icon">👩‍🏫</span> ครูที่ปรึกษา
+      </div>
+      <div class="nav-item" onclick="showPage('sheetConfig', this)">
+        <span class="icon">🔗</span> เชื่อมต่อ Google Sheet
+      </div>
+    </div>
+
+    <div class="sidebar-footer">
+      <button class="btn-logout" onclick="doLogout()">🚪 ออกจากระบบ</button>
+    </div>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="main">
+    <div class="topbar">
+      <div>
+        <div class="topbar-title" id="pageTitle">แดชบอร์ด</div>
+        <div class="topbar-breadcrumb" id="pageBreadcrumb">ระบบทะเบียนนักเรียน › แดชบอร์ด</div>
+      </div>
+      <div class="topbar-actions">
+        <div class="search-bar">
+          <span>🔍</span>
+          <input type="text" placeholder="ค้นหานักเรียน...">
+        </div>
+        <button class="btn btn-outline btn-sm">🔔</button>
+        <button class="btn btn-outline btn-sm">👤 ผู้ดูแล</button>
+      </div>
+    </div>
+
+    <div class="content">
+
+      <!-- DASHBOARD -->
+      <div class="page active" id="page-dashboard">
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-icon navy">👤</div>
+            <div class="stat-info">
+              <strong id="statStudents">0</strong>
+              <span>นักเรียนทั้งหมด</span>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon gold">🏫</div>
+            <div class="stat-info">
+              <strong id="statClasses">0</strong>
+              <span>ห้องเรียน</span>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon teal">📖</div>
+            <div class="stat-info">
+              <strong id="statSubjects">0</strong>
+              <span>รายวิชา</span>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon green">📋</div>
+            <div class="stat-info">
+              <strong>9</strong>
+              <span>แบบฟอร์ม ปพ.</span>
+            </div>
+          </div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
+          <div class="card">
+            <div class="card-header">
+              <span>📋</span>
+              <h3>รายงาน ปพ. ที่ใช้งานได้</h3>
+            </div>
+            <div class="card-body" style="padding:0">
+              <table><thead><tr><th>รหัส</th><th>ชื่อรายงาน</th><th>สถานะ</th></tr></thead>
+              <tbody>
+                <tr><td><b>ปพ.1</b></td><td>ระเบียนแสดงผลการเรียน</td><td><span class="badge badge-gold">เร็วๆนี้</span></td></tr>
+                <tr><td><b>ปพ.2</b></td><td>หลักฐานแสดงวุฒิการศึกษา</td><td><span class="badge badge-gold">เร็วๆนี้</span></td></tr>
+                <tr><td><b>ปพ.3</b></td><td>แบบรายงานผู้สำเร็จการศึกษา</td><td><span class="badge badge-gold">เร็วๆนี้</span></td></tr>
+                <tr><td><b>ปพ.4</b></td><td>หนังสือรับรองผลการเรียน</td><td><span class="badge badge-gold">เร็วๆนี้</span></td></tr>
+                <tr><td><b>ปพ.5</b></td><td>สมุดรายชื่อนักเรียน</td><td><span class="badge badge-gold">เร็วๆนี้</span></td></tr>
+                <tr><td><b>ปพ.6</b></td><td>รายงานผลพัฒนาคุณภาพผู้เรียน</td><td><span class="badge badge-green">พร้อมใช้</span></td></tr>
+                <tr><td><b>ปพ.7</b></td><td>ใบรับรองความประพฤติ</td><td><span class="badge badge-gold">เร็วๆนี้</span></td></tr>
+                <tr><td><b>ปพ.8</b></td><td>ระเบียนสะสม</td><td><span class="badge badge-gold">เร็วๆนี้</span></td></tr>
+                <tr><td><b>ปพ.9</b></td><td>สมุดพก</td><td><span class="badge badge-gold">เร็วๆนี้</span></td></tr>
+              </tbody></table>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-header"><span>🚀</span><h3>เริ่มต้นใช้งานด่วน</h3></div>
+            <div class="card-body">
+              <p style="color:var(--gray-400);font-size:13px;margin-bottom:16px">ขั้นตอนแนะนำสำหรับการตั้งค่าครั้งแรก</p>
+              <div style="display:flex;flex-direction:column;gap:10px">
+                <div style="display:flex;align-items:center;gap:12px;padding:12px;background:var(--gray-100);border-radius:8px;cursor:pointer" onclick="showPage('settings',null)">
+                  <div style="width:28px;height:28px;background:var(--navy);color:white;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:bold;flex-shrink:0">1</div>
+                  <div><div style="font-weight:600;font-size:13px">ตั้งค่าโรงเรียน</div><div style="font-size:12px;color:var(--gray-400)">ชื่อโรงเรียน ผู้บริหาร โลโก้</div></div>
+                  <span style="margin-left:auto">›</span>
+                </div>
+                <div style="display:flex;align-items:center;gap:12px;padding:12px;background:var(--gray-100);border-radius:8px;cursor:pointer" onclick="showPage('classes',null)">
+                  <div style="width:28px;height:28px;background:var(--teal);color:white;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:bold;flex-shrink:0">2</div>
+                  <div><div style="font-weight:600;font-size:13px">เพิ่มห้องเรียน</div><div style="font-size:12px;color:var(--gray-400)">ป.1/1, ป.6/2 เป็นต้น</div></div>
+                  <span style="margin-left:auto">›</span>
+                </div>
+                <div style="display:flex;align-items:center;gap:12px;padding:12px;background:var(--gray-100);border-radius:8px;cursor:pointer" onclick="showPage('students',null)">
+                  <div style="width:28px;height:28px;background:var(--gold);color:var(--navy);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:bold;flex-shrink:0">3</div>
+                  <div><div style="font-weight:600;font-size:13px">เพิ่มนักเรียน</div><div style="font-size:12px;color:var(--gray-400)">หรือ import จาก Excel</div></div>
+                  <span style="margin-left:auto">›</span>
+                </div>
+                <div style="display:flex;align-items:center;gap:12px;padding:12px;background:var(--gray-100);border-radius:8px;cursor:pointer" onclick="showPage('pp6',null)">
+                  <div style="width:28px;height:28px;background:var(--success);color:white;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:bold;flex-shrink:0">4</div>
+                  <div><div style="font-weight:600;font-size:13px">พิมพ์ ปพ.6</div><div style="font-size:12px;color:var(--gray-400)">รายงานผลพัฒนาคุณภาพผู้เรียน</div></div>
+                  <span style="margin-left:auto">›</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- STUDENTS PAGE -->
+      <div class="page" id="page-students">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px">
+          <div></div>
+          <div style="display:flex;gap:10px">
+            <button class="btn btn-outline" onclick="exportStudentTemplate()">⬇️ ดาวน์โหลดฟอร์ม Excel</button>
+            <button class="btn btn-teal" onclick="document.getElementById('importStudentFile').click()">📥 Import Excel</button>
+            <input type="file" id="importStudentFile" accept=".xlsx,.xls" style="display:none" onchange="importStudents(this)">
+            <button class="btn btn-gold" onclick="openModal('modalStudent')">➕ เพิ่มนักเรียน</button>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header">
+            <span>👤</span><h3>รายชื่อนักเรียน</h3>
+            <div style="margin-left:auto;display:flex;gap:8px">
+              <select id="filterClass" onchange="renderStudents()" style="border:1.5px solid var(--gray-200);border-radius:8px;padding:6px 10px;font-family:'Sarabun',sans-serif;font-size:13px">
+                <option value="">ทุกห้อง</option>
+              </select>
+            </div>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>#</th><th>เลขที่</th><th>รหัสนักเรียน</th><th>ชื่อ-สกุล</th><th>ห้อง</th><th>เพศ</th><th>วันเกิด</th><th>จัดการ</th></tr></thead>
+              <tbody id="studentTable"><tr><td colspan="8" style="text-align:center;color:var(--gray-400);padding:30px">ยังไม่มีข้อมูลนักเรียน</td></tr></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- CLASSES -->
+      <div class="page" id="page-classes">
+        <div style="display:flex;justify-content:flex-end;margin-bottom:20px">
+          <button class="btn btn-gold" onclick="openModal('modalClass')">➕ เพิ่มห้องเรียน</button>
+        </div>
+        <div class="card">
+          <div class="card-header"><span>🏫</span><h3>ห้องเรียน</h3></div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>#</th><th>ระดับชั้น</th><th>ห้อง</th><th>ภาคเรียน/ปีการศึกษา</th><th>ครูที่ปรึกษา</th><th>จำนวนนักเรียน</th><th>จัดการ</th></tr></thead>
+              <tbody id="classTable"><tr><td colspan="7" style="text-align:center;color:var(--gray-400);padding:30px">ยังไม่มีข้อมูลห้องเรียน</td></tr></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- SUBJECTS -->
+      <div class="page" id="page-subjects">
+        <div style="display:flex;justify-content:flex-end;margin-bottom:20px">
+          <button class="btn btn-gold" onclick="openModal('modalSubject')">➕ เพิ่มรายวิชา</button>
+        </div>
+        <div class="card">
+          <div class="card-header"><span>📖</span><h3>รายวิชา</h3></div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>#</th><th>รหัสวิชา</th><th>ชื่อวิชา</th><th>ประเภท</th><th>น้ำหนัก (หน่วยกิต)</th><th>ระดับชั้น</th><th>จัดการ</th></tr></thead>
+              <tbody id="subjectTable"><tr><td colspan="7" style="text-align:center;color:var(--gray-400);padding:30px">ยังไม่มีข้อมูลรายวิชา</td></tr></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- SCORES PAGE -->
+      <div class="page" id="page-scores">
+        <div class="card" style="margin-bottom:20px">
+          <div class="card-body">
+            <div class="form-row col-4">
+              <div class="form-group">
+                <label>ห้องเรียน</label>
+                <select id="scoreClass" onchange="loadScoreStudents()">
+                  <option value="">-- เลือกห้อง --</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>รายวิชา</label>
+                <select id="scoreSubject">
+                  <option value="">-- เลือกวิชา --</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>ภาคเรียน</label>
+                <select id="scoreTerm">
+                  <option value="1">ภาคเรียนที่ 1</option>
+                  <option value="2">ภาคเรียนที่ 2</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>ปีการศึกษา</label>
+                <input type="text" id="scoreYear" value="2567">
+              </div>
+            </div>
+            <button class="btn btn-primary" onclick="loadScoreTable()">📋 โหลดตาราง</button>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header"><span>📝</span><h3>กรอกคะแนน</h3></div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>#</th><th>รหัส</th><th>ชื่อ-สกุล</th><th>คะแนนระหว่างภาค</th><th>คะแนนปลายภาค</th><th>รวม</th><th>ระดับผล</th></tr></thead>
+              <tbody id="scoreTable"><tr><td colspan="7" style="text-align:center;color:var(--gray-400);padding:30px">เลือกห้องเรียนและวิชาก่อน</td></tr></tbody>
+            </table>
+          </div>
+          <div style="padding:16px;border-top:1px solid var(--gray-200);display:flex;justify-content:flex-end;gap:10px">
+            <button class="btn btn-primary" onclick="saveScores()">💾 บันทึกคะแนน</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- REPORTS MENU -->
+      <div class="page" id="page-reports">
+        <div class="report-grid">
+          <div class="report-card type-1" onclick="showPage('pp6',null)">
+            <div class="report-num">ปพ.6</div>
+            <h4>รายงานผลพัฒนาคุณภาพผู้เรียน</h4>
+            <p>แสดงผลการเรียนรายภาค รายบุคคล</p>
+            <div class="report-card-actions">
+              <span class="badge badge-green">พร้อมใช้งาน</span>
+            </div>
+          </div>
+          <div class="report-card type-2">
+            <div class="report-num">ปพ.1</div>
+            <h4>ระเบียนแสดงผลการเรียน</h4>
+            <p>หลักฐานแสดงผลการเรียนตลอดหลักสูตร</p>
+            <div class="report-card-actions"><span class="badge badge-gold">เร็วๆ นี้</span></div>
+          </div>
+          <div class="report-card type-3">
+            <div class="report-num">ปพ.2</div>
+            <h4>หลักฐานแสดงวุฒิการศึกษา</h4>
+            <p>ใบสุทธิ ใบประกาศนียบัตร</p>
+            <div class="report-card-actions"><span class="badge badge-gold">เร็วๆ นี้</span></div>
+          </div>
+          <div class="report-card type-1">
+            <div class="report-num">ปพ.3</div>
+            <h4>แบบรายงานผู้สำเร็จการศึกษา</h4>
+            <p>รายงานส่งหน่วยงานต้นสังกัด</p>
+            <div class="report-card-actions"><span class="badge badge-gold">เร็วๆ นี้</span></div>
+          </div>
+          <div class="report-card type-2">
+            <div class="report-num">ปพ.4</div>
+            <h4>หนังสือรับรองผลการเรียน</h4>
+            <p>ใบรับรองความสามารถทางการศึกษา</p>
+            <div class="report-card-actions"><span class="badge badge-gold">เร็วๆ นี้</span></div>
+          </div>
+          <div class="report-card type-3">
+            <div class="report-num">ปพ.5</div>
+            <h4>สมุดรายชื่อนักเรียน</h4>
+            <p>บัญชีรายชื่อประจำชั้น</p>
+            <div class="report-card-actions"><span class="badge badge-gold">เร็วๆ นี้</span></div>
+          </div>
+          <div class="report-card type-1">
+            <div class="report-num">ปพ.7</div>
+            <h4>ใบรับรองความประพฤติ</h4>
+            <p>หนังสือรับรองความประพฤตินักเรียน</p>
+            <div class="report-card-actions"><span class="badge badge-gold">เร็วๆ นี้</span></div>
+          </div>
+          <div class="report-card type-2">
+            <div class="report-num">ปพ.8</div>
+            <h4>ระเบียนสะสม</h4>
+            <p>บันทึกพัฒนาการและข้อมูลนักเรียน</p>
+            <div class="report-card-actions"><span class="badge badge-gold">เร็วๆ นี้</span></div>
+          </div>
+          <div class="report-card type-3">
+            <div class="report-num">ปพ.9</div>
+            <h4>สมุดพก</h4>
+            <p>รายงานผลการเรียนให้ผู้ปกครอง</p>
+            <div class="report-card-actions"><span class="badge badge-gold">เร็วๆ นี้</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ปพ.6 PAGE -->
+      <div class="page" id="page-pp6">
+        <div class="tabs">
+          <div class="tab active" onclick="switchTab('pp6db')">📋 จากฐานข้อมูล</div>
+          <div class="tab" onclick="switchTab('pp6import')">📥 Import Excel</div>
+        </div>
+
+        <!-- FROM DB -->
+        <div class="tab-content active" id="tab-pp6db">
+          <div class="card" style="margin-bottom:20px">
+            <div class="card-header"><span>🔍</span><h3>เลือกเงื่อนไขการพิมพ์</h3></div>
+            <div class="card-body">
+              <div class="form-row col-4">
+                <div class="form-group">
+                  <label>ห้องเรียน</label>
+                  <select id="pp6Class">
+                    <option value="">-- เลือกห้อง --</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label>ภาคเรียนที่</label>
+                  <select id="pp6Term">
+                    <option value="1">ภาคเรียนที่ 1</option>
+                    <option value="2">ภาคเรียนที่ 2</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label>ปีการศึกษา</label>
+                  <input type="text" id="pp6Year" value="2567">
+                </div>
+                <div class="form-group">
+                  <label>พิมพ์แบบ</label>
+                  <select id="pp6PrintType">
+                    <option value="all">ทั้งชั้น (รายชั้น)</option>
+                    <option value="single">รายบุคคล</option>
+                  </select>
+                </div>
+              </div>
+              <div class="form-row col-2" id="pp6SingleRow" style="display:none">
+                <div class="form-group">
+                  <label>เลือกนักเรียน</label>
+                  <select id="pp6Student"><option value="">-- เลือกนักเรียน --</option></select>
+                </div>
+              </div>
+              <div style="display:flex;gap:10px;margin-top:4px">
+                <button class="btn btn-primary" onclick="previewPP6()">👁️ ดูตัวอย่าง</button>
+                <button class="btn btn-gold" onclick="printPP6()">🖨️ พิมพ์</button>
+              </div>
+            </div>
+          </div>
+          <div id="pp6PreviewArea"></div>
+        </div>
+
+        <!-- IMPORT TAB -->
+        <div class="tab-content" id="tab-pp6import">
+          <div class="card" style="margin-bottom:16px">
+            <div class="card-body">
+              <div style="display:flex;align-items:center;gap:16px">
+                <div>
+                  <h4 style="font-family:'Prompt',sans-serif;color:var(--navy);margin-bottom:4px">ดาวน์โหลดฟอร์มเปล่า ปพ.6</h4>
+                  <p style="color:var(--gray-400);font-size:13px">ดาวน์โหลดไฟล์ Excel ฟอร์มเปล่า กรอกข้อมูล แล้ว Import กลับเพื่อพิมพ์</p>
+                </div>
+                <button class="btn btn-gold" style="flex-shrink:0;margin-left:auto" onclick="downloadPP6Template()">⬇️ ดาวน์โหลดฟอร์ม Excel ปพ.6</button>
+              </div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-header"><span>📥</span><h3>Import ข้อมูล ปพ.6 จาก Excel</h3></div>
+            <div class="card-body">
+              <div class="import-zone" id="pp6DropZone" onclick="document.getElementById('pp6FileInput').click()"
+                ondrop="handlePP6Drop(event)" ondragover="event.preventDefault();this.classList.add('dragover')" ondragleave="this.classList.remove('dragover')">
+                <div class="icon">📂</div>
+                <p><strong>คลิกเพื่อเลือกไฟล์</strong> หรือลากวางที่นี่</p>
+                <p style="margin-top:4px">รองรับ .xlsx, .xls</p>
+              </div>
+              <input type="file" id="pp6FileInput" accept=".xlsx,.xls" style="display:none" onchange="loadPP6Excel(this)">
+              <div id="pp6ImportPreview" style="margin-top:20px"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- IMPORT PAGE -->
+      <div class="page" id="page-import">
+        <div class="card">
+          <div class="card-header"><span>📥</span><h3>นำเข้าข้อมูลจาก Excel</h3></div>
+          <div class="card-body">
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
+              <div>
+                <div class="form-section-title">Import นักเรียน</div>
+                <p style="color:var(--gray-400);font-size:13px;margin-bottom:12px">นำเข้าข้อมูลนักเรียนจากไฟล์ Excel</p>
+                <button class="btn btn-outline btn-sm" onclick="exportStudentTemplate()">⬇️ ดาวน์โหลดฟอร์มเปล่า</button>
+                <div class="import-zone" style="margin-top:12px" onclick="document.getElementById('importStudentFile2').click()">
+                  <div class="icon">👤</div>
+                  <p><strong>เลือกไฟล์ข้อมูลนักเรียน</strong></p>
+                </div>
+                <input type="file" id="importStudentFile2" accept=".xlsx,.xls" style="display:none" onchange="importStudents(this)">
+              </div>
+              <div>
+                <div class="form-section-title">Import ผลการเรียน</div>
+                <p style="color:var(--gray-400);font-size:13px;margin-bottom:12px">นำเข้าคะแนนและผลการเรียนจากไฟล์ Excel</p>
+                <button class="btn btn-outline btn-sm" onclick="exportScoreTemplate()">⬇️ ดาวน์โหลดฟอร์มเปล่า</button>
+                <div class="import-zone" style="margin-top:12px">
+                  <div class="icon">📝</div>
+                  <p><strong>เลือกไฟล์ผลการเรียน</strong></p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SETTINGS PAGE -->
+      <div class="page" id="page-settings">
+        <div class="card">
+          <div class="card-header"><span>⚙️</span><h3>ตั้งค่าโรงเรียน</h3></div>
+          <div class="card-body">
+            <div style="display:grid;grid-template-columns:1fr auto;gap:24px;align-items:start">
+              <div>
+                <div class="form-section-title">ข้อมูลโรงเรียน</div>
+                <div class="form-row col-2">
+                  <div class="form-group" style="grid-column:1/-1">
+                    <label>ชื่อโรงเรียน (เต็ม)</label>
+                    <input type="text" id="settSchoolFull" placeholder="โรงเรียน...">
+                  </div>
+                  <div class="form-group">
+                    <label>ชื่อย่อ / ชื่อที่แสดง</label>
+                    <input type="text" id="settSchoolShort" placeholder="รร....">
+                  </div>
+                  <div class="form-group">
+                    <label>รหัสโรงเรียน</label>
+                    <input type="text" id="settSchoolCode" placeholder="1234567890">
+                  </div>
+                  <div class="form-group">
+                    <label>สำนักงานเขตพื้นที่การศึกษา</label>
+                    <input type="text" id="settDistrict" placeholder="สพป./.../เขต...">
+                  </div>
+                  <div class="form-group">
+                    <label>ที่อยู่</label>
+                    <input type="text" id="settAddress" placeholder="เลขที่ ถนน ตำบล อำเภอ จังหวัด">
+                  </div>
+                </div>
+                <div class="form-divider"></div>
+                <div class="form-section-title">ผู้บริหาร</div>
+                <div class="form-row col-2">
+                  <div class="form-group">
+                    <label>ชื่อผู้อำนวยการ (พร้อมตำแหน่ง)</label>
+                    <input type="text" id="settDirector" placeholder="นายสมศักดิ์ ใจดี">
+                  </div>
+                  <div class="form-group">
+                    <label>วิทยฐานะ</label>
+                    <input type="text" id="settDirectorRank" placeholder="ผอ.ชำนาญการพิเศษ">
+                  </div>
+                </div>
+                <div class="form-divider"></div>
+                <div class="form-section-title">ปีการศึกษาปัจจุบัน</div>
+                <div class="form-row col-2">
+                  <div class="form-group">
+                    <label>ปีการศึกษา (พ.ศ.)</label>
+                    <input type="text" id="settYear" value="2567">
+                  </div>
+                  <div class="form-group">
+                    <label>ภาคเรียนปัจจุบัน</label>
+                    <select id="settTerm">
+                      <option value="1">ภาคเรียนที่ 1</option>
+                      <option value="2">ภาคเรียนที่ 2</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+              <div style="display:flex;flex-direction:column;gap:16px;align-items:center">
+                <div>
+                  <label style="font-size:13px;font-weight:500;color:var(--gray-700);display:block;margin-bottom:6px;text-align:center">โลโก้โรงเรียน</label>
+                  <div class="logo-upload-box" style="width:100px;height:100px" onclick="document.getElementById('logoSchool').click()">
+                    <img id="logoSchoolPreview" src="" style="display:none">
+                    <div class="upload-hint" id="logoSchoolHint">📸<br>คลิกอัปโหลด</div>
+                  </div>
+                  <input type="file" id="logoSchool" accept="image/*" style="display:none" onchange="uploadLogo(this,'logoSchoolPreview','logoSchoolHint','schoolLogo')">
+                </div>
+                <div>
+                  <label style="font-size:13px;font-weight:500;color:var(--gray-700);display:block;margin-bottom:6px;text-align:center">โลโก้ สพฐ.</label>
+                  <div class="logo-upload-box" style="width:100px;height:100px" onclick="document.getElementById('logoObec').click()">
+                    <img id="logoObecPreview" src="" style="display:none">
+                    <div class="upload-hint" id="logoObecHint">📸<br>คลิกอัปโหลด</div>
+                  </div>
+                  <input type="file" id="logoObec" accept="image/*" style="display:none" onchange="uploadLogo(this,'logoObecPreview','logoObecHint','obecLogo')">
+                </div>
+              </div>
+            </div>
+            <div style="margin-top:20px;display:flex;gap:10px">
+              <button class="btn btn-gold" onclick="saveSettings()">💾 บันทึกการตั้งค่า</button>
+              <button class="btn btn-outline" onclick="loadSettings()">↩️ รีเซ็ต</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TEACHERS PAGE -->
+      <div class="page" id="page-teachers">
+        <div style="display:flex;justify-content:flex-end;margin-bottom:20px">
+          <button class="btn btn-gold" onclick="openModal('modalTeacher')">➕ เพิ่มครูที่ปรึกษา</button>
+        </div>
+        <div class="card">
+          <div class="card-header"><span>👩‍🏫</span><h3>ครูที่ปรึกษา</h3></div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>#</th><th>ชื่อ-สกุล</th><th>วิทยฐานะ</th><th>ห้องที่ดูแล</th><th>อีเมล</th><th>โทรศัพท์</th><th>จัดการ</th></tr></thead>
+              <tbody id="teacherTable"><tr><td colspan="7" style="text-align:center;color:var(--gray-400);padding:30px">ยังไม่มีข้อมูลครู</td></tr></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- SHEET CONFIG -->
+      <div class="page" id="page-sheetConfig">
+        <div class="card">
+          <div class="card-header"><span>🔗</span><h3>เชื่อมต่อ Google Sheets</h3></div>
+          <div class="card-body">
+            <div style="background:rgba(13,115,119,0.07);border:1.5px solid rgba(13,115,119,0.2);border-radius:10px;padding:16px;margin-bottom:20px">
+              <h4 style="color:var(--teal);font-family:'Prompt',sans-serif;margin-bottom:6px">📌 คำแนะนำการใช้งาน</h4>
+              <p style="font-size:13px;color:var(--gray-700);line-height:1.7">ระบบนี้ออกแบบมาให้ <strong>ไม่ผูกมัดกับ Google Sheet เดิม</strong> ครูสามารถเปลี่ยน Sheet ID ได้ทุกเมื่อ เพื่อรองรับกรณีที่ครูที่ปรึกษาย้ายโรงเรียนหรือต้องการแยก Sheet ต่างห้องออกจากกัน</p>
+            </div>
+            <div class="form-section-title">Sheet ข้อมูลนักเรียน</div>
+            <div class="form-row col-2">
+              <div class="form-group">
+                <label>Google Sheet ID (ข้อมูลนักเรียน)</label>
+                <input type="text" id="sheetStudents" placeholder="1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgVE2upms">
+              </div>
+              <div class="form-group">
+                <label>Sheet Name (Tab)</label>
+                <input type="text" id="sheetStudentsTab" placeholder="Students" value="Students">
+              </div>
+            </div>
+            <div class="form-section-title">Sheet ผลการเรียน</div>
+            <div class="form-row col-2">
+              <div class="form-group">
+                <label>Google Sheet ID (ผลการเรียน)</label>
+                <input type="text" id="sheetScores" placeholder="Sheet ID...">
+              </div>
+              <div class="form-group">
+                <label>Sheet Name (Tab)</label>
+                <input type="text" id="sheetScoresTab" placeholder="Scores" value="Scores">
+              </div>
+            </div>
+            <div class="form-row col-2">
+              <div class="form-group">
+                <label>Google API Key</label>
+                <input type="password" id="sheetApiKey" placeholder="AIza...">
+              </div>
+            </div>
+            <div style="display:flex;gap:10px;margin-top:8px">
+              <button class="btn btn-teal" onclick="saveSheetConfig()">💾 บันทึก Sheet Config</button>
+              <button class="btn btn-outline" onclick="testSheetConnection()">🔌 ทดสอบการเชื่อมต่อ</button>
+            </div>
+            <div style="margin-top:24px;padding:16px;background:var(--gray-100);border-radius:10px">
+              <h4 style="font-family:'Prompt',sans-serif;font-size:14px;color:var(--navy);margin-bottom:10px">📊 โครงสร้างข้อมูลที่แนะนำใน Google Sheet</h4>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;font-size:12px">
+                <div><strong>Sheet: Students</strong><br>A: รหัสนักเรียน, B: คำนำหน้า, C: ชื่อ, D: สกุล, E: ห้อง, F: เลขที่, G: เพศ, H: วันเกิด</div>
+                <div><strong>Sheet: Scores</strong><br>A: รหัสนักเรียน, B: รหัสวิชา, C: ภาคเรียน, D: ปีการศึกษา, E: คะแนนระหว่างภาค, F: คะแนนปลายภาค</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /content -->
+  </main>
+</div>
+
+<!-- ===== MODALS ===== -->
+
+<!-- Modal: Add Student -->
+<div class="modal-overlay" id="modalStudent">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>➕ เพิ่มนักเรียน</h3>
+      <button class="modal-close" onclick="closeModal('modalStudent')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-row col-3">
+        <div class="form-group">
+          <label>คำนำหน้า</label>
+          <select id="stuPrefix">
+            <option>เด็กชาย</option><option>เด็กหญิง</option><option>นาย</option><option>นางสาว</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>ชื่อ</label>
+          <input type="text" id="stuFirst" placeholder="ชื่อ">
+        </div>
+        <div class="form-group">
+          <label>นามสกุล</label>
+          <input type="text" id="stuLast" placeholder="นามสกุล">
+        </div>
+      </div>
+      <div class="form-row col-3">
+        <div class="form-group">
+          <label>รหัสนักเรียน</label>
+          <input type="text" id="stuCode" placeholder="xxxxx">
+        </div>
+        <div class="form-group">
+          <label>เลขที่ในห้อง</label>
+          <input type="number" id="stuNo" placeholder="1">
+        </div>
+        <div class="form-group">
+          <label>ห้องเรียน</label>
+          <select id="stuClass"></select>
+        </div>
+      </div>
+      <div class="form-row col-3">
+        <div class="form-group">
+          <label>วันเกิด</label>
+          <input type="date" id="stuBirth">
+        </div>
+        <div class="form-group">
+          <label>เลขบัตรประชาชน</label>
+          <input type="text" id="stuNid" placeholder="x-xxxx-xxxxx-xx-x">
+        </div>
+        <div class="form-group">
+          <label>สัญชาติ</label>
+          <input type="text" id="stuNation" value="ไทย">
+        </div>
+      </div>
+      <div class="form-row col-2">
+        <div class="form-group">
+          <label>ชื่อผู้ปกครอง</label>
+          <input type="text" id="stuParent" placeholder="ชื่อ-สกุล">
+        </div>
+        <div class="form-group">
+          <label>โทรผู้ปกครอง</label>
+          <input type="text" id="stuParentTel" placeholder="08x-xxx-xxxx">
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('modalStudent')">ยกเลิก</button>
+      <button class="btn btn-gold" onclick="saveStudent()">💾 บันทึก</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Add Class -->
+<div class="modal-overlay" id="modalClass">
+  <div class="modal" style="max-width:480px">
+    <div class="modal-header">
+      <h3>➕ เพิ่มห้องเรียน</h3>
+      <button class="modal-close" onclick="closeModal('modalClass')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-row col-2">
+        <div class="form-group">
+          <label>ระดับชั้น</label>
+          <select id="clsLevel">
+            <option>ป.1</option><option>ป.2</option><option>ป.3</option><option>ป.4</option><option>ป.5</option><option selected>ป.6</option>
+            <option>ม.1</option><option>ม.2</option><option>ม.3</option><option>ม.4</option><option>ม.5</option><option>ม.6</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>ห้อง</label>
+          <input type="text" id="clsRoom" placeholder="1">
+        </div>
+      </div>
+      <div class="form-row col-2">
+        <div class="form-group">
+          <label>ปีการศึกษา</label>
+          <input type="text" id="clsYear" value="2567">
+        </div>
+        <div class="form-group">
+          <label>ภาคเรียน</label>
+          <select id="clsTerm">
+            <option value="1">ภาคเรียนที่ 1</option>
+            <option value="2">ภาคเรียนที่ 2</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-divider"></div>
+      <div class="form-section-title">ครูที่ปรึกษา (รองรับ 2 คน)</div>
+      <div class="form-row col-1">
+        <div class="form-group">
+          <label>ครูที่ปรึกษาคนที่ 1</label>
+          <select id="clsTeacher1"><option value="">-- ไม่ระบุ --</option></select>
+        </div>
+        <div class="form-group">
+          <label>ครูที่ปรึกษาคนที่ 2 (ถ้ามี)</label>
+          <select id="clsTeacher2"><option value="">-- ไม่ระบุ --</option></select>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('modalClass')">ยกเลิก</button>
+      <button class="btn btn-gold" onclick="saveClass()">💾 บันทึก</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Add Subject -->
+<div class="modal-overlay" id="modalSubject">
+  <div class="modal" style="max-width:500px">
+    <div class="modal-header">
+      <h3>➕ เพิ่มรายวิชา</h3>
+      <button class="modal-close" onclick="closeModal('modalSubject')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-row col-2">
+        <div class="form-group">
+          <label>รหัสวิชา</label>
+          <input type="text" id="subCode" placeholder="ท11101">
+        </div>
+        <div class="form-group">
+          <label>ชื่อวิชา</label>
+          <input type="text" id="subName" placeholder="ภาษาไทย">
+        </div>
+      </div>
+      <div class="form-row col-3">
+        <div class="form-group">
+          <label>ประเภท</label>
+          <select id="subType">
+            <option value="พื้นฐาน">พื้นฐาน</option>
+            <option value="เพิ่มเติม">เพิ่มเติม</option>
+            <option value="กิจกรรม">กิจกรรม</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>น้ำหนัก (หน่วยกิต)</label>
+          <input type="number" id="subCredit" placeholder="1.5" step="0.5">
+        </div>
+        <div class="form-group">
+          <label>ระดับชั้น</label>
+          <select id="subLevel">
+            <option>ป.1</option><option>ป.2</option><option>ป.3</option><option>ป.4</option><option>ป.5</option><option>ป.6</option>
+            <option>ม.1</option><option>ม.2</option><option>ม.3</option><option>ม.4</option><option>ม.5</option><option>ม.6</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row col-2">
+        <div class="form-group">
+          <label>คะแนนระหว่างภาค (เต็ม)</label>
+          <input type="number" id="subMidMax" value="70">
+        </div>
+        <div class="form-group">
+          <label>คะแนนปลายภาค (เต็ม)</label>
+          <input type="number" id="subFinalMax" value="30">
+        </div>
+      </div>
+      <div class="form-group">
+        <label>ลำดับในฟอร์ม ปพ.6</label>
+        <input type="number" id="subOrder" placeholder="1">
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('modalSubject')">ยกเลิก</button>
+      <button class="btn btn-gold" onclick="saveSubject()">💾 บันทึก</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Add Teacher -->
+<div class="modal-overlay" id="modalTeacher">
+  <div class="modal" style="max-width:480px">
+    <div class="modal-header">
+      <h3>➕ เพิ่มครูที่ปรึกษา</h3>
+      <button class="modal-close" onclick="closeModal('modalTeacher')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-row col-2">
+        <div class="form-group">
+          <label>คำนำหน้า</label>
+          <select id="tPrefix">
+            <option>นาย</option><option>นาง</option><option>นางสาว</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>ชื่อ-สกุล</label>
+          <input type="text" id="tName" placeholder="ชื่อ นามสกุล">
+        </div>
+      </div>
+      <div class="form-row col-2">
+        <div class="form-group">
+          <label>วิทยฐานะ</label>
+          <select id="tRank">
+            <option value="">ไม่มีวิทยฐานะ</option>
+            <option>ชำนาญการ</option>
+            <option>ชำนาญการพิเศษ</option>
+            <option>เชี่ยวชาญ</option>
+            <option>เชี่ยวชาญพิเศษ</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>วุฒิการศึกษา</label>
+          <input type="text" id="tEdu" placeholder="ค.บ., ศษ.บ. เป็นต้น">
+        </div>
+      </div>
+      <div class="form-row col-2">
+        <div class="form-group">
+          <label>อีเมล</label>
+          <input type="email" id="tEmail" placeholder="teacher@school.ac.th">
+        </div>
+        <div class="form-group">
+          <label>โทรศัพท์</label>
+          <input type="text" id="tTel" placeholder="08x-xxx-xxxx">
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('modalTeacher')">ยกเลิก</button>
+      <button class="btn btn-gold" onclick="saveTeacher()">💾 บันทึก</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast-container" id="toastContainer"></div>
+
+<!-- PRINT AREA (hidden) -->
+<div id="printArea" style="display:none"></div>
+
+<script>
+// ===========================
+// DATA STORE (localStorage)
+// ===========================
+const DB = {
+  get: (k) => { try { return JSON.parse(localStorage.getItem('sch_'+k)) || []; } catch(e){ return []; } },
+  getObj: (k) => { try { return JSON.parse(localStorage.getItem('sch_'+k)) || {}; } catch(e){ return {}; } },
+  set: (k, v) => localStorage.setItem('sch_'+k, JSON.stringify(v)),
+  push: (k, v) => { let arr = DB.get(k); arr.push(v); DB.set(k, arr); return arr; }
+};
+
+// ===========================
+// AUTH
+// ===========================
+function doLogin() {
+  const u = document.getElementById('loginUser').value;
+  const p = document.getElementById('loginPass').value;
+  if (u === 'admin' && p === 'admin1234') {
+    document.getElementById('loginScreen').style.opacity = '0';
+    setTimeout(() => {
+      document.getElementById('loginScreen').style.display = 'none';
+      document.getElementById('app').style.display = 'block';
+      initApp();
+    }, 500);
+  } else {
+    document.getElementById('loginError').style.display = 'block';
+  }
+}
+
+function doLogout() {
+  document.getElementById('app').style.display = 'none';
+  document.getElementById('loginScreen').style.opacity = '1';
+  document.getElementById('loginScreen').style.display = 'flex';
+}
+
+// ===========================
+// NAVIGATION
+// ===========================
+const pageTitles = {
+  dashboard: ['แดชบอร์ด', 'แดชบอร์ด'],
+  students: ['ทะเบียนนักเรียน', 'ข้อมูลนักเรียน › ทะเบียนนักเรียน'],
+  classes: ['ห้องเรียน', 'ข้อมูลนักเรียน › ห้องเรียน'],
+  subjects: ['รายวิชา', 'ข้อมูล › รายวิชา'],
+  scores: ['บันทึกผลการเรียน', 'ข้อมูล › บันทึกผลการเรียน'],
+  reports: ['รายงาน ปพ.', 'รายงาน › เลือกรายงาน'],
+  pp6: ['ปพ.6 - รายงานผลพัฒนาคุณภาพผู้เรียน', 'รายงาน › ปพ.6'],
+  import: ['นำเข้าข้อมูล Excel', 'ข้อมูล › Import'],
+  settings: ['ตั้งค่าโรงเรียน', 'ระบบ › ตั้งค่า'],
+  teachers: ['ครูที่ปรึกษา', 'ระบบ › ครูที่ปรึกษา'],
+  sheetConfig: ['เชื่อมต่อ Google Sheets', 'ระบบ › Google Sheet'],
+};
+
+function showPage(id, el) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('page-' + id).classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  if (el) el.classList.add('active');
+  const t = pageTitles[id] || [id, id];
+  document.getElementById('pageTitle').textContent = t[0];
+  document.getElementById('pageBreadcrumb').textContent = 'ระบบทะเบียนนักเรียน › ' + t[1];
+  // Refresh
+  if (id === 'students') renderStudents();
+  if (id === 'classes') renderClasses();
+  if (id === 'subjects') renderSubjects();
+  if (id === 'teachers') renderTeachers();
+  if (id === 'settings') loadSettings();
+  if (id === 'dashboard') updateDashboard();
+  if (id === 'scores' || id === 'pp6') populateSelects();
+}
+
+// ===========================
+// TABS
+// ===========================
+function switchTab(id) {
+  const tabContainer = document.querySelector('.tabs');
+  tabContainer.querySelectorAll('.tab').forEach((t,i) => {
+    const contents = document.querySelectorAll('.tab-content');
+    if (t.getAttribute('onclick').includes(id)) {
+      t.classList.add('active');
+    } else {
+      t.classList.remove('active');
+    }
+  });
+  document.querySelectorAll('.tab-content').forEach(c => {
+    c.classList.remove('active');
+    if (c.id === 'tab-' + id) c.classList.add('active');
+  });
+}
+
+// ===========================
+// MODAL
+// ===========================
+function openModal(id) {
+  const m = document.getElementById(id);
+  m.classList.add('open');
+  if (id === 'modalClass' || id === 'modalStudent') populateClassSelects();
+  if (id === 'modalClass') populateTeacherSelects();
+}
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+
+// ===========================
+// TOAST
+// ===========================
+function toast(msg, type='') {
+  const c = document.getElementById('toastContainer');
+  const t = document.createElement('div');
+  t.className = 'toast ' + type;
+  t.textContent = msg;
+  c.appendChild(t);
+  setTimeout(() => t.remove(), 3000);
+}
+
+// ===========================
+// SETTINGS
+// ===========================
+function saveSettings() {
+  const s = {
+    schoolFull: document.getElementById('settSchoolFull').value,
+    schoolShort: document.getElementById('settSchoolShort').value,
+    schoolCode: document.getElementById('settSchoolCode').value,
+    district: document.getElementById('settDistrict').value,
+    address: document.getElementById('settAddress').value,
+    director: document.getElementById('settDirector').value,
+    directorRank: document.getElementById('settDirectorRank').value,
+    year: document.getElementById('settYear').value,
+    term: document.getElementById('settTerm').value,
+  };
+  DB.set('settings', s);
+  document.getElementById('sidebarSchoolName').textContent = s.schoolShort || s.schoolFull || 'โรงเรียน';
+  toast('✅ บันทึกการตั้งค่าเรียบร้อย', 'success');
+}
+
+function loadSettings() {
+  const s = DB.getObj('settings');
+  document.getElementById('settSchoolFull').value = s.schoolFull || '';
+  document.getElementById('settSchoolShort').value = s.schoolShort || '';
+  document.getElementById('settSchoolCode').value = s.schoolCode || '';
+  document.getElementById('settDistrict').value = s.district || '';
+  document.getElementById('settAddress').value = s.address || '';
+  document.getElementById('settDirector').value = s.director || '';
+  document.getElementById('settDirectorRank').value = s.directorRank || '';
+  document.getElementById('settYear').value = s.year || '2567';
+  document.getElementById('settTerm').value = s.term || '1';
+  document.getElementById('sidebarSchoolName').textContent = s.schoolShort || s.schoolFull || 'โรงเรียน';
+  // Load logos
+  const schoolLogo = localStorage.getItem('sch_schoolLogo');
+  if (schoolLogo) { document.getElementById('logoSchoolPreview').src = schoolLogo; document.getElementById('logoSchoolPreview').style.display='block'; document.getElementById('logoSchoolHint').style.display='none'; }
+  const obecLogo = localStorage.getItem('sch_obecLogo');
+  if (obecLogo) { document.getElementById('logoObecPreview').src = obecLogo; document.getElementById('logoObecPreview').style.display='block'; document.getElementById('logoObecHint').style.display='none'; }
+}
+
+function uploadLogo(input, previewId, hintId, storageKey) {
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    localStorage.setItem('sch_' + storageKey, e.target.result);
+    document.getElementById(previewId).src = e.target.result;
+    document.getElementById(previewId).style.display = 'block';
+    document.getElementById(hintId).style.display = 'none';
+    toast('✅ อัปโหลดโลโก้เรียบร้อย', 'success');
+  };
+  reader.readAsDataURL(file);
+}
+
+// ===========================
+// STUDENTS
+// ===========================
+function saveStudent() {
+  const s = {
+    id: Date.now(),
+    prefix: document.getElementById('stuPrefix').value,
+    first: document.getElementById('stuFirst').value,
+    last: document.getElementById('stuLast').value,
+    code: document.getElementById('stuCode').value,
+    no: document.getElementById('stuNo').value,
+    classId: document.getElementById('stuClass').value,
+    birth: document.getElementById('stuBirth').value,
+    nid: document.getElementById('stuNid').value,
+    nation: document.getElementById('stuNation').value,
+    parent: document.getElementById('stuParent').value,
+    parentTel: document.getElementById('stuParentTel').value,
+  };
+  if (!s.first || !s.last) { toast('❌ กรุณากรอกชื่อ-สกุล', 'error'); return; }
+  DB.push('students', s);
+  closeModal('modalStudent');
+  renderStudents();
+  updateDashboard();
+  toast('✅ เพิ่มนักเรียนเรียบร้อย', 'success');
+}
+
+function renderStudents() {
+  const students = DB.get('students');
+  const classes = DB.get('classes');
+  const filterClass = document.getElementById('filterClass')?.value || '';
+  
+  // Populate filter
+  const fc = document.getElementById('filterClass');
+  if (fc) {
+    fc.innerHTML = '<option value="">ทุกห้อง</option>' + classes.map(c => `<option value="${c.id}">${c.level}/${c.room}</option>`).join('');
+    fc.value = filterClass;
+  }
+
+  const tbody = document.getElementById('studentTable');
+  const filtered = filterClass ? students.filter(s => s.classId == filterClass) : students;
+  if (filtered.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;color:var(--gray-400);padding:30px">ยังไม่มีข้อมูลนักเรียน</td></tr>';
+    return;
+  }
+  tbody.innerHTML = filtered.map((s, i) => {
+    const cls = classes.find(c => c.id == s.classId);
+    const clsName = cls ? `${cls.level}/${cls.room}` : '-';
+    return `<tr>
+      <td>${i+1}</td>
+      <td>${s.no || '-'}</td>
+      <td><span class="badge badge-blue">${s.code}</span></td>
+      <td><strong>${s.prefix}${s.first} ${s.last}</strong></td>
+      <td>${clsName}</td>
+      <td>${s.prefix.includes('หญิ') || s.prefix === 'นางสาว' ? '♀️ หญิง' : '♂️ ชาย'}</td>
+      <td>${s.birth || '-'}</td>
+      <td><button class="btn btn-outline btn-sm btn-icon" onclick="deleteStudent(${s.id})">🗑</button></td>
+    </tr>`;
+  }).join('');
+}
+
+function deleteStudent(id) {
+  if (!confirm('ลบนักเรียนนี้?')) return;
+  DB.set('students', DB.get('students').filter(s => s.id !== id));
+  renderStudents();
+  updateDashboard();
+  toast('🗑 ลบนักเรียนแล้ว');
+}
+
+// ===========================
+// CLASSES
+// ===========================
+function saveClass() {
+  const c = {
+    id: Date.now(),
+    level: document.getElementById('clsLevel').value,
+    room: document.getElementById('clsRoom').value,
+    year: document.getElementById('clsYear').value,
+    term: document.getElementById('clsTerm').value,
+    teacher1: document.getElementById('clsTeacher1').value,
+    teacher2: document.getElementById('clsTeacher2').value,
+  };
+  if (!c.room) { toast('❌ กรุณากรอกห้อง', 'error'); return; }
+  DB.push('classes', c);
+  closeModal('modalClass');
+  renderClasses();
+  updateDashboard();
+  toast('✅ เพิ่มห้องเรียนเรียบร้อย', 'success');
+}
+
+function renderClasses() {
+  const classes = DB.get('classes');
+  const teachers = DB.get('teachers');
+  const students = DB.get('students');
+  const tbody = document.getElementById('classTable');
+  if (classes.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:var(--gray-400);padding:30px">ยังไม่มีห้องเรียน</td></tr>';
+    return;
+  }
+  tbody.innerHTML = classes.map((c, i) => {
+    const t1 = teachers.find(t => t.id == c.teacher1);
+    const t2 = teachers.find(t => t.id == c.teacher2);
+    const tNames = [t1, t2].filter(Boolean).map(t => `${t.prefix}${t.name}`).join(', ') || '-';
+    const count = students.filter(s => s.classId == c.id).length;
+    return `<tr>
+      <td>${i+1}</td>
+      <td><span class="badge badge-blue">${c.level}</span></td>
+      <td><strong>${c.room}</strong></td>
+      <td>ภาคเรียนที่ ${c.term}/${c.year}</td>
+      <td>${tNames}</td>
+      <td><span class="badge badge-green">${count} คน</span></td>
+      <td><button class="btn btn-outline btn-sm btn-icon" onclick="deleteClass(${c.id})">🗑</button></td>
+    </tr>`;
+  }).join('');
+}
+
+function deleteClass(id) {
+  if (!confirm('ลบห้องเรียนนี้?')) return;
+  DB.set('classes', DB.get('classes').filter(c => c.id !== id));
+  renderClasses();
+  updateDashboard();
+}
+
+// ===========================
+// SUBJECTS
+// ===========================
+function saveSubject() {
+  const s = {
+    id: Date.now(),
+    code: document.getElementById('subCode').value,
+    name: document.getElementById('subName').value,
+    type: document.getElementById('subType').value,
+    credit: document.getElementById('subCredit').value,
+    level: document.getElementById('subLevel').value,
+    midMax: document.getElementById('subMidMax').value,
+    finalMax: document.getElementById('subFinalMax').value,
+    order: parseInt(document.getElementById('subOrder').value) || 99,
+  };
+  if (!s.name) { toast('❌ กรุณากรอกชื่อวิชา', 'error'); return; }
+  DB.push('subjects', s);
+  closeModal('modalSubject');
+  renderSubjects();
+  updateDashboard();
+  toast('✅ เพิ่มรายวิชาเรียบร้อย', 'success');
+}
+
+function renderSubjects() {
+  const subjects = DB.get('subjects');
+  const tbody = document.getElementById('subjectTable');
+  if (subjects.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:var(--gray-400);padding:30px">ยังไม่มีรายวิชา</td></tr>';
+    return;
+  }
+  tbody.innerHTML = subjects.map((s, i) => `<tr>
+    <td>${i+1}</td>
+    <td><span class="badge badge-blue">${s.code}</span></td>
+    <td><strong>${s.name}</strong></td>
+    <td><span class="badge ${s.type==='พื้นฐาน'?'badge-blue':'badge-gold'}">${s.type}</span></td>
+    <td>${s.credit}</td>
+    <td>${s.level}</td>
+    <td><button class="btn btn-outline btn-sm btn-icon" onclick="deleteSubject(${s.id})">🗑</button></td>
+  </tr>`).join('');
+}
+
+function deleteSubject(id) {
+  if (!confirm('ลบรายวิชานี้?')) return;
+  DB.set('subjects', DB.get('subjects').filter(s => s.id !== id));
+  renderSubjects();
+  updateDashboard();
+}
+
+// ===========================
+// TEACHERS
+// ===========================
+function saveTeacher() {
+  const t = {
+    id: Date.now(),
+    prefix: document.getElementById('tPrefix').value,
+    name: document.getElementById('tName').value,
+    rank: document.getElementById('tRank').value,
+    edu: document.getElementById('tEdu').value,
+    email: document.getElementById('tEmail').value,
+    tel: document.getElementById('tTel').value,
+  };
+  if (!t.name) { toast('❌ กรุณากรอกชื่อครู', 'error'); return; }
+  DB.push('teachers', t);
+  closeModal('modalTeacher');
+  renderTeachers();
+  toast('✅ เพิ่มครูเรียบร้อย', 'success');
+}
+
+function renderTeachers() {
+  const teachers = DB.get('teachers');
+  const classes = DB.get('classes');
+  const tbody = document.getElementById('teacherTable');
+  if (teachers.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:var(--gray-400);padding:30px">ยังไม่มีข้อมูลครู</td></tr>';
+    return;
+  }
+  tbody.innerHTML = teachers.map((t, i) => {
+    const myClasses = classes.filter(c => c.teacher1 == t.id || c.teacher2 == t.id).map(c => `${c.level}/${c.room}`).join(', ') || '-';
+    return `<tr>
+      <td>${i+1}</td>
+      <td><strong>${t.prefix}${t.name}</strong></td>
+      <td>${t.rank || '-'}</td>
+      <td>${myClasses}</td>
+      <td>${t.email || '-'}</td>
+      <td>${t.tel || '-'}</td>
+      <td><button class="btn btn-outline btn-sm btn-icon" onclick="deleteTeacher(${t.id})">🗑</button></td>
+    </tr>`;
+  }).join('');
+}
+
+function deleteTeacher(id) {
+  if (!confirm('ลบครูนี้?')) return;
+  DB.set('teachers', DB.get('teachers').filter(t => t.id !== id));
+  renderTeachers();
+}
+
+// ===========================
+// POPULATE SELECTS
+// ===========================
+function populateClassSelects() {
+  const classes = DB.get('classes');
+  const opts = classes.map(c => `<option value="${c.id}">${c.level}/${c.room} (${c.year})</option>`).join('');
+  ['stuClass', 'filterClass', 'pp6Class', 'scoreClass'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.innerHTML = (id === 'filterClass' ? '<option value="">ทุกห้อง</option>' : '<option value="">-- เลือกห้อง --</option>') + opts;
+  });
+}
+
+function populateTeacherSelects() {
+  const teachers = DB.get('teachers');
+  const opts = '<option value="">-- ไม่ระบุ --</option>' + teachers.map(t => `<option value="${t.id}">${t.prefix}${t.name}</option>`).join('');
+  ['clsTeacher1', 'clsTeacher2'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.innerHTML = opts;
+  });
+}
+
+function populateSelects() {
+  populateClassSelects();
+  const subjects = DB.get('subjects');
+  const subOpts = '<option value="">-- เลือกวิชา --</option>' + subjects.map(s => `<option value="${s.id}">${s.code} ${s.name}</option>`).join('');
+  const ss = document.getElementById('scoreSubject');
+  if (ss) ss.innerHTML = subOpts;
+  const pp6s = document.getElementById('pp6Student');
+  if (pp6s) {
+    const cls = document.getElementById('pp6Class')?.value;
+    const students = DB.get('students').filter(s => !cls || s.classId == cls);
+    pp6s.innerHTML = '<option value="">-- เลือกนักเรียน --</option>' + students.map(s => `<option value="${s.id}">${s.no}. ${s.prefix}${s.first} ${s.last}</option>`).join('');
+  }
+}
+
+// ===========================
+// SCORES
+// ===========================
+function loadScoreStudents() { populateSelects(); }
+
+function loadScoreTable() {
+  const classId = document.getElementById('scoreClass').value;
+  const subjectId = document.getElementById('scoreSubject').value;
+  const term = document.getElementById('scoreTerm').value;
+  const year = document.getElementById('scoreYear').value;
+  if (!classId || !subjectId) { toast('❌ เลือกห้องและวิชาก่อน', 'error'); return; }
+  const students = DB.get('students').filter(s => s.classId == classId).sort((a,b) => (a.no||0)-(b.no||0));
+  const scores = DB.get('scores');
+  const tbody = document.getElementById('scoreTable');
+  if (students.length === 0) { tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:20px">ไม่มีนักเรียนในห้องนี้</td></tr>'; return; }
+  tbody.innerHTML = students.map((s, i) => {
+    const sc = scores.find(x => x.studentId == s.id && x.subjectId == subjectId && x.term == term && x.year == year) || {};
+    const mid = sc.mid || '';
+    const fin = sc.final || '';
+    const total = (mid !== '' && fin !== '') ? (parseFloat(mid) + parseFloat(fin)).toFixed(0) : '';
+    return `<tr>
+      <td>${i+1}</td>
+      <td>${s.code}</td>
+      <td>${s.prefix}${s.first} ${s.last}</td>
+      <td><input class="score-input" data-id="${s.id}" data-field="mid" type="number" min="0" max="100" value="${mid}" oninput="calcTotal(this)"></td>
+      <td><input class="score-input" data-id="${s.id}" data-field="final" type="number" min="0" max="100" value="${fin}" oninput="calcTotal(this)"></td>
+      <td id="total_${s.id}">${total}</td>
+      <td id="grade_${s.id}">${total ? getGrade(total) : ''}</td>
+    </tr>`;
+  }).join('');
+}
+
+function calcTotal(input) {
+  const row = input.closest('tr');
+  const mid = row.querySelector('[data-field="mid"]').value;
+  const fin = row.querySelector('[data-field="final"]').value;
+  const id = input.dataset.id;
+  if (mid !== '' && fin !== '') {
+    const total = (parseFloat(mid) + parseFloat(fin)).toFixed(0);
+    document.getElementById('total_' + id).textContent = total;
+    document.getElementById('grade_' + id).innerHTML = `<span class="grade-badge" style="background:${gradeColor(getGrade(total))};color:white">${getGrade(total)}</span>`;
+  }
+}
+
+function getGrade(score) {
+  const s = parseFloat(score);
+  if (s >= 80) return '4';
+  if (s >= 75) return '3.5';
+  if (s >= 70) return '3';
+  if (s >= 65) return '2.5';
+  if (s >= 60) return '2';
+  if (s >= 55) return '1.5';
+  if (s >= 50) return '1';
+  return '0';
+}
+
+function gradeColor(g) {
+  const n = parseFloat(g);
+  if (n >= 3) return '#1a7a4a';
+  if (n >= 2) return '#e67e22';
+  if (n >= 1) return '#c0392b';
+  return '#7f8c8d';
+}
+
+function saveScores() {
+  const classId = document.getElementById('scoreClass').value;
+  const subjectId = document.getElementById('scoreSubject').value;
+  const term = document.getElementById('scoreTerm').value;
+  const year = document.getElementById('scoreYear').value;
+  const rows = document.getElementById('scoreTable').querySelectorAll('tr');
+  let scores = DB.get('scores').filter(s => !(s.subjectId == subjectId && s.term == term && s.year == year && DB.get('students').filter(st => st.classId == classId).some(st => st.id == s.studentId)));
+  rows.forEach(row => {
+    const midEl = row.querySelector('[data-field="mid"]');
+    const finEl = row.querySelector('[data-field="final"]');
+    if (midEl && finEl) {
+      scores.push({ studentId: midEl.dataset.id, subjectId, term, year, mid: midEl.value, final: finEl.value });
+    }
+  });
+  DB.set('scores', scores);
+  toast('✅ บันทึกคะแนนเรียบร้อย', 'success');
+}
+
+// ===========================
+// ปพ.6 PREVIEW & PRINT
+// ===========================
+function previewPP6() {
+  const classId = document.getElementById('pp6Class').value;
+  const term = document.getElementById('pp6Term').value;
+  const year = document.getElementById('pp6Year').value;
+  const printType = document.getElementById('pp6PrintType').value;
+  const studentId = document.getElementById('pp6Student')?.value;
+  if (!classId) { toast('❌ เลือกห้องเรียนก่อน', 'error'); return; }
+
+  const cls = DB.get('classes').find(c => c.id == classId);
+  const students = DB.get('students').filter(s => s.classId == classId).sort((a,b) => (a.no||0)-(b.no||0));
+  const targetStudents = (printType === 'single' && studentId) ? students.filter(s => s.id == studentId) : students;
+  const subjects = DB.get('subjects');
+  const scores = DB.get('scores');
+  const teachers = DB.get('teachers');
+  const settings = DB.getObj('settings');
+
+  const html = targetStudents.map(student => renderPP6Form(student, cls, subjects, scores, teachers, settings, term, year)).join('<div style="page-break-after:always"></div>');
+  document.getElementById('pp6PreviewArea').innerHTML = `<div style="background:white;border:1px solid var(--gray-200);border-radius:12px;overflow:hidden;margin-top:8px">${html}</div>`;
+  document.getElementById('pp6PreviewArea').scrollIntoView({behavior:'smooth'});
+}
+
+function printPP6() {
+  previewPP6();
+  setTimeout(() => window.print(), 600);
+}
+
+function renderPP6Form(student, cls, subjects, scores, teachers, settings, term, year) {
+  const clsSubjects = subjects.filter(s => s.level === (cls ? cls.level : '')).sort((a,b) => a.order - b.order);
+  const basic = clsSubjects.filter(s => s.type === 'พื้นฐาน');
+  const extra = clsSubjects.filter(s => s.type === 'เพิ่มเติม');
+  const getScore = (subId) => scores.find(s => s.studentId == student.id && s.subjectId == subId && s.term == term && s.year == year) || {};
+
+  const schoolLogo = localStorage.getItem('sch_schoolLogo') || '';
+  const obecLogo = localStorage.getItem('sch_obecLogo') || '';
+  const t1 = teachers.find(t => t.id == cls?.teacher1);
+  const t2 = teachers.find(t => t.id == cls?.teacher2);
+  const tName1 = t1 ? `${t1.prefix}${t1.name}${t1.rank ? ' ครู'+t1.rank : ''}` : '';
+  const tName2 = t2 ? `${t2.prefix}${t2.name}${t2.rank ? ' ครู'+t2.rank : ''}` : '';
+  const tSignLine = [tName1, tName2].filter(Boolean).join(' / ') || '..........................';
+
+  let basicRows = basic.map((s, i) => {
+    const sc = getScore(s.id);
+    const total = sc.mid && sc.final ? (parseFloat(sc.mid) + parseFloat(sc.final)).toFixed(0) : '';
+    return `<tr>
+      <td>${i+1}</td>
+      <td style="font-size:10px">${s.code}</td>
+      <td class="left">${s.name}</td>
+      <td>${s.type}</td>
+      <td>${s.credit}</td>
+      <td>${sc.mid || ''}</td>
+      <td>${sc.final || ''}</td>
+      <td>${total}</td>
+      <td style="font-weight:bold">${total ? getGrade(total) : ''}</td>
+      <td></td>
+    </tr>`;
+  }).join('');
+
+  // Pad basic to 14 rows
+  for (let i = basic.length; i < 14; i++) {
+    const shaded = i >= 9 ? 'style="background:#ddd"' : '';
+    basicRows += `<tr><td>${i+1}</td><td></td><td></td><td></td><td></td><td ${shaded}></td><td ${shaded}></td><td></td><td></td><td></td></tr>`;
+  }
+
+  let extraRows = extra.map((s, i) => {
+    const sc = getScore(s.id);
+    const total = sc.mid && sc.final ? (parseFloat(sc.mid) + parseFloat(sc.final)).toFixed(0) : '';
+    return `<tr>
+      <td>${i+1}</td>
+      <td style="font-size:10px">${s.code}</td>
+      <td class="left">${s.name}</td>
+      <td>${s.type}</td>
+      <td>${s.credit}</td>
+      <td>${sc.mid || ''}</td>
+      <td>${sc.final || ''}</td>
+      <td>${total}</td>
+      <td style="font-weight:bold">${total ? getGrade(total) : ''}</td>
+      <td></td>
+    </tr>`;
+  }).join('');
+  for (let i = extra.length; i < 8; i++) {
+    extraRows += `<tr><td>${i+1}</td><td></td><td></td><td>เพิ่มเติม</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>`;
+  }
+
+  const totalBasicCredit = basic.reduce((a, s) => a + parseFloat(s.credit || 0), 0).toFixed(1);
+
+  return `<div class="pp6-form">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px">
+      ${schoolLogo ? `<img src="${schoolLogo}" style="width:50px;height:50px;object-fit:contain">` : '<div style="width:50px;height:50px;background:#eee;display:flex;align-items:center;justify-content:center;font-size:20px">🏫</div>'}
+      <div style="flex:1;text-align:center">
+        <div class="pp6-title">แบบรายงานผลพัฒนาคุณภาพผู้เรียนรายบุคคล ( ปพ.6 )</div>
+        <div style="font-size:11px">ภาคเรียนที่ ${term} &nbsp;&nbsp;&nbsp; ชั้น.............. ภาคเรียนที่ ${term}</div>
+      </div>
+      ${obecLogo ? `<img src="${obecLogo}" style="width:50px;height:50px;object-fit:contain">` : '<div style="width:50px;height:50px;background:#eee;display:flex;align-items:center;justify-content:center;font-size:10px;text-align:center">สพฐ.</div>'}
+    </div>
+    <div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:4px">
+      <div>โรงเรียน <u>${settings.schoolFull || '...................................'}</u> &nbsp; เลขที่ <u>........</u> &nbsp; ชั้น <u>${cls ? cls.level+'/'+cls.room : '........'}</u></div>
+      <div>ปีการศึกษา <u>${year}</u></div>
+    </div>
+    <div style="font-size:11px;margin-bottom:6px">
+      ชื่อ-สกุล <u>${student.prefix}${student.first} ${student.last}</u> &nbsp;
+      เลขประจำตัวนักเรียน <u>${student.code || '............'}</u> &nbsp;
+      เลขที่ <u>${student.no || '...'}</u>
+    </div>
+
+    <table class="pp6-table">
+      <thead>
+        <tr>
+          <th rowspan="2">ลำดับที่</th>
+          <th rowspan="2">รหัสวิชา</th>
+          <th rowspan="2">รายวิชา</th>
+          <th rowspan="2">ประเภท</th>
+          <th rowspan="2">น้ำหนัก<br>หน่วยกิต</th>
+          <th colspan="2">คะแนน</th>
+          <th rowspan="2">รวม<br>คะแนน</th>
+          <th rowspan="2">ระดับผล<br>การเรียน</th>
+          <th rowspan="2">หมายเหตุ</th>
+        </tr>
+        <tr>
+          <th>ระหว่างภาค</th>
+          <th>ปลายภาค</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="pp6-section-header"><td colspan="10">วิชาพื้นฐาน</td></tr>
+        ${basicRows}
+        <tr class="pp6-section-header"><td colspan="10">วิชาเพิ่มเติม</td></tr>
+        ${extraRows}
+      </tbody>
+    </table>
+
+    <table class="pp6-table" style="margin-top:4px">
+      <tr>
+        <td style="width:60%;text-align:left;border:none;padding:4px 0" colspan="2">
+          <table style="width:100%;border-collapse:collapse">
+            <tr><td style="border:1px solid #000;padding:4px 8px;font-weight:bold;background:#e0e0e0" colspan="3">สรุปผลการประเมิน</td></tr>
+            <tr>
+              <td style="border:1px solid #000;padding:4px 8px">จำนวนหน่วยกิต/น้ำหนักรายวิชาพื้นฐาน</td>
+              <td style="border:1px solid #000;padding:4px 8px;text-align:center">${totalBasicCredit}</td>
+              <td style="border:1px solid #000;padding:4px 8px"></td>
+            </tr>
+            <tr>
+              <td style="border:1px solid #000;padding:4px 8px">จำนวนหน่วยกิต/น้ำหนักรายวิชาเพิ่มเติม</td>
+              <td style="border:1px solid #000;padding:4px 8px"></td>
+              <td style="border:1px solid #000;padding:4px 8px"></td>
+            </tr>
+            <tr>
+              <td style="border:1px solid #000;padding:4px 8px">รวมหน่วยกิต/น้ำหนักที่ได้</td>
+              <td style="border:1px solid #000;padding:4px 8px"></td>
+              <td style="border:1px solid #000;padding:4px 8px"></td>
+            </tr>
+            <tr>
+              <td style="border:1px solid #000;padding:4px 8px">ระดับผลการเรียนเฉลี่ย</td>
+              <td style="border:1px solid #000;padding:4px 8px" colspan="2"></td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+
+    <div class="pp6-sign-row" style="margin-top:10px">
+      <div class="pp6-sign-box">
+        <div>ลงชื่อ......................................</div>
+        <div style="margin-top:2px">${tSignLine}</div>
+        <div>ครูที่ปรึกษา/ครูประจำชั้น</div>
+      </div>
+      <div class="pp6-sign-box">
+        <div>ลงชื่อ......................................</div>
+        <div style="margin-top:2px">${settings.director || '.................................'}</div>
+        <div>ผู้อำนวยการ</div>
+      </div>
+      <div class="pp6-sign-box">
+        <div>ลงชื่อ......................................</div>
+        <div style="margin-top:2px">.................................</div>
+        <div>ผู้ปกครอง</div>
+      </div>
+    </div>
+
+    <table style="width:100%;border-collapse:collapse;margin-top:8px;font-size:11px">
+      <tr>
+        <td style="border:1px solid #000;padding:4px 8px;font-weight:bold;background:#e0e0e0">การประเมินคุณลักษณะ</td>
+        <td style="border:1px solid #000;padding:4px 8px"></td>
+      </tr>
+      <tr>
+        <td style="border:1px solid #000;padding:4px 8px">คุณลักษณะอันพึงประสงค์ของสถานศึกษา</td>
+        <td style="border:1px solid #000;padding:4px 8px"></td>
+      </tr>
+      <tr>
+        <td style="border:1px solid #000;padding:4px 8px">การอ่าน คิดวิเคราะห์และเขียน</td>
+        <td style="border:1px solid #000;padding:4px 8px"></td>
+      </tr>
+      <tr>
+        <td style="border:1px solid #000;padding:4px 8px">กิจกรรมพัฒนาผู้เรียน</td>
+        <td style="border:1px solid #000;padding:4px 8px"></td>
+      </tr>
+    </table>
+  </div>`;
+}
+
+// ===========================
+// EXCEL IMPORT/EXPORT
+// ===========================
+function exportStudentTemplate() {
+  const wb = XLSX.utils.book_new();
+  const ws = XLSX.utils.aoa_to_sheet([
+    ['รหัสนักเรียน','คำนำหน้า','ชื่อ','นามสกุล','ระดับชั้น','ห้อง','เลขที่','วันเกิด(YYYY-MM-DD)','เลขบัตรประชาชน','ชื่อผู้ปกครอง','โทรผู้ปกครอง'],
+    ['10001','เด็กชาย','สมชาย','ใจดี','ป.6','1','1','2557-01-15','1234567890123','นายสมศักดิ์ ใจดี','0812345678'],
+  ]);
+  XLSX.utils.book_append_sheet(wb, ws, 'Students');
+  XLSX.writeFile(wb, 'student_template.xlsx');
+  toast('✅ ดาวน์โหลดฟอร์มนักเรียนแล้ว', 'success');
+}
+
+function exportScoreTemplate() {
+  const wb = XLSX.utils.book_new();
+  const ws = XLSX.utils.aoa_to_sheet([
+    ['รหัสนักเรียน','รหัสวิชา','ภาคเรียน','ปีการศึกษา','คะแนนระหว่างภาค','คะแนนปลายภาค'],
+    ['10001','ท11101','1','2567','60','25'],
+  ]);
+  XLSX.utils.book_append_sheet(wb, ws, 'Scores');
+  XLSX.writeFile(wb, 'score_template.xlsx');
+  toast('✅ ดาวน์โหลดฟอร์มผลการเรียนแล้ว', 'success');
+}
+
+function importStudents(input) {
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    const wb = XLSX.read(e.target.result, {type:'binary'});
+    const ws = wb.Sheets[wb.SheetNames[0]];
+    const data = XLSX.utils.sheet_to_json(ws, {header:1});
+    let count = 0;
+    data.slice(1).forEach(row => {
+      if (!row[0]) return;
+      const classes = DB.get('classes');
+      const cls = classes.find(c => c.level === row[4] && c.room == row[5]);
+      DB.push('students', {
+        id: Date.now() + Math.random(),
+        code: String(row[0]), prefix: row[1] || 'เด็กชาย',
+        first: row[2] || '', last: row[3] || '',
+        classId: cls ? cls.id : '',
+        room: row[5] || '', no: row[6] || '',
+        birth: row[7] || '', nid: row[8] || '',
+        parent: row[9] || '', parentTel: row[10] || '',
+      });
+      count++;
+    });
+    renderStudents();
+    updateDashboard();
+    toast(`✅ Import นักเรียน ${count} คนเรียบร้อย`, 'success');
+  };
+  reader.readAsBinaryString(file);
+  input.value = '';
+}
+
+// ===========================
+// ปพ.6 EXCEL TEMPLATE & IMPORT
+// ===========================
+function downloadPP6Template() {
+  const wb = XLSX.utils.book_new();
+  const info = [
+    ['แบบฟอร์ม ปพ.6 - รายงานผลพัฒนาคุณภาพผู้เรียน'],
+    ['คำอธิบาย: กรอกข้อมูลในชีต StudentInfo และ Scores แล้ว Import กลับในระบบ'],
+    [],
+  ];
+  const ws1 = XLSX.utils.aoa_to_sheet([
+    ...info,
+    ['=== ข้อมูลนักเรียน ==='],
+    ['รหัสนักเรียน','คำนำหน้า','ชื่อ','นามสกุล','ชั้น','ห้อง','เลขที่'],
+    ['10001','เด็กชาย','สมชาย','ใจดี','ป.6','1','1'],
+  ]);
+  XLSX.utils.book_append_sheet(wb, ws1, 'StudentInfo');
+
+  const ws2 = XLSX.utils.aoa_to_sheet([
+    ['=== ผลการเรียน ==='],
+    ['รหัสวิชา','ชื่อวิชา','ประเภท','น้ำหนักหน่วยกิต','คะแนนระหว่างภาค','คะแนนปลายภาค','ภาคเรียน','ปีการศึกษา'],
+    ['ท11101','ภาษาไทย','พื้นฐาน','1.5','60','25','1','2567'],
+    ['ค11101','คณิตศาสตร์','พื้นฐาน','1.5','65','28','1','2567'],
+    ['ว11101','วิทยาศาสตร์','พื้นฐาน','2','70','26','1','2567'],
+  ]);
+  XLSX.utils.book_append_sheet(wb, ws2, 'Scores');
+  XLSX.writeFile(wb, 'pp6_form_blank.xlsx');
+  toast('✅ ดาวน์โหลดฟอร์ม ปพ.6 เรียบร้อย', 'success');
+}
+
+function handlePP6Drop(event) {
+  event.preventDefault();
+  document.getElementById('pp6DropZone').classList.remove('dragover');
+  const file = event.dataTransfer.files[0];
+  if (file) loadPP6ExcelDirect(file);
+}
+
+function loadPP6Excel(input) {
+  const file = input.files[0];
+  if (file) loadPP6ExcelDirect(file);
+  input.value = '';
+}
+
+function loadPP6ExcelDirect(file) {
+  const reader = new FileReader();
+  reader.onload = e => {
+    const wb = XLSX.read(e.target.result, {type:'binary'});
+    // Read StudentInfo
+    const ws1 = wb.Sheets['StudentInfo'];
+    const ws2 = wb.Sheets['Scores'];
+    if (!ws1 || !ws2) { toast('❌ ไม่พบชีต StudentInfo หรือ Scores', 'error'); return; }
+    const sData = XLSX.utils.sheet_to_json(ws1, {header:1}).filter(r => r[0] && r[0] !== 'รหัสนักเรียน' && !String(r[0]).startsWith('='));
+    const scData = XLSX.utils.sheet_to_json(ws2, {header:1}).filter(r => r[0] && r[0] !== 'รหัสวิชา' && !String(r[0]).startsWith('='));
+    
+    const settings = DB.getObj('settings');
+    const students = sData.map(r => ({ code: r[0], prefix: r[1], first: r[2], last: r[3], level: r[4], room: r[5], no: r[6] }));
+    const scoreRows = scData.map(r => ({ code: r[0], name: r[1], type: r[2], credit: r[3], mid: r[4], final: r[5], term: r[6], year: r[7] }));
+
+    const teachers = DB.get('teachers');
+    const classes = DB.get('classes');
+
+    const html = students.map(student => {
+      const clsObj = classes.find(c => c.level === student.level && c.room == student.room) || {};
+      const t1 = teachers.find(t => t.id == clsObj.teacher1);
+      const t2 = teachers.find(t => t.id == clsObj.teacher2);
+      const tSignLine = [t1, t2].filter(Boolean).map(t => `${t.prefix}${t.name}`).join(' / ') || '..........................';
+      const schoolLogo = localStorage.getItem('sch_schoolLogo') || '';
+      const obecLogo = localStorage.getItem('sch_obecLogo') || '';
+      const term = scoreRows[0]?.term || settings.term || '1';
+      const year = scoreRows[0]?.year || settings.year || '2567';
+
+      const basic = scoreRows.filter(s => s.type === 'พื้นฐาน');
+      const extra = scoreRows.filter(s => s.type === 'เพิ่มเติม');
+
+      let basicRows = basic.map((s, i) => {
+        const total = s.mid && s.final ? (parseFloat(s.mid) + parseFloat(s.final)).toFixed(0) : '';
+        return `<tr><td>${i+1}</td><td style="font-size:10px">${s.code}</td><td class="left">${s.name}</td><td>${s.type}</td><td>${s.credit}</td><td>${s.mid || ''}</td><td>${s.final || ''}</td><td>${total}</td><td style="font-weight:bold">${total ? getGrade(total) : ''}</td><td></td></tr>`;
+      }).join('');
+      for (let i = basic.length; i < 14; i++) {
+        const sh = i >= 9 ? 'style="background:#ddd"' : '';
+        basicRows += `<tr><td>${i+1}</td><td></td><td></td><td></td><td></td><td ${sh}></td><td ${sh}></td><td></td><td></td><td></td></tr>`;
+      }
+      let extraRows = extra.map((s, i) => {
+        const total = s.mid && s.final ? (parseFloat(s.mid) + parseFloat(s.final)).toFixed(0) : '';
+        return `<tr><td>${i+1}</td><td style="font-size:10px">${s.code}</td><td class="left">${s.name}</td><td>${s.type}</td><td>${s.credit}</td><td>${s.mid||''}</td><td>${s.final||''}</td><td>${total}</td><td style="font-weight:bold">${total?getGrade(total):''}</td><td></td></tr>`;
+      }).join('');
+      for (let i = extra.length; i < 8; i++) extraRows += `<tr><td>${i+1}</td><td></td><td></td><td>เพิ่มเติม</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>`;
+
+      const totalBasicCredit = basic.reduce((a, s) => a + parseFloat(s.credit || 0), 0).toFixed(1);
+
+      return `<div class="pp6-form">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px">
+          ${schoolLogo ? `<img src="${schoolLogo}" style="width:50px;height:50px;object-fit:contain">` : '<div style="width:50px;height:50px;background:#eee;display:flex;align-items:center;justify-content:center;font-size:20px">🏫</div>'}
+          <div style="flex:1;text-align:center">
+            <div class="pp6-title">แบบรายงานผลพัฒนาคุณภาพผู้เรียนรายบุคคล ( ปพ.6 )</div>
+            <div style="font-size:11px">ภาคเรียนที่ ${term} &nbsp;&nbsp;&nbsp; ชั้น.............. ภาคเรียนที่ ${term}</div>
+          </div>
+          ${obecLogo ? `<img src="${obecLogo}" style="width:50px;height:50px;object-fit:contain">` : '<div style="width:50px;background:#eee;height:50px;display:flex;align-items:center;justify-content:center;font-size:10px">สพฐ.</div>'}
+        </div>
+        <div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:4px">
+          <div>โรงเรียน <u>${settings.schoolFull || '...................................'}</u> &nbsp; เลขที่ <u>........</u> &nbsp; ชั้น <u>${student.level||''}/${student.room||''}</u></div>
+          <div>ปีการศึกษา <u>${year}</u></div>
+        </div>
+        <div style="font-size:11px;margin-bottom:6px">ชื่อ-สกุล <u>${student.prefix||''}${student.first||''} ${student.last||''}</u> &nbsp; เลขประจำตัวนักเรียน <u>${student.code||'............'}</u> &nbsp; เลขที่ <u>${student.no||'...'}</u></div>
+        <table class="pp6-table">
+          <thead><tr><th rowspan="2">ลำดับที่</th><th rowspan="2">รหัสวิชา</th><th rowspan="2">รายวิชา</th><th rowspan="2">ประเภท</th><th rowspan="2">น้ำหนักหน่วยกิต</th><th colspan="2">คะแนน</th><th rowspan="2">รวมคะแนน</th><th rowspan="2">ระดับผลการเรียน</th><th rowspan="2">หมายเหตุ</th></tr><tr><th>ระหว่างภาค</th><th>ปลายภาค</th></tr></thead>
+          <tbody>
+            <tr class="pp6-section-header"><td colspan="10">วิชาพื้นฐาน</td></tr>
+            ${basicRows}
+            <tr class="pp6-section-header"><td colspan="10">วิชาเพิ่มเติม</td></tr>
+            ${extraRows}
+          </tbody>
+        </table>
+        <table style="width:60%;border-collapse:collapse;margin-top:4px;font-size:11px">
+          <tr><td style="border:1px solid #000;padding:4px 8px;font-weight:bold;background:#e0e0e0" colspan="2">สรุปผลการประเมิน</td></tr>
+          <tr><td style="border:1px solid #000;padding:4px 8px">จำนวนหน่วยกิต/น้ำหนักรายวิชาพื้นฐาน</td><td style="border:1px solid #000;padding:4px 8px;text-align:center">${totalBasicCredit}</td></tr>
+          <tr><td style="border:1px solid #000;padding:4px 8px">จำนวนหน่วยกิต/น้ำหนักรายวิชาเพิ่มเติม</td><td style="border:1px solid #000;padding:4px 8px"></td></tr>
+          <tr><td style="border:1px solid #000;padding:4px 8px">รวมหน่วยกิต/น้ำหนักที่ได้</td><td style="border:1px solid #000;padding:4px 8px"></td></tr>
+          <tr><td style="border:1px solid #000;padding:4px 8px">ระดับผลการเรียนเฉลี่ย</td><td style="border:1px solid #000;padding:4px 8px"></td></tr>
+        </table>
+        <div class="pp6-sign-row" style="margin-top:10px">
+          <div class="pp6-sign-box"><div>ลงชื่อ......................................</div><div style="margin-top:2px">${tSignLine}</div><div>ครูที่ปรึกษา/ครูประจำชั้น</div></div>
+          <div class="pp6-sign-box"><div>ลงชื่อ......................................</div><div style="margin-top:2px">${settings.director||'.................................'}</div><div>ผู้อำนวยการ</div></div>
+          <div class="pp6-sign-box"><div>ลงชื่อ......................................</div><div style="margin-top:2px">.................................</div><div>ผู้ปกครอง</div></div>
+        </div>
+        <table style="width:100%;border-collapse:collapse;margin-top:8px;font-size:11px">
+          <tr><td style="border:1px solid #000;padding:4px 8px;font-weight:bold;background:#e0e0e0">การประเมินคุณลักษณะ</td><td style="border:1px solid #000;padding:4px 8px"></td></tr>
+          <tr><td style="border:1px solid #000;padding:4px 8px">คุณลักษณะอันพึงประสงค์ของสถานศึกษา</td><td style="border:1px solid #000;padding:4px 8px"></td></tr>
+          <tr><td style="border:1px solid #000;padding:4px 8px">การอ่าน คิดวิเคราะห์และเขียน</td><td style="border:1px solid #000;padding:4px 8px"></td></tr>
+          <tr><td style="border:1px solid #000;padding:4px 8px">กิจกรรมพัฒนาผู้เรียน</td><td style="border:1px solid #000;padding:4px 8px"></td></tr>
+        </table>
+      </div>`;
+    }).join('<div style="page-break-after:always"></div>');
+
+    document.getElementById('pp6ImportPreview').innerHTML = `
+      <div style="display:flex;gap:10px;margin-bottom:12px">
+        <button class="btn btn-gold" onclick="window.print()">🖨️ พิมพ์</button>
+        <span style="color:var(--gray-400);font-size:13px;line-height:36px">Import สำเร็จ: พบนักเรียน ${students.length} คน, วิชา ${scoreRows.length} วิชา</span>
+      </div>
+      <div style="background:white;border:1px solid var(--gray-200);border-radius:12px;overflow:hidden">${html}</div>`;
+    toast(`✅ โหลดข้อมูล ปพ.6 จาก Excel สำเร็จ: ${students.length} คน`, 'success');
+  };
+  reader.readAsBinaryString(file);
+}
+
+// ===========================
+// SHEET CONFIG
+// ===========================
+function saveSheetConfig() {
+  DB.set('sheetConfig', {
+    students: document.getElementById('sheetStudents').value,
+    studentsTab: document.getElementById('sheetStudentsTab').value,
+    scores: document.getElementById('sheetScores').value,
+    scoresTab: document.getElementById('sheetScoresTab').value,
+    apiKey: document.getElementById('sheetApiKey').value,
+  });
+  toast('✅ บันทึก Sheet Config แล้ว', 'success');
+}
+
+function testSheetConnection() {
+  const cfg = DB.getObj('sheetConfig');
+  if (!cfg.students || !cfg.apiKey) { toast('❌ กรอก Sheet ID และ API Key ก่อน', 'error'); return; }
+  toast('🔌 กำลังทดสอบการเชื่อมต่อ...', '');
+  setTimeout(() => toast('ℹ️ ต้องใช้ภายใน environment ที่มี API key จริง', ''), 1500);
+}
+
+// ===========================
+// DASHBOARD
+// ===========================
+function updateDashboard() {
+  document.getElementById('statStudents').textContent = DB.get('students').length;
+  document.getElementById('statClasses').textContent = DB.get('classes').length;
+  document.getElementById('statSubjects').textContent = DB.get('subjects').length;
+}
+
+// ===========================
+// PP6 PRINT TYPE TOGGLE
+// ===========================
+document.addEventListener('change', e => {
+  if (e.target.id === 'pp6PrintType') {
+    document.getElementById('pp6SingleRow').style.display = e.target.value === 'single' ? '' : 'none';
+    if (e.target.value === 'single') populateSelects();
+  }
+  if (e.target.id === 'pp6Class') populateSelects();
+});
+
+// ===========================
+// INIT
+// ===========================
+function initApp() {
+  loadSettings();
+  renderStudents();
+  renderClasses();
+  renderSubjects();
+  renderTeachers();
+  updateDashboard();
+  populateSelects();
+  // Load sheet config
+  const cfg = DB.getObj('sheetConfig');
+  if (cfg.students) document.getElementById('sheetStudents').value = cfg.students;
+  if (cfg.studentsTab) document.getElementById('sheetStudentsTab').value = cfg.studentsTab;
+  if (cfg.scores) document.getElementById('sheetScores').value = cfg.scores;
+  if (cfg.scoresTab) document.getElementById('sheetScoresTab').value = cfg.scoresTab;
+  if (cfg.apiKey) document.getElementById('sheetApiKey').value = cfg.apiKey;
+}
+
+// Close modals on overlay click
+document.querySelectorAll('.modal-overlay').forEach(o => {
+  o.addEventListener('click', e => { if (e.target === o) o.classList.remove('open'); });
+});
+</script>
+</body>
+</html>

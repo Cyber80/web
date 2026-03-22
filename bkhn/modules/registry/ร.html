@@ -1,0 +1,111 @@
+{
+  "name": "สรุปข่าวเช้า → Discord (No AI)",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [{ "field": "cronExpression", "expression": "0 7 * * *" }]
+        }
+      },
+      "id": "trigger-1",
+      "name": "ทุกเช้า 07:00",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1,
+      "position": [-1200, 0]
+    },
+    {
+      "parameters": {
+        "url": "https://www.thairath.co.th/rss/news.xml",
+        "options": { "response": { "response": { "fullResponse": false, "neverError": true } } }
+      },
+      "id": "rss-thai",
+      "name": "ข่าวไทย (ไทยรัฐ)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [-960, -300]
+    },
+    {
+      "parameters": {
+        "url": "https://feeds.bbci.co.uk/news/world/rss.xml",
+        "options": { "response": { "response": { "fullResponse": false, "neverError": true } } }
+      },
+      "id": "rss-world",
+      "name": "ข่าวต่างประเทศ (BBC World)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [-960, -100]
+    },
+    {
+      "parameters": {
+        "url": "https://feeds.bbci.co.uk/news/business/rss.xml",
+        "options": { "response": { "response": { "fullResponse": false, "neverError": true } } }
+      },
+      "id": "rss-biz",
+      "name": "ข่าวเศรษฐกิจ (BBC Business)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [-960, 100]
+    },
+    {
+      "parameters": {
+        "url": "https://feeds.bbci.co.uk/news/technology/rss.xml",
+        "options": { "response": { "response": { "fullResponse": false, "neverError": true } } }
+      },
+      "id": "rss-tech",
+      "name": "ข่าวเทคโนโลยี (BBC Tech)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [-960, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "const inputs = $input.all();\n\nfunction parseRSS(xml, category, limit = 3) {\n  const items = [];\n  const itemRegex = /<item>(.*?)<\\/item>/gs;\n  const titleRegex = /<title><!\\[CDATA\\[(.+?)\\]\\]><\\/title>|<title>([^<]+)<\\/title>/;\n  const linkRegex = /<link>([^<]+)<\\/link>/;\n  const descRegex = /<description><!\\[CDATA\\[(.+?)\\]\\]><\\/description>|<description>([^<]+)<\\/description>/;\n  let match;\n  let count = 0;\n  while ((match = itemRegex.exec(xml)) !== null && count < limit) {\n    const block = match[1];\n    const titleMatch = titleRegex.exec(block);\n    const linkMatch = linkRegex.exec(block);\n    const descMatch = descRegex.exec(block);\n    const title = titleMatch ? (titleMatch[1] || titleMatch[2] || '').trim() : '';\n    const link = linkMatch ? linkMatch[1].trim() : '';\n    const desc = descMatch ? (descMatch[1] || descMatch[2] || '').replace(/<[^>]+>/g, '').trim().slice(0, 80) : '';\n    if (title && !title.toLowerCase().includes('bbc')) {\n      items.push({ category, title, link, desc });\n      count++;\n    }\n  }\n  return items;\n}\n\nconst categories = [\n  { emoji: '🇹🇭', label: 'ข่าวในประเทศ' },\n  { emoji: '🌍', label: 'ข่าวต่างประเทศ' },\n  { emoji: '💹', label: 'เศรษฐกิจ/หุ้น' },\n  { emoji: '💻', label: 'เทคโนโลยี/AI' }\n];\n\nlet allNews = {};\ncategories.forEach(c => { allNews[c.label] = []; });\n\ninputs.forEach((item, i) => {\n  const xml = item.json.data || item.json.body || '';\n  const cat = categories[i];\n  const parsed = parseRSS(xml, cat.label, 3);\n  allNews[cat.label] = parsed;\n});\n\n// จัดรูปแบบข้อความ\nconst today = new Date().toLocaleDateString('th-TH', { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'Asia/Bangkok' });\nlet message = `📰 **สรุปข่าวเด่นประจำวัน ${today}**\\n━━━━━━━━━━━━━━━━━━━━\\n`;\n\ncategories.forEach(cat => {\n  const news = allNews[cat.label];\n  if (news.length > 0) {\n    message += `\\n${cat.emoji} **${cat.label}**\\n`;\n    news.forEach((n, i) => {\n      message += `${i+1}. ${n.title}\\n`;\n      if (n.link) message += `   🔗 ${n.link}\\n`;\n    });\n  }\n});\n\nmessage += `\\n━━━━━━━━━━━━━━━━━━━━\\n⏰ อัปเดตทุกเช้า 07:00 น. (เวลาไทย)`;\n\n// Discord จำกัด 2000 ตัวอักษร\nif (message.length > 1990) {\n  message = message.slice(0, 1990) + '...';\n}\n\nreturn [{ json: { message } }];"
+      },
+      "id": "parse-and-format",
+      "name": "Parse และจัดรูปแบบ",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [-480, 0]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "DISCORD_WEBHOOK_URL",
+        "sendBody": true,
+        "contentType": "raw",
+        "rawContentType": "application/json",
+        "body": "={{ JSON.stringify({ content: $json.message }) }}",
+        "options": {
+          "response": {
+            "response": {
+              "fullResponse": false,
+              "neverError": true
+            }
+          }
+        }
+      },
+      "id": "discord-send",
+      "name": "ส่ง Discord",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [-240, 0]
+    }
+  ],
+  "connections": {
+    "ทุกเช้า 07:00": {
+      "main": [[
+        { "node": "ข่าวไทย (ไทยรัฐ)", "type": "main", "index": 0 },
+        { "node": "ข่าวต่างประเทศ (BBC World)", "type": "main", "index": 0 },
+        { "node": "ข่าวเศรษฐกิจ (BBC Business)", "type": "main", "index": 0 },
+        { "node": "ข่าวเทคโนโลยี (BBC Tech)", "type": "main", "index": 0 }
+      ]]
+    },
+    "ข่าวไทย (ไทยรัฐ)": { "main": [[{ "node": "Parse และจัดรูปแบบ", "type": "main", "index": 0 }]] },
+    "ข่าวต่างประเทศ (BBC World)": { "main": [[{ "node": "Parse และจัดรูปแบบ", "type": "main", "index": 1 }]] },
+    "ข่าวเศรษฐกิจ (BBC Business)": { "main": [[{ "node": "Parse และจัดรูปแบบ", "type": "main", "index": 2 }]] },
+    "ข่าวเทคโนโลยี (BBC Tech)": { "main": [[{ "node": "Parse และจัดรูปแบบ", "type": "main", "index": 3 }]] },
+    "Parse และจัดรูปแบบ": { "main": [[{ "node": "ส่ง Discord", "type": "main", "index": 0 }]] }
+  },
+  "active": true,
+  "settings": { "executionOrder": "v1" }
+}
