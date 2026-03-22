@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>หน้าหลัก — ระบบประปาหมู่บ้าน</title>
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;600;700&family=Noto+Serif+Thai:wght@700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="layout.css">
+<style>
+.menu-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-bottom:24px }
+.menu-card {
+  background:white; border:2px solid var(--gray-200); border-radius:var(--r-lg);
+  padding:20px 16px; cursor:pointer; transition:all .2s;
+  display:flex; flex-direction:column; align-items:flex-start; gap:8px;
+  text-decoration:none; color:inherit;
+}
+.menu-card:hover { border-color:var(--blue); box-shadow:0 4px 20px rgba(45,125,210,.12); transform:translateY(-2px) }
+.menu-card:hover .menu-icon { background:var(--blue) }
+.menu-card:hover .menu-icon svg { stroke:white }
+.menu-icon {
+  width:46px; height:46px; border-radius:11px; background:var(--gray-100);
+  display:flex; align-items:center; justify-content:center; transition:background .2s;
+}
+.menu-icon svg { width:22px; height:22px; stroke:var(--gray-600); fill:none; stroke-width:1.8; transition:stroke .2s }
+.menu-name { font-size:15px; font-weight:700; color:var(--gray-800) }
+.menu-desc { font-size:12px; color:var(--gray-400); margin-top:-4px }
+
+.recent-table { overflow-x:auto }
+@media(max-width:1024px) { .menu-grid { grid-template-columns:repeat(2,1fr) } }
+@media(max-width:480px)  { .menu-grid { grid-template-columns:1fr 1fr } }
+</style>
+</head>
+<body>
+<div class="main">
+  <header class="topbar">
+    <div class="topbar-title">หน้าหลัก</div>
+    <div class="topbar-date" id="topbarDate"></div>
+    <div style="display:flex;gap:8px">
+      <button class="btn btn-outline" onclick="doBackup()" id="btnBackup">
+        <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+        Backup
+      </button>
+      <a href="meters.html" class="btn btn-primary">
+        <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        บันทึกมิเตอร์
+      </a>
+    </div>
+  </header>
+
+  <div class="content">
+    <!-- Alert -->
+    <div class="alert alert-warn" id="backupAlert" style="display:none">
+      <svg viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+      <span>ยังไม่ได้ Backup ข้อมูลเดือนนี้ — แนะนำให้ Backup ก่อนเริ่มบันทึกมิเตอร์</span>
+      <button class="btn btn-outline" style="margin-left:auto;padding:5px 12px;font-size:12px" onclick="doBackup()">Backup ตอนนี้</button>
+    </div>
+
+    <!-- Stats -->
+    <div class="stats-grid">
+      <div class="stat-card" style="--accent:var(--blue);--icon-bg:var(--blue-pale);--icon-c:var(--blue)">
+        <div class="stat-icon"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg></div>
+        <div class="stat-val" id="sMembers">—</div>
+        <div class="stat-label">สมาชิกทั้งหมด</div>
+      </div>
+      <div class="stat-card" style="--accent:var(--teal);--icon-bg:#f0fdfa;--icon-c:var(--teal)">
+        <div class="stat-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 15"/></svg></div>
+        <div class="stat-val" id="sRecorded">—</div>
+        <div class="stat-label">บันทึกมิเตอร์แล้ว</div>
+      </div>
+      <div class="stat-card" style="--accent:var(--amber);--icon-bg:var(--amber-bg);--icon-c:var(--amber)">
+        <div class="stat-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></div>
+        <div class="stat-val" id="sPending">—</div>
+        <div class="stat-label">ยังไม่ได้บันทึก</div>
+      </div>
+      <div class="stat-card" style="--accent:var(--green);--icon-bg:var(--green-bg);--icon-c:var(--green)">
+        <div class="stat-icon"><svg viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div>
+        <div class="stat-val" id="sRevenue">—</div>
+        <div class="stat-label">รายรับเดือนนี้ (บาท)</div>
+      </div>
+    </div>
+
+    <!-- Quick menu -->
+    <div class="section-title">เมนูลัด</div>
+    <div class="menu-grid">
+      <a href="meters.html" class="menu-card">
+        <div class="menu-icon"><svg viewBox="0 0 24 24" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 15"/></svg></div>
+        <div class="menu-name">บันทึกมิเตอร์</div>
+        <div class="menu-desc">จดเลขมิเตอร์ประจำเดือน</div>
+      </a>
+      <a href="receipts.html" class="menu-card">
+        <div class="menu-icon"><svg viewBox="0 0 24 24" stroke-width="1.8"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/></svg></div>
+        <div class="menu-name">ออก & พิมพ์ใบเสร็จ</div>
+        <div class="menu-desc">รายบุคคล หรือทั้งหมด</div>
+      </a>
+      <a href="members.html" class="menu-card">
+        <div class="menu-icon"><svg viewBox="0 0 24 24" stroke-width="1.8"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="22" y1="11" x2="16" y2="11"/></svg></div>
+        <div class="menu-name">เพิ่มสมาชิกใหม่</div>
+        <div class="menu-desc">เพิ่มครัวเรือนในระบบ</div>
+      </a>
+      <a href="print-form.html" class="menu-card">
+        <div class="menu-icon"><svg viewBox="0 0 24 24" stroke-width="1.8"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg></div>
+        <div class="menu-name">พิมพ์สมุดจดมิเตอร์</div>
+        <div class="menu-desc">สำรองกรณีไม่มีอินเทอร์เน็ต</div>
+      </a>
+      <a href="print-form.html?type=abt" class="menu-card">
+        <div class="menu-icon"><svg viewBox="0 0 24 24" stroke-width="1.8"><path d="M4 22h14a2 2 0 0 0 2-2V7.5L14.5 2H6a2 2 0 0 0-2 2v4"/><polyline points="14 2 14 7 20 7"/><path d="M2 15s1-1 2-1 2 1 4 1 2-1 2-1"/></svg></div>
+        <div class="menu-name">แบบฟอร์มส่ง อบต.</div>
+        <div class="menu-desc">รายงานประจำเดือนราชการ</div>
+      </a>
+      <a href="settings.html" class="menu-card">
+        <div class="menu-icon"><svg viewBox="0 0 24 24" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></div>
+        <div class="menu-name">ตั้งค่าระบบ</div>
+        <div class="menu-desc">อัตราค่าน้ำ เจ้าหน้าที่</div>
+      </a>
+    </div>
+
+    <!-- Recent invoices -->
+    <div class="section-title">ใบเสร็จล่าสุด</div>
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">รายการเดือนปัจจุบัน</div>
+        <a href="receipts.html" style="font-size:13px;color:var(--blue);text-decoration:none;font-weight:600">ดูทั้งหมด →</a>
+      </div>
+      <div class="recent-table">
+        <table>
+          <thead>
+            <tr><th>เลขที่</th><th>ชื่อสมาชิก</th><th>บ้านเลขที่</th><th style="text-align:center">หน่วย</th><th style="text-align:right">จำนวนเงิน</th><th>สถานะ</th></tr>
+          </thead>
+          <tbody id="recentTbody">
+            <tr><td colspan="6" style="text-align:center;padding:30px;color:var(--gray-400)">กำลังโหลด...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="config.js"></script>
+<script src="sidebar.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', async () => {
+  if (!initPage('dashboard')) return;
+  try {
+    const r = await apiAuth('getDashboard');
+    if (!r.ok) return;
+    const d = r.data;
+    document.getElementById('sMembers').textContent  = d.total_members  ?? '—';
+    document.getElementById('sRecorded').textContent = d.recorded_this_month ?? '—';
+    document.getElementById('sPending').textContent  = d.pending ?? '—';
+    document.getElementById('sRevenue').textContent  = (d.revenue ?? 0).toLocaleString('th-TH');
+    if ((d.days_since_backup ?? 99) > 5) {
+      document.getElementById('backupAlert').style.display = 'flex';
+    }
+    renderRecent(d.recent_invoices || []);
+  } catch(e) {
+    renderRecent([]);
+    toast('err', 'ไม่สามารถโหลดข้อมูลได้');
+  }
+});
+
+function renderRecent(list) {
+  const tbody = document.getElementById('recentTbody');
+  if (!list.length) {
+    tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:30px;color:var(--gray-400)">ยังไม่มีข้อมูลเดือนนี้</td></tr>';
+    return;
+  }
+  const stCls = { paid:'tag-paid', issued:'tag-issued', draft:'tag-draft' };
+  const stTh  = { paid:'✓ ชำระแล้ว', issued:'รอชำระ', draft:'ยังไม่จด' };
+  tbody.innerHTML = list.map(r => `
+    <tr>
+      <td style="font-family:monospace;font-size:13px">${r.no||'—'}</td>
+      <td style="font-weight:600">${r.name||'—'}</td>
+      <td>${r.house||'—'}</td>
+      <td style="text-align:center">${r.units??'—'}</td>
+      <td style="text-align:right;font-weight:700">${r.amount?(+r.amount).toLocaleString('th-TH')+' บาท':'—'}</td>
+      <td><span class="tag ${stCls[r.status]||'tag-draft'}">${stTh[r.status]||r.status}</span></td>
+    </tr>`).join('');
+}
+
+async function doBackup() {
+  if (!confirm('ต้องการ Backup ข้อมูลไปยัง Google Drive ตอนนี้ใช่ไหม?')) return;
+  const btn = document.getElementById('btnBackup');
+  setLoading(btn, true, 'กำลัง Backup...');
+  try {
+    const r = await apiAuth('backup');
+    toast(r.ok ? 'ok' : 'err', r.ok ? '✓ Backup สำเร็จ!' : 'Backup ล้มเหลว: ' + r.message);
+    if (r.ok) document.getElementById('backupAlert').style.display = 'none';
+  } catch(e) {
+    toast('err', 'ไม่สามารถ Backup ได้: ' + e.message);
+  }
+  setLoading(btn, false);
+}
+</script>
+</body>
+</html>
