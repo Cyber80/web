@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>พิมพ์ ปพ.6</title>
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#f5f4f0;--sf:#fff;--sf2:#eeeee8;--bd:#dddbd3;--bd2:#c8c6bc;
+  --tx:#18170f;--tx2:#65635a;--tx3:#9e9b92;
+  --ac:#1a5c35;--ac2:#144a29;--ac-bg:#e8f2ec;
+  --rd:#7a1a1a;--rd-bg:#fde8e8;
+  --mono:'IBM Plex Mono',monospace;--sans:'Sarabun',sans-serif;
+}
+body{font-family:var(--sans);background:var(--bg);color:var(--tx);font-size:15px}
+nav{background:var(--sf);border-bottom:1px solid var(--bd);padding:0 20px;display:flex;align-items:center;height:52px;position:sticky;top:0;z-index:100}
+.nbrand{font-weight:600;font-size:15px;margin-right:24px;display:flex;align-items:center;gap:8px}
+.ndot{width:8px;height:8px;background:var(--ac);border-radius:50%}
+.nlinks{display:flex;gap:2px;flex:1}
+.nl{padding:6px 13px;border-radius:6px;font-size:13px;text-decoration:none;color:var(--tx2);transition:.15s}
+.nl:hover{background:var(--sf2)}.nl.on{background:var(--ac-bg);color:var(--ac);font-weight:500}
+.nuser{font-size:12px;font-family:var(--mono);color:var(--tx3);display:flex;align-items:center;gap:8px}
+.nout{cursor:pointer;padding:4px 10px;border:1px solid var(--bd2);border-radius:5px;font-size:12px;color:var(--tx2);background:transparent}
+.nout:hover{color:var(--rd)}
+.toolbar{background:var(--sf);border-bottom:1px solid var(--bd);padding:10px 20px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.tg{display:flex;align-items:center;gap:7px}
+.fl{font-size:11px;font-family:var(--mono);color:var(--tx2)}
+.ts{background:var(--bg);border:1px solid var(--bd2);border-radius:6px;color:var(--tx);font-family:var(--sans);font-size:13px;padding:6px 10px;outline:none;transition:.15s}
+.ts:focus{border-color:var(--ac)}
+.sep{width:1px;height:22px;background:var(--bd)}
+.btn{display:inline-flex;align-items:center;gap:5px;padding:7px 15px;border-radius:7px;border:none;font-size:13px;font-weight:500;cursor:pointer;transition:.15s;white-space:nowrap}
+.bp{background:var(--ac);color:#fff}.bp:hover{background:var(--ac2)}
+.bo{background:transparent;color:var(--tx2);border:1px solid var(--bd2)}.bo:hover{background:var(--sf2)}
+.bsm{padding:6px 12px;font-size:12px}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+.main{padding:20px 24px 40px;max-width:1200px;margin:0 auto}
+.sl{font-size:11px;font-family:var(--mono);color:var(--tx3);letter-spacing:1px;text-transform:uppercase;margin-bottom:10px}
+.sg{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:8px;margin-bottom:20px}
+.sc{background:var(--sf);border:1px solid var(--bd);border-radius:8px;padding:9px 13px;cursor:pointer;transition:.15s;display:flex;align-items:center;justify-content:space-between}
+.sc:hover{border-color:var(--ac);background:var(--ac-bg)}.sc.on{border-color:var(--ac);background:var(--ac-bg)}
+.sn{font-size:13px;font-weight:500}.sno{font-size:11px;font-family:var(--mono);color:var(--tx2)}
+.sgr{font-size:11px;font-family:var(--mono);background:var(--sf2);padding:2px 7px;border-radius:4px}
+#toast{position:fixed;bottom:20px;right:20px;padding:10px 18px;border-radius:9px;font-size:13px;font-weight:500;opacity:0;transform:translateY(5px);transition:.2s;pointer-events:none;z-index:999}
+#toast.on{opacity:1;transform:translateY(0)}
+#toast.s{background:var(--ac);color:#fff}
+#toast.e{background:var(--rd-bg);color:var(--rd);border:1px solid #f5c0c0}
+#toast.i{background:var(--sf);color:var(--tx);border:1px solid var(--bd)}
+.spin{width:13px;height:13px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:sp .6s linear infinite;display:inline-block}
+@keyframes sp{to{transform:rotate(360deg)}}
+
+/* ── ปพ.6 PRINT FORM ──────────────────────────────── */
+.pp6-wrap{display:none}.pp6-wrap.on{display:block}
+
+@media screen{
+  .pp6-page{
+    background:#fff;width:210mm;min-height:290mm;
+    margin:0 auto 20px;padding:10mm 12mm;
+    border:1px solid #ccc;border-radius:3px;
+    font-family:'Sarabun',sans-serif;font-size:12px;
+    box-shadow:0 2px 8px rgba(0,0,0,.08)
+  }
+}
+
+.pp6-school{text-align:center;margin-bottom:5px;font-size:11px;font-weight:600}
+.pp6-h1{text-align:center;font-size:14px;font-weight:700;margin-bottom:2px}
+.pp6-h2{text-align:center;font-size:13px;font-weight:600;margin-bottom:1px}
+.pp6-h3{text-align:center;font-size:12px;margin-bottom:7px}
+
+.pp6-info{display:grid;grid-template-columns:1fr auto;gap:2px 20px;margin-bottom:6px;font-size:11px}
+.pp6-il{display:flex;gap:4px}
+.pp6-il .k{font-weight:600;white-space:nowrap}
+.pp6-il .v{border-bottom:1px dotted #999;flex:1;min-width:80px}
+
+/* main table */
+.pp6-t{width:100%;border-collapse:collapse;font-size:10.5px;margin-bottom:5px}
+.pp6-t th,.pp6-t td{border:1px solid #333;padding:2px 3px;text-align:center;vertical-align:middle;line-height:1.3}
+.pp6-t th{background:#f0f0f0;font-weight:600}
+.pp6-t .tn{text-align:left;padding-left:4px;white-space:nowrap}
+.pp6-t .nm{font-family:monospace}
+.pp6-t tr:nth-child(even) td{background:#fafafa}
+.pp6-t tr.tot td{font-weight:700;background:#ececec}
+.pp6-t .ability{background:#fffbe6;font-weight:600;color:#5a3e00}
+
+/* bottom sections */
+.pp6-bot{margin-top:5px;font-size:10.5px}
+.pp6-bot-grid{display:grid;grid-template-columns:1fr 1fr;gap:3px 20px}
+.pp6-bl{display:flex;gap:4px;align-items:flex-end;margin-bottom:2px}
+.pp6-bl .k{font-weight:600;min-width:120px;white-space:nowrap}
+.pp6-bl .v{border-bottom:1px dotted #999;flex:1;padding-bottom:1px}
+
+/* activity results */
+.pp6-act{margin-top:5px}
+.pp6-act-grid{display:grid;grid-template-columns:1fr 1fr;gap:2px 16px;font-size:10.5px}
+.pp6-act-row{display:flex;align-items:center;gap:4px}
+.pp6-act-row .k{min-width:110px;font-weight:500}
+.pp6-act-row .v{border-bottom:1px dotted #999;flex:1}
+
+/* signatures */
+.pp6-sig{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-top:8px;font-size:10px}
+.pp6-sig-box{text-align:center}
+.pp6-sig-line{height:26px;border-bottom:1px solid #333;margin:0 8px 3px}
+.pp6-sig-name{font-size:10.5px}
+.pp6-sig-role{font-size:9.5px;color:#555}
+.pp6-sig-date{font-size:9px;color:#777;margin-top:3px}
+
+/* grade badge */
+.gb{display:inline-block;padding:1px 5px;border-radius:3px;font-weight:700;min-width:24px}
+.g4{background:#d1e9da;color:#0d5c2e}.g35{background:#e0edd5;color:#2d5a11}
+.g3{background:#e8f5ee;color:#1a6b3c}.g25{background:#eaf0f9;color:#1a4a8a}
+.g2{background:#cde0f5;color:#1a4a8a}.g15{background:#fff3cd;color:#7a4f00}
+.g1{background:#fde8b5;color:#7a4f00}.g0{background:#fde8e8;color:#7a1a1a}
+
+@media print{
+  nav,.toolbar,.main .sl,.sg,.print-info,#toast{display:none!important}
+  body{background:#fff}
+  .pp6-wrap{display:block!important}
+  .pp6-page{width:100%;margin:0;padding:8mm 10mm;border:none;box-shadow:none;page-break-after:always;min-height:0}
+  .pp6-page:last-child{page-break-after:auto}
+  @page{size:A4;margin:0}
+}
+</style>
+</head>
+<body>
+<nav>
+  <div class="nbrand"><div class="ndot"></div>ระบบ ปพ.6</div>
+  <div class="nlinks">
+    <a class="nl" href="config.html">ตั้งค่า</a>
+    <a class="nl" href="students.html">นักเรียน</a>
+    <a class="nl" href="scores.html">กรอกคะแนน</a>
+    <a class="nl on" href="pp6.html">พิมพ์ ปพ.6</a>
+  </div>
+  <div class="nuser"><span id="nu"></span><button class="nout" onclick="logout()">ออก</button></div>
+</nav>
+
+<div class="toolbar">
+  <div class="tg"><label class="fl">ชั้น/ห้อง</label>
+    <select class="ts" id="sel-class" onchange="loadStudents()"><option value="">-- เลือกชั้น --</option></select>
+  </div>
+  <div class="sep"></div>
+  <div class="tg"><label class="fl">ปีการศึกษา</label><input type="text" class="ts" id="py" style="width:70px"></div>
+  <div class="sep"></div>
+  <div class="tg">
+    <button class="btn bo bsm" onclick="selAll()">เลือกทั้งห้อง</button>
+    <button class="btn bo bsm" onclick="selNone()">ยกเลิก</button>
+  </div>
+  <div style="margin-left:auto;display:flex;gap:8px">
+    <button class="btn bo bsm" id="fetch-btn" onclick="fetchData()">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.4"/></svg>
+      ดึงข้อมูลจาก Sheets
+    </button>
+    <button class="btn bp" onclick="doPrint()">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+      พิมพ์ที่เลือก
+    </button>
+  </div>
+</div>
+
+<div class="main">
+  <div class="sl">เลือกนักเรียน</div>
+  <div class="sg" id="sg"><div style="color:var(--tx3);font-size:14px;grid-column:1/-1;padding:20px 0">เลือกชั้นเรียนและกด "ดึงข้อมูลจาก Sheets"</div></div>
+  <div class="print-info" id="pi" style="display:none;font-size:13px;color:var(--tx2);margin-bottom:16px">
+    เลือก <span id="cnt">0</span> คน
+  </div>
+  <div class="pp6-wrap" id="pp6-wrap"></div>
+</div>
+<div id="toast"></div>
+
+<script>
+const CK='pp6_config';
+let students=[],selected=new Set(),pp6Data=null;
+
+function cfg(){return JSON.parse(localStorage.getItem(CK)||'{}')}
+function gv(id){return(document.getElementById(id)||{}).value||''}
+function toast(m,t='s'){const e=document.getElementById('toast');e.textContent=m;e.className='on '+t;clearTimeout(window._t);window._t=setTimeout(()=>e.classList.remove('on'),3000)}
+function logout(){sessionStorage.removeItem('pp6a');location.href='config.html'}
+if(sessionStorage.getItem('pp6a')!=='1')location.href='config.html';
+document.getElementById('nu').textContent=sessionStorage.getItem('pp6u')||'admin';
+
+function init(){
+  const c=cfg();
+  document.getElementById('py').value=c.academicYear||'2568';
+  const sc=document.getElementById('sel-class');
+  sc.innerHTML='<option value="">-- เลือกชั้น --</option>';
+  (c.teachers||[]).forEach(t=>{
+    const o=document.createElement('option');
+    o.value=t.grade+'-'+t.room;
+    o.textContent=t.grade+'/'+t.room+(t.teacher?' ('+t.teacher+')':'');
+    sc.appendChild(o);
+  });
+}
+
+function loadStudents(){
+  const cls=gv('sel-class'); if(!cls)return;
+  const c=cfg(),scores=JSON.parse(localStorage.getItem('pp6_scores')||'{}');
+  const names={};
+  (c.subjects||[]).forEach(sub=>{
+    const k=cls+'__'+sub.code;
+    if(scores[k]) scores[k].forEach(r=>{if(r.name&&r.name.trim())names[r.no]={no:r.no,name:r.name};});
+  });
+  students=Object.values(names).sort((a,b)=>+a.no-+b.no);
+  if(!students.length) students=Array.from({length:30},(_,i)=>({no:i+1,name:'นักเรียนที่'+(i+1)}));
+  selected=new Set(students.map(s=>s.no));
+  renderGrid(); updateCnt();
+  document.getElementById('pi').style.display='block';
+}
+
+function renderGrid(){
+  document.getElementById('sg').innerHTML=students.map(s=>`
+    <div class="sc ${selected.has(s.no)?'on':''}" onclick="toggle(${s.no})" id="sc${s.no}">
+      <div><div class="sn">${s.name||'(ไม่มีชื่อ)'}</div><div class="sno">เลขที่ ${s.no}</div></div>
+      <div class="sgr" id="sg${s.no}">—</div>
+    </div>`).join('');
+}
+function toggle(no){
+  selected.has(no)?selected.delete(no):selected.add(no);
+  document.getElementById('sc'+no)?.classList.toggle('on',selected.has(no));
+  updateCnt();
+}
+function selAll(){selected=new Set(students.map(s=>s.no));renderGrid();updateCnt()}
+function selNone(){selected=new Set();renderGrid();updateCnt()}
+function updateCnt(){document.getElementById('cnt').textContent=selected.size}
+
+async function fetchData(){
+  const cls=gv('sel-class'),c=cfg();
+  if(!cls){toast('เลือกชั้นก่อน','e');return}
+  if(!c.apiUrl){toast('ตั้งค่า API URL ก่อน','e');return}
+  const btn=document.getElementById('fetch-btn');
+  btn.disabled=true;btn.innerHTML='<span class="spin"></span> กำลังดึง...';
+  const[grade,room]=cls.split('-');
+  const year=gv('py');
+  try{
+    const sep=c.apiUrl.includes('?')?'&':'?';
+    const url=`${c.apiUrl}${sep}path=pp6&key=${encodeURIComponent(c.apiKey||'')}&grade=${encodeURIComponent(grade)}&room=${encodeURIComponent(room)}&year=${encodeURIComponent(year)}`;
+    const r=await fetch(url);pp6Data=await r.json();
+    if(pp6Data.error)throw new Error(pp6Data.error);
+    if(pp6Data.students){
+      students=pp6Data.students;
+      selected=new Set(students.map(s=>s.no||s.studentCode));
+      renderGrid(); updateCnt();
+      // show gpax on cards
+      students.forEach(s=>{
+        const el=document.getElementById('sg'+(s.no||s.studentCode));
+        if(el&&s._gpax!==undefined) el.textContent=s._gpax.toFixed(2);
+      });
+    }
+    toast('ดึงข้อมูลสำเร็จ ✓','s');
+  }catch(e){toast('ข้อผิดพลาด: '+e.message,'e');pp6Data=null;}
+  finally{btn.disabled=false;btn.innerHTML='<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.4"/></svg> ดึงข้อมูลจาก Sheets';}
+}
+
+function doPrint(){
+  const cls=gv('sel-class');
+  if(!cls||!selected.size){toast('เลือกชั้นและนักเรียนก่อน','e');return}
+  const[grade,room]=cls.split('-');
+  const c=cfg();
+  const year=gv('py');
+  const tchrs=c.teachers||[];
+  const tchr=tchrs.find(t=>t.grade===grade&&String(t.room)===String(room))||{};
+  const subjs=(c.subjects||[]).filter(s=>!s.gradeLevel||s.gradeLevel===grade||s.gradeLevel==='');
+  const crits=c.abilityCriteria||[];
+  const localScores=JSON.parse(localStorage.getItem('pp6_scores')||'{}');
+
+  const list=students.filter(s=>selected.has(s.no||s.studentCode));
+  const pages=list.map(stu=>buildPage(stu,cls,grade,room,tchr,subjs,year,c,crits,localScores,pp6Data));
+
+  const wrap=document.getElementById('pp6-wrap');
+  wrap.innerHTML=pages.join('');wrap.classList.add('on');
+  wrap.scrollIntoView({behavior:'smooth'});
+  toast(`สร้าง ปพ.6 จำนวน ${pages.length} หน้า — Ctrl+P พิมพ์`,'s');
+  setTimeout(()=>window.print(),500);
+}
+
+function calcGrade(tot){
+  if(tot>=80)return 4;if(tot>=75)return 3.5;if(tot>=70)return 3;
+  if(tot>=65)return 2.5;if(tot>=60)return 2;if(tot>=55)return 1.5;
+  if(tot>=50)return 1;return 0;
+}
+function gradeClass(g){
+  const m={4:'g4',3.5:'g35',3:'g3',2.5:'g25',2:'g2',1.5:'g15',1:'g1',0:'g0'};
+  return m[g]||'';
+}
+function calcAbility(gpax,crits){
+  if(!crits||!crits.length)return'';
+  const g=parseFloat(gpax)||0;
+  for(const c of crits){if(g>=parseFloat(c.min)&&g<=parseFloat(c.max))return c.label;}
+  return'';
+}
+function sumArr(arr){return(arr||[]).reduce((a,v)=>a+(v===''?0:+v),0)}
+
+function buildPage(stu,cls,grade,room,tchr,subjs,year,c,crits,localScores,apiData){
+  // get scores: prefer API data, fallback local
+  const apiScores=(apiData&&apiData.scores)||{};
+
+  let totalScore=0,gradedCnt=0,totalCredit=0,earnedCredit=0;
+  const rows=subjs.map((sub,si)=>{
+    const k=cls+'__'+sub.code;
+    // find row
+    let sRow=null;
+    if(apiScores[sub.code]){
+      sRow=apiScores[sub.code].find(r=>String(r.no)===String(stu.no)||String(r.no)===String(stu.studentCode));
+    }
+    if(!sRow&&localScores[k]){
+      sRow=localScores[k].find(r=>String(r.no)===String(stu.no));
+    }
+    const t1=sRow?sumArr(sRow.t1):null;
+    const t2=sRow?sumArr(sRow.t2):null;
+    const tot=(t1!==null&&t2!==null)?t1+t2:null;
+    const g=tot!==null?calcGrade(tot):null;
+    const pass=g!==null?(g>=1?'ผ่าน':'ไม่ผ่าน'):'';
+    const fullScore=(sub.midCount*sub.midScore+sub.finalScore)*2;
+    totalCredit+=+sub.credit||0;
+    if(g!==null){totalScore+=tot;gradedCnt++;if(g>=1)earnedCredit+=+sub.credit||0;}
+    return`<tr>
+      <td class="tn" style="font-size:10px">${sub.code}</td>
+      <td class="tn">${sub.name}</td>
+      <td class="nm">${sub.hours}</td>
+      <td class="nm">${fullScore}</td>
+      <td class="nm">${t1!==null?t1:''}</td>
+      <td class="nm">${t2!==null?t2:''}</td>
+      <td class="nm" style="font-weight:600">${tot!==null?tot:''}</td>
+      <td class="nm">${g!==null?`<span class="gb ${gradeClass(g)}">${g}</span>`:''}</td>
+      <td class="nm">${pass}</td>
+      <td class="nm">${sub.credit}</td>
+    </tr>`;
+  }).join('');
+
+  const gpax=gradedCnt?(totalScore/gradedCnt).toFixed(2):'-';
+  const abilityLevel=calcAbility(gpax,crits);
+  const avgGrade=gradedCnt?calcGrade(totalScore/gradedCnt):'-';
+
+  const name=stu.name||(stu.prefix||'')+(stu.firstName||'')+(stu.lastName?(' '+stu.lastName):'');
+  const stuId=stu.studentCode||stu.no||'';
+  const idCard=stu.idCard||'';
+
+  return`<div class="pp6-page">
+    <div class="pp6-h1">แบบรายงานประจำตัวนักเรียน : ผลการพัฒนาคุณภาพผู้เรียนรายบุคคล (ปพ.6)</div>
+    <div class="pp6-h2">${c.schoolName||'โรงเรียน...'} ${c.district||''}</div>
+    <div class="pp6-h3">ชั้น${grade} ปีการศึกษา ${year}</div>
+
+    <div class="pp6-info">
+      <div class="pp6-il"><span class="k">ชื่อ-สกุล</span><span class="v">${name}</span></div>
+      <div class="pp6-il"><span class="k">เลขประจำตัว</span><span class="v" style="font-family:monospace">${stuId}</span></div>
+      <div class="pp6-il"><span class="k">เลขบัตรประชาชน</span><span class="v" style="font-family:monospace">${idCard}</span></div>
+      <div class="pp6-il"><span class="k">เลขที่</span><span class="v">${stu.no||''}</span></div>
+    </div>
+
+    <table class="pp6-t">
+      <thead>
+        <tr>
+          <th rowspan="2">รหัสวิชา</th>
+          <th rowspan="2">รายวิชา</th>
+          <th rowspan="2">เวลาเรียน<br>(ชม./ปี)</th>
+          <th rowspan="2">คะแนน<br>เต็ม</th>
+          <th colspan="2">คะแนนที่ได้</th>
+          <th rowspan="2">รวม</th>
+          <th rowspan="2">ระดับผล<br>การเรียน</th>
+          <th rowspan="2">ผลการเรียน</th>
+          <th rowspan="2">หน่วย<br>กิต</th>
+        </tr>
+        <tr><th>เทอม 1</th><th>เทอม 2</th></tr>
+      </thead>
+      <tbody>
+        <tr><td colspan="10" style="text-align:left;padding-left:6px;font-weight:600;background:#f5f5f5;font-size:10px">ผลการเรียนรายวิชา</td></tr>
+        ${rows}
+        <tr class="tot">
+          <td colspan="2" class="tn">รวม</td>
+          <td class="nm">${subjs.reduce((a,s)=>a+(+s.hours||0),0)}</td>
+          <td class="nm">${subjs.reduce((a,s)=>a+((s.midCount*s.midScore+s.finalScore)*2),0)}</td>
+          <td></td><td></td>
+          <td class="nm">${gradedCnt?totalScore:''}</td>
+          <td class="nm">${gradedCnt?`<span class="gb ${gradeClass(avgGrade)}">${avgGrade}</span>`:''}</td>
+          <td></td>
+          <td class="nm">${earnedCredit}/${totalCredit}</td>
+        </tr>
+        <tr>
+          <td colspan="9" class="tn" style="font-weight:600">ระดับความสามารถ</td>
+          <td class="ability">${abilityLevel}</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="pp6-bot">
+      <div class="pp6-bot-grid">
+        <div class="pp6-bl"><span class="k">คะแนนเฉลี่ยทุกวิชา</span><span class="v">${gpax}</span></div>
+        <div class="pp6-bl"><span class="k">จำนวนหน่วยกิตที่ได้</span><span class="v">${earnedCredit} / ${totalCredit}</span></div>
+        <div class="pp6-bl"><span class="k">คะแนนรวมได้ลำดับที่</span><span class="v"><input type="text" style="border:none;border-bottom:1px dotted #999;width:35px;font-size:10px;outline:none;font-family:Sarabun"> ใน ${students.length} คน</span></div>
+        <div class="pp6-bl"><span class="k">ผลการเรียน</span><span class="v">${gradedCnt&&calcGrade(totalScore/gradedCnt)>=1?'ผ่าน':'ไม่ผ่าน'}</span></div>
+      </div>
+    </div>
+
+    <div class="pp6-act" style="margin-top:6px">
+      <div style="font-weight:600;font-size:10.5px;margin-bottom:3px">ผลการประเมินกิจกรรมพัฒนาผู้เรียน</div>
+      <div class="pp6-act-grid">
+        <div class="pp6-act-row"><span class="k">แนะแนว</span><span class="v">${stu._act_guidance||''}</span></div>
+        <div class="pp6-act-row"><span class="k">ลูกเสือ-เนตรนารี</span><span class="v">${stu._act_scout||''}</span></div>
+        <div class="pp6-act-row"><span class="k">ชุมนุม</span><span class="v">${stu._act_club||''}</span></div>
+        <div class="pp6-act-row"><span class="k">กิจกรรมเพื่อสังคม</span><span class="v">${stu._act_social||''}</span></div>
+      </div>
+    </div>
+
+    <div style="margin-top:5px;display:grid;grid-template-columns:1fr 1fr;gap:4px 20px;font-size:10.5px">
+      <div class="pp6-bl"><span class="k">ผลการประเมินคุณลักษณะอันพึงประสงค์</span><span class="v">${stu._character||'ดีเยี่ยม'}</span></div>
+      <div class="pp6-bl"><span class="k">ผลการประเมินการอ่าน คิดวิเคราะห์และเขียน</span><span class="v">${stu._reading||'ผ่าน'}</span></div>
+      <div class="pp6-bl"><span class="k">ผลการประเมินสมรรถนะสำคัญของผู้เรียน</span><span class="v">${stu._competency||'ดี'}</span></div>
+    </div>
+
+    <div class="pp6-sig">
+      <div class="pp6-sig-box">
+        <div class="pp6-sig-line"></div>
+        <div class="pp6-sig-name">(${tchr.teacher||'..............................................'})</div>
+        <div class="pp6-sig-role">ครูประจำชั้น / ครูที่ปรึกษา</div>
+        <div class="pp6-sig-date">ลงชื่อ.....................................<br>วันที่ .......... เดือน .................. พ.ศ. ..........</div>
+      </div>
+      <div class="pp6-sig-box">
+        <div class="pp6-sig-line"></div>
+        <div class="pp6-sig-name">(${tchr.teacher||'..............................................'})</div>
+        <div class="pp6-sig-role">หัวหน้าสถานศึกษา/ครูผู้รับผิดชอบ</div>
+        <div class="pp6-sig-date">ลงชื่อ.....................................<br>วันที่ .......... เดือน .................. พ.ศ. ..........</div>
+      </div>
+      <div class="pp6-sig-box">
+        <div class="pp6-sig-line"></div>
+        <div class="pp6-sig-name">(${c.directorName||'...................................'})</div>
+        <div class="pp6-sig-role">${c.directorTitle||'ผู้อำนวยการโรงเรียน'}</div>
+        <div class="pp6-sig-date">ลงชื่อ.....................................<br>วันที่ .......... เดือน .................. พ.ศ. ..........</div>
+      </div>
+    </div>
+    <div style="text-align:right;margin-top:6px;font-size:10px">ลงชื่อ..................................<br>(...................................)<br>ผู้ปกครองนักเรียน</div>
+  </div>`;
+}
+init();
+</script>
+</body></html>

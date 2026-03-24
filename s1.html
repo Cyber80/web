@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ระบบจัดการศาสนพิธี - เจ้าพ่อ Digital</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Sarabun', sans-serif; background-color: #fcf8f1; }
+        .checked-item { text-decoration: line-through; color: #9ca3af; }
+        .ceremony-card { border-left: 5px solid #b45309; }
+    </style>
+</head>
+<body class="p-4 md:p-8">
+
+    <div class="max-w-3xl mx-auto bg-white shadow-2xl rounded-2xl overflow-hidden border border-amber-100">
+        <div class="bg-amber-700 p-6 text-white text-center">
+            <h1 class="text-2xl font-bold">🏛️ ระบบเช็คลิสต์อุปกรณ์ศาสนพิธี</h1>
+            <p class="text-amber-100 text-sm">จัดการงานบุญให้ถูกต้องตามหลักสากล</p>
+        </div>
+
+        <div class="p-6 border-b bg-amber-50">
+            <label class="block text-sm font-bold text-amber-900 mb-2">เลือกประเภทพิธีการ:</label>
+            <select id="ceremonySelect" onchange="filterCeremony()" class="w-full p-3 rounded-lg border-2 border-amber-200 focus:outline-none focus:border-amber-500">
+                <option value="">-- โปรดเลือกพิธี --</option>
+                <option value="ทำบุญขึ้นบ้านใหม่">ทำบุญขึ้นบ้านใหม่</option>
+                <option value="พิธีมงคลสมรส">พิธีมงคลสมรส (งานแต่ง)</option>
+                <option value="งานบวช">งานอุปสมบท (งานบวช)</option>
+                <option value="งานศพ">พิธีสวดพระอภิธรรม (งานศพ)</option>
+            </select>
+        </div>
+
+        <div class="px-6 py-4 bg-white">
+            <div class="flex justify-between text-sm mb-1">
+                <span class="font-bold text-amber-800">ความพร้อมของอุปกรณ์</span>
+                <span id="progressText">0%</span>
+            </div>
+            <div class="w-full bg-gray-200 rounded-full h-2.5">
+                <div id="progressBar" class="bg-green-600 h-2.5 rounded-full" style="width: 0%"></div>
+            </div>
+        </div>
+
+        <div id="checklistContent" class="p-6 space-y-4 min-h-[300px]">
+            <p class="text-center text-gray-400 mt-10">กรุณาเลือกพิธีเพื่อแสดงรายการอุปกรณ์</p>
+        </div>
+
+        <div class="p-6 bg-gray-50 flex gap-3">
+            <button onclick="window.print()" class="flex-1 bg-amber-600 hover:bg-amber-700 text-white py-3 rounded-xl font-bold transition">
+                🖨️ พิมพ์/ส่งออก PDF
+            </button>
+            <button onclick="resetChecklist()" class="bg-gray-300 hover:bg-gray-400 text-gray-700 px-6 py-3 rounded-xl font-bold">
+                ล้างข้อมูล
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // ใส่ Link CSV จาก Google Sheets ตรงนี้ครับ
+        const SHEET_URL = 'YOUR_GOOGLE_SHEET_CSV_LINK_HERE';
+
+        // ข้อมูลจำลอง (กรณีไม่มีเน็ตหรือยังไม่ได้เชื่อม Sheet)
+        const mockData = [
+            { Ceremony: 'ทำบุญขึ้นบ้านใหม่', Category: 'โต๊ะหมู่บูชา', Item: 'โต๊ะหมู่บูชา (หมู่ 7 หรือ 9)', Note: 'เช็คความสะอาด' },
+            { Ceremony: 'ทำบุญขึ้นบ้านใหม่', Category: 'โต๊ะหมู่บูชา', Item: 'พระพุทธรูป', Note: 'อัญเชิญวางเป็นประธาน' },
+            { Ceremony: 'ทำบุญขึ้นบ้านใหม่', Category: 'พิธีสงฆ์', Item: 'อาสนะ 9 ชุด', Note: 'ปูให้เป็นระเบียบ' },
+            { Ceremony: 'ทำบุญขึ้นบ้านใหม่', Category: 'พิธีสงฆ์', Item: 'ขันน้ำมนต์ + หญ้าคา', Note: 'น้ำสะอาดใส่ลอยดอกมะลิ' },
+            { Ceremony: 'งานศพ', Category: 'เครื่องตั้ง', Item: 'ตู้พระธรรม', Note: 'หน้าอาสนะสงฆ์' }
+        ];
+
+        let currentData = mockData; // เริ่มต้นใช้ Mock Data
+
+        function filterCeremony() {
+            const selected = document.getElementById('ceremonySelect').value;
+            const container = document.getElementById('checklistContent');
+            container.innerHTML = '';
+
+            const filtered = currentData.filter(d => d.Ceremony === selected);
+            
+            if (filtered.length === 0) {
+                container.innerHTML = '<p class="text-center text-gray-400 mt-10">ยังไม่มีข้อมูลรายการของพิธีนี้</p>';
+                updateProgress();
+                return;
+            }
+
+            // จัดกลุ่มตาม Category
+            const groups = filtered.reduce((acc, item) => {
+                if (!acc[item.Category]) acc[item.Category] = [];
+                acc[item.Category].push(item);
+                return acc;
+            }, {});
+
+            for (const category in groups) {
+                let html = `<div class="mb-6">
+                    <h3 class="font-bold text-amber-700 border-b-2 border-amber-100 mb-3">${category}</h3>`;
+                
+                groups[category].forEach((item, idx) => {
+                    const id = `${selected}-${category}-${idx}`;
+                    const isChecked = localStorage.getItem(id) === 'true';
+                    html += `
+                        <div class="flex items-start gap-3 p-3 ceremony-card bg-amber-50/50 rounded-lg mb-2 shadow-sm">
+                            <input type="checkbox" id="${id}" ${isChecked ? 'checked' : ''} 
+                                   onchange="toggleItem('${id}')" 
+                                   class="mt-1 w-5 h-5 accent-amber-600">
+                            <label for="${id}" class="flex-1 cursor-pointer ${isChecked ? 'checked-item' : ''}">
+                                <div class="font-bold text-gray-800">${item.Item}</div>
+                                <div class="text-xs text-gray-500">${item.Note}</div>
+                            </label>
+                        </div>
+                    `;
+                });
+                html += `</div>`;
+                container.innerHTML += html;
+            }
+            updateProgress();
+        }
+
+        function toggleItem(id) {
+            const checkbox = document.getElementById(id);
+            const label = checkbox.nextElementSibling;
+            localStorage.setItem(id, checkbox.checked);
+            
+            if (checkbox.checked) {
+                label.classList.add('checked-item');
+            } else {
+                label.classList.remove('checked-item');
+            }
+            updateProgress();
+        }
+
+        function updateProgress() {
+            const checkboxes = document.querySelectorAll('#checklistContent input[type="checkbox"]');
+            if (checkboxes.length === 0) {
+                document.getElementById('progressBar').style.width = '0%';
+                document.getElementById('progressText').innerText = '0%';
+                return;
+            }
+            const checked = Array.from(checkboxes).filter(c => c.checked).length;
+            const percent = Math.round((checked / checkboxes.length) * 100);
+            document.getElementById('progressBar').style.width = percent + '%';
+            document.getElementById('progressText').innerText = percent + '%';
+        }
+
+        function resetChecklist() {
+            if(confirm('ต้องการล้างข้อมูลการเช็คทั้งหมดหรือไม่?')) {
+                localStorage.clear();
+                filterCeremony();
+            }
+        }
+    </script>
+</body>
+</html>
