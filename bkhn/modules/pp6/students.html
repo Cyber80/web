@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ระบบ ปพ.6 — นักเรียน</title>
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#f5f4f0;--sf:#fff;--sf2:#eeeee8;--sf3:#e5e4de;
+  --bd:#dddbd3;--bd2:#c8c6bc;
+  --tx:#18170f;--tx2:#65635a;--tx3:#9e9b92;
+  --ac:#1a5c35;--ac2:#144a29;--ac-bg:#e8f2ec;--ac-lt:#c8e5d2;
+  --bl:#1a3f7a;--bl-bg:#e8eef8;
+  --am:#7a4f00;--am-bg:#fdf5e6;
+  --rd:#7a1a1a;--rd-bg:#fde8e8;
+  --mono:'IBM Plex Mono',monospace;--sans:'Sarabun',sans-serif;
+}
+body{font-family:var(--sans);background:var(--bg);color:var(--tx);font-size:14px;line-height:1.5}
+
+/* NAV */
+nav{background:var(--sf);border-bottom:1px solid var(--bd);padding:0 20px;display:flex;align-items:center;height:52px;position:sticky;top:0;z-index:200;gap:0}
+.nbrand{font-weight:600;font-size:15px;margin-right:24px;display:flex;align-items:center;gap:8px}
+.ndot{width:8px;height:8px;background:var(--ac);border-radius:50%}
+.nlinks{display:flex;gap:2px;flex:1}
+.nl{padding:6px 13px;border-radius:6px;font-size:13px;text-decoration:none;color:var(--tx2);transition:.15s}
+.nl:hover{background:var(--sf2)}.nl.on{background:var(--ac-bg);color:var(--ac);font-weight:500}
+.nuser{font-size:12px;font-family:var(--mono);color:var(--tx3);display:flex;align-items:center;gap:8px}
+.nout{cursor:pointer;padding:4px 10px;border:1px solid var(--bd2);border-radius:5px;font-size:12px;color:var(--tx2);background:transparent;transition:.15s}
+.nout:hover{color:var(--rd)}
+
+/* TOOLBAR */
+.toolbar{background:var(--sf);border-bottom:1px solid var(--bd);padding:10px 20px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;position:sticky;top:52px;z-index:100}
+.tg{display:flex;align-items:center;gap:7px}
+.fl{font-size:11px;font-family:var(--mono);color:var(--tx2);white-space:nowrap}
+.ts{background:var(--bg);border:1px solid var(--bd2);border-radius:6px;color:var(--tx);font-family:var(--sans);font-size:13px;padding:6px 10px;outline:none;transition:.15s}
+.ts:focus{border-color:var(--ac)}
+.sep{width:1px;height:22px;background:var(--bd);flex-shrink:0}
+
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;gap:5px;padding:7px 14px;border-radius:7px;border:none;font-family:var(--sans);font-size:13px;font-weight:500;cursor:pointer;transition:.15s;white-space:nowrap}
+.bp{background:var(--ac);color:#fff}.bp:hover{background:var(--ac2)}
+.bo{background:transparent;color:var(--tx2);border:1px solid var(--bd2)}.bo:hover{background:var(--sf2)}
+.br{background:var(--rd-bg);color:var(--rd);border:1px solid #f5c0c0}.br:hover{background:#f9d5d5}
+.bsm{padding:5px 11px;font-size:12px}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+
+/* STATUS BAR */
+.sbar{background:var(--sf2);border-bottom:1px solid var(--bd);padding:5px 20px;display:flex;align-items:center;gap:14px;font-size:12px;font-family:var(--mono);color:var(--tx2)}
+.chip{background:var(--sf);border:1px solid var(--bd);padding:2px 9px;border-radius:4px;color:var(--tx)}
+.chip.ok{background:var(--ac-bg);border-color:var(--ac-lt);color:var(--ac)}
+.chip.warn{background:var(--am-bg);border-color:#f5d87a;color:var(--am)}
+
+/* MAIN */
+.main{padding:16px 20px 80px}
+
+/* PASTE ZONE */
+.paste-zone{border:2px dashed var(--bd2);border-radius:10px;padding:24px;text-align:center;color:var(--tx3);font-size:13px;margin-bottom:16px;cursor:pointer;transition:all .2s;position:relative}
+.paste-zone:hover,.paste-zone.drag{border-color:var(--ac);color:var(--ac);background:var(--ac-bg)}
+.paste-zone .icon{font-size:24px;margin-bottom:6px}
+.paste-zone .hint{font-size:11px;font-family:var(--mono);margin-top:5px;color:var(--tx3)}
+#paste-ta{position:absolute;opacity:0;pointer-events:none;width:1px;height:1px;top:0;left:0}
+
+/* FIELD GROUPS */
+.fg-wrap{background:var(--sf);border:1px solid var(--bd);border-radius:10px;margin-bottom:12px;overflow:hidden}
+.fg-head{background:var(--sf2);padding:9px 16px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none;border-bottom:1px solid var(--bd)}
+.fg-head:hover{background:var(--sf3)}
+.fg-title{font-size:12px;font-weight:600;color:var(--tx);display:flex;align-items:center;gap:7px}
+.fg-badge{font-size:10px;font-family:var(--mono);background:var(--ac-bg);color:var(--ac);padding:1px 7px;border-radius:4px}
+.fg-toggle{font-size:10px;color:var(--tx3);transition:transform .2s}
+.fg-toggle.open{transform:rotate(180deg)}
+.fg-body{padding:14px 16px;display:grid;gap:10px}
+.fg-body.hidden{display:none}
+.g2{grid-template-columns:1fr 1fr}
+.g3{grid-template-columns:1fr 1fr 1fr}
+.g4{grid-template-columns:1fr 1fr 1fr 1fr}
+
+/* FIELD */
+.f{display:flex;flex-direction:column;gap:3px}
+.f.span2{grid-column:span 2}.f.span3{grid-column:span 3}.f.full{grid-column:1/-1}
+.f label{font-size:10px;font-family:var(--mono);color:var(--tx3);letter-spacing:.3px}
+.f label .req{color:var(--rd)}
+.f input,.f select{background:var(--bg);border:1px solid var(--bd2);border-radius:6px;color:var(--tx);font-family:var(--sans);font-size:13px;padding:7px 10px;outline:none;transition:.15s;width:100%}
+.f input:focus,.f select:focus{border-color:var(--ac);box-shadow:0 0 0 2px rgba(26,92,53,.09)}
+.f input.err{border-color:var(--rd);background:#fff5f5}
+.f input[readonly]{background:var(--sf2);color:var(--tx2)}
+
+/* STUDENT TABS */
+.stu-tabs{display:flex;gap:4px;margin-bottom:16px;overflow-x:auto;padding-bottom:2px}
+.stu-tab{padding:5px 13px;border-radius:6px;font-size:12px;font-family:var(--mono);cursor:pointer;border:1px solid var(--bd2);background:var(--sf);color:var(--tx2);white-space:nowrap;transition:.15s;flex-shrink:0}
+.stu-tab:hover{background:var(--sf2)}.stu-tab.on{background:var(--ac-bg);color:var(--ac);border-color:var(--ac-lt)}
+.stu-tab.done{background:var(--ac-bg);color:var(--ac);border-color:var(--ac-lt)}
+.stu-tab.empty{opacity:.5}
+
+/* ACTION BAR */
+.abar{position:fixed;bottom:0;left:0;right:0;background:var(--sf);border-top:1px solid var(--bd);padding:10px 20px;display:flex;align-items:center;justify-content:space-between;gap:10px;z-index:100}
+.abar-left{font-size:12px;font-family:var(--mono);color:var(--tx2)}
+
+/* TOAST */
+#toast{position:fixed;bottom:62px;right:20px;padding:10px 18px;border-radius:9px;font-size:13px;font-weight:500;opacity:0;transform:translateY(5px);transition:.2s;pointer-events:none;z-index:999}
+#toast.on{opacity:1;transform:translateY(0)}
+#toast.s{background:var(--ac);color:#fff}
+#toast.e{background:var(--rd-bg);color:var(--rd);border:1px solid #f5c0c0}
+#toast.i{background:var(--sf);color:var(--tx);border:1px solid var(--bd)}
+
+.spin{width:13px;height:13px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:sp .6s linear infinite;display:inline-block}
+@keyframes sp{to{transform:rotate(360deg)}}
+
+/* PASTE PREVIEW */
+.prev-wrap{background:var(--bl-bg);border:1px solid #b5cdf5;border-radius:8px;padding:12px 16px;margin-bottom:14px;font-size:12px;color:var(--bl)}
+.prev-wrap strong{display:block;margin-bottom:4px}
+.prev-cols{font-family:var(--mono);font-size:11px;opacity:.8}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nbrand"><div class="ndot"></div>ระบบ ปพ.6</div>
+  <div class="nlinks">
+    <a class="nl" href="config.html">ตั้งค่า</a>
+    <a class="nl on" href="students.html">นักเรียน</a>
+    <a class="nl" href="scores.html">กรอกคะแนน</a>
+    <a class="nl" href="pp6.html">พิมพ์ ปพ.6</a>
+  </div>
+  <div class="nuser"><span id="nu"></span><button class="nout" onclick="logout()">ออก</button></div>
+</nav>
+
+<div class="toolbar">
+  <div class="tg">
+    <label class="fl">ชั้น</label>
+    <select class="ts" id="sel-grade" onchange="onClassChange()">
+      <option value="">-- ชั้น --</option>
+      <option>ป.1</option><option>ป.2</option><option>ป.3</option>
+      <option>ป.4</option><option>ป.5</option><option>ป.6</option>
+      <option>ม.1</option><option>ม.2</option><option>ม.3</option>
+    </select>
+  </div>
+  <div class="tg">
+    <label class="fl">ห้อง</label>
+    <input type="text" class="ts" id="sel-room" placeholder="1" style="width:55px" oninput="onClassChange()">
+  </div>
+  <div class="sep"></div>
+  <div class="tg">
+    <label class="fl">จำนวนนักเรียน</label>
+    <input type="number" class="ts" id="stu-count" value="30" min="1" max="60" style="width:65px">
+    <button class="btn bo bsm" onclick="initStudents()">สร้างรายการ</button>
+  </div>
+  <div class="sep"></div>
+  <div class="tg">
+    <button class="btn bo bsm" onclick="prevStu()">◀</button>
+    <span id="stu-pos" style="font-size:12px;font-family:var(--mono);color:var(--tx2)">—/—</span>
+    <button class="btn bo bsm" onclick="nextStu()">▶</button>
+  </div>
+  <div style="margin-left:auto;display:flex;gap:7px">
+    <button class="btn bo bsm" onclick="loadFromGAS()">โหลดจาก Sheets</button>
+    <button class="btn bo bsm" onclick="exportCSV()">Export CSV</button>
+    <button class="btn bp bsm" id="save-btn" onclick="saveAll()">บันทึกลง Sheets</button>
+  </div>
+</div>
+
+<div class="sbar" id="sbar">เลือกชั้นและห้องเพื่อเริ่มต้น</div>
+
+<div class="main">
+  <!-- Student selector tabs -->
+  <div class="stu-tabs" id="stu-tabs"></div>
+
+  <!-- Paste Zone -->
+  <div class="paste-zone" id="paste-zone" onclick="document.getElementById('paste-ta').focus()">
+    <div class="icon">📋</div>
+    <div><strong>วางข้อมูลจาก Excel</strong> — คลิกที่นี่แล้ว Ctrl+V</div>
+    <div class="hint">รองรับการวางหลายแถวพร้อมกัน | คอลัมน์ตามลำดับในตาราง Excel ของท่าน</div>
+    <textarea id="paste-ta" onpaste="handlePaste(event)"></textarea>
+  </div>
+  <div id="paste-preview" style="display:none"></div>
+
+  <!-- Student form -->
+  <div id="stu-form"></div>
+</div>
+
+<div class="abar">
+  <div class="abar-left" id="abar-info">—</div>
+  <div style="display:flex;gap:7px">
+    <button class="btn bo bsm" onclick="clearCurrent()">ล้างข้อมูลนักเรียนนี้</button>
+    <button class="btn bp bsm" onclick="saveAll()">💾 บันทึกลง Sheets</button>
+  </div>
+</div>
+<div id="toast"></div>
+
+<script>
+// ─────────────────────────────────────────────────────────
+//  FIELD DEFINITIONS  (key | label | type | required | group)
+// ─────────────────────────────────────────────────────────
+const FIELDS = [
+  // --- กลุ่ม 1: ข้อมูลโรงเรียน/ชั้น ---
+  {k:'schoolCode',    lb:'รหัสโรงเรียน',            t:'text',   req:true,  g:0},
+  {k:'schoolName',    lb:'ชื่อโรงเรียน',             t:'text',   req:false, g:0},
+  {k:'grade',         lb:'ชั้น',                     t:'text',   req:true,  g:0},
+  {k:'room',          lb:'ห้อง',                     t:'text',   req:true,  g:0},
+  {k:'studentCode',   lb:'รหัสนักเรียน',             t:'text',   req:true,  g:0},
+  {k:'idCard',        lb:'เลขประจำตัวประชาชน',       t:'text',   req:false, g:0},
+  // --- กลุ่ม 2: ข้อมูลส่วนตัว ---
+  {k:'gender',        lb:'เพศ (ช/ญ)',                t:'gender', req:false, g:1},
+  {k:'prefix',        lb:'คำนำหน้าชื่อ',             t:'prefix', req:false, g:1},
+  {k:'firstName',     lb:'ชื่อ',                     t:'text',   req:true,  g:1},
+  {k:'lastName',      lb:'นามสกุล',                  t:'text',   req:true,  g:1},
+  {k:'firstNameEn',   lb:'ชื่อ (อังกฤษ)',            t:'text',   req:false, g:1},
+  {k:'lastNameEn',    lb:'นามสกุล (อังกฤษ)',         t:'text',   req:false, g:1},
+  {k:'birthDate',     lb:'วันเกิด',                  t:'date',   req:false, g:1},
+  {k:'ageYear',       lb:'อายุ (ปี)',                 t:'number', req:false, g:1},
+  {k:'ageMonth',      lb:'อายุ (เดือน)',              t:'number', req:false, g:1},
+  {k:'bloodType',     lb:'หมู่โลหิต',                t:'blood',  req:false, g:1},
+  {k:'nationality',   lb:'สัญชาติ',                  t:'text',   req:false, g:1},
+  {k:'ethnicity',     lb:'เชื้อชาติ',                t:'text',   req:false, g:1},
+  {k:'religion',      lb:'ศาสนา',                    t:'text',   req:false, g:1},
+  {k:'birthProvince', lb:'จังหวัดที่เกิด',           t:'text',   req:false, g:1},
+  // --- กลุ่ม 3: ครอบครัว ---
+  {k:'brotherCount',       lb:'จำนวนพี่ชาย',         t:'number', req:false, g:2},
+  {k:'youngerBrotherCount',lb:'จำนวนน้องชาย',        t:'number', req:false, g:2},
+  {k:'sisterCount',        lb:'จำนวนพี่สาว',         t:'number', req:false, g:2},
+  {k:'youngerSisterCount', lb:'จำนวนน้องสาว',        t:'number', req:false, g:2},
+  {k:'childOrder',         lb:'เป็นบุตรคนที่',       t:'number', req:false, g:2},
+  {k:'parentMaritalStatus',lb:'สถานภาพสมรสบิดามารดา',t:'text',   req:false, g:2},
+  // --- กลุ่ม 4: บิดา ---
+  {k:'fatherIdCard',   lb:'เลขบัตรประชาชนบิดา',      t:'text',   req:false, g:3},
+  {k:'fatherPrefix',   lb:'คำนำหน้าบิดา',            t:'text',   req:false, g:3},
+  {k:'fatherFirstName',lb:'ชื่อบิดา',                t:'text',   req:false, g:3},
+  {k:'fatherLastName', lb:'นามสกุลบิดา',             t:'text',   req:false, g:3},
+  {k:'fatherOccupation',lb:'อาชีพบิดา',              t:'text',   req:false, g:3},
+  {k:'fatherIncome',   lb:'รายได้/เดือนบิดา (บาท)', t:'number', req:false, g:3},
+  {k:'fatherPhone',    lb:'เบอร์โทรบิดา',            t:'text',   req:false, g:3},
+  // --- กลุ่ม 5: มารดา ---
+  {k:'motherIdCard',   lb:'เลขบัตรประชาชนมารดา',     t:'text',   req:false, g:4},
+  {k:'motherPrefix',   lb:'คำนำหน้ามารดา',           t:'text',   req:false, g:4},
+  {k:'motherFirstName',lb:'ชื่อมารดา',               t:'text',   req:false, g:4},
+  {k:'motherLastName', lb:'นามสกุลมารดา',            t:'text',   req:false, g:4},
+  {k:'motherOccupation',lb:'อาชีพมารดา',             t:'text',   req:false, g:4},
+  {k:'motherIncome',   lb:'รายได้/เดือนมารดา (บาท)',t:'number',  req:false, g:4},
+  {k:'motherPhone',    lb:'เบอร์โทรมารดา',           t:'text',   req:false, g:4},
+  // --- กลุ่ม 6: ผู้ปกครอง ---
+  {k:'guardianRelation',  lb:'ความสัมพันธ์ผู้ปกครอง', t:'text', req:false, g:5},
+  {k:'guardianIdCard',    lb:'เลขบัตรผู้ปกครอง',      t:'text', req:false, g:5},
+  {k:'guardianPrefix',    lb:'คำนำหน้าผู้ปกครอง',     t:'text', req:false, g:5},
+  {k:'guardianFirstName', lb:'ชื่อผู้ปกครอง',          t:'text', req:false, g:5},
+  {k:'guardianLastName',  lb:'นามสกุลผู้ปกครอง',      t:'text', req:false, g:5},
+  {k:'guardianOccupation',lb:'อาชีพผู้ปกครอง',        t:'text', req:false, g:5},
+  {k:'guardianIncome',    lb:'รายได้/เดือนผู้ปกครอง', t:'number',req:false, g:5},
+  {k:'guardianPhone',     lb:'เบอร์โทรผู้ปกครอง',     t:'text', req:false, g:5},
+  // --- กลุ่ม 7: ที่อยู่ทะเบียนบ้าน ---
+  {k:'houseRegCode',        lb:'รหัสประจำบ้าน',        t:'text', req:false, g:6},
+  {k:'houseRegNo',          lb:'เลขที่บ้าน',            t:'text', req:false, g:6},
+  {k:'houseRegMoo',         lb:'หมู่ที่',               t:'text', req:false, g:6},
+  {k:'houseRegRoad',        lb:'ถนน',                   t:'text', req:false, g:6},
+  {k:'houseRegSubdistrict', lb:'ตำบล',                  t:'text', req:false, g:6},
+  {k:'houseRegDistrict',    lb:'อำเภอ',                 t:'text', req:false, g:6},
+  {k:'houseRegProvince',    lb:'จังหวัด',               t:'text', req:false, g:6},
+  {k:'houseRegPostcode',    lb:'รหัสไปรษณีย์',          t:'text', req:false, g:6},
+  {k:'houseRegPhone',       lb:'โทรศัพท์',              t:'text', req:false, g:6},
+  // --- กลุ่ม 8: ที่อยู่ปัจจุบัน ---
+  {k:'currentHouseCode',    lb:'รหัสประจำบ้าน',        t:'text', req:false, g:7},
+  {k:'currentHouseNo',      lb:'เลขที่บ้าน',            t:'text', req:false, g:7},
+  {k:'currentHouseMoo',     lb:'หมู่ที่',               t:'text', req:false, g:7},
+  {k:'currentHouseRoad',    lb:'ถนน',                   t:'text', req:false, g:7},
+  {k:'currentSubdistrict',  lb:'ตำบล',                  t:'text', req:false, g:7},
+  {k:'currentDistrict',     lb:'อำเภอ',                 t:'text', req:false, g:7},
+  {k:'currentProvince',     lb:'จังหวัด',               t:'text', req:false, g:7},
+  {k:'currentPostcode',     lb:'รหัสไปรษณีย์',          t:'text', req:false, g:7},
+  {k:'currentPhone',        lb:'โทรศัพท์',              t:'text', req:false, g:7},
+  // --- กลุ่ม 9: สุขภาพ/สถานภาพ ---
+  {k:'weight',              lb:'น้ำหนัก (กก.)',          t:'number',req:false, g:8},
+  {k:'height',              lb:'ส่วนสูง (ซม.)',          t:'number',req:false, g:8},
+  {k:'disadvantaged',       lb:'ความด้อยโอกาส',          t:'text',  req:false, g:8},
+  {k:'boarding',            lb:'การพักนอนประจำ',         t:'text',  req:false, g:8},
+  {k:'lackUniform',         lb:'ขาดแคลนเครื่องแบบ',     t:'text',  req:false, g:8},
+  {k:'lackStationery',      lb:'ขาดแคลนเครื่องเขียน',   t:'text',  req:false, g:8},
+  {k:'lackTextbook',        lb:'ขาดแคลนแบบเรียน',       t:'text',  req:false, g:8},
+  {k:'lackLunch',           lb:'ขาดแคลนอาหารกลางวัน',  t:'text',  req:false, g:8},
+  {k:'disability',          lb:'ความพิการ',              t:'text',  req:false, g:8},
+  {k:'distGravel',          lb:'ระยะทาง ถนนลูกรัง (กม.)',t:'number',req:false,g:8},
+  {k:'distPaved',           lb:'ระยะทาง ถนนลาดยาง (กม.)',t:'number',req:false,g:8},
+  {k:'distWater',           lb:'ระยะทาง ทางน้ำ (กม.)',  t:'number',req:false, g:8},
+  {k:'travelTime',          lb:'ระยะเวลาเดินทาง (นาที)',t:'number', req:false, g:8},
+  {k:'travelType',          lb:'ลักษณะการเดินทาง',      t:'text',  req:false, g:8},
+  {k:'studentType',         lb:'ประเภทนักเรียน',         t:'text',  req:false, g:8},
+  {k:'gpa',                 lb:'GPA',                   t:'number',req:false, g:8},
+  {k:'gpax',                lb:'GPAX',                  t:'number',req:false, g:8},
+];
+
+const GROUPS = [
+  {id:0, title:'ข้อมูลโรงเรียน / ชั้นเรียน', cols:3},
+  {id:1, title:'ข้อมูลส่วนตัวนักเรียน',       cols:4},
+  {id:2, title:'ครอบครัว',                    cols:4},
+  {id:3, title:'ข้อมูลบิดา',                  cols:4},
+  {id:4, title:'ข้อมูลมารดา',                 cols:4},
+  {id:5, title:'ข้อมูลผู้ปกครอง',             cols:4},
+  {id:6, title:'ที่อยู่ตามทะเบียนบ้าน',       cols:3},
+  {id:7, title:'ที่อยู่ปัจจุบัน',             cols:3},
+  {id:8, title:'สุขภาพ / สถานภาพ / การเดินทาง',cols:4},
+];
+
+const GENDER_OPTS  = ['','ช','ญ'];
+const PREFIX_OPTS  = ['','เด็กชาย','เด็กหญิง','นาย','นาง','นางสาว','ด.ช.','ด.ญ.'];
+const BLOOD_OPTS   = ['','A','B','AB','O'];
+
+// ─── STATE ───────────────────────────────────────────────
+const CK      = 'pp6_config';
+const SK      = 'pp6_students';
+let students  = [];   // array of objects
+let curIdx    = 0;    // current student index
+let classKey  = '';   // grade-room
+let collapsed = {};   // group collapsed state
+
+function cfg(){ return JSON.parse(localStorage.getItem(CK)||'{}'); }
+function gv(id){ return (document.getElementById(id)||{}).value||''; }
+function toast(m,t='s'){const e=document.getElementById('toast');e.textContent=m;e.className='on '+t;clearTimeout(window._t);window._t=setTimeout(()=>e.classList.remove('on'),2800)}
+function logout(){ sessionStorage.removeItem('pp6a'); location.href='config.html'; }
+if(sessionStorage.getItem('pp6a')!=='1') location.href='config.html';
+document.getElementById('nu').textContent = sessionStorage.getItem('pp6u')||'admin';
+
+// ─── INIT ────────────────────────────────────────────────
+function init(){
+  const c = cfg();
+  // fill grade select from teachers list
+  const sg = document.getElementById('sel-grade');
+  const grades = [...new Set((c.teachers||[]).map(t=>t.grade))];
+  grades.forEach(g=>{ if(![...sg.options].find(o=>o.value===g)){ const o=document.createElement('option');o.value=g;o.textContent=g;sg.appendChild(o); }});
+  // try to restore last class
+  const saved = JSON.parse(localStorage.getItem(SK)||'{}');
+  if(saved.classKey){
+    const [g,r] = saved.classKey.split('-');
+    sg.value = g||'';
+    document.getElementById('sel-room').value = r||'';
+    classKey = saved.classKey;
+    students = saved.students||[];
+    if(students.length){ curIdx=0; renderTabs(); renderForm(); updateStatus(); }
+  }
+}
+
+// ─── CLASS CHANGE ─────────────────────────────────────────
+function onClassChange(){
+  const g=gv('sel-grade'), r=gv('sel-room').trim();
+  if(!g||!r)return;
+  const newKey = g+'-'+r;
+  if(newKey===classKey)return;
+  classKey = newKey;
+  // try load from localStorage
+  const saved = JSON.parse(localStorage.getItem(SK)||'{}');
+  if(saved[classKey]){ students=saved[classKey]; curIdx=0; renderTabs(); renderForm(); updateStatus(); }
+  else students=[];
+}
+
+function initStudents(){
+  if(!classKey){ toast('เลือกชั้นและห้องก่อน','e'); return; }
+  const n = +gv('stu-count')||30;
+  const c = cfg();
+  if(students.length && !confirm(`มีข้อมูลนักเรียน ${students.length} คนอยู่แล้ว สร้างใหม่จะลบข้อมูลเดิม ยืนยัน?`)) return;
+  const [grade, room] = classKey.split('-');
+  students = Array.from({length:n}, (_,i)=>({
+    no: i+1,
+    schoolCode: c.schoolCode||'',
+    schoolName: c.schoolName||'',
+    grade, room,
+    studentCode:'', idCard:'', gender:'', prefix:'',
+    firstName:'', lastName:'', firstNameEn:'', lastNameEn:'',
+  }));
+  curIdx=0; renderTabs(); renderForm(); saveLocal(); updateStatus();
+  toast(`สร้างรายการ ${n} คนแล้ว`,'s');
+}
+
+// ─── TABS ────────────────────────────────────────────────
+function renderTabs(){
+  const el = document.getElementById('stu-tabs');
+  el.innerHTML = students.map((s,i)=>{
+    const done = s.firstName||s.studentCode;
+    const name = s.firstName? (s.firstName+(s.lastName?' '+s.lastName:'')) : `ที่ ${s.no||i+1}`;
+    return `<div class="stu-tab ${i===curIdx?'on':''} ${done?'done':'empty'}" onclick="goTo(${i})" title="${name}">${s.no||i+1}. ${s.firstName||'-'}</div>`;
+  }).join('');
+  document.getElementById('stu-pos').textContent = `${curIdx+1}/${students.length}`;
+}
+
+function goTo(i){ if(i<0||i>=students.length)return; saveFormToState(); curIdx=i; renderTabs(); renderForm(); }
+function prevStu(){ goTo(curIdx-1); }
+function nextStu(){ goTo(curIdx+1); }
+
+// ─── FORM RENDER ─────────────────────────────────────────
+function renderForm(){
+  if(!students.length){ document.getElementById('stu-form').innerHTML='<div style="color:var(--tx3);padding:24px;text-align:center">กด "สร้างรายการ" เพื่อเริ่มต้น</div>'; return; }
+  const s = students[curIdx];
+  let html = '';
+  GROUPS.forEach(grp=>{
+    const flds = FIELDS.filter(f=>f.g===grp.id);
+    const isOpen = collapsed[grp.id]===undefined ? true : !collapsed[grp.id];
+    const filled = flds.filter(f=>s[f.k]!==undefined&&s[f.k]!=='').length;
+    html += `<div class="fg-wrap">
+      <div class="fg-head" onclick="toggleGroup(${grp.id})">
+        <div class="fg-title">
+          ${grp.title}
+          <span class="fg-badge">${filled}/${flds.length}</span>
+        </div>
+        <span class="fg-toggle ${isOpen?'open':''}">▼</span>
+      </div>
+      <div class="fg-body g${grp.cols} ${isOpen?'':'hidden'}" id="grp-${grp.id}">
+        ${flds.map(f=>renderField(f,s[f.k])).join('')}
+      </div>
+    </div>`;
+  });
+  document.getElementById('stu-form').innerHTML=html;
+  updateStatus();
+}
+
+function renderField(f, val){
+  val = val===undefined||val===null?'':val;
+  let input='';
+  if(f.t==='gender'){
+    input=`<select onchange="onFieldChange('${f.k}',this.value)">${GENDER_OPTS.map(o=>`<option ${val===o?'selected':''}>${o}</option>`).join('')}</select>`;
+  } else if(f.t==='prefix'){
+    input=`<select onchange="onFieldChange('${f.k}',this.value)">${PREFIX_OPTS.map(o=>`<option ${val===o?'selected':''}>${o}</option>`).join('')}</select>`;
+  } else if(f.t==='blood'){
+    input=`<select onchange="onFieldChange('${f.k}',this.value)">${BLOOD_OPTS.map(o=>`<option ${val===o?'selected':''}>${o}</option>`).join('')}</select>`;
+  } else if(f.t==='date'){
+    input=`<input type="date" value="${val}" onchange="onFieldChange('${f.k}',this.value)">`;
+  } else if(f.t==='number'){
+    input=`<input type="number" value="${val}" oninput="onFieldChange('${f.k}',this.value)" step="any">`;
+  } else {
+    input=`<input type="text" value="${esc(val)}" oninput="onFieldChange('${f.k}',this.value)">`;
+  }
+  return `<div class="f"><label>${f.lb}${f.req?'<span class="req">*</span>':''}</label>${input}</div>`;
+}
+
+function esc(s){ return (s||'').toString().replace(/"/g,'&quot;').replace(/</g,'&lt;'); }
+
+function toggleGroup(id){
+  collapsed[id] = !collapsed[id];
+  const body = document.getElementById('grp-'+id);
+  const toggle = body?.previousElementSibling?.querySelector('.fg-toggle');
+  if(body) body.classList.toggle('hidden', collapsed[id]);
+  if(toggle) toggle.classList.toggle('open', !collapsed[id]);
+}
+
+function onFieldChange(key, val){
+  if(!students[curIdx]) return;
+  students[curIdx][key] = val;
+  saveLocal();
+  // update tab name if name changed
+  if(key==='firstName'||key==='lastName'||key==='no') renderTabs();
+  updateStatus();
+}
+
+// ─── SAVE / LOAD ─────────────────────────────────────────
+function saveFormToState(){
+  if(!students[curIdx]) return;
+  FIELDS.forEach(f=>{
+    const el = document.querySelector(`#grp-${f.g} [onchange*="${f.k}"], #grp-${f.g} [oninput*="${f.k}"]`);
+    if(el) students[curIdx][f.k] = el.value;
+  });
+}
+
+function saveLocal(){
+  const saved = JSON.parse(localStorage.getItem(SK)||'{}');
+  saved[classKey] = students;
+  saved.classKey = classKey;
+  localStorage.setItem(SK, JSON.stringify(saved));
+}
+
+function updateStatus(){
+  const filled = students.filter(s=>s.firstName||s.studentCode).length;
+  const cur = students[curIdx];
+  const name = cur ? ((cur.prefix||'')+(cur.firstName||'')+' '+(cur.lastName||'')).trim() : '';
+  document.getElementById('sbar').innerHTML = classKey
+    ? `<span class="chip ok">${classKey}</span> กรอกข้อมูลแล้ว <span class="chip">${filled}</span>/<span class="chip">${students.length}</span> คน`
+    : 'เลือกชั้นและห้องเพื่อเริ่มต้น';
+  document.getElementById('abar-info').textContent = cur
+    ? `เลขที่ ${cur.no||curIdx+1} — ${name||'(ยังไม่มีชื่อ)'}`
+    : '—';
+}
+
+// ─── PASTE HANDLER ────────────────────────────────────────
+function handlePaste(e){
+  e.preventDefault();
+  const text = e.clipboardData.getData('text');
+  if(!text){ toast('ไม่มีข้อมูลใน clipboard','e'); return; }
+  if(!students.length){ toast('กด "สร้างรายการ" ก่อนวางข้อมูล','e'); return; }
+  const lines = text.trim().split(/\r?\n/);
+  const keys  = FIELDS.map(f=>f.k);
+  let pasted  = 0;
+  // detect if first row is header
+  const firstRow = lines[0].split('\t');
+  const isHeader = firstRow.some(c=> FIELDS.some(f=>f.lb.includes(c.trim())||f.k===c.trim()));
+  const dataLines = isHeader ? lines.slice(1) : lines;
+
+  dataLines.forEach((line, li)=>{
+    if(li >= students.length) return;
+    const cols = line.split('\t');
+    cols.forEach((val, ci)=>{
+      if(ci < keys.length) students[li+curIdx < students.length ? li+curIdx : li][keys[ci]] = val.trim();
+    });
+    pasted++;
+  });
+  saveLocal();
+  renderTabs();
+  renderForm();
+  updateStatus();
+
+  // show preview
+  const prevEl = document.getElementById('paste-preview');
+  prevEl.style.display='block';
+  prevEl.innerHTML=`<div class="prev-wrap"><strong>✓ วางข้อมูล ${pasted} แถวสำเร็จ</strong><div class="prev-cols">คอลัมน์ที่รับ: ${keys.slice(0,firstRow.length).join(' | ')}</div></div>`;
+  setTimeout(()=>prevEl.style.display='none',4000);
+  toast(`วาง ${pasted} แถวสำเร็จ`,'s');
+}
+
+// ─── LOAD FROM GAS ────────────────────────────────────────
+async function loadFromGAS(){
+  const c = cfg();
+  if(!c.apiUrl){ toast('ตั้งค่า API URL ก่อน','e'); return; }
+  if(!classKey){ toast('เลือกชั้นและห้องก่อน','e'); return; }
+  const [grade,room] = classKey.split('-');
+  const btn = document.getElementById('save-btn');
+  btn.disabled=true; btn.innerHTML='<span class="spin"></span>';
+  try{
+    const sep = c.apiUrl.includes('?')?'&':'?';
+    const url = `${c.apiUrl}${sep}path=students&key=${encodeURIComponent(c.apiKey||'')}&grade=${encodeURIComponent(grade)}&room=${encodeURIComponent(room)}`;
+    const r = await fetch(url);
+    const d = await r.json();
+    if(d.error) throw new Error(d.error);
+    if(d.students&&d.students.length){
+      students = d.students;
+      saveLocal(); renderTabs(); renderForm(); updateStatus();
+      toast(`โหลด ${students.length} คนสำเร็จ`,'s');
+    } else {
+      toast('ไม่พบข้อมูลใน Sheets','i');
+    }
+  }catch(e){ toast('ข้อผิดพลาด: '+e.message,'e'); }
+  finally{ btn.disabled=false; btn.innerHTML='บันทึกลง Sheets'; }
+}
+
+// ─── SAVE TO GAS ──────────────────────────────────────────
+async function saveAll(){
+  const c = cfg();
+  if(!c.apiUrl){ toast('ตั้งค่า API URL ก่อน','e'); return; }
+  if(!classKey||!students.length){ toast('ไม่มีข้อมูลนักเรียน','e'); return; }
+  saveFormToState(); saveLocal();
+  const [grade,room] = classKey.split('-');
+  const btn = document.getElementById('save-btn');
+  btn.disabled=true; btn.innerHTML='<span class="spin"></span> กำลังบันทึก...';
+  try{
+    const sep = c.apiUrl.includes('?')?'&':'?';
+    const url = `${c.apiUrl}${sep}path=students&key=${encodeURIComponent(c.apiKey||'')}`;
+    const r = await fetch(url,{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({grade,room,students})
+    });
+    const d = await r.json();
+    if(d.error) throw new Error(d.error);
+    toast(`บันทึก ${students.length} คนสำเร็จ ✓`,'s');
+  }catch(e){ toast('ข้อผิดพลาด: '+e.message,'e'); }
+  finally{ btn.disabled=false; btn.innerHTML='บันทึกลง Sheets'; }
+}
+
+// ─── EXPORT CSV ───────────────────────────────────────────
+function exportCSV(){
+  if(!students.length){ toast('ไม่มีข้อมูล','e'); return; }
+  const headers = FIELDS.map(f=>f.lb);
+  const rows = students.map(s=> FIELDS.map(f=>{ const v=s[f.k]||''; return v.toString().includes(',')?`"${v}"`:v; }).join(','));
+  const csv = '\uFEFF'+[headers.join(','),...rows].join('\n');
+  const a   = document.createElement('a');
+  a.href    = URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'}));
+  a.download= `students_${classKey}.csv`;
+  a.click();
+  toast('Export CSV สำเร็จ','s');
+}
+
+// ─── CLEAR ────────────────────────────────────────────────
+function clearCurrent(){
+  if(!students[curIdx])return;
+  if(!confirm('ล้างข้อมูลนักเรียนคนนี้?'))return;
+  const no = students[curIdx].no;
+  const c  = cfg();
+  const [grade,room]=classKey.split('-');
+  students[curIdx]={no,grade,room,schoolCode:c.schoolCode||'',schoolName:c.schoolName||''};
+  saveLocal(); renderTabs(); renderForm(); updateStatus();
+}
+
+// ─── KEYBOARD NAV ─────────────────────────────────────────
+document.addEventListener('keydown',e=>{
+  if(e.target.tagName==='INPUT'||e.target.tagName==='SELECT'||e.target.tagName==='TEXTAREA') return;
+  if(e.key==='ArrowLeft') prevStu();
+  if(e.key==='ArrowRight') nextStu();
+});
+
+// ─── PASTE ZONE ───────────────────────────────────────────
+document.addEventListener('keydown',e=>{
+  if((e.ctrlKey||e.metaKey)&&e.key==='v'){
+    const active=document.activeElement;
+    if(!active||active.tagName!=='INPUT'&&active.tagName!=='SELECT'&&active.tagName!=='TEXTAREA'){
+      document.getElementById('paste-ta').focus();
+    }
+  }
+});
+const pz=document.getElementById('paste-zone');
+pz.addEventListener('dragover',e=>{e.preventDefault();pz.classList.add('drag')});
+pz.addEventListener('dragleave',()=>pz.classList.remove('drag'));
+pz.addEventListener('drop',e=>{
+  e.preventDefault();pz.classList.remove('drag');
+  const text=e.dataTransfer.getData('text');
+  if(text){const fakeE={preventDefault:()=>{},clipboardData:{getData:()=>text}};handlePaste(fakeE);}
+});
+
+init();
+</script>
+</body>
+</html>
