@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Student Data - Professional View</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet" />
+  <style>
+    /* รีเซ็ต CSS */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Roboto', sans-serif;
+      background: #f5f7fa;
+      color: #333;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: auto;
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+    }
+
+    .header {
+      padding: 20px;
+      text-align: center;
+      background: #007BFF;
+      color: #fff;
+      font-size: 24px;
+      font-weight: 700;
+    }
+
+    .table-container {
+      padding: 20px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    th, td {
+      padding: 12px 16px;
+      text-align: left;
+      border-bottom: 1px solid #ddd;
+    }
+
+    th {
+      background-color: #007BFF;
+      color: #fff;
+      font-weight: 500;
+    }
+
+    tr:hover {
+      background-color: #f9f9f9;
+    }
+
+    .loading {
+      text-align: center;
+      font-size: 18px;
+      color: #666;
+      margin: 20px 0;
+    }
+
+    @media (max-width: 768px) {
+      table, thead, tbody, th, td, tr {
+        display: block;
+      }
+
+      th {
+        position: absolute;
+        top: -9999px;
+        left: -9999px;
+      }
+
+      tr {
+        border: 1px solid #ccc;
+        margin-bottom: 10px;
+      }
+
+      td {
+        border: none;
+        padding: 10px;
+        text-align: right;
+      }
+
+      td::before {
+        content: attr(data-label);
+        font-weight: bold;
+        display: inline-block;
+        width: 120px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>Student Data</h1>
+      <p>แสดงข้อมูลนักศึกษาแบบมืออาชีพ</p>
+    </div>
+    <div class="table-container">
+      <div class="loading" id="loading">Loading data...</div>
+      <table id="studentTable">
+        <thead>
+          <tr>
+            <th>ชื่อ</th>
+            <th>นามสกุล</th>
+            <th>อายุ</th>
+            <th>เกรด</th>
+            <th>สาขา</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- ข้อมูลจะถูกแทรกที่นี่ -->
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const loading = document.getElementById("loading");
+      const tableBody = document.querySelector("#studentTable tbody");
+
+      // ตัวอย่างข้อมูล (จะถูกแทนที่ด้วยข้อมูลจาก API)
+      fetch("https://script.google.com/macros/s/AKfycbyoXHUSKNJO5Gbp_mU2-wWzXcWNEAMEXVkYiTJpTvQjqB4bfT3W42KJ31bp8IAJ69CQ/exec")
+        .then(response => {
+          if (!response.ok) throw new Error("Network response was not ok");
+          return response.json();
+        })
+        .then(data => {
+          loading.style.display = "none";
+          tableBody.innerHTML = "";
+
+          data.forEach(row => {
+            const tr = document.createElement("tr");
+            row.forEach((cell, index) => {
+              const td = document.createElement("td");
+              td.textContent = cell;
+              if (index === 0) td.classList.add("name");
+              tr.appendChild(td);
+            });
+            tableBody.appendChild(tr);
+          });
+        })
+        .catch(error => {
+          console.error("Error fetching data:", error);
+          loading.textContent = "เกิดข้อผิดพลาด: ไม่สามารถโหลดข้อมูลได้";
+        });
+    });
+  </script>
+</body>
+</html>

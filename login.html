@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>เข้าสู่ระบบ</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      min-height: 100vh;
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Segoe UI', Arial, sans-serif;
+      overflow: hidden;
+    }
+
+    /* Animated background orbs */
+    body::before, body::after {
+      content: '';
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(80px);
+      opacity: 0.15;
+      animation: float 8s ease-in-out infinite;
+      pointer-events: none;
+    }
+    body::before {
+      width: 400px; height: 400px;
+      background: #e94560;
+      top: -100px; left: -100px;
+    }
+    body::after {
+      width: 500px; height: 500px;
+      background: #0f3460;
+      bottom: -150px; right: -100px;
+      animation-delay: -4s;
+    }
+    @keyframes float {
+      0%, 100% { transform: translateY(0) scale(1); }
+      50% { transform: translateY(30px) scale(1.05); }
+    }
+
+    .card {
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 24px;
+      padding: 48px 44px;
+      width: 100%;
+      max-width: 420px;
+      box-shadow: 0 25px 60px rgba(0,0,0,0.4), 0 0 0 1px rgba(255,255,255,0.05);
+      position: relative;
+      z-index: 1;
+    }
+
+    .logo {
+      text-align: center;
+      margin-bottom: 32px;
+    }
+    .logo-icon {
+      width: 64px; height: 64px;
+      background: linear-gradient(135deg, #e94560, #f5a623);
+      border-radius: 18px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+      margin-bottom: 14px;
+      box-shadow: 0 8px 24px rgba(233, 69, 96, 0.4);
+    }
+    .logo h1 {
+      color: #fff;
+      font-size: 1.5rem;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+    }
+    .logo p {
+      color: rgba(255,255,255,0.5);
+      font-size: 0.85rem;
+      margin-top: 4px;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+    label {
+      display: block;
+      color: rgba(255,255,255,0.7);
+      font-size: 0.82rem;
+      font-weight: 600;
+      margin-bottom: 8px;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+    .input-wrap {
+      position: relative;
+    }
+    .input-icon {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: rgba(255,255,255,0.35);
+      font-size: 16px;
+      pointer-events: none;
+    }
+    input[type="text"],
+    input[type="password"] {
+      width: 100%;
+      padding: 13px 14px 13px 42px;
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 12px;
+      color: #fff;
+      font-size: 0.95rem;
+      outline: none;
+      transition: border-color 0.25s, background 0.25s, box-shadow 0.25s;
+    }
+    input[type="text"]::placeholder,
+    input[type="password"]::placeholder {
+      color: rgba(255,255,255,0.25);
+    }
+    input[type="text"]:focus,
+    input[type="password"]:focus {
+      border-color: #e94560;
+      background: rgba(255,255,255,0.1);
+      box-shadow: 0 0 0 3px rgba(233,69,96,0.2);
+    }
+
+    .toggle-pw {
+      position: absolute;
+      right: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      color: rgba(255,255,255,0.35);
+      cursor: pointer;
+      font-size: 16px;
+      padding: 2px;
+      transition: color 0.2s;
+    }
+    .toggle-pw:hover { color: rgba(255,255,255,0.7); }
+
+    .options {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 28px;
+      margin-top: 4px;
+    }
+    .remember {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      color: rgba(255,255,255,0.55);
+      font-size: 0.85rem;
+    }
+    .remember input { display: none; }
+    .checkmark {
+      width: 16px; height: 16px;
+      border: 1px solid rgba(255,255,255,0.25);
+      border-radius: 4px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+    }
+    .remember input:checked ~ .checkmark {
+      background: #e94560;
+      border-color: #e94560;
+    }
+    .remember input:checked ~ .checkmark::after {
+      content: '✓';
+      color: #fff;
+      font-size: 11px;
+    }
+
+    .forgot {
+      color: #e94560;
+      font-size: 0.85rem;
+      text-decoration: none;
+      transition: opacity 0.2s;
+    }
+    .forgot:hover { opacity: 0.75; }
+
+    .btn-login {
+      width: 100%;
+      padding: 14px;
+      background: linear-gradient(135deg, #e94560, #c62a47);
+      color: #fff;
+      font-size: 1rem;
+      font-weight: 700;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      letter-spacing: 0.5px;
+      transition: transform 0.15s, box-shadow 0.2s, opacity 0.2s;
+      box-shadow: 0 6px 20px rgba(233,69,96,0.45);
+    }
+    .btn-login:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 28px rgba(233,69,96,0.55);
+    }
+    .btn-login:active {
+      transform: translateY(0);
+    }
+    .btn-login:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    /* Error / Success messages */
+    .msg {
+      border-radius: 10px;
+      padding: 12px 16px;
+      font-size: 0.88rem;
+      margin-bottom: 20px;
+      display: none;
+      align-items: center;
+      gap: 10px;
+    }
+    .msg.error {
+      background: rgba(233,69,96,0.15);
+      border: 1px solid rgba(233,69,96,0.4);
+      color: #ff8fa3;
+    }
+    .msg.success {
+      background: rgba(52,211,153,0.12);
+      border: 1px solid rgba(52,211,153,0.35);
+      color: #6ee7b7;
+    }
+    .msg.show { display: flex; }
+
+    /* Shake animation */
+    @keyframes shake {
+      0%,100% { transform: translateX(0); }
+      20% { transform: translateX(-8px); }
+      40% { transform: translateX(8px); }
+      60% { transform: translateX(-5px); }
+      80% { transform: translateX(5px); }
+    }
+    .shake { animation: shake 0.4s ease; }
+  </style>
+</head>
+<body>
+
+<div class="card" id="card">
+  <div class="logo">
+    <div class="logo-icon">🔐</div>
+    <h1>Admin Portal</h1>
+    <p>กรุณาเข้าสู่ระบบเพื่อดำเนินการต่อ</p>
+  </div>
+
+  <div class="msg error" id="msgError">
+    <span>⚠️</span>
+    <span id="msgErrorText">ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง</span>
+  </div>
+  <div class="msg success" id="msgSuccess">
+    <span>✅</span>
+    <span>เข้าสู่ระบบสำเร็จ! กำลังนำทาง...</span>
+  </div>
+
+  <form id="loginForm" onsubmit="handleLogin(event)" novalidate>
+    <div class="form-group">
+      <label for="username">ชื่อผู้ใช้</label>
+      <div class="input-wrap">
+        <span class="input-icon">👤</span>
+        <input type="text" id="username" name="username" placeholder="กรอกชื่อผู้ใช้" autocomplete="username" />
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="password">รหัสผ่าน</label>
+      <div class="input-wrap">
+        <span class="input-icon">🔑</span>
+        <input type="password" id="password" name="password" placeholder="กรอกรหัสผ่าน" autocomplete="current-password" />
+        <button type="button" class="toggle-pw" id="togglePw" onclick="togglePassword()" aria-label="แสดง/ซ่อนรหัสผ่าน">👁</button>
+      </div>
+    </div>
+
+    <div class="options">
+      <label class="remember">
+        <input type="checkbox" id="remember" />
+        <span class="checkmark"></span>
+        จดจำฉัน
+      </label>
+      <a href="#" class="forgot">ลืมรหัสผ่าน?</a>
+    </div>
+
+    <button type="submit" class="btn-login" id="btnLogin">เข้าสู่ระบบ</button>
+  </form>
+</div>
+
+<script>
+  const CREDENTIALS = { username: 'admin', password: 'admin1234' };
+
+  function handleLogin(e) {
+    e.preventDefault();
+    const username = document.getElementById('username').value.trim();
+    const password = document.getElementById('password').value;
+    const btn = document.getElementById('btnLogin');
+    const errEl = document.getElementById('msgError');
+    const errText = document.getElementById('msgErrorText');
+    const sucEl = document.getElementById('msgSuccess');
+
+    // Hide previous messages
+    errEl.classList.remove('show');
+    sucEl.classList.remove('show');
+
+    if (!username || !password) {
+      errText.textContent = 'กรุณากรอกชื่อผู้ใช้และรหัสผ่าน';
+      errEl.classList.add('show');
+      document.getElementById('card').classList.add('shake');
+      setTimeout(() => document.getElementById('card').classList.remove('shake'), 400);
+      return;
+    }
+
+    btn.disabled = true;
+    btn.textContent = 'กำลังตรวจสอบ...';
+
+    // Simulate async check
+    setTimeout(() => {
+      if (username === CREDENTIALS.username && password === CREDENTIALS.password) {
+        sucEl.classList.add('show');
+        btn.textContent = 'สำเร็จ ✓';
+        // Redirect after 1.5s (change URL as needed)
+        setTimeout(() => { window.location.href = 'index.html'; }, 1500);
+      } else {
+        errText.textContent = 'ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง';
+        errEl.classList.add('show');
+        document.getElementById('card').classList.add('shake');
+        setTimeout(() => document.getElementById('card').classList.remove('shake'), 400);
+        btn.disabled = false;
+        btn.textContent = 'เข้าสู่ระบบ';
+      }
+    }, 800);
+  }
+
+  function togglePassword() {
+    const pw = document.getElementById('password');
+    const btn = document.getElementById('togglePw');
+    if (pw.type === 'password') {
+      pw.type = 'text';
+      btn.textContent = '🙈';
+    } else {
+      pw.type = 'password';
+      btn.textContent = '👁';
+    }
+  }
+
+  // Enter key support
+  document.getElementById('username').addEventListener('keydown', e => {
+    if (e.key === 'Enter') document.getElementById('password').focus();
+  });
+</script>
+</body>
+</html>
