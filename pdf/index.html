@@ -1,0 +1,1493 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PDF Studio Pro</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
+
+:root {
+  --bg: #09090f;
+  --s1: #0f0f18;
+  --s2: #14141f;
+  --s3: #1a1a28;
+  --s4: #202030;
+  --border: #2a2a40;
+  --borderl: #353550;
+  --t: #f0f0ff;
+  --t2: #a0a0c8;
+  --t3: #60607a;
+  --c1: #7c6fff; /* purple */
+  --c2: #38e8c8; /* teal */
+  --c3: #ff6b6b; /* red */
+  --c4: #ffd93d; /* yellow */
+  --c5: #6bcb77; /* green */
+  --c6: #ff9f43; /* orange */
+  --c7: #54a0ff; /* blue */
+  --c8: #fd79a8; /* pink */
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Sarabun',sans-serif;background:var(--bg);color:var(--t);height:100vh;display:flex;flex-direction:column;overflow:hidden}
+
+/* ── TOPBAR ── */
+.topbar{
+  display:flex;align-items:center;gap:12px;
+  padding:0 20px;height:52px;
+  background:var(--s1);
+  border-bottom:1px solid var(--border);
+  flex-shrink:0;
+}
+.logo{display:flex;align-items:center;gap:8px}
+.logo-icon{
+  width:32px;height:32px;border-radius:8px;
+  background:linear-gradient(135deg,var(--c1),var(--c2));
+  display:flex;align-items:center;justify-content:center;
+  font-size:16px;flex-shrink:0;
+}
+.logo-text{font-size:15px;font-weight:700;letter-spacing:-.3px}
+.logo-text span{color:var(--c1)}
+.topbar-sep{width:1px;height:24px;background:var(--border);margin:0 4px}
+.topbar-sub{font-size:11px;color:var(--t3);font-family:'IBM Plex Mono',monospace}
+.topbar-right{margin-left:auto;display:flex;gap:8px;align-items:center}
+.badge{
+  font-size:10px;font-weight:700;letter-spacing:.08em;
+  padding:2px 7px;border-radius:20px;
+  background:rgba(124,111,255,.15);color:var(--c1);
+  border:1px solid rgba(124,111,255,.3);
+}
+
+/* ── NAV MODULES ── */
+.nav{
+  display:flex;gap:2px;
+  padding:8px 16px 0;
+  background:var(--s1);
+  border-bottom:1px solid var(--border);
+  overflow-x:auto;flex-shrink:0;
+}
+.nav::-webkit-scrollbar{height:0}
+.nav-btn{
+  display:flex;align-items:center;gap:6px;
+  padding:8px 14px;border-radius:8px 8px 0 0;
+  border:none;background:transparent;color:var(--t3);
+  cursor:pointer;font-family:'Sarabun',sans-serif;
+  font-size:12px;font-weight:600;white-space:nowrap;
+  border-bottom:2px solid transparent;
+  transition:.15s;margin-bottom:-1px;
+  position:relative;
+}
+.nav-btn .ni{font-size:15px}
+.nav-btn:hover{color:var(--t);background:var(--s3)}
+.nav-btn.active{color:var(--t);border-bottom-color:var(--c1);background:var(--s3)}
+.nav-btn .dot{
+  width:5px;height:5px;border-radius:50%;
+  position:absolute;top:6px;right:6px;
+}
+
+/* ── MAIN SPLIT ── */
+.main{display:flex;flex:1;overflow:hidden}
+
+/* ── SIDEBAR ── */
+.sidebar{
+  width:300px;min-width:300px;
+  background:var(--s2);
+  border-right:1px solid var(--border);
+  display:flex;flex-direction:column;
+  overflow:hidden;
+}
+.sidebar-body{
+  flex:1;overflow-y:auto;padding:16px;
+  display:flex;flex-direction:column;gap:14px;
+}
+.sidebar-body::-webkit-scrollbar{width:4px}
+.sidebar-body::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+
+/* ── PANELS ── */
+.panel{display:none;flex-direction:column;gap:14px}
+.panel.active{display:flex}
+
+/* ── SECTIONS ── */
+.sec-hd{
+  font-size:9px;font-weight:700;letter-spacing:.15em;
+  text-transform:uppercase;color:var(--t3);margin-bottom:6px;
+}
+.card{
+  background:var(--s3);border:1px solid var(--border);
+  border-radius:10px;padding:12px;
+}
+
+/* ── UPLOAD ── */
+.drop-zone{
+  border:2px dashed var(--border);border-radius:12px;
+  padding:24px 12px;text-align:center;cursor:pointer;
+  position:relative;transition:.2s;
+}
+.drop-zone:hover,.drop-zone.drag{
+  border-color:var(--c1);
+  background:rgba(124,111,255,.05);
+}
+.drop-zone input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+.drop-icon{font-size:28px;margin-bottom:6px}
+.drop-zone p{font-size:12px;color:var(--t3);line-height:1.5}
+.drop-zone .hint{font-size:10px;color:var(--t3);margin-top:4px}
+.loaded-name{
+  font-size:11px;color:var(--c2);margin-top:6px;
+  font-family:'IBM Plex Mono',monospace;word-break:break-all;
+}
+
+/* ── FORM ELEMENTS ── */
+.field{display:flex;flex-direction:column;gap:4px}
+.field label{font-size:11px;color:var(--t3);font-family:'IBM Plex Mono',monospace}
+.field input[type=number],.field select,.field textarea{
+  background:var(--bg);border:1px solid var(--border);
+  border-radius:7px;color:var(--t);
+  font-size:13px;font-family:'IBM Plex Mono',monospace;
+  padding:7px 10px;width:100%;transition:.15s;
+  -moz-appearance:textfield;
+}
+.field input[type=number]::-webkit-inner-spin-button{opacity:.4}
+.field input:focus,.field select:focus,.field textarea:focus{
+  outline:none;border-color:var(--c1);
+}
+.field textarea{font-family:'Sarabun',sans-serif;font-size:13px;resize:vertical;min-height:60px}
+.field select option{background:var(--s3)}
+.field input[type=range]{width:100%;accent-color:var(--c1);cursor:pointer}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+
+/* ── BUTTONS ── */
+.btn{
+  display:flex;align-items:center;justify-content:center;gap:6px;
+  padding:9px 16px;border-radius:9px;border:none;cursor:pointer;
+  font-family:'Sarabun',sans-serif;font-weight:600;font-size:13px;
+  transition:.15s;width:100%;letter-spacing:-.1px;
+}
+.btn:disabled{opacity:.35;cursor:not-allowed}
+.btn-p{background:linear-gradient(135deg,var(--c1),#5a4fd0);color:#fff}
+.btn-p:hover:not(:disabled){filter:brightness(1.1)}
+.btn-t{background:linear-gradient(135deg,var(--c2),#2ab8a0);color:#0a1a18}
+.btn-t:hover:not(:disabled){filter:brightness(1.1)}
+.btn-r{background:linear-gradient(135deg,var(--c3),#d94f4f);color:#fff}
+.btn-r:hover:not(:disabled){filter:brightness(1.1)}
+.btn-y{background:linear-gradient(135deg,var(--c4),#e8c020);color:#1a1400}
+.btn-y:hover:not(:disabled){filter:brightness(1.1)}
+.btn-g{background:linear-gradient(135deg,var(--c5),#4aaa58);color:#0a1a0e}
+.btn-g:hover:not(:disabled){filter:brightness(1.1)}
+.btn-o{background:linear-gradient(135deg,var(--c6),#e0882a);color:#1a0d00}
+.btn-o:hover:not(:disabled){filter:brightness(1.1)}
+.btn-b{background:linear-gradient(135deg,var(--c7),#3a80e0);color:#fff}
+.btn-b:hover:not(:disabled){filter:brightness(1.1)}
+.btn-ghost{background:transparent;border:1px solid var(--border);color:var(--t)}
+.btn-ghost:hover:not(:disabled){border-color:var(--c1);color:var(--c1)}
+.btn-sm{padding:6px 12px;font-size:12px;border-radius:7px}
+
+/* ── INFO BOXES ── */
+.info{
+  border-radius:9px;padding:10px 12px;
+  font-size:11.5px;line-height:1.65;
+}
+.info-p{background:rgba(124,111,255,.08);border:1px solid rgba(124,111,255,.2);color:#b0a8ff}
+.info-t{background:rgba(56,232,200,.07);border:1px solid rgba(56,232,200,.2);color:#7df5e8}
+.info-r{background:rgba(255,107,107,.07);border:1px solid rgba(255,107,107,.2);color:#ffaaaa}
+.info-y{background:rgba(255,217,61,.07);border:1px solid rgba(255,217,61,.2);color:#ffe589}
+.info-g{background:rgba(107,203,119,.07);border:1px solid rgba(107,203,119,.2);color:#8ee898}
+
+/* ── PAGE THUMBNAILS ── */
+.thumb-grid{
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(72px,1fr));
+  gap:8px;max-height:300px;overflow-y:auto;padding:2px;
+}
+.thumb-grid::-webkit-scrollbar{width:4px}
+.thumb-grid::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+.thumb-item{
+  position:relative;cursor:pointer;
+  border:2px solid var(--border);
+  border-radius:6px;overflow:hidden;
+  transition:.15s;aspect-ratio:210/297;background:white;
+}
+.thumb-item:hover{border-color:var(--c1)}
+.thumb-item.selected{border-color:var(--c1);box-shadow:0 0 0 2px rgba(124,111,255,.3)}
+.thumb-item canvas{width:100%;height:100%;display:block}
+.thumb-num{
+  position:absolute;bottom:2px;left:0;right:0;
+  text-align:center;font-size:9px;
+  background:rgba(0,0,0,.6);color:#fff;padding:1px 0;
+}
+.thumb-del{
+  position:absolute;top:2px;right:2px;width:16px;height:16px;
+  background:var(--c3);border-radius:50%;
+  display:none;align-items:center;justify-content:center;
+  font-size:9px;color:#fff;cursor:pointer;border:none;
+}
+.thumb-item:hover .thumb-del{display:flex}
+
+/* ── PAGE NAV ── */
+.pnav{display:flex;align-items:center;gap:6px;justify-content:center}
+.pnav button{
+  background:var(--bg);border:1px solid var(--border);color:var(--t);
+  border-radius:7px;padding:4px 12px;cursor:pointer;
+  font-size:12px;transition:.15s;font-family:'Sarabun',sans-serif;
+}
+.pnav button:hover:not(:disabled){border-color:var(--c1)}
+.pnav button:disabled{opacity:.3;cursor:default}
+.pnav span{font-family:'IBM Plex Mono',monospace;font-size:11px;min-width:70px;text-align:center;color:var(--t3)}
+
+/* ── CANVAS AREA ── */
+.canvas-area{
+  flex:1;overflow:auto;background:#060608;
+  display:flex;align-items:flex-start;justify-content:center;
+  padding:24px;
+}
+.canvas-area::-webkit-scrollbar{width:8px;height:8px}
+.canvas-area::-webkit-scrollbar-thumb{background:var(--s4);border-radius:4px}
+.page-wrap{
+  position:relative;background:white;
+  box-shadow:0 12px 60px rgba(0,0,0,.8);
+  flex-shrink:0;overflow:hidden;
+  min-height:400px;
+}
+#mainCanvas{display:block}
+.canvas-overlay{position:absolute;inset:0;pointer-events:none;z-index:10}
+
+/* crop line */
+.crop-line{
+  position:absolute;left:0;right:0;height:2px;
+  background:rgba(124,111,255,.9);pointer-events:none;
+}
+.crop-shade{
+  position:absolute;left:0;right:0;
+  background:rgba(124,111,255,.15);pointer-events:none;
+}
+
+/* Watermark preview */
+.wm-preview-text{
+  position:absolute;pointer-events:none;z-index:20;
+  font-weight:900;white-space:nowrap;
+  transform-origin:center center;
+  opacity:.25;
+}
+
+/* ── EMPTY STATE ── */
+.empty-canvas{
+  display:flex;flex-direction:column;align-items:center;
+  justify-content:center;gap:10px;color:var(--s4);
+  width:595px;height:842px;
+}
+.empty-canvas .ei{font-size:64px}
+.empty-canvas p{font-size:13px}
+
+/* ── PROGRESS ── */
+.progress-wrap{display:none;flex-direction:column;gap:6px}
+.progress-wrap.show{display:flex}
+.progress-bar-bg{height:6px;background:var(--s4);border-radius:3px;overflow:hidden}
+.progress-bar{height:100%;border-radius:3px;transition:width .2s;background:var(--c1)}
+.progress-text{font-size:11px;color:var(--t3);font-family:'IBM Plex Mono',monospace}
+
+/* ── TOGGLE ── */
+.toggle-row{
+  display:flex;align-items:center;gap:8px;
+  font-size:12px;color:var(--t2);cursor:pointer;user-select:none;
+}
+.toggle-row input{accent-color:var(--c1)}
+
+/* ── RESULT BOX ── */
+.result-box{
+  background:var(--s4);border:1px solid var(--borderl);
+  border-radius:9px;padding:10px 12px;
+  font-size:12px;line-height:1.7;font-family:'IBM Plex Mono',monospace;
+  max-height:200px;overflow-y:auto;
+  display:none;
+  white-space:pre-wrap;word-break:break-all;
+}
+.result-box.show{display:block}
+
+/* ── COLOR SWATCHES ── */
+.swatches{display:flex;gap:6px;flex-wrap:wrap}
+.swatch{
+  width:24px;height:24px;border-radius:6px;cursor:pointer;
+  border:2px solid transparent;transition:.15s;
+}
+.swatch.active{border-color:#fff;transform:scale(1.15)}
+
+/* ── STATUS BAR ── */
+.statusbar{
+  height:26px;background:var(--s1);border-top:1px solid var(--border);
+  display:flex;align-items:center;gap:16px;padding:0 16px;flex-shrink:0;
+}
+.statusbar .sb-item{
+  font-size:10px;font-family:'IBM Plex Mono',monospace;
+  color:var(--t3);display:flex;align-items:center;gap:4px;
+}
+.statusbar .sb-item .sb-val{color:var(--t2)}
+
+@media print{
+  .topbar,.nav,.sidebar,.statusbar{display:none!important}
+  .canvas-area{padding:0;background:white;overflow:visible}
+  .page-wrap{box-shadow:none}
+  .canvas-overlay{display:none}
+}
+</style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <div class="logo">
+    <div class="logo-icon">📄</div>
+    <div class="logo-text">PDF<span>Studio</span></div>
+  </div>
+  <div class="topbar-sep"></div>
+  <span class="topbar-sub">All-in-One PDF Toolkit</span>
+  <div class="topbar-right">
+    <span class="badge">v2.0</span>
+    <button class="btn btn-ghost btn-sm" style="width:auto" onclick="window.print()">🖨️ Print</button>
+  </div>
+</div>
+
+<!-- NAV MODULES -->
+<div class="nav" id="nav">
+  <button class="nav-btn active" onclick="switchModule('crop')"    data-m="crop">    <span class="ni">✂️</span> Crop/Margin</button>
+  <button class="nav-btn"        onclick="switchModule('pages')"   data-m="pages">   <span class="ni">📑</span> จัดการหน้า</button>
+  <button class="nav-btn"        onclick="switchModule('merge')"   data-m="merge">   <span class="ni">🔗</span> Merge PDF</button>
+  <button class="nav-btn"        onclick="switchModule('img')"     data-m="img">     <span class="ni">🖼️</span> PDF↔Image</button>
+  <button class="nav-btn"        onclick="switchModule('water')"   data-m="water">   <span class="ni">💧</span> Watermark</button>
+  <button class="nav-btn"        onclick="switchModule('protect')" data-m="protect"> <span class="ni">🔒</span> Protect</button>
+  <button class="nav-btn"        onclick="switchModule('text')"    data-m="text">    <span class="ni">📝</span> Extract Text</button>
+  <button class="nav-btn"        onclick="switchModule('meta')"    data-m="meta">    <span class="ni">🏷️</span> Metadata</button>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-body" id="sidebarBody">
+
+      <!-- ══════════════════════════════ -->
+      <!-- MODULE: CROP/MARGIN           -->
+      <!-- ══════════════════════════════ -->
+      <div class="panel active" id="panel-crop">
+        <div class="sec-hd">📁 เลือกไฟล์ PDF</div>
+        <div class="drop-zone" id="dz-crop">
+          <input type="file" accept=".pdf" onchange="loadPDF(this,'crop')">
+          <div class="drop-icon">📂</div>
+          <p>คลิกหรือลาก PDF มาวาง</p>
+          <div class="loaded-name" id="fn-crop"></div>
+        </div>
+
+        <div class="info info-p">
+          ✂️ <strong>Crop ส่วนบน</strong> — ใช้ <code>translateContent</code> เลื่อนเนื้อหาจริงขึ้น คุณภาพคงเดิม 100%
+        </div>
+
+        <div class="card">
+          <div class="sec-hd">Step 1 — Margin บนเดิม (นิ้ว)</div>
+          <div class="field">
+            <input type="number" id="origTopIn" value="1.0" min="0.1" max="4" step="0.05" oninput="cropUIUpdate()">
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="sec-hd">Step 2 — Margin บนใหม่</div>
+          <div class="field">
+            <label>เลื่อน slider</label>
+            <input type="range" id="cropSlider" min="0.05" max="2" step="0.05" value="0.79" oninput="cropSyncSlider()">
+            <div style="font-size:11px;font-family:'IBM Plex Mono',monospace;color:var(--c6);text-align:right" id="cropBadge">0.30 in = 0.76 cm</div>
+          </div>
+          <div class="grid2" style="margin-top:8px">
+            <div class="field"><label>นิ้ว</label><input type="number" id="cropIn" value="0.79" min="0.05" max="2" step="0.05" oninput="cropSyncIn()"></div>
+            <div class="field"><label>ซม.</label><input type="number" id="cropCm" value="2" min="0.1" max="5" step="0.1" oninput="cropSyncCm()"></div>
+          </div>
+          <div id="cropShiftInfo" style="font-size:11px;color:var(--c6);font-family:'IBM Plex Mono',monospace;margin-top:6px"></div>
+        </div>
+
+        <div class="card">
+          <div class="sec-hd">ใช้กับ</div>
+          <div style="display:flex;flex-direction:column;gap:6px">
+            <label class="toggle-row"><input type="radio" name="cropApply" value="all" > ทุกหน้า</label>
+            <label class="toggle-row"><input type="radio" name="cropApply" value="first"> เฉพาะหน้าแรก</label>
+            <label class="toggle-row"><input type="radio" name="cropApply" value="current" checked> หน้าปัจจุบัน</label>
+          </div>
+        </div>
+
+        <button class="btn btn-p" id="btn-crop" disabled onclick="runCrop()">✂️ Crop & Export PDF</button>
+
+        <div class="sec-hd" style="margin-top:4px">📐 Margin ปกติ (เพิ่ม padding)</div>
+        <div class="card">
+          <div class="grid2">
+            <div class="field" style="grid-column:1/-1"><label>▲ บน (ซม.)</label><input type="number" id="mTop" value="2.54" step="0.1" min="0" max="10" oninput="marginUpdate()"></div>
+            <div class="field"><label>◄ ซ้าย</label><input type="number" id="mLeft" value="3.17" step="0.1" min="0" max="10" oninput="marginUpdate()"></div>
+            <div class="field"><label>► ขวา</label><input type="number" id="mRight" value="3.17" step="0.1" min="0" max="10" oninput="marginUpdate()"></div>
+            <div class="field" style="grid-column:1/-1"><label>▼ ล่าง</label><input type="number" id="mBottom" value="2.54" step="0.1" min="0" max="10" oninput="marginUpdate()"></div>
+          </div>
+        </div>
+        <button class="btn btn-t" id="btn-margin" disabled onclick="runMargin()">📐 Export Margin PDF</button>
+      </div>
+
+      <!-- ══════════════════════════════ -->
+      <!-- MODULE: PAGE MANAGER          -->
+      <!-- ══════════════════════════════ -->
+      <div class="panel" id="panel-pages">
+        <div class="sec-hd">📁 เลือกไฟล์ PDF</div>
+        <div class="drop-zone" id="dz-pages">
+          <input type="file" accept=".pdf" onchange="loadPDF(this,'pages')">
+          <div class="drop-icon">📑</div>
+          <p>คลิกหรือลาก PDF มาวาง</p>
+          <div class="loaded-name" id="fn-pages"></div>
+        </div>
+
+        <div class="info info-t">
+          คลิกรูปขนาดย่อเพื่อเลือก/ยกเลิกหน้า | ลากเพื่อเรียงใหม่ | กด ✕ เพื่อลบ
+        </div>
+
+        <div class="card">
+          <div class="sec-hd">หน้าทั้งหมด — คลิกเพื่อเลือก</div>
+          <div class="thumb-grid" id="thumbGrid"></div>
+        </div>
+
+        <div class="card">
+          <div class="sec-hd">จัดการ</div>
+          <div style="display:flex;flex-direction:column;gap:8px">
+            <button class="btn btn-ghost btn-sm" onclick="selectAllPages()">☑️ เลือกทั้งหมด</button>
+            <button class="btn btn-ghost btn-sm" onclick="selectNonePages()">☐ ยกเลิกทั้งหมด</button>
+            <button class="btn btn-ghost btn-sm" onclick="invertSelectPages()">🔄 กลับการเลือก</button>
+            <button class="btn btn-r btn-sm" onclick="deleteSelectedPages()">🗑️ ลบหน้าที่เลือก</button>
+            <button class="btn btn-ghost btn-sm" onclick="rotatePagesSelected(90)">↻ หมุน 90° ขวา</button>
+            <button class="btn btn-ghost btn-sm" onclick="rotatePagesSelected(-90)">↺ หมุน 90° ซ้าย</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="sec-hd">แทรกหน้าว่าง</div>
+          <div class="grid2">
+            <div class="field"><label>หลังหน้าที่</label><input type="number" id="insertAfter" value="1" min="0"></div>
+            <div class="field"><label>จำนวน</label><input type="number" id="insertCount" value="1" min="1" max="10"></div>
+          </div>
+          <button class="btn btn-y btn-sm" style="margin-top:8px" onclick="insertBlankPages()">➕ แทรกหน้าว่าง</button>
+        </div>
+
+        <div class="card">
+          <div class="sec-hd">แยก PDF (Split)</div>
+          <div class="field"><label>แยกทุกกี่หน้า (0 = ทีละหน้า)</label><input type="number" id="splitEvery" value="1" min="0"></div>
+          <button class="btn btn-o btn-sm" style="margin-top:8px" onclick="splitPDF()">✂️ แยก & Download ZIP</button>
+        </div>
+
+        <button class="btn btn-p" id="btn-pages" disabled onclick="exportPages()">💾 Export PDF (หน้าที่เหลือ)</button>
+      </div>
+
+      <!-- ══════════════════════════════ -->
+      <!-- MODULE: MERGE                 -->
+      <!-- ══════════════════════════════ -->
+      <div class="panel" id="panel-merge">
+        <div class="info info-p">รวม PDF หลายไฟล์ ลากเพื่อเรียงลำดับ</div>
+
+        <div class="drop-zone" id="dz-merge" style="min-height:100px">
+          <input type="file" accept=".pdf" multiple onchange="addMergeFiles(this)">
+          <div class="drop-icon">📎</div>
+          <p>คลิกหรือลากไฟล์ PDF หลายไฟล์</p>
+          <div class="hint">รองรับหลายไฟล์พร้อมกัน</div>
+        </div>
+
+        <div class="card">
+          <div class="sec-hd">รายการไฟล์</div>
+          <div id="mergeList" style="display:flex;flex-direction:column;gap:6px;min-height:40px">
+            <div style="font-size:12px;color:var(--t3);text-align:center;padding:12px">ยังไม่มีไฟล์</div>
+          </div>
+          <button class="btn btn-r btn-sm" style="margin-top:8px" onclick="clearMerge()">🗑️ ล้างรายการ</button>
+        </div>
+
+        <div class="field">
+          <label>ชื่อไฟล์ผลลัพธ์</label>
+          <input type="text" id="mergeName" value="merged" style="background:var(--bg);border:1px solid var(--border);border-radius:7px;color:var(--t);padding:7px 10px;font-family:'IBM Plex Mono',monospace;font-size:13px;width:100%">
+        </div>
+
+        <button class="btn btn-p" id="btn-merge" onclick="runMerge()" disabled>🔗 Merge & Download</button>
+      </div>
+
+      <!-- ══════════════════════════════ -->
+      <!-- MODULE: IMAGE                 -->
+      <!-- ══════════════════════════════ -->
+      <div class="panel" id="panel-img">
+        <div class="info info-y">แปลง PDF → รูปภาพ หรือ รูปภาพ → PDF</div>
+
+        <div class="card">
+          <div class="sec-hd">📄 PDF → รูปภาพ (PNG/JPG)</div>
+          <div class="drop-zone" id="dz-img">
+            <input type="file" accept=".pdf" onchange="loadPDF(this,'img')">
+            <div class="drop-icon">📄</div>
+            <p>เลือก PDF ที่จะแปลง</p>
+            <div class="loaded-name" id="fn-img"></div>
+          </div>
+          <div class="grid2" style="margin-top:10px">
+            <div class="field"><label>Format</label>
+              <select id="imgFmt"><option value="image/png">PNG</option><option value="image/jpeg">JPEG</option></select>
+            </div>
+            <div class="field"><label>DPI (ความละเอียด)</label>
+              <select id="imgDPI">
+                <option value="1">72 dpi (screen)</option>
+                <option value="2" selected>150 dpi</option>
+                <option value="3">216 dpi (print)</option>
+                <option value="4">300 dpi (high)</option>
+              </select>
+            </div>
+          </div>
+          <div class="field" style="margin-top:8px"><label>แปลงหน้าใด</label>
+            <select id="imgPages">
+              <option value="all">ทุกหน้า (ZIP)</option>
+              <option value="current" selected>หน้าปัจจุบัน</option>
+            </select>
+          </div>
+          <button class="btn btn-y btn-sm" style="margin-top:10px" id="btn-pdf2img" disabled onclick="runPDF2Img()">🖼️ แปลง PDF → รูปภาพ</button>
+        </div>
+
+        <div class="card">
+          <div class="sec-hd">🖼️ รูปภาพ → PDF</div>
+          <div class="drop-zone" id="dz-img2pdf">
+            <input type="file" accept="image/*" multiple onchange="addImg2PDF(this)">
+            <div class="drop-icon">🖼️</div>
+            <p>เลือกรูปภาพ (PNG, JPG, WebP)</p>
+            <div class="hint">รองรับหลายรูปพร้อมกัน</div>
+          </div>
+          <div id="img2pdfList" style="font-size:12px;color:var(--t3);padding:6px 0;min-height:20px"></div>
+          <div class="grid2" style="margin-top:8px">
+            <div class="field"><label>ขนาดกระดาษ</label>
+              <select id="imgPaperSize">
+                <option value="A4" selected>A4</option>
+                <option value="Letter">Letter</option>
+                <option value="fit">ตามขนาดรูป</option>
+              </select>
+            </div>
+            <div class="field"><label>Orientation</label>
+              <select id="imgOrientation">
+                <option value="portrait" selected>Portrait</option>
+                <option value="landscape">Landscape</option>
+                <option value="auto">Auto</option>
+              </select>
+            </div>
+          </div>
+          <button class="btn btn-g btn-sm" style="margin-top:10px" id="btn-img2pdf" onclick="runImg2PDF()" disabled>📄 แปลง รูปภาพ → PDF</button>
+        </div>
+      </div>
+
+      <!-- ══════════════════════════════ -->
+      <!-- MODULE: WATERMARK             -->
+      <!-- ══════════════════════════════ -->
+      <div class="panel" id="panel-water">
+        <div class="drop-zone" id="dz-water">
+          <input type="file" accept=".pdf" onchange="loadPDF(this,'water')">
+          <div class="drop-icon">💧</div>
+          <p>เลือก PDF ที่จะใส่ Watermark</p>
+          <div class="loaded-name" id="fn-water"></div>
+        </div>
+
+        <div class="info info-p">ข้อความ Watermark จะถูกฝังลงใน PDF โดยตรง</div>
+
+        <div class="card">
+          <div class="sec-hd">ข้อความ Watermark</div>
+          <div class="field"><textarea id="wmText" rows="2" placeholder="CONFIDENTIAL">CONFIDENTIAL</textarea></div>
+          <div class="grid2" style="margin-top:8px">
+            <div class="field"><label>ขนาด font (pt)</label><input type="number" id="wmSize" value="60" min="10" max="200" oninput="wmPreview()"></div>
+            <div class="field"><label>ความโปร่งใส %</label><input type="number" id="wmOpacity" value="20" min="5" max="80" oninput="wmPreview()"></div>
+          </div>
+          <div class="field" style="margin-top:8px"><label>มุมหมุน (องศา)</label>
+            <input type="range" id="wmAngle" min="-90" max="90" value="-45" oninput="wmPreview()">
+            <div style="font-size:10px;color:var(--t3);text-align:right" id="wmAngleLbl">-45°</div>
+          </div>
+          <div style="margin-top:8px">
+            <div class="sec-hd">สี</div>
+            <div class="swatches" id="wmSwatches">
+              <div class="swatch active" style="background:#ff0000" onclick="setWmColor(this,'#ff0000')"></div>
+              <div class="swatch" style="background:#0055ff" onclick="setWmColor(this,'#0055ff')"></div>
+              <div class="swatch" style="background:#008800" onclick="setWmColor(this,'#008800')"></div>
+              <div class="swatch" style="background:#888888" onclick="setWmColor(this,'#888888')"></div>
+              <div class="swatch" style="background:#000000;border:1px solid var(--border)" onclick="setWmColor(this,'#000000')"></div>
+            </div>
+          </div>
+          <div class="field" style="margin-top:8px"><label>ตำแหน่ง</label>
+            <select id="wmPos">
+              <option value="center" selected>กลางหน้า (Diagonal)</option>
+              <option value="tile">ปู Tile ทั้งหน้า</option>
+              <option value="topleft">บนซ้าย</option>
+              <option value="topright">บนขวา</option>
+              <option value="bottomleft">ล่างซ้าย</option>
+              <option value="bottomright">ล่างขวา</option>
+            </select>
+          </div>
+          <div class="field" style="margin-top:8px"><label>ใช้กับ</label>
+            <select id="wmApply">
+              <option value="all" selected>ทุกหน้า</option>
+              <option value="first">เฉพาะหน้าแรก</option>
+              <option value="odd">หน้าคี่</option>
+              <option value="even">หน้าคู่</option>
+            </select>
+          </div>
+        </div>
+
+        <button class="btn btn-b" id="btn-water" disabled onclick="runWatermark()">💧 ใส่ Watermark & Export</button>
+      </div>
+
+      <!-- ══════════════════════════════ -->
+      <!-- MODULE: PROTECT               -->
+      <!-- ══════════════════════════════ -->
+      <div class="panel" id="panel-protect">
+        <div class="drop-zone" id="dz-protect">
+          <input type="file" accept=".pdf" onchange="loadPDF(this,'protect')">
+          <div class="drop-icon">🔒</div>
+          <p>เลือก PDF</p>
+          <div class="loaded-name" id="fn-protect"></div>
+        </div>
+
+        <div class="info info-r">
+          🔐 เข้ารหัส PDF ด้วยรหัสผ่าน — ผู้รับต้องใส่รหัสเพื่อเปิด
+        </div>
+
+        <div class="card">
+          <div class="sec-hd">🔒 ล็อคด้วยรหัสผ่าน</div>
+          <div class="field"><label>User Password (ใส่เพื่อเปิดอ่าน)</label>
+            <input type="password" id="userPwd" placeholder="ปล่อยว่างถ้าไม่ต้องการ"
+              style="background:var(--bg);border:1px solid var(--border);border-radius:7px;color:var(--t);padding:7px 10px;font-size:13px;width:100%">
+          </div>
+          <div class="field" style="margin-top:8px"><label>Owner Password (สำหรับ admin)</label>
+            <input type="password" id="ownerPwd" placeholder="ควรต่างจาก user password"
+              style="background:var(--bg);border:1px solid var(--border);border-radius:7px;color:var(--t);padding:7px 10px;font-size:13px;width:100%">
+          </div>
+          <button class="btn btn-r btn-sm" style="margin-top:10px" id="btn-lock" disabled onclick="runLock()">🔒 เข้ารหัส & Export</button>
+        </div>
+
+        <div class="card">
+          <div class="sec-hd">🔓 ถอดรหัส PDF</div>
+          <div class="info info-y" style="margin-bottom:10px">ใส่รหัสผ่านเพื่อถอดการล็อค</div>
+          <div class="field"><label>รหัสผ่าน</label>
+            <input type="password" id="unlockPwd"
+              style="background:var(--bg);border:1px solid var(--border);border-radius:7px;color:var(--t);padding:7px 10px;font-size:13px;width:100%">
+          </div>
+          <button class="btn btn-g btn-sm" style="margin-top:8px" id="btn-unlock" disabled onclick="runUnlock()">🔓 ถอดรหัส & Export</button>
+        </div>
+      </div>
+
+      <!-- ══════════════════════════════ -->
+      <!-- MODULE: TEXT EXTRACT          -->
+      <!-- ══════════════════════════════ -->
+      <div class="panel" id="panel-text">
+        <div class="drop-zone" id="dz-text">
+          <input type="file" accept=".pdf" onchange="loadPDF(this,'text')">
+          <div class="drop-icon">📝</div>
+          <p>เลือก PDF ที่จะดึงข้อความ</p>
+          <div class="loaded-name" id="fn-text"></div>
+        </div>
+
+        <div class="info info-t">ดึงข้อความออกจาก PDF — รองรับ PDF ที่มี text layer</div>
+
+        <div class="card">
+          <div class="sec-hd">ตัวเลือก</div>
+          <div class="field"><label>ดึงหน้า</label>
+            <select id="extractPages">
+              <option value="all">ทุกหน้า</option>
+              <option value="current">หน้าปัจจุบัน</option>
+            </select>
+          </div>
+          <div style="margin-top:8px;display:flex;flex-direction:column;gap:6px">
+            <label class="toggle-row"><input type="checkbox" id="inclPageNum" checked> ใส่เลขหน้า</label>
+            <label class="toggle-row"><input type="checkbox" id="inclSep" checked> ใส่เส้นคั่น</label>
+          </div>
+          <button class="btn btn-t btn-sm" style="margin-top:10px" id="btn-extract" disabled onclick="runExtract()">📝 ดึงข้อความ</button>
+        </div>
+
+        <div class="sec-hd">ผลลัพธ์</div>
+        <div id="extractResult" class="result-box"></div>
+        <div id="extractBtns" style="display:none;flex-direction:column;gap:6px;margin-top:6px">
+          <button class="btn btn-ghost btn-sm" onclick="copyExtract()">📋 คัดลอกข้อความ</button>
+          <button class="btn btn-ghost btn-sm" onclick="downloadExtract()">💾 บันทึกเป็น .txt</button>
+        </div>
+      </div>
+
+      <!-- ══════════════════════════════ -->
+      <!-- MODULE: METADATA              -->
+      <!-- ══════════════════════════════ -->
+      <div class="panel" id="panel-meta">
+        <div class="drop-zone" id="dz-meta">
+          <input type="file" accept=".pdf" onchange="loadPDF(this,'meta')">
+          <div class="drop-icon">🏷️</div>
+          <p>เลือก PDF</p>
+          <div class="loaded-name" id="fn-meta"></div>
+        </div>
+
+        <div class="info info-p">ดู/แก้ไข Metadata ของ PDF เช่น Title, Author, Keywords</div>
+
+        <div class="card" id="metaCard" style="display:none">
+          <div class="sec-hd">Metadata ปัจจุบัน</div>
+          <div id="metaReadout" style="font-size:11px;font-family:'IBM Plex Mono',monospace;color:var(--t2);line-height:1.8"></div>
+        </div>
+
+        <div class="card">
+          <div class="sec-hd">แก้ไข Metadata</div>
+          <div style="display:flex;flex-direction:column;gap:8px">
+            <div class="field"><label>Title</label><input type="text" id="metaTitle" placeholder="ชื่อเรื่อง" style="background:var(--bg);border:1px solid var(--border);border-radius:7px;color:var(--t);padding:7px 10px;font-size:13px;width:100%"></div>
+            <div class="field"><label>Author</label><input type="text" id="metaAuthor" placeholder="ผู้แต่ง" style="background:var(--bg);border:1px solid var(--border);border-radius:7px;color:var(--t);padding:7px 10px;font-size:13px;width:100%"></div>
+            <div class="field"><label>Subject</label><input type="text" id="metaSubject" placeholder="หัวข้อ" style="background:var(--bg);border:1px solid var(--border);border-radius:7px;color:var(--t);padding:7px 10px;font-size:13px;width:100%"></div>
+            <div class="field"><label>Keywords</label><input type="text" id="metaKeywords" placeholder="คีย์เวิร์ด" style="background:var(--bg);border:1px solid var(--border);border-radius:7px;color:var(--t);padding:7px 10px;font-size:13px;width:100%"></div>
+            <div class="field"><label>Creator</label><input type="text" id="metaCreator" placeholder="โปรแกรมที่สร้าง" style="background:var(--bg);border:1px solid var(--border);border-radius:7px;color:var(--t);padding:7px 10px;font-size:13px;width:100%"></div>
+          </div>
+          <button class="btn btn-p btn-sm" style="margin-top:10px" id="btn-meta" disabled onclick="runMeta()">🏷️ บันทึก Metadata & Export</button>
+        </div>
+      </div>
+
+      <!-- shared page nav -->
+      <div style="margin-top:auto;padding-top:8px">
+        <div class="sec-hd">📑 หน้าที่แสดง</div>
+        <div class="pnav">
+          <button onclick="changePage(-1)" id="btnPrev">◀</button>
+          <span id="pageInfo">- / -</span>
+          <button onclick="changePage(1)"  id="btnNext">▶</button>
+        </div>
+      </div>
+
+      <!-- progress -->
+      <div class="progress-wrap" id="progressWrap">
+        <div class="progress-bar-bg"><div class="progress-bar" id="progressBar" style="width:0%"></div></div>
+        <div class="progress-text" id="progressText">กำลังประมวลผล...</div>
+      </div>
+
+    </div><!-- /sidebar-body -->
+  </aside><!-- /sidebar -->
+
+  <!-- CANVAS AREA -->
+  <main class="canvas-area" id="canvasArea">
+    <div class="page-wrap" id="pageWrap">
+      <canvas id="mainCanvas"></canvas>
+      <div class="canvas-overlay" id="canvasOverlay"></div>
+      <div class="empty-canvas" id="emptyCanvas">
+        <div class="ei">📄</div>
+        <p>เลือกไฟล์ PDF เพื่อเริ่มต้น</p>
+      </div>
+    </div>
+  </main>
+
+</div><!-- /main -->
+
+<!-- STATUS BAR -->
+<div class="statusbar">
+  <div class="sb-item">📄 <span class="sb-val" id="sb-file">ไม่มีไฟล์</span></div>
+  <div class="sb-item">📐 <span class="sb-val" id="sb-size">—</span></div>
+  <div class="sb-item">🔢 <span class="sb-val" id="sb-pages">—</span></div>
+  <div class="sb-item">📑 <span class="sb-val" id="sb-cur">หน้า —</span></div>
+</div>
+
+<script>
+// ══════════════════════════════════════════════════
+//  CONSTANTS & STATE
+// ══════════════════════════════════════════════════
+pdfjsLib.GlobalWorkerOptions.workerSrc =
+  'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+
+const IN_PT = 72, CM_PT = 28.3465, IN_PX = 96;
+let pdfLibLoaded = false;
+let JSZipLoaded  = false;
+
+// per-module state
+const S = {
+  crop:    { doc: null, bytes: null, pages: 0, cur: 1, ptW: 595, ptH: 842 },
+  pages:   { doc: null, bytes: null, pages: 0, cur: 1, order: [], rotations: {}, selected: new Set() },
+  merge:   { files: [] },
+  img:     { doc: null, bytes: null, pages: 0, cur: 1, imgFiles: [] },
+  water:   { doc: null, bytes: null, pages: 0, cur: 1, color: '#ff0000' },
+  protect: { doc: null, bytes: null, pages: 0, cur: 1 },
+  text:    { doc: null, bytes: null, pages: 0, cur: 1, lastText: '' },
+  meta:    { doc: null, bytes: null, pages: 0, cur: 1 },
+};
+let currentMod = 'crop';
+
+// ── MODULE SWITCH ──
+function switchModule(m) {
+  currentMod = m;
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.toggle('active', b.dataset.m === m));
+  document.querySelectorAll('.panel').forEach(p => p.classList.toggle('active', p.id === 'panel-'+m));
+  // render current page for this module
+  const ms = S[m];
+  if(ms && ms.doc) renderPage(m, ms.cur);
+  else showEmpty();
+}
+
+// ── LOAD PDF ──
+async function loadPDF(input, mod) {
+  const file = input.files[0]; if(!file) return;
+  const bytes = new Uint8Array(await file.arrayBuffer());
+  const doc   = await pdfjsLib.getDocument({data: bytes.slice()}).promise;
+  const ms    = S[mod];
+  ms.doc   = doc;
+  ms.bytes = bytes;
+  ms.pages = doc.numPages;
+  ms.cur   = 1;
+  const fn = document.getElementById('fn-'+mod);
+  if(fn) fn.textContent = file.name;
+
+  // per-module init
+  if(mod === 'pages') initPageManager();
+  if(mod === 'meta')  readMeta();
+  if(mod === 'water') wmPreview();
+
+  // statusbar
+  const pg1 = await doc.getPage(1);
+  const vp  = pg1.getViewport({scale:1});
+  ms.ptW = vp.width; ms.ptH = vp.height;
+  updateStatusBar(mod, file.name);
+
+  // enable buttons
+  ['btn-crop','btn-margin','btn-pages','btn-pdf2img','btn-water','btn-protect',
+   'btn-lock','btn-unlock','btn-extract','btn-meta'].forEach(id => {
+    const el = document.getElementById(id);
+    if(el) el.disabled = false;
+  });
+  document.getElementById('btn-'+mod) && (document.getElementById('btn-'+mod).disabled = false);
+
+  renderPage(mod, 1);
+  updatePageNav(mod);
+}
+
+function updateStatusBar(mod, fname) {
+  const ms = S[mod];
+  document.getElementById('sb-file').textContent  = fname || '—';
+  document.getElementById('sb-size').textContent  =
+    (ms.ptW/CM_PT).toFixed(1)+'×'+(ms.ptH/CM_PT).toFixed(1)+' cm';
+  document.getElementById('sb-pages').textContent = ms.pages+' หน้า';
+  document.getElementById('sb-cur').textContent   = 'หน้า '+ms.cur;
+}
+
+// ── RENDER ──
+async function renderPage(mod, n) {
+  const ms = S[mod]; if(!ms || !ms.doc) return;
+  ms.cur = n;
+  const page = await ms.doc.getPage(n);
+  const vp0  = page.getViewport({scale:1});
+  const scale = Math.min(700/vp0.width, 900/vp0.height, 1.5);
+  const vp   = page.getViewport({scale});
+  const cv   = document.getElementById('mainCanvas');
+  cv.width   = vp.width; cv.height = vp.height;
+  const wrap = document.getElementById('pageWrap');
+  wrap.style.width  = vp.width+'px';
+  wrap.style.height = vp.height+'px';
+  document.getElementById('emptyCanvas').style.display = 'none';
+  const r = page.getViewport({scale:1});
+  ms.ptW = r.width; ms.ptH = r.height;
+  await page.render({canvasContext: cv.getContext('2d'), viewport: vp}).promise;
+  document.getElementById('sb-cur').textContent = 'หน้า '+n;
+  updatePageNav(mod);
+  if(mod === 'crop')  cropUIUpdate();
+  if(mod === 'water') wmPreview();
+}
+
+function showEmpty() {
+  document.getElementById('emptyCanvas').style.display='flex';
+  document.getElementById('mainCanvas').width=0;
+  const wrap = document.getElementById('pageWrap');
+  wrap.style.width='595px'; wrap.style.height='842px';
+}
+
+function updatePageNav(mod) {
+  const ms = S[mod]||{pages:0,cur:1};
+  document.getElementById('pageInfo').textContent = ms.doc ? ms.cur+' / '+ms.pages : '- / -';
+  document.getElementById('btnPrev').disabled = ms.cur <= 1;
+  document.getElementById('btnNext').disabled = ms.cur >= ms.pages;
+}
+
+function changePage(d) {
+  const ms = S[currentMod]; if(!ms||!ms.doc) return;
+  const n = ms.cur+d;
+  if(n<1||n>ms.pages) return;
+  renderPage(currentMod, n);
+}
+
+// ── DRAG-DROP for all drop-zones ──
+document.querySelectorAll('.drop-zone').forEach(z => {
+  z.addEventListener('dragover', e => { e.preventDefault(); z.classList.add('drag'); });
+  z.addEventListener('dragleave', () => z.classList.remove('drag'));
+  z.addEventListener('drop', e => {
+    e.preventDefault(); z.classList.remove('drag');
+    const inp = z.querySelector('input[type=file]');
+    if(!inp) return;
+    const dt = new DataTransfer();
+    Array.from(e.dataTransfer.files).forEach(f => dt.items.add(f));
+    inp.files = dt.files;
+    inp.dispatchEvent(new Event('change'));
+  });
+});
+
+// ══════════════════════════════════════════════════
+//  MODULE: CROP / MARGIN
+// ══════════════════════════════════════════════════
+function cropUIUpdate() {
+  const orig = parseFloat(document.getElementById('origTopIn').value)||1;
+  const nw   = parseFloat(document.getElementById('cropSlider').value)||0.3;
+  const shift = orig - nw;
+  const info  = document.getElementById('cropShiftInfo');
+  if(shift>0) {
+    info.style.color='var(--c6)';
+    info.textContent='▲ เลื่อนขึ้น '+shift.toFixed(2)+' in ('+((shift*2.54).toFixed(2))+' cm)';
+  } else {
+    info.style.color='var(--c3)';
+    info.textContent='⚠ margin ใหม่ ≥ เดิม';
+  }
+  // update crop line on canvas
+  const ms = S.crop; if(!ms.doc) return;
+  const cv = document.getElementById('mainCanvas');
+  const pxPerPt = cv.height / ms.ptH;
+  const newTopPx = nw * IN_PT * pxPerPt;
+  const overlay  = document.getElementById('canvasOverlay');
+  overlay.innerHTML = `
+    <div class="crop-shade" style="top:0;height:${newTopPx}px;background:rgba(124,111,255,.12)"></div>
+    <div class="crop-line" style="top:${newTopPx}px"></div>
+  `;
+}
+function cropSyncSlider() {
+  const v = parseFloat(document.getElementById('cropSlider').value)||0.3;
+  document.getElementById('cropIn').value = v.toFixed(2);
+  document.getElementById('cropCm').value = (v*2.54).toFixed(2);
+  document.getElementById('cropBadge').textContent = v.toFixed(2)+' in = '+(v*2.54).toFixed(2)+' cm';
+  cropUIUpdate();
+}
+function cropSyncIn() {
+  let v = Math.min(2,Math.max(0.05, parseFloat(document.getElementById('cropIn').value)||0.3));
+  document.getElementById('cropSlider').value = v;
+  document.getElementById('cropCm').value = (v*2.54).toFixed(2);
+  document.getElementById('cropBadge').textContent = v.toFixed(2)+' in = '+(v*2.54).toFixed(2)+' cm';
+  cropUIUpdate();
+}
+function cropSyncCm() {
+  let v = Math.min(2,Math.max(0.05, (parseFloat(document.getElementById('cropCm').value)||0.76)/2.54));
+  document.getElementById('cropSlider').value = v;
+  document.getElementById('cropIn').value = v.toFixed(2);
+  document.getElementById('cropBadge').textContent = v.toFixed(2)+' in = '+(v*2.54).toFixed(2)+' cm';
+  cropUIUpdate();
+}
+function marginUpdate() {
+  // just visual -- no live overlay needed for margin mode
+}
+
+async function runCrop() {
+  const ms = S.crop; if(!ms.bytes) return;
+  await ensurePdfLib();
+  const { PDFDocument } = PDFLib;
+  const newTopPt  = parseFloat(document.getElementById('cropSlider').value) * IN_PT;
+  const origTopPt = parseFloat(document.getElementById('origTopIn').value) * IN_PT;
+  const shiftPt   = origTopPt - newTopPt;
+  if(shiftPt <= 0) { alert('margin ใหม่ต้องน้อยกว่าเดิม'); return; }
+  const applyTo = document.querySelector('input[name="cropApply"]:checked').value;
+  showProgress('กำลัง Crop...');
+  const doc   = await PDFDocument.load(ms.bytes);
+  const pages = doc.getPages();
+  pages.forEach((pg, i) => {
+    const ok = applyTo==='all' || (applyTo==='first'&&i===0) || (applyTo==='current'&&i===ms.cur-1);
+    if(!ok) return;
+    const mb = pg.getMediaBox();
+    pg.translateContent(0, shiftPt);
+    pg.setMediaBox(mb.x, mb.y, mb.width, Math.max(mb.height-shiftPt,50));
+    pg.setCropBox(mb.x, mb.y, mb.width, Math.max(mb.height-shiftPt,50));
+  });
+  dlBytes(await doc.save(), 'cropped.pdf');
+  hideProgress();
+}
+
+async function runMargin() {
+  const ms = S.crop; if(!ms.bytes) return;
+  await ensurePdfLib();
+  const { PDFDocument } = PDFLib;
+  showProgress('กำลัง Export...');
+  const src = await PDFDocument.load(ms.bytes);
+  const dst = await PDFDocument.create();
+  const A4W=595.28, A4H=841.89;
+  const tP=parseFloat(document.getElementById('mTop').value)*CM_PT;
+  const lP=parseFloat(document.getElementById('mLeft').value)*CM_PT;
+  const rP=parseFloat(document.getElementById('mRight').value)*CM_PT;
+  const bP=parseFloat(document.getElementById('mBottom').value)*CM_PT;
+  for(const sp of src.getPages()){
+    const [e]=await dst.embedPages([sp]);
+    const {width:sw,height:sh}=sp.getMediaBox();
+    const np=dst.addPage([A4W,A4H]);
+    const aw=A4W-lP-rP, ah=A4H-tP-bP;
+    const sc=Math.min(aw/sw,ah/sh);
+    np.drawPage(e,{x:lP+(aw-sw*sc)/2, y:bP+(ah-sh*sc)/2, width:sw*sc, height:sh*sc});
+  }
+  dlBytes(await dst.save(), 'margin_adjusted.pdf');
+  hideProgress();
+}
+
+// ══════════════════════════════════════════════════
+//  MODULE: PAGE MANAGER
+// ══════════════════════════════════════════════════
+function initPageManager() {
+  const ms = S.pages;
+  ms.order     = Array.from({length:ms.pages},(_,i)=>i+1);
+  ms.rotations = {};
+  ms.selected  = new Set();
+  renderThumbnails();
+  document.getElementById('btn-pages').disabled = false;
+}
+
+async function renderThumbnails() {
+  const ms  = S.pages; if(!ms.doc) return;
+  const grid= document.getElementById('thumbGrid');
+  grid.innerHTML='';
+  for(const pgNum of ms.order) {
+    const item = document.createElement('div');
+    item.className = 'thumb-item';
+    item.dataset.pg = pgNum;
+    if(ms.selected.has(pgNum)) item.classList.add('selected');
+    // canvas
+    const cv = document.createElement('canvas');
+    item.appendChild(cv);
+    // num label
+    const lbl = document.createElement('div');
+    lbl.className='thumb-num'; lbl.textContent=pgNum;
+    item.appendChild(lbl);
+    // del btn
+    const del = document.createElement('button');
+    del.className='thumb-del'; del.textContent='✕';
+    del.onclick = e => { e.stopPropagation(); deletePage(pgNum); };
+    item.appendChild(del);
+    item.onclick = () => {
+      if(ms.selected.has(pgNum)) ms.selected.delete(pgNum);
+      else ms.selected.add(pgNum);
+      item.classList.toggle('selected', ms.selected.has(pgNum));
+      renderPage('pages', pgNum);
+    };
+    grid.appendChild(item);
+    // render thumbnail async
+    (async () => {
+      const page = await ms.doc.getPage(pgNum);
+      const rot  = ms.rotations[pgNum]||0;
+      const vp   = page.getViewport({scale:.15, rotation:rot});
+      cv.width=vp.width; cv.height=vp.height;
+      await page.render({canvasContext:cv.getContext('2d'),viewport:vp}).promise;
+    })();
+  }
+}
+
+function deletePage(pgNum) {
+  const ms = S.pages;
+  ms.order = ms.order.filter(p => p !== pgNum);
+  ms.selected.delete(pgNum);
+  renderThumbnails();
+}
+function selectAllPages()    { S.pages.selected=new Set(S.pages.order); renderThumbnails(); }
+function selectNonePages()   { S.pages.selected=new Set(); renderThumbnails(); }
+function invertSelectPages() {
+  const ms=S.pages;
+  ms.order.forEach(p => { if(ms.selected.has(p)) ms.selected.delete(p); else ms.selected.add(p); });
+  renderThumbnails();
+}
+function deleteSelectedPages() {
+  const ms=S.pages;
+  ms.order=ms.order.filter(p=>!ms.selected.has(p));
+  ms.selected.clear();
+  renderThumbnails();
+}
+function rotatePagesSelected(deg) {
+  const ms=S.pages;
+  ms.selected.forEach(p => { ms.rotations[p]= ((ms.rotations[p]||0)+deg+360)%360; });
+  renderThumbnails();
+}
+function insertBlankPages() {
+  const ms     = S.pages;
+  const after  = parseInt(document.getElementById('insertAfter').value)||0;
+  const count  = parseInt(document.getElementById('insertCount').value)||1;
+  const idx    = ms.order.indexOf(after);
+  const blanks = Array.from({length:count},()=>0); // 0 = blank marker
+  if(idx>=0) ms.order.splice(idx+1,0,...blanks);
+  else ms.order.push(...blanks);
+  renderThumbnails();
+}
+
+async function exportPages() {
+  const ms=S.pages; if(!ms.bytes) return;
+  await ensurePdfLib();
+  const {PDFDocument}=PDFLib;
+  showProgress('กำลัง Export...');
+  const src=await PDFDocument.load(ms.bytes);
+  const dst=await PDFDocument.create();
+  for(const pgNum of ms.order) {
+    if(pgNum===0) { dst.addPage([595.28,841.89]); continue; }
+    const [emb]=await dst.embedPages([src.getPage(pgNum-1)]);
+    const srcPg=src.getPage(pgNum-1);
+    const {width:w,height:h}=srcPg.getMediaBox();
+    const rot=(ms.rotations[pgNum]||0);
+    const np=dst.addPage([rot%180?h:w, rot%180?w:h]);
+    const opts={x:0,y:0,width:rot%180?h:w,height:rot%180?w:h};
+    if(rot) { opts.rotate=PDFLib.degrees(rot); opts.x=rot===90?h:0; opts.y=rot===180?h:rot===270?w:0; }
+    np.drawPage(emb,{x:0,y:0,width:np.getWidth(),height:np.getHeight()});
+  }
+  dlBytes(await dst.save(),'pages_edited.pdf');
+  hideProgress();
+}
+
+async function splitPDF() {
+  const ms=S.pages; if(!ms.bytes) return;
+  await ensurePdfLib();
+  await ensureJSZip();
+  showProgress('กำลังแยก PDF...');
+  const {PDFDocument}=PDFLib;
+  const src=await PDFDocument.load(ms.bytes);
+  const every=parseInt(document.getElementById('splitEvery').value)||1;
+  const zip=new JSZip();
+  const groups=[];
+  if(every<=0||every===1) { src.getPages().forEach((_,i)=>groups.push([i])); }
+  else {
+    for(let i=0;i<src.getPageCount();i+=every) groups.push(Array.from({length:Math.min(every,src.getPageCount()-i)},(_,j)=>i+j));
+  }
+  for(let gi=0;gi<groups.length;gi++) {
+    setProgress(gi/groups.length*100, `กำลังสร้างส่วนที่ ${gi+1}/${groups.length}`);
+    const dst=await PDFDocument.create();
+    const idxs=groups[gi];
+    const embs=await dst.embedPages(idxs.map(i=>src.getPage(i)));
+    idxs.forEach((_,j)=>{
+      const sp=src.getPage(idxs[j]);
+      const {width:w,height:h}=sp.getMediaBox();
+      const np=dst.addPage([w,h]);
+      np.drawPage(embs[j],{x:0,y:0,width:w,height:h});
+    });
+    const b=await dst.save();
+    zip.file(`part_${String(gi+1).padStart(3,'0')}.pdf`, b);
+  }
+  const content=await zip.generateAsync({type:'blob'});
+  const url=URL.createObjectURL(content);
+  const a=document.createElement('a'); a.href=url; a.download='split_pdf.zip'; a.click();
+  URL.revokeObjectURL(url);
+  hideProgress();
+}
+
+// ══════════════════════════════════════════════════
+//  MODULE: MERGE
+// ══════════════════════════════════════════════════
+function addMergeFiles(input) {
+  const files=Array.from(input.files);
+  files.forEach(f=>{ if(f.type==='application/pdf') S.merge.files.push(f); });
+  renderMergeList();
+  document.getElementById('btn-merge').disabled = S.merge.files.length<2;
+}
+function renderMergeList() {
+  const el=document.getElementById('mergeList');
+  if(!S.merge.files.length){ el.innerHTML='<div style="font-size:12px;color:var(--t3);text-align:center;padding:12px">ยังไม่มีไฟล์</div>'; return; }
+  el.innerHTML=S.merge.files.map((f,i)=>`
+    <div style="display:flex;align-items:center;gap:6px;background:var(--s4);border-radius:7px;padding:6px 8px">
+      <span style="font-size:11px;color:var(--c2);font-family:'IBM Plex Mono',monospace;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${f.name}</span>
+      <button onclick="S.merge.files.splice(${i},1);renderMergeList()" style="background:none;border:none;color:var(--c3);cursor:pointer;font-size:13px">✕</button>
+    </div>`).join('');
+}
+function clearMerge() { S.merge.files=[]; renderMergeList(); document.getElementById('btn-merge').disabled=true; }
+async function runMerge() {
+  if(S.merge.files.length<1) return;
+  await ensurePdfLib();
+  showProgress('กำลัง Merge...');
+  const {PDFDocument}=PDFLib;
+  const dst=await PDFDocument.create();
+  for(let i=0;i<S.merge.files.length;i++) {
+    setProgress(i/S.merge.files.length*100,`กำลังรวม ${S.merge.files[i].name}...`);
+    const bytes=new Uint8Array(await S.merge.files[i].arrayBuffer());
+    const src=await PDFDocument.load(bytes);
+    const embs=await dst.embedPages(src.getPages());
+    src.getPages().forEach((sp,j)=>{
+      const {width:w,height:h}=sp.getMediaBox();
+      const np=dst.addPage([w,h]);
+      np.drawPage(embs[j],{x:0,y:0,width:w,height:h});
+    });
+  }
+  const name=(document.getElementById('mergeName').value||'merged').replace(/\.pdf$/i,'');
+  dlBytes(await dst.save(), name+'.pdf');
+  hideProgress();
+}
+
+// ══════════════════════════════════════════════════
+//  MODULE: PDF ↔ IMAGE
+// ══════════════════════════════════════════════════
+async function runPDF2Img() {
+  const ms=S.img; if(!ms.doc) return;
+  const fmt    = document.getElementById('imgFmt').value;
+  const scale  = parseFloat(document.getElementById('imgDPI').value)||2;
+  const mode   = document.getElementById('imgPages').value;
+  const ext    = fmt==='image/jpeg'?'jpg':'png';
+  const pages  = mode==='current'?[ms.cur]:Array.from({length:ms.pages},(_,i)=>i+1);
+  showProgress('กำลังแปลง...');
+  if(pages.length===1) {
+    const pg  = await ms.doc.getPage(pages[0]);
+    const vp  = pg.getViewport({scale});
+    const cv  = document.createElement('canvas');
+    cv.width=vp.width; cv.height=vp.height;
+    await pg.render({canvasContext:cv.getContext('2d'),viewport:vp}).promise;
+    cv.toBlob(b=>{ dlBlob(b,`page_${pages[0]}.${ext}`); }, fmt, .92);
+  } else {
+    await ensureJSZip();
+    const zip=new JSZip();
+    for(let i=0;i<pages.length;i++) {
+      setProgress(i/pages.length*100,`กำลังแปลงหน้า ${pages[i]}...`);
+      const pg = await ms.doc.getPage(pages[i]);
+      const vp = pg.getViewport({scale});
+      const cv = document.createElement('canvas');
+      cv.width=vp.width; cv.height=vp.height;
+      await pg.render({canvasContext:cv.getContext('2d'),viewport:vp}).promise;
+      const blob=await new Promise(r=>cv.toBlob(r,fmt,.92));
+      zip.file(`page_${String(pages[i]).padStart(3,'0')}.${ext}`, await blob.arrayBuffer());
+    }
+    const content=await zip.generateAsync({type:'blob'});
+    dlBlob(content,'pdf_images.zip');
+  }
+  hideProgress();
+}
+
+let img2pdfFiles = [];
+function addImg2PDF(input) {
+  img2pdfFiles=Array.from(input.files).filter(f=>f.type.startsWith('image/'));
+  document.getElementById('img2pdfList').textContent = img2pdfFiles.length+' รูปภาพที่เลือก: '+img2pdfFiles.map(f=>f.name).join(', ');
+  document.getElementById('btn-img2pdf').disabled = img2pdfFiles.length===0;
+}
+async function runImg2PDF() {
+  if(!img2pdfFiles.length) return;
+  await ensurePdfLib();
+  showProgress('กำลังแปลง...');
+  const {PDFDocument}=PDFLib;
+  const dst=await PDFDocument.create();
+  const paperSize=document.getElementById('imgPaperSize').value;
+  const orient=document.getElementById('imgOrientation').value;
+  for(let i=0;i<img2pdfFiles.length;i++) {
+    setProgress(i/img2pdfFiles.length*100,`กำลังเพิ่ม ${img2pdfFiles[i].name}...`);
+    const bytes=new Uint8Array(await img2pdfFiles[i].arrayBuffer());
+    let img;
+    const t=img2pdfFiles[i].type;
+    if(t==='image/jpeg'||t==='image/jpg') img=await dst.embedJpg(bytes);
+    else { // png/webp — convert via canvas
+      const bmp=await createImageBitmap(img2pdfFiles[i]);
+      const cv=document.createElement('canvas'); cv.width=bmp.width; cv.height=bmp.height;
+      cv.getContext('2d').drawImage(bmp,0,0);
+      const pngBytes=await new Promise(r=>cv.toBlob(async b=>r(new Uint8Array(await b.arrayBuffer())),'image/png'));
+      img=await dst.embedPng(pngBytes);
+    }
+    let pw,ph;
+    if(paperSize==='A4')     { pw=595.28; ph=841.89; }
+    else if(paperSize==='Letter') { pw=612; ph=792; }
+    else                     { pw=img.width; ph=img.height; }
+    // auto orient
+    let finalW=pw,finalH=ph;
+    if(orient==='auto') { if(img.width>img.height&&pw<ph) { finalW=ph;finalH=pw; } }
+    else if(orient==='landscape') { finalW=Math.max(pw,ph); finalH=Math.min(pw,ph); }
+    const pg=dst.addPage([finalW,finalH]);
+    const sc=Math.min(finalW/img.width, finalH/img.height);
+    const dw=img.width*sc, dh=img.height*sc;
+    pg.drawImage(img,{x:(finalW-dw)/2, y:(finalH-dh)/2, width:dw, height:dh});
+  }
+  dlBytes(await dst.save(),'images_to_pdf.pdf');
+  hideProgress();
+}
+
+// ══════════════════════════════════════════════════
+//  MODULE: WATERMARK
+// ══════════════════════════════════════════════════
+let wmColor='#ff0000';
+function setWmColor(el,c){
+  wmColor=c; document.querySelectorAll('.swatch').forEach(s=>s.classList.remove('active'));
+  el.classList.add('active'); wmPreview();
+}
+function wmPreview() {
+  document.getElementById('wmAngleLbl').textContent = document.getElementById('wmAngle').value+'°';
+  const ms=S.water; if(!ms.doc) return;
+  const overlay=document.getElementById('canvasOverlay');
+  const cv=document.getElementById('mainCanvas');
+  const text=document.getElementById('wmText').value||'WATERMARK';
+  const op=parseInt(document.getElementById('wmOpacity').value)||20;
+  const ang=parseInt(document.getElementById('wmAngle').value)||(-45);
+  const sz=parseInt(document.getElementById('wmSize').value)||60;
+  const pos=document.getElementById('wmPos').value;
+  const pxPerPt=cv.width/ms.ptW;
+  const fsPx=sz*pxPerPt;
+  let style='';
+  if(pos==='center'||pos==='tile') {
+    style=`left:50%;top:50%;transform:translate(-50%,-50%) rotate(${ang}deg);font-size:${fsPx}px;color:${wmColor};opacity:${op/100}`;
+  } else {
+    const map={topleft:'top:8%;left:5%',topright:'top:8%;right:5%',bottomleft:'bottom:8%;left:5%',bottomright:'bottom:8%;right:5%'};
+    style=`${map[pos]};font-size:${fsPx*0.6}px;color:${wmColor};opacity:${op/100};transform:rotate(${ang}deg)`;
+  }
+  overlay.innerHTML=`<div class="wm-preview-text" style="${style}">${text}</div>`;
+}
+async function runWatermark() {
+  const ms=S.water; if(!ms.bytes) return;
+  await ensurePdfLib();
+  showProgress('กำลังใส่ Watermark...');
+  const {PDFDocument,rgb,degrees}=PDFLib;
+  const src=await PDFDocument.load(ms.bytes);
+  const pages=src.getPages();
+  const text=document.getElementById('wmText').value||'WATERMARK';
+  const op=parseInt(document.getElementById('wmOpacity').value)/100;
+  const ang=parseInt(document.getElementById('wmAngle').value);
+  const sz=parseInt(document.getElementById('wmSize').value);
+  const pos=document.getElementById('wmPos').value;
+  const applyTo=document.getElementById('wmApply').value;
+  const hx=parseInt(wmColor.slice(1,3),16)/255;
+  const hy=parseInt(wmColor.slice(3,5),16)/255;
+  const hz=parseInt(wmColor.slice(5,7),16)/255;
+  const font=await src.embedFont(PDFLib.StandardFonts.HelveticaBold);
+  pages.forEach((pg,i)=>{
+    const ok=applyTo==='all'||(applyTo==='first'&&i===0)||(applyTo==='odd'&&i%2===0)||(applyTo==='even'&&i%2===1);
+    if(!ok) return;
+    const {width:w,height:h}=pg.getMediaBox();
+    const draw=(x,y)=>pg.drawText(text,{x,y,size:sz,font,color:rgb(hx,hy,hz),opacity:op,rotate:degrees(ang)});
+    if(pos==='center')  draw(w/2,h/2);
+    else if(pos==='tile'){ for(let tx=0;tx<w;tx+=w/3) for(let ty=0;ty<h;ty+=h/4) draw(tx,ty); }
+    else if(pos==='topleft')     draw(40,h-sz-40);
+    else if(pos==='topright')    draw(w-text.length*sz*.5-40,h-sz-40);
+    else if(pos==='bottomleft')  draw(40,40);
+    else if(pos==='bottomright') draw(w-text.length*sz*.5-40,40);
+  });
+  dlBytes(await src.save(),'watermarked.pdf');
+  hideProgress();
+}
+
+// ══════════════════════════════════════════════════
+//  MODULE: PROTECT
+// ══════════════════════════════════════════════════
+async function runLock() {
+  const ms=S.protect; if(!ms.bytes) return;
+  await ensurePdfLib();
+  showProgress('กำลังเข้ารหัส...');
+  const {PDFDocument}=PDFLib;
+  const doc=await PDFDocument.load(ms.bytes);
+  const up=document.getElementById('userPwd').value;
+  const op=document.getElementById('ownerPwd').value||up+'_owner';
+  doc.encrypt({userPassword:up, ownerPassword:op,
+    permissions:{printing:'highResolution',copying:false,modifying:false}});
+  dlBytes(await doc.save({useObjectStreams:false}),'protected.pdf');
+  hideProgress();
+}
+async function runUnlock() {
+  const ms=S.protect; if(!ms.bytes) return;
+  await ensurePdfLib();
+  showProgress('กำลังถอดรหัส...');
+  const {PDFDocument}=PDFLib;
+  const pwd=document.getElementById('unlockPwd').value;
+  try {
+    const doc=await PDFDocument.load(ms.bytes,{password:pwd});
+    dlBytes(await doc.save(),'unlocked.pdf');
+  } catch(e) { alert('รหัสผ่านผิด หรือไฟล์ไม่ได้เข้ารหัส\n'+e.message); }
+  hideProgress();
+}
+
+// ══════════════════════════════════════════════════
+//  MODULE: TEXT EXTRACT
+// ══════════════════════════════════════════════════
+async function runExtract() {
+  const ms=S.text; if(!ms.doc) return;
+  showProgress('กำลังดึงข้อความ...');
+  const mode=document.getElementById('extractPages').value;
+  const inclNum=document.getElementById('inclPageNum').checked;
+  const inclSep=document.getElementById('inclSep').checked;
+  const pages=mode==='current'?[ms.cur]:Array.from({length:ms.pages},(_,i)=>i+1);
+  let out='';
+  for(const n of pages) {
+    setProgress((n-1)/pages.length*100,`กำลังดึงหน้า ${n}...`);
+    const pg=await ms.doc.getPage(n);
+    const tc=await pg.getTextContent();
+    const txt=tc.items.map(i=>i.str).join(' ').trim();
+    if(inclNum)  out+=`\n===== หน้า ${n} =====\n`;
+    if(inclSep && n>1 && !inclNum) out+='\n'+'-'.repeat(40)+'\n';
+    out+=txt+'\n';
+  }
+  ms.lastText=out.trim();
+  const box=document.getElementById('extractResult');
+  box.textContent=ms.lastText||'(ไม่พบข้อความ — PDF นี้อาจเป็นรูปภาพ/สแกน)';
+  box.classList.add('show');
+  document.getElementById('extractBtns').style.display='flex';
+  hideProgress();
+}
+function copyExtract() { navigator.clipboard.writeText(S.text.lastText); }
+function downloadExtract() { dlText(S.text.lastText,'extracted_text.txt'); }
+
+// ══════════════════════════════════════════════════
+//  MODULE: METADATA
+// ══════════════════════════════════════════════════
+async function readMeta() {
+  const ms=S.meta; if(!ms.doc) return;
+  const info=await ms.doc.getMetadata().catch(()=>null);
+  const card=document.getElementById('metaCard');
+  card.style.display='block';
+  const rd=document.getElementById('metaReadout');
+  if(info&&info.info) {
+    const d=info.info;
+    rd.textContent=[
+      d.Title    ?`Title:    ${d.Title}`:'',
+      d.Author   ?`Author:   ${d.Author}`:'',
+      d.Subject  ?`Subject:  ${d.Subject}`:'',
+      d.Keywords ?`Keywords: ${d.Keywords}`:'',
+      d.Creator  ?`Creator:  ${d.Creator}`:'',
+      d.Producer ?`Producer: ${d.Producer}`:'',
+      d.CreationDate?`Created:  ${d.CreationDate}`:'',
+    ].filter(Boolean).join('\n')||'(ไม่มี metadata)';
+    // pre-fill edit fields
+    if(d.Title)    document.getElementById('metaTitle').value=d.Title;
+    if(d.Author)   document.getElementById('metaAuthor').value=d.Author;
+    if(d.Subject)  document.getElementById('metaSubject').value=d.Subject;
+    if(d.Keywords) document.getElementById('metaKeywords').value=d.Keywords;
+    if(d.Creator)  document.getElementById('metaCreator').value=d.Creator;
+  } else { rd.textContent='(ไม่มี metadata)'; }
+  document.getElementById('btn-meta').disabled=false;
+}
+async function runMeta() {
+  const ms=S.meta; if(!ms.bytes) return;
+  await ensurePdfLib();
+  showProgress('กำลังบันทึก...');
+  const {PDFDocument}=PDFLib;
+  const doc=await PDFDocument.load(ms.bytes);
+  doc.setTitle(document.getElementById('metaTitle').value);
+  doc.setAuthor(document.getElementById('metaAuthor').value);
+  doc.setSubject(document.getElementById('metaSubject').value);
+  doc.setKeywords([document.getElementById('metaKeywords').value]);
+  doc.setCreator(document.getElementById('metaCreator').value);
+  doc.setModificationDate(new Date());
+  dlBytes(await doc.save(),'metadata_updated.pdf');
+  hideProgress();
+}
+
+// ══════════════════════════════════════════════════
+//  HELPERS
+// ══════════════════════════════════════════════════
+async function ensurePdfLib() {
+  if(pdfLibLoaded) return;
+  await loadScript('https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js');
+  pdfLibLoaded=true;
+}
+async function ensureJSZip() {
+  if(JSZipLoaded) return;
+  await loadScript('https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js');
+  JSZipLoaded=true;
+}
+function loadScript(src) {
+  return new Promise((res,rej)=>{ const s=document.createElement('script'); s.src=src; s.onload=res; s.onerror=rej; document.head.appendChild(s); });
+}
+function dlBytes(bytes, name) {
+  const url=URL.createObjectURL(new Blob([bytes],{type:'application/pdf'}));
+  const a=document.createElement('a'); a.href=url; a.download=name; a.click();
+  URL.revokeObjectURL(url);
+}
+function dlBlob(blob, name) {
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a'); a.href=url; a.download=name; a.click();
+  URL.revokeObjectURL(url);
+}
+function dlText(text, name) {
+  const blob=new Blob([text],{type:'text/plain;charset=utf-8'});
+  dlBlob(blob,name);
+}
+function showProgress(msg) {
+  const w=document.getElementById('progressWrap'); w.classList.add('show');
+  document.getElementById('progressBar').style.width='5%';
+  document.getElementById('progressText').textContent=msg;
+}
+function setProgress(pct,msg) {
+  document.getElementById('progressBar').style.width=pct+'%';
+  if(msg) document.getElementById('progressText').textContent=msg;
+}
+function hideProgress() {
+  setProgress(100,'เสร็จสิ้น!');
+  setTimeout(()=>document.getElementById('progressWrap').classList.remove('show'),1200);
+}
+
+// ── INIT ──
+showEmpty();
+</script>
+</body>
+</html>
