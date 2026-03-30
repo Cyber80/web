@@ -1,0 +1,48 @@
+<!-- index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PDF Creator</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <nav>
+            <ul>
+                <li><a href="#page-editor">Page Editor</a></li>
+                <li><a href="#image-manager">Image Manager</a></li>
+                <li><a href="#format-converter">Format Converter</a></li>
+            </ul>
+        </nav>
+    </header>
+    <div class="container">
+        <!-- แท็บหน้า 1: Page Editor -->
+        <div id="page-editor" class="tab-content active">
+            <h2>Page Editor</h2>
+            <button id="add-page">Add New Page</button>
+            <button id="remove-page">Remove Current Page</button>
+            <div id="page-editor-container"></div>
+        </div>
+
+        <!-- แท็บหน้า 2: Image Manager -->
+        <div id="image-manager" class="tab-content">
+            <h2>Image Manager</h2>
+            <button id="add-image">Add New Image</button>
+            <button id="remove-image">Remove Current Image</button>
+            <div id="image-manager-container"></div>
+        </div>
+
+        <!-- แท็บหน้า 3: Format Converter -->
+        <div id="format-converter" class="tab-content">
+            <h2>Format Converter</h2>
+            <button id="convert-to-word">Convert to Word</button>
+            <button id="convert-to-image">Convert to Image</button>
+            <div id="format-converter-container"></div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

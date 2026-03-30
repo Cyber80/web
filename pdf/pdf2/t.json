@@ -1,0 +1,29 @@
+{
+  "exportDate": "2026-03-30T03:09:06.372Z",
+  "books": [
+    {
+      "name": "Provider for MyApp-OIDC",
+      "subject": "ไทย",
+      "grade": "ป.1",
+      "press": "ข",
+      "publisher": "ส",
+      "price": 51
+    }
+  ],
+  "teachers": [
+    {
+      "teacher_name": "นางสาววิไลรัตน์",
+      "teacher_grade": "ป.3"
+    }
+  ],
+  "budgets": [
+    {
+      "budget_grade": "อ.2",
+      "budget_per_head": 200,
+      "budget_students": 16,
+      "year": 2569
+    }
+  ],
+  "schools": [],
+  "shops": []
+}

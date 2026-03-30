@@ -1,0 +1,1146 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DataForge — Excel & CSV → JSON</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;0,400;0,500;1,400&family=Syne:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --surface: #111118;
+    --surface2: #1a1a26;
+    --border: #2a2a3d;
+    --accent: #00e5ff;
+    --accent2: #7c3aed;
+    --accent3: #10b981;
+    --text: #e8e8f0;
+    --muted: #6b6b8a;
+    --danger: #f43f5e;
+    --warn: #f59e0b;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Syne', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Grid background */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(0,229,255,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,229,255,0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .glow-orb {
+    position: fixed;
+    border-radius: 50%;
+    filter: blur(120px);
+    pointer-events: none;
+    z-index: 0;
+  }
+  .orb1 { width: 600px; height: 600px; background: rgba(124,58,237,0.12); top: -200px; right: -100px; }
+  .orb2 { width: 400px; height: 400px; background: rgba(0,229,255,0.08); bottom: -100px; left: -100px; }
+
+  .container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 24px;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* Header */
+  header {
+    padding: 40px 0 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 48px;
+  }
+
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .logo-icon {
+    width: 36px;
+    height: 36px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+  }
+
+  .logo-text {
+    font-size: 22px;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+  }
+
+  .logo-text span { color: var(--accent); }
+
+  .badge {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--accent3);
+    background: rgba(16,185,129,0.1);
+    border: 1px solid rgba(16,185,129,0.25);
+    padding: 4px 10px;
+    border-radius: 20px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  /* Upload Zone */
+  .upload-section { margin-bottom: 32px; }
+
+  .section-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .section-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  .drop-zone {
+    border: 2px dashed var(--border);
+    border-radius: 16px;
+    padding: 60px 40px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    background: var(--surface);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .drop-zone::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(0,229,255,0.05), rgba(124,58,237,0.05));
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+
+  .drop-zone:hover::before,
+  .drop-zone.drag-over::before { opacity: 1; }
+
+  .drop-zone:hover,
+  .drop-zone.drag-over {
+    border-color: var(--accent);
+    transform: translateY(-2px);
+    box-shadow: 0 20px 60px rgba(0,229,255,0.1);
+  }
+
+  .drop-zone.drag-over { border-style: solid; }
+
+  .drop-icon {
+    font-size: 48px;
+    margin-bottom: 16px;
+    display: block;
+    animation: float 3s ease-in-out infinite;
+  }
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
+  }
+
+  .drop-title {
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 8px;
+    letter-spacing: -0.3px;
+  }
+
+  .drop-sub {
+    color: var(--muted);
+    font-size: 14px;
+    margin-bottom: 20px;
+    font-family: 'DM Mono', monospace;
+  }
+
+  .file-types {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .file-type-badge {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    padding: 4px 12px;
+    border-radius: 6px;
+    font-weight: 500;
+  }
+
+  .ft-excel { background: rgba(16,185,129,0.15); color: var(--accent3); border: 1px solid rgba(16,185,129,0.3); }
+  .ft-csv { background: rgba(0,229,255,0.12); color: var(--accent); border: 1px solid rgba(0,229,255,0.25); }
+
+  #fileInput { display: none; }
+
+  /* Options Bar */
+  .options-bar {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 16px;
+    margin-bottom: 32px;
+  }
+
+  .option-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+
+  .option-info {}
+  .option-title { font-size: 13px; font-weight: 600; margin-bottom: 3px; }
+  .option-desc { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--muted); }
+
+  /* Toggle */
+  .toggle { position: relative; width: 40px; height: 22px; flex-shrink: 0; }
+  .toggle input { opacity: 0; width: 0; height: 0; }
+  .toggle-slider {
+    position: absolute;
+    inset: 0;
+    background: var(--border);
+    border-radius: 11px;
+    cursor: pointer;
+    transition: 0.3s;
+  }
+  .toggle-slider::before {
+    content: '';
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    left: 3px;
+    top: 3px;
+    background: white;
+    border-radius: 50%;
+    transition: 0.3s;
+  }
+  .toggle input:checked + .toggle-slider { background: var(--accent); }
+  .toggle input:checked + .toggle-slider::before { transform: translateX(18px); }
+
+  /* Select */
+  .option-select {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    color: var(--text);
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    padding: 6px 10px;
+    border-radius: 8px;
+    cursor: pointer;
+    outline: none;
+    min-width: 100px;
+  }
+  .option-select:focus { border-color: var(--accent); }
+
+  /* File Info */
+  .file-info {
+    display: none;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px 20px;
+    margin-bottom: 24px;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .file-info.show { display: flex; animation: slideIn 0.3s ease; }
+
+  @keyframes slideIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .file-icon-big { font-size: 32px; }
+
+  .file-meta { flex: 1; }
+  .file-name { font-weight: 600; font-size: 15px; margin-bottom: 4px; }
+  .file-stats { font-family: 'DM Mono', monospace; font-size: 12px; color: var(--muted); }
+
+  .sheet-selector {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: 10px;
+  }
+
+  .sheet-tab {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    padding: 4px 12px;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--muted);
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .sheet-tab:hover { border-color: var(--accent); color: var(--accent); }
+  .sheet-tab.active { background: rgba(0,229,255,0.1); border-color: var(--accent); color: var(--accent); }
+
+  /* Action Buttons */
+  .actions {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 32px;
+    flex-wrap: wrap;
+  }
+
+  .btn {
+    font-family: 'Syne', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    padding: 12px 24px;
+    border-radius: 10px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    letter-spacing: 0.2px;
+  }
+
+  .btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none !important; }
+
+  .btn-primary {
+    background: linear-gradient(135deg, var(--accent), #0099cc);
+    color: #000;
+  }
+  .btn-primary:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(0,229,255,0.3); }
+
+  .btn-secondary {
+    background: var(--surface2);
+    color: var(--text);
+    border: 1px solid var(--border);
+  }
+  .btn-secondary:hover:not(:disabled) { border-color: var(--accent); color: var(--accent); transform: translateY(-2px); }
+
+  .btn-success {
+    background: linear-gradient(135deg, var(--accent3), #059669);
+    color: #fff;
+  }
+  .btn-success:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(16,185,129,0.3); }
+
+  .btn-danger {
+    background: rgba(244,63,94,0.1);
+    color: var(--danger);
+    border: 1px solid rgba(244,63,94,0.3);
+  }
+  .btn-danger:hover:not(:disabled) { background: rgba(244,63,94,0.2); transform: translateY(-2px); }
+
+  /* Main Layout */
+  .workspace {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    margin-bottom: 32px;
+  }
+
+  @media (max-width: 768px) {
+    .workspace { grid-template-columns: 1fr; }
+    .actions { flex-direction: column; }
+  }
+
+  .panel {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .panel-header {
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--surface2);
+  }
+
+  .panel-title {
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .panel-actions { display: flex; gap: 8px; }
+
+  .icon-btn {
+    width: 28px;
+    height: 28px;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--muted);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    transition: all 0.2s;
+  }
+  .icon-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+  .panel-body {
+    flex: 1;
+    overflow: auto;
+    max-height: 500px;
+  }
+
+  /* Table Preview */
+  .preview-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+  }
+
+  .preview-table th {
+    position: sticky;
+    top: 0;
+    background: #1e1e2e;
+    color: var(--accent);
+    padding: 10px 14px;
+    text-align: left;
+    font-weight: 500;
+    border-bottom: 1px solid var(--border);
+    white-space: nowrap;
+    z-index: 2;
+  }
+
+  .preview-table td {
+    padding: 8px 14px;
+    border-bottom: 1px solid rgba(42,42,61,0.5);
+    color: var(--text);
+    max-width: 200px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .preview-table tr:hover td { background: rgba(0,229,255,0.04); }
+  .preview-table tr:nth-child(even) td { background: rgba(255,255,255,0.02); }
+  .preview-table tr:nth-child(even):hover td { background: rgba(0,229,255,0.04); }
+
+  /* JSON Output */
+  .json-output {
+    padding: 20px;
+    font-family: 'DM Mono', monospace;
+    font-size: 12.5px;
+    line-height: 1.7;
+    color: #c9d1d9;
+    white-space: pre-wrap;
+    word-break: break-word;
+    min-height: 200px;
+  }
+
+  .json-key { color: #79c0ff; }
+  .json-string { color: #a5d6ff; }
+  .json-number { color: #f78166; }
+  .json-bool { color: #ff7b72; }
+  .json-null { color: #8b949e; }
+
+  /* Stats Row */
+  .stats-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-bottom: 32px;
+  }
+
+  @media (max-width: 600px) { .stats-row { grid-template-columns: repeat(2, 1fr); } }
+
+  .stat-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px 20px;
+    display: none;
+  }
+
+  .stat-card.show { display: block; animation: slideIn 0.3s ease; }
+
+  .stat-value {
+    font-size: 28px;
+    font-weight: 800;
+    letter-spacing: -1px;
+    color: var(--accent);
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+
+  .stat-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  /* Progress */
+  .progress-bar {
+    height: 3px;
+    background: var(--border);
+    border-radius: 2px;
+    overflow: hidden;
+    margin-bottom: 24px;
+    display: none;
+  }
+  .progress-bar.show { display: block; }
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent2), var(--accent));
+    border-radius: 2px;
+    transition: width 0.3s ease;
+    width: 0%;
+  }
+
+  /* Toast */
+  .toast-container {
+    position: fixed;
+    top: 24px;
+    right: 24px;
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .toast {
+    font-family: 'DM Mono', monospace;
+    font-size: 13px;
+    padding: 12px 20px;
+    border-radius: 10px;
+    border-left: 3px solid;
+    animation: toastIn 0.3s ease, toastOut 0.3s ease 2.7s forwards;
+    min-width: 220px;
+  }
+
+  .toast-success { background: rgba(16,185,129,0.15); border-color: var(--accent3); color: var(--accent3); }
+  .toast-error { background: rgba(244,63,94,0.15); border-color: var(--danger); color: var(--danger); }
+  .toast-info { background: rgba(0,229,255,0.12); border-color: var(--accent); color: var(--accent); }
+
+  @keyframes toastIn { from { opacity:0; transform: translateX(20px); } to { opacity:1; transform: translateX(0); } }
+  @keyframes toastOut { from { opacity:1; } to { opacity:0; } }
+
+  /* Empty state */
+  .empty-state {
+    padding: 60px 20px;
+    text-align: center;
+    color: var(--muted);
+  }
+  .empty-state-icon { font-size: 36px; margin-bottom: 12px; opacity: 0.4; }
+  .empty-state-text { font-family: 'DM Mono', monospace; font-size: 13px; }
+
+  /* Copy indicator */
+  .copy-flash { animation: copyFlash 0.5s ease; }
+  @keyframes copyFlash { 0%,100%{background:transparent} 50%{background:rgba(0,229,255,0.1)} }
+
+  footer {
+    text-align: center;
+    padding: 32px 0 48px;
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    border-top: 1px solid var(--border);
+    letter-spacing: 1px;
+  }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--muted); }
+
+  /* Field mapping */
+  .field-map-container {
+    padding: 16px 20px;
+    display: none;
+    border-top: 1px solid var(--border);
+  }
+  .field-map-container.show { display: block; }
+  .field-map-title {
+    font-size: 12px;
+    font-weight: 600;
+    margin-bottom: 12px;
+    color: var(--muted);
+    font-family: 'DM Mono', monospace;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+  .field-map-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .field-chip {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    padding: 4px 10px;
+    border-radius: 6px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    color: var(--text);
+    cursor: pointer;
+    transition: all 0.2s;
+    user-select: none;
+  }
+  .field-chip.active { background: rgba(0,229,255,0.12); border-color: var(--accent); color: var(--accent); }
+  .field-chip:hover { border-color: var(--accent); }
+</style>
+</head>
+<body>
+
+<div class="glow-orb orb1"></div>
+<div class="glow-orb orb2"></div>
+
+<div class="toast-container" id="toastContainer"></div>
+
+<div class="container">
+
+  <header>
+    <div class="logo">
+      <div class="logo-icon">⚡</div>
+      <div class="logo-text">Data<span>Forge</span></div>
+    </div>
+    <span class="badge">v2.0 — Local Processing</span>
+  </header>
+
+  <!-- Upload -->
+  <div class="upload-section">
+    <div class="section-label">01 // อัปโหลดไฟล์</div>
+    <div class="drop-zone" id="dropZone" onclick="document.getElementById('fileInput').click()">
+      <span class="drop-icon">📊</span>
+      <div class="drop-title">วางไฟล์ที่นี่ หรือคลิกเพื่อเลือก</div>
+      <div class="drop-sub">ไฟล์ทั้งหมดประมวลผลในเครื่องของคุณ — ไม่มีการอัปโหลดไปยัง server</div>
+      <div class="file-types">
+        <span class="file-type-badge ft-excel">.xlsx</span>
+        <span class="file-type-badge ft-excel">.xls</span>
+        <span class="file-type-badge ft-csv">.csv</span>
+      </div>
+    </div>
+    <input type="file" id="fileInput" accept=".xlsx,.xls,.csv">
+  </div>
+
+  <!-- File info -->
+  <div class="file-info" id="fileInfo">
+    <div class="file-icon-big" id="fileIconBig">📗</div>
+    <div class="file-meta">
+      <div class="file-name" id="fileName">—</div>
+      <div class="file-stats" id="fileStats">—</div>
+      <div class="sheet-selector" id="sheetSelector"></div>
+    </div>
+    <button class="btn btn-danger" onclick="resetAll()" style="flex-shrink:0">🗑 ล้าง</button>
+  </div>
+
+  <!-- Options -->
+  <div class="section-label">02 // ตั้งค่าการแปลง</div>
+  <div class="options-bar">
+    <div class="option-card">
+      <div class="option-info">
+        <div class="option-title">ข้ามแถวว่างเปล่า</div>
+        <div class="option-desc">Skip empty rows</div>
+      </div>
+      <label class="toggle"><input type="checkbox" id="skipEmpty" checked><span class="toggle-slider"></span></label>
+    </div>
+    <div class="option-card">
+      <div class="option-info">
+        <div class="option-title">แปลง Type อัตโนมัติ</div>
+        <div class="option-desc">Auto type casting</div>
+      </div>
+      <label class="toggle"><input type="checkbox" id="autoType" checked><span class="toggle-slider"></span></label>
+    </div>
+    <div class="option-card">
+      <div class="option-info">
+        <div class="option-title">รูปแบบ JSON</div>
+        <div class="option-desc">Output format</div>
+      </div>
+      <select class="option-select" id="outputFormat">
+        <option value="array">Array [ ]</option>
+        <option value="object">Object { }</option>
+        <option value="lines">JSON Lines</option>
+      </select>
+    </div>
+    <div class="option-card">
+      <div class="option-info">
+        <div class="option-title">Indent JSON</div>
+        <div class="option-desc">Pretty print</div>
+      </div>
+      <select class="option-select" id="indentSize">
+        <option value="2">2 spaces</option>
+        <option value="4">4 spaces</option>
+        <option value="0">Minified</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Stats -->
+  <div class="stats-row" id="statsRow">
+    <div class="stat-card" id="stat0">
+      <div class="stat-value" id="statRows">—</div>
+      <div class="stat-label">Rows</div>
+    </div>
+    <div class="stat-card" id="stat1">
+      <div class="stat-value" id="statCols">—</div>
+      <div class="stat-label">Columns</div>
+    </div>
+    <div class="stat-card" id="stat2">
+      <div class="stat-value" id="statSize">—</div>
+      <div class="stat-label">JSON Size</div>
+    </div>
+    <div class="stat-card" id="stat3">
+      <div class="stat-value" id="statFields">—</div>
+      <div class="stat-label">Fields</div>
+    </div>
+  </div>
+
+  <!-- Progress -->
+  <div class="progress-bar" id="progressBar"><div class="progress-fill" id="progressFill"></div></div>
+
+  <!-- Actions -->
+  <div class="section-label">03 // ดำเนินการ</div>
+  <div class="actions">
+    <button class="btn btn-primary" id="convertBtn" onclick="convertData()" disabled>⚡ แปลงเป็น JSON</button>
+    <button class="btn btn-success" id="downloadBtn" onclick="downloadJSON()" disabled>⬇ ดาวน์โหลด JSON</button>
+    <button class="btn btn-secondary" id="copyBtn" onclick="copyJSON()" disabled>📋 คัดลอก JSON</button>
+    <button class="btn btn-secondary" id="copyMiniBtn" onclick="copyMinified()" disabled>📦 คัดลอก Minified</button>
+  </div>
+
+  <!-- Workspace -->
+  <div class="workspace" id="workspace">
+    <div class="panel">
+      <div class="panel-header">
+        <div class="panel-title">📋 ตัวอย่างข้อมูล <span id="previewCount" style="color:var(--muted);font-weight:400;font-family:'DM Mono',monospace;font-size:11px"></span></div>
+        <div class="panel-actions">
+          <button class="icon-btn" title="รีเฟรช" onclick="refreshPreview()">↺</button>
+        </div>
+      </div>
+      <div class="panel-body" id="tablePreview">
+        <div class="empty-state">
+          <div class="empty-state-icon">📂</div>
+          <div class="empty-state-text">อัปโหลดไฟล์เพื่อดูตัวอย่าง</div>
+        </div>
+      </div>
+      <div class="field-map-container" id="fieldMapContainer">
+        <div class="field-map-title">⚡ เลือก fields ที่ต้องการ (คลิกเพื่อเลือก/ยกเลิก)</div>
+        <div class="field-map-grid" id="fieldChips"></div>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="panel-header">
+        <div class="panel-title">{ } JSON Output <span id="jsonLineCount" style="color:var(--muted);font-weight:400;font-family:'DM Mono',monospace;font-size:11px"></span></div>
+        <div class="panel-actions">
+          <button class="icon-btn" title="คัดลอก" onclick="copyJSON()">📋</button>
+          <button class="icon-btn" title="ดาวน์โหลด" onclick="downloadJSON()">⬇</button>
+        </div>
+      </div>
+      <div class="panel-body" id="jsonPreview">
+        <div class="empty-state">
+          <div class="empty-state-icon">{ }</div>
+          <div class="empty-state-text">กด "แปลงเป็น JSON" เพื่อเริ่ม</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer>DATAFORGE // ALL PROCESSING IS LOCAL — NO DATA LEAVES YOUR BROWSER // 2025</footer>
+</div>
+
+<script>
+let workbook = null;
+let currentSheet = null;
+let rawData = [];
+let headers = [];
+let jsonResult = '';
+let selectedFields = new Set();
+let currentFile = null;
+
+// Drag & drop
+const dropZone = document.getElementById('dropZone');
+const fileInput = document.getElementById('fileInput');
+
+dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('drag-over'); });
+dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag-over'));
+dropZone.addEventListener('drop', e => {
+  e.preventDefault();
+  dropZone.classList.remove('drag-over');
+  const file = e.dataTransfer.files[0];
+  if (file) handleFile(file);
+});
+
+fileInput.addEventListener('change', e => {
+  if (e.target.files[0]) handleFile(e.target.files[0]);
+});
+
+function handleFile(file) {
+  currentFile = file;
+  const ext = file.name.split('.').pop().toLowerCase();
+  if (!['xlsx', 'xls', 'csv'].includes(ext)) {
+    showToast('รองรับเฉพาะ .xlsx, .xls, .csv เท่านั้น', 'error');
+    return;
+  }
+
+  showProgress(20);
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    try {
+      showProgress(50);
+      const data = new Uint8Array(e.target.result);
+      workbook = XLSX.read(data, { type: 'array', cellDates: true });
+
+      const icon = ext === 'csv' ? '📄' : '📗';
+      document.getElementById('fileIconBig').textContent = icon;
+      document.getElementById('fileName').textContent = file.name;
+      document.getElementById('fileInfo').classList.add('show');
+
+      renderSheetTabs();
+      showProgress(80);
+      loadSheet(workbook.SheetNames[0]);
+      showProgress(100);
+      setTimeout(() => hideProgress(), 600);
+      showToast('โหลดไฟล์สำเร็จ! 🎉', 'success');
+    } catch (err) {
+      showToast('ไม่สามารถอ่านไฟล์ได้: ' + err.message, 'error');
+      hideProgress();
+    }
+  };
+  reader.readAsArrayBuffer(file);
+}
+
+function renderSheetTabs() {
+  const container = document.getElementById('sheetSelector');
+  container.innerHTML = '';
+  if (workbook.SheetNames.length <= 1) return;
+  workbook.SheetNames.forEach(name => {
+    const btn = document.createElement('button');
+    btn.className = 'sheet-tab' + (name === workbook.SheetNames[0] ? ' active' : '');
+    btn.textContent = name;
+    btn.onclick = () => {
+      document.querySelectorAll('.sheet-tab').forEach(t => t.classList.remove('active'));
+      btn.classList.add('active');
+      loadSheet(name);
+    };
+    container.appendChild(btn);
+  });
+}
+
+function loadSheet(sheetName) {
+  currentSheet = sheetName;
+  const sheet = workbook.Sheets[sheetName];
+  rawData = XLSX.utils.sheet_to_json(sheet, { header: 1, defval: '' });
+
+  if (rawData.length < 1) { showToast('ชีตนี้ว่างเปล่า', 'error'); return; }
+
+  headers = rawData[0].map(h => String(h || '').trim());
+  selectedFields = new Set(headers);
+
+  const rows = rawData.slice(1).filter(r => r.some(c => c !== ''));
+  const size = new Blob([JSON.stringify(rawData)]).size;
+
+  document.getElementById('fileStats').textContent =
+    `${rows.length.toLocaleString()} rows • ${headers.length} columns • ${formatBytes(currentFile?.size || size)}`;
+
+  renderFieldChips();
+  renderTablePreview();
+  updateStats(rows.length, headers.length);
+  document.getElementById('convertBtn').disabled = false;
+  jsonResult = '';
+  document.getElementById('downloadBtn').disabled = true;
+  document.getElementById('copyBtn').disabled = true;
+  document.getElementById('copyMiniBtn').disabled = true;
+  document.getElementById('jsonPreview').innerHTML = '<div class="empty-state"><div class="empty-state-icon">{ }</div><div class="empty-state-text">กด "แปลงเป็น JSON" เพื่อเริ่ม</div></div>';
+  document.getElementById('jsonLineCount').textContent = '';
+}
+
+function renderFieldChips() {
+  const container = document.getElementById('fieldChips');
+  container.innerHTML = '';
+  document.getElementById('fieldMapContainer').classList.add('show');
+  headers.forEach(h => {
+    const chip = document.createElement('span');
+    chip.className = 'field-chip active';
+    chip.textContent = h || '(ว่าง)';
+    chip.onclick = () => {
+      if (selectedFields.has(h)) {
+        if (selectedFields.size <= 1) { showToast('ต้องเลือกอย่างน้อย 1 field', 'info'); return; }
+        selectedFields.delete(h);
+        chip.classList.remove('active');
+      } else {
+        selectedFields.add(h);
+        chip.classList.add('active');
+      }
+    };
+    container.appendChild(chip);
+  });
+}
+
+function renderTablePreview() {
+  const rows = rawData.slice(1, 51); // show max 50 rows
+  const displayCount = Math.min(rawData.length - 1, 50);
+  document.getElementById('previewCount').textContent = `(แสดง ${displayCount} แถว)`;
+
+  let html = '<table class="preview-table"><thead><tr>';
+  headers.forEach(h => { html += `<th title="${h}">${h || '—'}</th>`; });
+  html += '</tr></thead><tbody>';
+
+  rows.forEach(row => {
+    const hasVal = row.some(c => c !== '' && c !== null && c !== undefined);
+    if (document.getElementById('skipEmpty').checked && !hasVal) return;
+    html += '<tr>';
+    headers.forEach((_, i) => {
+      const val = row[i] ?? '';
+      html += `<td title="${String(val)}">${String(val) || '<span style="color:var(--muted)">—</span>'}</td>`;
+    });
+    html += '</tr>';
+  });
+
+  html += '</tbody></table>';
+  document.getElementById('tablePreview').innerHTML = html;
+}
+
+function refreshPreview() {
+  if (rawData.length) renderTablePreview();
+}
+
+function convertData() {
+  if (!rawData.length) return;
+  showProgress(10);
+
+  const skipEmpty = document.getElementById('skipEmpty').checked;
+  const autoType = document.getElementById('autoType').checked;
+  const format = document.getElementById('outputFormat').value;
+  const indent = parseInt(document.getElementById('indentSize').value);
+
+  const selectedHeaders = headers.filter(h => selectedFields.has(h));
+  const selectedIndices = selectedHeaders.map(h => headers.indexOf(h));
+
+  let rows = rawData.slice(1);
+  showProgress(30);
+
+  const parsed = [];
+  rows.forEach(row => {
+    const hasVal = selectedIndices.some(i => {
+      const v = row[i];
+      return v !== '' && v !== null && v !== undefined;
+    });
+    if (skipEmpty && !hasVal) return;
+
+    const obj = {};
+    selectedIndices.forEach((idx, pos) => {
+      const key = selectedHeaders[pos];
+      let val = row[idx] ?? null;
+
+      if (autoType && val !== null && val !== '') {
+        if (val instanceof Date) {
+          val = val.toISOString().split('T')[0];
+        } else if (typeof val === 'string') {
+          const trimmed = val.trim();
+          if (trimmed === '') val = null;
+          else if (trimmed.toLowerCase() === 'true') val = true;
+          else if (trimmed.toLowerCase() === 'false') val = false;
+          else if (!isNaN(trimmed) && trimmed !== '') val = Number(trimmed);
+          else val = trimmed;
+        }
+      } else if (val === '') {
+        val = null;
+      }
+
+      obj[key] = val;
+    });
+    parsed.push(obj);
+  });
+
+  showProgress(70);
+
+  let output = '';
+  if (format === 'array') {
+    output = indent === 0 ? JSON.stringify(parsed) : JSON.stringify(parsed, null, indent);
+  } else if (format === 'object') {
+    const wrapper = {};
+    const firstKey = selectedHeaders[0] || 'id';
+    parsed.forEach((row, i) => {
+      const key = row[firstKey] !== undefined && row[firstKey] !== null ? String(row[firstKey]) : `row_${i}`;
+      wrapper[key] = row;
+    });
+    output = indent === 0 ? JSON.stringify(wrapper) : JSON.stringify(wrapper, null, indent);
+  } else if (format === 'lines') {
+    output = parsed.map(r => JSON.stringify(r)).join('\n');
+  }
+
+  jsonResult = output;
+  showProgress(90);
+
+  // Render highlighted JSON (first 200 lines)
+  const lines = output.split('\n');
+  const previewLines = lines.slice(0, 200);
+  const highlighted = syntaxHighlight(previewLines.join('\n'));
+
+  const more = lines.length > 200 ? `\n<span style="color:var(--muted);font-family:'DM Mono',monospace;font-size:11px">... ${(lines.length - 200).toLocaleString()} บรรทัดเพิ่มเติม (ดาวน์โหลดเพื่อดูทั้งหมด)</span>` : '';
+
+  document.getElementById('jsonPreview').innerHTML = `<div class="json-output">${highlighted}${more}</div>`;
+
+  const sizeStr = formatBytes(new Blob([output]).size);
+  document.getElementById('jsonLineCount').textContent = `(${parsed.length.toLocaleString()} records • ${sizeStr})`;
+
+  updateStats(parsed.length, selectedHeaders.length, sizeStr, selectedHeaders.length);
+
+  document.getElementById('downloadBtn').disabled = false;
+  document.getElementById('copyBtn').disabled = false;
+  document.getElementById('copyMiniBtn').disabled = false;
+
+  showProgress(100);
+  setTimeout(() => hideProgress(), 400);
+  showToast(`แปลงสำเร็จ! ${parsed.length.toLocaleString()} records ✓`, 'success');
+}
+
+function syntaxHighlight(json) {
+  return json.replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, match => {
+    let cls = 'json-number';
+    if (/^"/.test(match)) {
+      if (/:$/.test(match)) cls = 'json-key';
+      else cls = 'json-string';
+    } else if (/true|false/.test(match)) cls = 'json-bool';
+    else if (/null/.test(match)) cls = 'json-null';
+    return `<span class="${cls}">${match}</span>`;
+  });
+}
+
+function updateStats(rows, cols, size = '—', fields = '—') {
+  document.getElementById('statRows').textContent = rows.toLocaleString();
+  document.getElementById('statCols').textContent = cols;
+  document.getElementById('statSize').textContent = size;
+  document.getElementById('statFields').textContent = fields;
+  document.querySelectorAll('.stat-card').forEach(c => c.classList.add('show'));
+}
+
+function downloadJSON() {
+  if (!jsonResult) return;
+  const baseName = currentFile ? currentFile.name.replace(/\.[^.]+$/, '') : 'data';
+  const format = document.getElementById('outputFormat').value;
+  const ext = format === 'lines' ? 'jsonl' : 'json';
+  const blob = new Blob([jsonResult], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `${baseName}_export.${ext}`;
+  a.click();
+  URL.revokeObjectURL(url);
+  showToast(`ดาวน์โหลด ${baseName}_export.${ext} แล้ว ⬇`, 'success');
+}
+
+function copyJSON() {
+  if (!jsonResult) return;
+  navigator.clipboard.writeText(jsonResult).then(() => {
+    showToast('คัดลอก JSON แล้ว 📋', 'info');
+    document.getElementById('jsonPreview').classList.add('copy-flash');
+    setTimeout(() => document.getElementById('jsonPreview').classList.remove('copy-flash'), 500);
+  });
+}
+
+function copyMinified() {
+  if (!jsonResult) return;
+  const format = document.getElementById('outputFormat').value;
+  let mini = '';
+  if (format === 'lines') {
+    mini = jsonResult;
+  } else {
+    try { mini = JSON.stringify(JSON.parse(jsonResult)); } catch { mini = jsonResult; }
+  }
+  navigator.clipboard.writeText(mini).then(() => showToast(`Minified (${formatBytes(new Blob([mini]).size)}) คัดลอกแล้ว 📦`, 'info'));
+}
+
+function resetAll() {
+  workbook = null; currentSheet = null; rawData = []; headers = [];
+  jsonResult = ''; selectedFields = new Set(); currentFile = null;
+  document.getElementById('fileInfo').classList.remove('show');
+  document.getElementById('fieldMapContainer').classList.remove('show');
+  document.getElementById('tablePreview').innerHTML = '<div class="empty-state"><div class="empty-state-icon">📂</div><div class="empty-state-text">อัปโหลดไฟล์เพื่อดูตัวอย่าง</div></div>';
+  document.getElementById('jsonPreview').innerHTML = '<div class="empty-state"><div class="empty-state-icon">{ }</div><div class="empty-state-text">กด "แปลงเป็น JSON" เพื่อเริ่ม</div></div>';
+  document.getElementById('convertBtn').disabled = true;
+  document.getElementById('downloadBtn').disabled = true;
+  document.getElementById('copyBtn').disabled = true;
+  document.getElementById('copyMiniBtn').disabled = true;
+  document.querySelectorAll('.stat-card').forEach(c => c.classList.remove('show'));
+  document.getElementById('previewCount').textContent = '';
+  document.getElementById('jsonLineCount').textContent = '';
+  fileInput.value = '';
+  showToast('ล้างข้อมูลแล้ว', 'info');
+}
+
+// Progress
+function showProgress(pct) {
+  document.getElementById('progressBar').classList.add('show');
+  document.getElementById('progressFill').style.width = pct + '%';
+}
+function hideProgress() {
+  document.getElementById('progressFill').style.width = '0%';
+  document.getElementById('progressBar').classList.remove('show');
+}
+
+// Toast
+function showToast(msg, type = 'info') {
+  const c = document.getElementById('toastContainer');
+  const t = document.createElement('div');
+  t.className = `toast toast-${type}`;
+  t.textContent = msg;
+  c.appendChild(t);
+  setTimeout(() => t.remove(), 3100);
+}
+
+// Format bytes
+function formatBytes(b) {
+  if (b < 1024) return b + ' B';
+  if (b < 1048576) return (b / 1024).toFixed(1) + ' KB';
+  return (b / 1048576).toFixed(2) + ' MB';
+}
+</script>
+</body>
+</html>

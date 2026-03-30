@@ -1,0 +1,40 @@
+/* styles.css */
+.container {
+    width: 80%;
+    margin: 40px auto;
+}
+
+.tab-content {
+    display: none;
+    background-color: #f9f9f9;
+    padding: 20px;
+    border: 1px solid #ccc;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+button {
+    margin: 10px;
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+#page-editor-container {
+    width: 80%;
+    margin: 40px auto;
+}
+
+.row {
+    display: flex;
+    justify-content: space-between;
+}
+
+.cell {
+    width: 50px;
+    height: 30px;
+    border: 1px solid #ccc;
+    padding: 10px;
+}
