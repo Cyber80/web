@@ -1,0 +1,1695 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SchoolTask — ระบบติดตามภาระงาน</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0d1117;
+  --bg2: #161b22;
+  --bg3: #21262d;
+  --border: #30363d;
+  --border2: #484f58;
+  --text: #e6edf3;
+  --text2: #8b949e;
+  --text3: #656d76;
+  --accent: #f0883e;
+  --accent2: #d29922;
+  --green: #3fb950;
+  --red: #f85149;
+  --blue: #58a6ff;
+  --purple: #bc8cff;
+  --teal: #39d353;
+  --radius: 8px;
+  --shadow: 0 8px 32px rgba(0,0,0,.4);
+  --font: 'Sarabun', sans-serif;
+  --mono: 'IBM Plex Mono', monospace;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+/* ── SIDEBAR ── */
+.sidebar {
+  position: fixed; left: 0; top: 0; bottom: 0;
+  width: 240px;
+  background: var(--bg2);
+  border-right: 1px solid var(--border);
+  display: flex; flex-direction: column;
+  z-index: 100;
+  transition: transform .3s;
+}
+.sidebar-logo {
+  padding: 20px 20px 16px;
+  border-bottom: 1px solid var(--border);
+}
+.logo-badge {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-size: 11px; font-family: var(--mono);
+  color: var(--accent); text-transform: uppercase; letter-spacing: .08em;
+  background: rgba(240,136,62,.1);
+  border: 1px solid rgba(240,136,62,.3);
+  border-radius: 4px; padding: 4px 8px; margin-bottom: 8px;
+}
+.logo-title {
+  font-size: 17px; font-weight: 700; color: var(--text); line-height: 1.2;
+}
+.logo-sub { font-size: 11px; color: var(--text3); margin-top: 2px; }
+
+.sidebar-user {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; gap: 10px;
+}
+.avatar {
+  width: 34px; height: 34px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 700; font-size: 13px; color: #fff; flex-shrink: 0;
+}
+.user-info .name { font-size: 13px; font-weight: 600; }
+.user-info .role {
+  font-size: 11px; color: var(--text3);
+  display: flex; align-items: center; gap: 4px;
+}
+.role-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); }
+
+.nav { flex: 1; padding: 12px 8px; overflow-y: auto; }
+.nav-section { margin-bottom: 20px; }
+.nav-label {
+  font-size: 10px; font-weight: 600; color: var(--text3);
+  text-transform: uppercase; letter-spacing: .1em;
+  padding: 0 8px; margin-bottom: 4px;
+}
+.nav-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 8px 10px; border-radius: var(--radius);
+  cursor: pointer; color: var(--text2); font-size: 14px;
+  transition: all .15s; position: relative; user-select: none;
+}
+.nav-item:hover { background: var(--bg3); color: var(--text); }
+.nav-item.active { background: rgba(240,136,62,.15); color: var(--accent); }
+.nav-item .icon { font-size: 16px; flex-shrink: 0; }
+.nav-badge {
+  margin-left: auto; background: var(--red);
+  color: #fff; font-size: 10px; font-weight: 700;
+  padding: 1px 6px; border-radius: 10px; min-width: 18px; text-align: center;
+}
+.nav-badge.info { background: var(--blue); }
+.nav-badge.warn { background: var(--accent2); }
+
+.sidebar-bottom {
+  padding: 12px 8px;
+  border-top: 1px solid var(--border);
+}
+.btn-logout {
+  display: flex; align-items: center; gap: 8px;
+  width: 100%; padding: 8px 10px; border-radius: var(--radius);
+  background: none; border: none; color: var(--text3);
+  font-family: var(--font); font-size: 14px; cursor: pointer;
+  transition: all .15s;
+}
+.btn-logout:hover { background: rgba(248,81,73,.1); color: var(--red); }
+
+/* ── MAIN ── */
+.main {
+  margin-left: 240px;
+  min-height: 100vh;
+  display: flex; flex-direction: column;
+}
+.topbar {
+  height: 56px;
+  background: var(--bg2);
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 24px; position: sticky; top: 0; z-index: 50;
+}
+.topbar-left { display: flex; align-items: center; gap: 12px; }
+.page-title { font-size: 16px; font-weight: 600; }
+.topbar-right { display: flex; align-items: center; gap: 10px; }
+.btn { 
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 7px 14px; border-radius: var(--radius);
+  font-family: var(--font); font-size: 13px; font-weight: 500;
+  cursor: pointer; border: none; transition: all .15s;
+}
+.btn-primary { background: var(--accent); color: #fff; }
+.btn-primary:hover { background: #e07830; }
+.btn-ghost { background: var(--bg3); color: var(--text2); border: 1px solid var(--border); }
+.btn-ghost:hover { color: var(--text); border-color: var(--border2); }
+.btn-sm { padding: 5px 10px; font-size: 12px; }
+.btn-danger { background: rgba(248,81,73,.15); color: var(--red); border: 1px solid rgba(248,81,73,.3); }
+.btn-danger:hover { background: rgba(248,81,73,.25); }
+
+.content { flex: 1; padding: 24px; max-width: 1200px; }
+
+/* ── VIEWS ── */
+.view { display: none; }
+.view.active { display: block; }
+
+/* ── STAT CARDS ── */
+.stats-grid {
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px;
+}
+.stat-card {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: 10px; padding: 18px 20px;
+  position: relative; overflow: hidden;
+}
+.stat-card::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+}
+.stat-card.orange::before { background: var(--accent); }
+.stat-card.blue::before { background: var(--blue); }
+.stat-card.green::before { background: var(--green); }
+.stat-card.red::before { background: var(--red); }
+.stat-label { font-size: 12px; color: var(--text3); text-transform: uppercase; letter-spacing: .05em; }
+.stat-value { font-size: 32px; font-weight: 700; margin: 4px 0; font-family: var(--mono); }
+.stat-sub { font-size: 12px; color: var(--text2); }
+.stat-icon { position: absolute; right: 18px; top: 18px; font-size: 28px; opacity: .15; }
+
+/* ── TABLES ── */
+.card {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: 10px; overflow: hidden; margin-bottom: 20px;
+}
+.card-header {
+  padding: 14px 20px;
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+}
+.card-title { font-size: 14px; font-weight: 600; display: flex; align-items: center; gap: 8px; }
+.card-actions { display: flex; gap: 8px; }
+
+.table-wrap { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; }
+th {
+  text-align: left; padding: 10px 16px;
+  font-size: 11px; font-weight: 600; color: var(--text3);
+  text-transform: uppercase; letter-spacing: .06em;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg3);
+}
+td {
+  padding: 12px 16px; font-size: 13px;
+  border-bottom: 1px solid rgba(48,54,61,.5);
+}
+tr:last-child td { border-bottom: none; }
+tr:hover td { background: rgba(255,255,255,.02); }
+
+/* ── BADGES ── */
+.badge {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 600;
+}
+.badge-todo { background: rgba(139,148,158,.15); color: var(--text2); }
+.badge-progress { background: rgba(88,166,255,.15); color: var(--blue); }
+.badge-done { background: rgba(63,185,80,.15); color: var(--green); }
+.badge-overdue { background: rgba(248,81,73,.15); color: var(--red); }
+.badge-high { background: rgba(248,81,73,.12); color: var(--red); border: 1px solid rgba(248,81,73,.3); }
+.badge-med { background: rgba(210,153,34,.12); color: var(--accent2); border: 1px solid rgba(210,153,34,.3); }
+.badge-low { background: rgba(63,185,80,.1); color: var(--green); border: 1px solid rgba(63,185,80,.2); }
+
+/* ── PROGRESS BAR ── */
+.prog-wrap { background: var(--bg3); border-radius: 99px; height: 6px; min-width: 80px; }
+.prog-bar { height: 100%; border-radius: 99px; transition: width .3s; }
+
+/* ── MODAL ── */
+.overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,.7);
+  display: none; align-items: center; justify-content: center;
+  z-index: 200; padding: 20px; backdrop-filter: blur(4px);
+}
+.overlay.open { display: flex; }
+.modal {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: 12px; width: 100%; max-width: 520px;
+  box-shadow: var(--shadow); animation: slideUp .2s ease;
+}
+@keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+.modal-header {
+  padding: 18px 20px 14px;
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+}
+.modal-title { font-size: 15px; font-weight: 600; }
+.modal-close {
+  width: 28px; height: 28px; border-radius: 6px;
+  background: none; border: none; color: var(--text3);
+  cursor: pointer; font-size: 16px; display: flex; align-items: center; justify-content: center;
+  transition: all .15s;
+}
+.modal-close:hover { background: var(--bg3); color: var(--text); }
+.modal-body { padding: 20px; }
+.modal-footer {
+  padding: 14px 20px;
+  border-top: 1px solid var(--border);
+  display: flex; gap: 10px; justify-content: flex-end;
+}
+
+/* ── FORMS ── */
+.form-row { margin-bottom: 14px; }
+.form-label { font-size: 12px; font-weight: 600; color: var(--text2); margin-bottom: 6px; display: block; }
+.form-input, .form-select, .form-textarea {
+  width: 100%; padding: 8px 12px;
+  background: var(--bg3); border: 1px solid var(--border);
+  border-radius: var(--radius); color: var(--text);
+  font-family: var(--font); font-size: 14px;
+  transition: border-color .15s; outline: none;
+}
+.form-input:focus, .form-select:focus, .form-textarea:focus {
+  border-color: var(--accent);
+}
+.form-textarea { resize: vertical; min-height: 80px; }
+.form-select option { background: var(--bg2); }
+.form-row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+/* ── SCHEDULE CARDS ── */
+.event-list { display: flex; flex-direction: column; gap: 10px; }
+.event-card {
+  background: var(--bg3); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 14px 16px;
+  display: flex; align-items: flex-start; gap: 14px;
+  position: relative; transition: border-color .15s;
+}
+.event-card:hover { border-color: var(--border2); }
+.event-date {
+  min-width: 48px; text-align: center;
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: 6px; padding: 6px 4px;
+}
+.event-date .day { font-size: 22px; font-weight: 700; font-family: var(--mono); line-height: 1; }
+.event-date .month { font-size: 10px; color: var(--text3); margin-top: 2px; }
+.event-info { flex: 1; }
+.event-title { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+.event-meta { font-size: 12px; color: var(--text2); display: flex; flex-wrap: wrap; gap: 10px; }
+.event-meta span { display: flex; align-items: center; gap: 4px; }
+.event-actions { display: flex; gap: 6px; align-items: flex-start; }
+.event-type {
+  position: absolute; top: 12px; right: 80px;
+}
+
+/* ── ALERT ── */
+.toast {
+  position: fixed; bottom: 24px; right: 24px; z-index: 500;
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 12px 18px;
+  font-size: 13px; box-shadow: var(--shadow);
+  transform: translateY(20px); opacity: 0;
+  transition: all .25s; pointer-events: none;
+  max-width: 320px;
+}
+.toast.show { transform: translateY(0); opacity: 1; }
+.toast.success { border-left: 3px solid var(--green); }
+.toast.error { border-left: 3px solid var(--red); }
+.toast.info { border-left: 3px solid var(--blue); }
+
+/* ── LOGIN ── */
+#login-screen {
+  position: fixed; inset: 0;
+  background: var(--bg);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 999;
+}
+.login-box {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: 14px; padding: 36px 40px;
+  width: 100%; max-width: 380px;
+  box-shadow: 0 20px 60px rgba(0,0,0,.5);
+}
+.login-logo { text-align: center; margin-bottom: 28px; }
+.login-logo .icon { font-size: 40px; margin-bottom: 8px; }
+.login-logo h1 { font-size: 20px; font-weight: 700; }
+.login-logo p { font-size: 12px; color: var(--text3); margin-top: 4px; }
+.login-err {
+  background: rgba(248,81,73,.1); border: 1px solid rgba(248,81,73,.3);
+  border-radius: 6px; padding: 10px 12px;
+  font-size: 13px; color: var(--red); margin-bottom: 14px; display: none;
+}
+
+/* ── SETTINGS ── */
+.settings-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.settings-section { margin-bottom: 24px; }
+.settings-title { font-size: 13px; font-weight: 600; color: var(--text2); margin-bottom: 12px; display: flex; align-items: center; gap: 6px; }
+
+/* ── TELEGRAM CONFIG ── */
+.tg-box {
+  background: rgba(88,166,255,.05); border: 1px solid rgba(88,166,255,.2);
+  border-radius: var(--radius); padding: 16px;
+}
+.tg-status { display: flex; align-items: center; gap: 8px; font-size: 13px; }
+.tg-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--green); animation: pulse 2s infinite; }
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
+
+/* ── EMPTY STATE ── */
+.empty { text-align: center; padding: 48px 20px; }
+.empty .icon { font-size: 48px; opacity: .3; margin-bottom: 12px; }
+.empty p { color: var(--text3); font-size: 14px; }
+
+/* ── QUICK FILTERS ── */
+.filters { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
+.filter-btn {
+  padding: 5px 12px; border-radius: 99px;
+  background: var(--bg3); border: 1px solid var(--border);
+  color: var(--text2); font-size: 12px; cursor: pointer;
+  transition: all .15s; font-family: var(--font);
+}
+.filter-btn.active, .filter-btn:hover {
+  background: rgba(240,136,62,.15); border-color: rgba(240,136,62,.4); color: var(--accent);
+}
+
+/* ── UPCOMING WIDGET ── */
+.upcoming-item {
+  display: flex; align-items: center; gap: 12px;
+  padding: 10px 0; border-bottom: 1px solid var(--border);
+}
+.upcoming-item:last-child { border-bottom: none; }
+.upcoming-dot {
+  width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0;
+}
+.upcoming-info { flex: 1; }
+.upcoming-info .t { font-size: 13px; font-weight: 500; }
+.upcoming-info .d { font-size: 11px; color: var(--text3); margin-top: 2px; }
+.upcoming-time { font-size: 12px; font-family: var(--mono); color: var(--text2); }
+
+/* ── ADMIN USER TABLE ── */
+.user-avatar {
+  width: 30px; height: 30px; border-radius: 50%;
+  display: inline-flex; align-items: center; justify-content: center;
+  font-size: 12px; font-weight: 700; color: #fff;
+}
+
+/* ── SCHOOL SWITCHER ── */
+.school-switch {
+  display: flex; gap: 6px; margin-bottom: 20px;
+}
+.school-tab {
+  padding: 6px 14px; border-radius: 99px;
+  font-size: 12px; cursor: pointer; border: 1px solid var(--border);
+  background: var(--bg3); color: var(--text2); transition: all .15s;
+}
+.school-tab.active {
+  background: rgba(240,136,62,.2); border-color: rgba(240,136,62,.5); color: var(--accent);
+}
+
+/* ── RESPONSIVE ── */
+@media (max-width: 768px) {
+  .sidebar { transform: translateX(-100%); }
+  .sidebar.open { transform: translateX(0); }
+  .main { margin-left: 0; }
+  .stats-grid { grid-template-columns: repeat(2,1fr); }
+  .settings-grid { grid-template-columns: 1fr; }
+  .form-row-2 { grid-template-columns: 1fr; }
+}
+
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 99px; }
+
+/* action icon btns */
+.icon-btn {
+  width: 28px; height: 28px; border-radius: 6px;
+  background: none; border: 1px solid var(--border);
+  color: var(--text2); cursor: pointer; font-size: 14px;
+  display: inline-flex; align-items: center; justify-content: center;
+  transition: all .15s;
+}
+.icon-btn:hover { background: var(--bg3); color: var(--text); }
+.icon-btn.del:hover { background: rgba(248,81,73,.1); color: var(--red); border-color: rgba(248,81,73,.3); }
+.icon-btn.edit:hover { background: rgba(88,166,255,.1); color: var(--blue); border-color: rgba(88,166,255,.3); }
+
+/* loading */
+.loading { text-align:center; padding: 32px; color: var(--text3); font-size: 14px; }
+.spinner { 
+  display: inline-block; width:20px; height:20px; border: 2px solid var(--border);
+  border-top-color: var(--accent); border-radius: 50%; animation: spin .7s linear infinite; margin-right: 8px;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* Hamburger for mobile */
+.hamburger {
+  display: none; background: none; border: none; color: var(--text);
+  font-size: 20px; cursor: pointer; padding: 6px;
+}
+@media(max-width:768px) { .hamburger { display: block; } }
+
+.overlay-sidebar {
+  position: fixed; inset: 0; background: rgba(0,0,0,.5);
+  z-index: 99; display: none;
+}
+.overlay-sidebar.open { display: block; }
+
+/* Telegram cmd reference */
+.cmd-box {
+  background: var(--bg3); border-radius: var(--radius); padding: 14px 16px;
+}
+.cmd-item {
+  display: flex; align-items: baseline; gap: 10px; padding: 5px 0;
+  border-bottom: 1px solid rgba(48,54,61,.5); font-size: 13px;
+}
+.cmd-item:last-child { border-bottom: none; }
+.cmd-name { font-family: var(--mono); font-size: 12px; color: var(--blue); flex-shrink: 0; min-width: 130px; }
+.cmd-desc { color: var(--text2); font-size: 12px; }
+</style>
+</head>
+<body>
+
+<!-- LOGIN SCREEN -->
+<div id="login-screen">
+  <div class="login-box">
+    <div class="login-logo">
+      <div class="icon">🏫</div>
+      <h1>SchoolTask</h1>
+      <p>ระบบติดตามภาระงานโรงเรียน</p>
+    </div>
+    <div class="login-err" id="login-err">ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง</div>
+    <div class="form-row">
+      <label class="form-label">ชื่อผู้ใช้</label>
+      <input class="form-input" id="inp-user" placeholder="username" autocomplete="username">
+    </div>
+    <div class="form-row">
+      <label class="form-label">รหัสผ่าน</label>
+      <input class="form-input" id="inp-pass" type="password" placeholder="password" autocomplete="current-password">
+    </div>
+    <button class="btn btn-primary" style="width:100%;justify-content:center;margin-top:4px" onclick="doLogin()">เข้าสู่ระบบ</button>
+    <p style="font-size:11px;color:var(--text3);margin-top:14px;text-align:center">v1.0 · รักษาความปลอดภัยโดย GAS Auth</p>
+  </div>
+</div>
+
+<!-- SIDEBAR OVERLAY (mobile) -->
+<div class="overlay-sidebar" id="sidebar-overlay" onclick="closeSidebar()"></div>
+
+<!-- SIDEBAR -->
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-badge">🏫 SchoolTask</div>
+    <div class="logo-title">ระบบภาระงาน</div>
+    <div class="logo-sub" id="sidebar-school-name">กำลังโหลด...</div>
+  </div>
+  <div class="sidebar-user">
+    <div class="avatar" id="sidebar-avatar">?</div>
+    <div class="user-info">
+      <div class="name" id="sidebar-username">-</div>
+      <div class="role"><span class="role-dot"></span><span id="sidebar-role">-</span></div>
+    </div>
+  </div>
+  <nav class="nav">
+    <div class="nav-section">
+      <div class="nav-label">ภาพรวม</div>
+      <div class="nav-item active" onclick="showView('dashboard')">
+        <span class="icon">📊</span> แดชบอร์ด
+      </div>
+    </div>
+    <div class="nav-section">
+      <div class="nav-label">งาน</div>
+      <div class="nav-item" onclick="showView('tasks')">
+        <span class="icon">📋</span> ภาระงานทั้งหมด
+        <span class="nav-badge" id="badge-overdue" style="display:none"></span>
+      </div>
+      <div class="nav-item" onclick="showView('my-tasks')">
+        <span class="icon">👤</span> งานของฉัน
+      </div>
+    </div>
+    <div class="nav-section">
+      <div class="nav-label">กำหนดการ</div>
+      <div class="nav-item" onclick="showView('schedule')">
+        <span class="icon">📅</span> กำหนดการ / อบรม
+        <span class="nav-badge info" id="badge-upcoming" style="display:none"></span>
+      </div>
+    </div>
+    <div class="nav-section">
+      <div class="nav-label">ระบบ</div>
+      <div class="nav-item" onclick="showView('telegram')">
+        <span class="icon">✈️</span> Telegram Bot
+      </div>
+      <div class="nav-item" id="nav-admin" style="display:none" onclick="showView('admin')">
+        <span class="icon">⚙️</span> จัดการผู้ใช้
+      </div>
+      <div class="nav-item" onclick="showView('settings')">
+        <span class="icon">🔧</span> ตั้งค่า
+      </div>
+    </div>
+  </nav>
+  <div class="sidebar-bottom">
+    <button class="btn-logout" onclick="doLogout()">🚪 ออกจากระบบ</button>
+  </div>
+</aside>
+
+<!-- MAIN CONTENT -->
+<div class="main">
+  <div class="topbar">
+    <div class="topbar-left">
+      <button class="hamburger" onclick="openSidebar()">☰</button>
+      <div class="page-title" id="page-title">แดชบอร์ด</div>
+    </div>
+    <div class="topbar-right">
+      <div class="school-switch">
+        <div class="school-tab active" id="tab-s1" onclick="switchSchool(0)">บ้านเขาหัวนา</div>
+        <div class="school-tab" id="tab-s2" onclick="switchSchool(1)">วัดเนินสะอาด</div>
+        <div class="school-tab" id="tab-all" onclick="switchSchool(-1)">ทั้งหมด</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- DASHBOARD -->
+    <div class="view active" id="view-dashboard">
+      <div class="stats-grid" id="stat-grid">
+        <div class="stat-card orange">
+          <div class="stat-label">งานทั้งหมด</div>
+          <div class="stat-value" id="s-total">—</div>
+          <div class="stat-sub">ภาระงานในระบบ</div>
+          <div class="stat-icon">📋</div>
+        </div>
+        <div class="stat-card blue">
+          <div class="stat-label">กำลังดำเนินการ</div>
+          <div class="stat-value" id="s-prog">—</div>
+          <div class="stat-sub">รายการ</div>
+          <div class="stat-icon">🔄</div>
+        </div>
+        <div class="stat-card green">
+          <div class="stat-label">เสร็จแล้ว</div>
+          <div class="stat-value" id="s-done">—</div>
+          <div class="stat-sub">รายการ</div>
+          <div class="stat-icon">✅</div>
+        </div>
+        <div class="stat-card red">
+          <div class="stat-label">เลยกำหนด</div>
+          <div class="stat-value" id="s-over">—</div>
+          <div class="stat-sub">รายการ</div>
+          <div class="stat-icon">⚠️</div>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:2fr 1fr;gap:16px">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">⚡ งานด่วน / เลยกำหนด</div>
+            <button class="btn btn-ghost btn-sm" onclick="showView('tasks')">ดูทั้งหมด</button>
+          </div>
+          <div id="dash-urgent-list"><div class="loading"><span class="spinner"></span>กำลังโหลด...</div></div>
+        </div>
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">📅 กำหนดการใกล้ถึง</div>
+          </div>
+          <div style="padding:12px 16px" id="dash-upcoming-list">
+            <div class="loading"><span class="spinner"></span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TASKS -->
+    <div class="view" id="view-tasks">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+        <div class="filters" id="task-filters">
+          <div class="filter-btn active" onclick="filterTasks('all',this)">ทั้งหมด</div>
+          <div class="filter-btn" onclick="filterTasks('todo',this)">รอดำเนินการ</div>
+          <div class="filter-btn" onclick="filterTasks('progress',this)">กำลังดำเนินการ</div>
+          <div class="filter-btn" onclick="filterTasks('done',this)">เสร็จแล้ว</div>
+          <div class="filter-btn" onclick="filterTasks('overdue',this)">เลยกำหนด</div>
+        </div>
+        <button class="btn btn-primary" onclick="openTaskModal()">+ เพิ่มงาน</button>
+      </div>
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">📋 รายการภาระงาน</div>
+          <div style="font-size:12px;color:var(--text3)" id="task-count-label">—</div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>งาน</th><th>ผู้รับผิดชอบ</th><th>โรงเรียน</th>
+                <th>กำหนดส่ง</th><th>สถานะ</th><th>ความสำคัญ</th>
+                <th>ความคืบหน้า</th><th></th>
+              </tr>
+            </thead>
+            <tbody id="task-tbody">
+              <tr><td colspan="8"><div class="loading"><span class="spinner"></span>กำลังโหลด...</div></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- MY TASKS -->
+    <div class="view" id="view-my-tasks">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">👤 งานของฉัน</div>
+          <button class="btn btn-primary" onclick="openTaskModal()">+ เพิ่มงาน</button>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr><th>งาน</th><th>โรงเรียน</th><th>กำหนดส่ง</th><th>สถานะ</th><th>ความคืบหน้า</th><th></th></tr>
+            </thead>
+            <tbody id="my-task-tbody">
+              <tr><td colspan="6"><div class="loading"><span class="spinner"></span></div></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- SCHEDULE -->
+    <div class="view" id="view-schedule">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+        <div class="filters">
+          <div class="filter-btn active" onclick="filterEvents('all',this)">ทั้งหมด</div>
+          <div class="filter-btn" onclick="filterEvents('training',this)">อบรม</div>
+          <div class="filter-btn" onclick="filterEvents('meeting',this)">ประชุม</div>
+          <div class="filter-btn" onclick="filterEvents('exam',this)">สอบ/ประเมิน</div>
+          <div class="filter-btn" onclick="filterEvents('other',this)">อื่นๆ</div>
+        </div>
+        <button class="btn btn-primary" onclick="openEventModal()">+ เพิ่มกำหนดการ</button>
+      </div>
+      <div class="event-list" id="event-list">
+        <div class="loading"><span class="spinner"></span>กำลังโหลด...</div>
+      </div>
+    </div>
+
+    <!-- TELEGRAM -->
+    <div class="view" id="view-telegram">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+        <div class="card">
+          <div class="card-header"><div class="card-title">✈️ สถานะ Telegram Bot</div></div>
+          <div style="padding:20px">
+            <div class="tg-box" style="margin-bottom:16px">
+              <div class="tg-status">
+                <div class="tg-dot" id="tg-dot"></div>
+                <span id="tg-status-text">กำลังตรวจสอบ...</span>
+              </div>
+              <div style="font-size:12px;color:var(--text3);margin-top:8px" id="tg-bot-name">-</div>
+            </div>
+            <div class="form-row">
+              <label class="form-label">Bot Token (ตั้งค่าใน GAS Script Properties)</label>
+              <input class="form-input" id="inp-tg-token" type="password" placeholder="ตั้งค่าใน GAS → Project Settings → Script Properties">
+            </div>
+            <div class="form-row">
+              <label class="form-label">Chat ID สำหรับแจ้งเตือน</label>
+              <input class="form-input" id="inp-tg-chatid" placeholder="เช่น -100xxxxxxxxxx (Group) หรือ xxxxxxxxx (Personal)">
+            </div>
+            <button class="btn btn-primary" onclick="saveTgSettings()">💾 บันทึกและทดสอบ</button>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header"><div class="card-title">📖 คำสั่ง Bot</div></div>
+          <div style="padding:16px">
+            <div class="cmd-box">
+              <div class="cmd-item"><span class="cmd-name">/tasks</span><span class="cmd-desc">ดูงานทั้งหมด</span></div>
+              <div class="cmd-item"><span class="cmd-name">/mytasks</span><span class="cmd-desc">งานของฉัน</span></div>
+              <div class="cmd-item"><span class="cmd-name">/addtask [ชื่องาน]</span><span class="cmd-desc">เพิ่มงานใหม่</span></div>
+              <div class="cmd-item"><span class="cmd-name">/done [ID]</span><span class="cmd-desc">ทำเครื่องหมายเสร็จ</span></div>
+              <div class="cmd-item"><span class="cmd-name">/schedule</span><span class="cmd-desc">กำหนดการสัปดาห์นี้</span></div>
+              <div class="cmd-item"><span class="cmd-name">/addevent [หัวข้อ]</span><span class="cmd-desc">เพิ่มกำหนดการ</span></div>
+              <div class="cmd-item"><span class="cmd-name">/overdue</span><span class="cmd-desc">งานที่เลยกำหนด</span></div>
+              <div class="cmd-item"><span class="cmd-name">/remind [ID] [นาที]</span><span class="cmd-desc">ตั้งเตือน</span></div>
+            </div>
+            <p style="font-size:11px;color:var(--text3);margin-top:12px">💡 Bot จะแจ้งเตือนอัตโนมัติ 1 วันก่อนกำหนดส่งงาน และ 1 ชม.ก่อนกำหนดการ</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ADMIN -->
+    <div class="view" id="view-admin">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">⚙️ จัดการผู้ใช้ระบบ</div>
+          <button class="btn btn-primary" onclick="openUserModal()">+ เพิ่มผู้ใช้</button>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr><th>ผู้ใช้</th><th>ชื่อ-นามสกุล</th><th>โรงเรียน</th><th>บทบาท</th><th>Telegram ID</th><th>สถานะ</th><th></th></tr>
+            </thead>
+            <tbody id="user-tbody">
+              <tr><td colspan="7"><div class="loading"><span class="spinner"></span></div></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- SETTINGS -->
+    <div class="view" id="view-settings">
+      <div class="card">
+        <div class="card-header"><div class="card-title">🔧 ตั้งค่าระบบ</div></div>
+        <div style="padding:20px">
+          <div class="settings-section">
+            <div class="settings-title">🔗 GAS Endpoint</div>
+            <div class="form-row">
+              <label class="form-label">GAS Web App URL (จาก Deploy)</label>
+              <input class="form-input" id="inp-gas-url" placeholder="https://script.google.com/macros/s/xxxxxx/exec">
+            </div>
+            <button class="btn btn-primary" onclick="saveGasUrl()">💾 บันทึก URL</button>
+            <button class="btn btn-ghost" style="margin-left:8px" onclick="testConnection()">🔌 ทดสอบการเชื่อมต่อ</button>
+          </div>
+          <hr style="border-color:var(--border);margin:20px 0">
+          <div class="settings-section">
+            <div class="settings-title">🏫 ข้อมูลโรงเรียน</div>
+            <div class="form-row-2">
+              <div class="form-row">
+                <label class="form-label">โรงเรียน 1</label>
+                <input class="form-input" id="inp-school1" value="โรงเรียนบ้านเขาหัวนา">
+              </div>
+              <div class="form-row">
+                <label class="form-label">โรงเรียน 2</label>
+                <input class="form-input" id="inp-school2" value="โรงเรียนวัดเนินสะอาด">
+              </div>
+            </div>
+            <button class="btn btn-ghost" onclick="saveSchoolNames()">💾 บันทึก</button>
+          </div>
+          <hr style="border-color:var(--border);margin:20px 0">
+          <div class="settings-section">
+            <div class="settings-title">🎨 เกี่ยวกับระบบ</div>
+            <p style="font-size:13px;color:var(--text2)">SchoolTask v1.0 · พัฒนาสำหรับโรงเรียนบ้านเขาหัวนา และ วัดเนินสะอาด<br>
+            Backend: Google Apps Script + Google Sheets · Deploy: Cloudflare Pages</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /content -->
+</div><!-- /main -->
+
+<!-- MODAL: Add/Edit Task -->
+<div class="overlay" id="modal-task">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title" id="task-modal-title">➕ เพิ่มภาระงานใหม่</div>
+      <button class="modal-close" onclick="closeModal('modal-task')">✕</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="task-edit-id">
+      <div class="form-row">
+        <label class="form-label">ชื่องาน / หัวข้อ *</label>
+        <input class="form-input" id="task-name" placeholder="เช่น จัดทำ SAR ปีการศึกษา 2568">
+      </div>
+      <div class="form-row">
+        <label class="form-label">รายละเอียด</label>
+        <textarea class="form-textarea" id="task-desc" placeholder="รายละเอียดงาน..."></textarea>
+      </div>
+      <div class="form-row-2">
+        <div class="form-row">
+          <label class="form-label">มอบหมายให้ *</label>
+          <select class="form-select" id="task-assignee"></select>
+        </div>
+        <div class="form-row">
+          <label class="form-label">โรงเรียน *</label>
+          <select class="form-select" id="task-school">
+            <option value="s1">บ้านเขาหัวนา</option>
+            <option value="s2">วัดเนินสะอาด</option>
+            <option value="both">ทั้งสองโรงเรียน</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row-2">
+        <div class="form-row">
+          <label class="form-label">กำหนดส่ง *</label>
+          <input class="form-input" id="task-due" type="date">
+        </div>
+        <div class="form-row">
+          <label class="form-label">ความสำคัญ</label>
+          <select class="form-select" id="task-priority">
+            <option value="high">🔴 สูง</option>
+            <option value="med" selected>🟡 ปานกลาง</option>
+            <option value="low">🟢 ต่ำ</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row-2">
+        <div class="form-row">
+          <label class="form-label">สถานะ</label>
+          <select class="form-select" id="task-status">
+            <option value="todo">รอดำเนินการ</option>
+            <option value="progress">กำลังดำเนินการ</option>
+            <option value="done">เสร็จแล้ว</option>
+          </select>
+        </div>
+        <div class="form-row">
+          <label class="form-label">ความคืบหน้า (%)</label>
+          <input class="form-input" id="task-progress" type="number" min="0" max="100" value="0" placeholder="0-100">
+        </div>
+      </div>
+      <div class="form-row">
+        <label class="form-label">หมายเหตุ / อัปเดตล่าสุด</label>
+        <textarea class="form-textarea" id="task-note" placeholder="บันทึกความคืบหน้า..." style="min-height:60px"></textarea>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('modal-task')">ยกเลิก</button>
+      <button class="btn btn-primary" onclick="saveTask()">💾 บันทึก</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: Add/Edit Event -->
+<div class="overlay" id="modal-event">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title" id="event-modal-title">📅 เพิ่มกำหนดการ</div>
+      <button class="modal-close" onclick="closeModal('modal-event')">✕</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="event-edit-id">
+      <div class="form-row">
+        <label class="form-label">หัวข้อ *</label>
+        <input class="form-input" id="event-title" placeholder="เช่น อบรมหลักสูตรใหม่ 2568">
+      </div>
+      <div class="form-row">
+        <label class="form-label">รายละเอียด</label>
+        <textarea class="form-textarea" id="event-desc" placeholder="รายละเอียด สถานที่ วิทยากร..."></textarea>
+      </div>
+      <div class="form-row-2">
+        <div class="form-row">
+          <label class="form-label">วันที่ *</label>
+          <input class="form-input" id="event-date" type="date">
+        </div>
+        <div class="form-row">
+          <label class="form-label">เวลาเริ่ม *</label>
+          <input class="form-input" id="event-time" type="time" value="13:00">
+        </div>
+      </div>
+      <div class="form-row-2">
+        <div class="form-row">
+          <label class="form-label">ประเภท</label>
+          <select class="form-select" id="event-type">
+            <option value="training">📚 อบรม</option>
+            <option value="meeting">🤝 ประชุม</option>
+            <option value="exam">📝 สอบ/ประเมิน</option>
+            <option value="other">📌 อื่นๆ</option>
+          </select>
+        </div>
+        <div class="form-row">
+          <label class="form-label">โรงเรียน</label>
+          <select class="form-select" id="event-school">
+            <option value="s1">บ้านเขาหัวนา</option>
+            <option value="s2">วัดเนินสะอาด</option>
+            <option value="both">ทั้งสองโรงเรียน</option>
+            <option value="personal">ส่วนตัว</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row">
+        <label class="form-label">สถานที่</label>
+        <input class="form-input" id="event-location" placeholder="เช่น ห้องประชุม สพป. / ออนไลน์">
+      </div>
+      <div class="form-row">
+        <label class="form-label">แจ้งเตือนล่วงหน้า</label>
+        <select class="form-select" id="event-remind">
+          <option value="60">1 ชั่วโมง</option>
+          <option value="180">3 ชั่วโมง</option>
+          <option value="1440" selected>1 วัน</option>
+          <option value="2880">2 วัน</option>
+          <option value="10080">1 สัปดาห์</option>
+        </select>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('modal-event')">ยกเลิก</button>
+      <button class="btn btn-primary" onclick="saveEvent()">💾 บันทึก</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: Add/Edit User -->
+<div class="overlay" id="modal-user">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">👤 เพิ่ม / แก้ไขผู้ใช้</div>
+      <button class="modal-close" onclick="closeModal('modal-user')">✕</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="user-edit-id">
+      <div class="form-row-2">
+        <div class="form-row">
+          <label class="form-label">ชื่อผู้ใช้ (username) *</label>
+          <input class="form-input" id="user-username" placeholder="เช่น teacher.somchai">
+        </div>
+        <div class="form-row">
+          <label class="form-label">รหัสผ่าน *</label>
+          <input class="form-input" id="user-password" type="password" placeholder="อย่างน้อย 6 ตัวอักษร">
+        </div>
+      </div>
+      <div class="form-row">
+        <label class="form-label">ชื่อ-นามสกุล *</label>
+        <input class="form-input" id="user-fullname" placeholder="เช่น นายสมชาย ใจดี">
+      </div>
+      <div class="form-row-2">
+        <div class="form-row">
+          <label class="form-label">โรงเรียน</label>
+          <select class="form-select" id="user-school">
+            <option value="s1">บ้านเขาหัวนา</option>
+            <option value="s2">วัดเนินสะอาด</option>
+            <option value="both">ทั้งสองโรงเรียน</option>
+          </select>
+        </div>
+        <div class="form-row">
+          <label class="form-label">บทบาท</label>
+          <select class="form-select" id="user-role">
+            <option value="admin">Admin (ผอ./รองผอ.)</option>
+            <option value="teacher" selected>ครู</option>
+            <option value="staff">เจ้าหน้าที่</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row">
+        <label class="form-label">Telegram User ID (สำหรับแจ้งเตือนส่วนตัว)</label>
+        <input class="form-input" id="user-tgid" placeholder="เช่น 123456789 (ส่ง /start หา bot แล้วดู ID)">
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('modal-user')">ยกเลิก</button>
+      <button class="btn btn-primary" onclick="saveUser()">💾 บันทึก</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+/* ══════════════════════════════════════════════
+   CONFIG
+══════════════════════════════════════════════ */
+const CFG = {
+  gasUrl: localStorage.getItem('gasUrl') || '',
+  school1: localStorage.getItem('school1') || 'โรงเรียนบ้านเขาหัวนา',
+  school2: localStorage.getItem('school2') || 'โรงเรียนวัดเนินสะอาด',
+};
+
+let STATE = {
+  user: null,
+  token: null,
+  tasks: [],
+  events: [],
+  users: [],
+  schoolFilter: 0, // 0=s1, 1=s2, -1=all
+  taskFilter: 'all',
+  eventFilter: 'all',
+};
+
+/* ══════════════════════════════════════════════
+   API HELPER
+══════════════════════════════════════════════ */
+async function api(action, data = {}) {
+  const url = localStorage.getItem('gasUrl');
+  if (!url) throw new Error('ยังไม่ได้ตั้งค่า GAS URL');
+  const params = new URLSearchParams({ action, token: STATE.token || '', ...data });
+  const res = await fetch(`${url}?${params}`);
+  const json = await res.json();
+  if (json.error) throw new Error(json.error);
+  return json;
+}
+
+/* ══════════════════════════════════════════════
+   AUTH
+══════════════════════════════════════════════ */
+async function doLogin() {
+  const u = document.getElementById('inp-user').value.trim();
+  const p = document.getElementById('inp-pass').value;
+  if (!u || !p) return;
+  document.getElementById('login-err').style.display = 'none';
+
+  // Demo mode (no GAS configured)
+  if (!localStorage.getItem('gasUrl')) {
+    if (u === 'admin' && p === 'admin1234') {
+      STATE.user = { username:'admin', fullname:'ผู้ดูแลระบบ', role:'admin', school:'both' };
+      STATE.token = 'demo-token';
+      finishLogin();
+      return;
+    }
+    if (u === 'teacher' && p === 'teacher') {
+      STATE.user = { username:'teacher', fullname:'คุณครูตัวอย่าง', role:'teacher', school:'s1' };
+      STATE.token = 'demo-token';
+      finishLogin();
+      return;
+    }
+    document.getElementById('login-err').style.display = 'block';
+    return;
+  }
+
+  try {
+    const r = await api('login', { username: u, password: p });
+    STATE.user = r.user;
+    STATE.token = r.token;
+    finishLogin();
+  } catch(e) {
+    document.getElementById('login-err').style.display = 'block';
+    document.getElementById('login-err').textContent = e.message || 'ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง';
+  }
+}
+
+function finishLogin() {
+  document.getElementById('login-screen').style.display = 'none';
+  updateSidebar();
+  loadAll();
+}
+
+function doLogout() {
+  STATE.user = null; STATE.token = null;
+  document.getElementById('login-screen').style.display = 'flex';
+  document.getElementById('inp-pass').value = '';
+}
+
+function updateSidebar() {
+  const u = STATE.user;
+  document.getElementById('sidebar-avatar').textContent = (u.fullname||'?')[0];
+  document.getElementById('sidebar-username').textContent = u.fullname || u.username;
+  document.getElementById('sidebar-role').textContent = {admin:'ผู้ดูแล / ผอ.',teacher:'ครู',staff:'เจ้าหน้าที่'}[u.role] || u.role;
+  if (u.role === 'admin') document.getElementById('nav-admin').style.display = 'flex';
+  document.getElementById('sidebar-school-name').textContent = CFG.school1 + ' + ' + CFG.school2;
+  document.getElementById('inp-school1').value = CFG.school1;
+  document.getElementById('inp-school2').value = CFG.school2;
+  document.getElementById('inp-gas-url').value = localStorage.getItem('gasUrl') || '';
+}
+
+/* ══════════════════════════════════════════════
+   NAVIGATION
+══════════════════════════════════════════════ */
+const PAGE_TITLES = {
+  dashboard:'แดชบอร์ด', tasks:'ภาระงานทั้งหมด', 'my-tasks':'งานของฉัน',
+  schedule:'กำหนดการ / อบรม', telegram:'Telegram Bot', admin:'จัดการผู้ใช้', settings:'ตั้งค่า'
+};
+
+function showView(id) {
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('view-' + id).classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(n => {
+    if (n.textContent.trim().includes(PAGE_TITLES[id]?.substring(0,4) || '')) n.classList.add('active');
+  });
+  document.getElementById('page-title').textContent = PAGE_TITLES[id] || id;
+  closeSidebar();
+  if (id === 'tasks' || id === 'my-tasks') renderTasks();
+  if (id === 'schedule') renderEvents();
+  if (id === 'admin') loadUsers();
+  if (id === 'dashboard') renderDashboard();
+}
+
+function openSidebar() {
+  document.getElementById('sidebar').classList.add('open');
+  document.getElementById('sidebar-overlay').classList.add('open');
+}
+function closeSidebar() {
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('sidebar-overlay').classList.remove('open');
+}
+
+function switchSchool(idx) {
+  STATE.schoolFilter = idx;
+  ['tab-s1','tab-s2','tab-all'].forEach(id => document.getElementById(id).classList.remove('active'));
+  document.getElementById(['tab-s1','tab-s2','tab-all'][idx === -1 ? 2 : idx]).classList.add('active');
+  renderTasks(); renderEvents(); renderDashboard();
+}
+
+/* ══════════════════════════════════════════════
+   LOAD DATA
+══════════════════════════════════════════════ */
+async function loadAll() {
+  await Promise.all([loadTasks(), loadEvents()]);
+  renderDashboard();
+}
+
+async function loadTasks() {
+  // Demo data if no GAS
+  if (!localStorage.getItem('gasUrl') || STATE.token === 'demo-token') {
+    STATE.tasks = DEMO_TASKS;
+    populateAssigneeSelect();
+    return;
+  }
+  try {
+    const r = await api('getTasks');
+    STATE.tasks = r.tasks || [];
+    populateAssigneeSelect();
+  } catch(e) { toast('โหลดงานไม่สำเร็จ: ' + e.message, 'error'); }
+}
+
+async function loadEvents() {
+  if (!localStorage.getItem('gasUrl') || STATE.token === 'demo-token') {
+    STATE.events = DEMO_EVENTS;
+    return;
+  }
+  try {
+    const r = await api('getEvents');
+    STATE.events = r.events || [];
+  } catch(e) { toast('โหลดกำหนดการไม่สำเร็จ: ' + e.message, 'error'); }
+}
+
+async function loadUsers() {
+  if (!localStorage.getItem('gasUrl') || STATE.token === 'demo-token') {
+    STATE.users = DEMO_USERS;
+    renderUsers();
+    return;
+  }
+  try {
+    const r = await api('getUsers');
+    STATE.users = r.users || [];
+    renderUsers();
+  } catch(e) { toast('โหลดผู้ใช้ไม่สำเร็จ: ' + e.message, 'error'); }
+}
+
+/* ══════════════════════════════════════════════
+   RENDER
+══════════════════════════════════════════════ */
+function filteredTasks() {
+  let tasks = STATE.tasks;
+  if (STATE.schoolFilter !== -1) {
+    const key = STATE.schoolFilter === 0 ? 's1' : 's2';
+    tasks = tasks.filter(t => t.school === key || t.school === 'both');
+  }
+  if (STATE.taskFilter !== 'all') {
+    const today = new Date(); today.setHours(0,0,0,0);
+    if (STATE.taskFilter === 'overdue') {
+      tasks = tasks.filter(t => t.status !== 'done' && new Date(t.due) < today);
+    } else {
+      tasks = tasks.filter(t => t.status === STATE.taskFilter);
+    }
+  }
+  return tasks;
+}
+
+function renderTasks() {
+  const tasks = filteredTasks();
+  document.getElementById('task-count-label').textContent = `${tasks.length} รายการ`;
+  const tbody = document.getElementById('task-tbody');
+  if (!tasks.length) { tbody.innerHTML = `<tr><td colspan="8"><div class="empty"><div class="icon">📭</div><p>ไม่มีรายการงาน</p></div></td></tr>`; return; }
+  tbody.innerHTML = tasks.map(t => {
+    const over = isOverdue(t);
+    return `<tr>
+      <td>
+        <div style="font-weight:600;font-size:13px">${esc(t.name)}</div>
+        ${t.note ? `<div style="font-size:11px;color:var(--text3);margin-top:2px">${esc(t.note.substring(0,60))}${t.note.length>60?'…':''}</div>` : ''}
+      </td>
+      <td><span style="font-size:13px">${esc(t.assignee)}</span></td>
+      <td><span style="font-size:12px;color:var(--text3)">${schoolLabel(t.school)}</span></td>
+      <td><span style="font-size:12px;font-family:var(--mono);color:${over?'var(--red)':'var(--text2)'}">${fmtDate(t.due)}</span></td>
+      <td>${statusBadge(t.status, over)}</td>
+      <td>${priorityBadge(t.priority)}</td>
+      <td>
+        <div style="display:flex;align-items:center;gap:8px">
+          <div class="prog-wrap"><div class="prog-bar" style="width:${t.progress||0}%;background:${(t.progress||0)>=100?'var(--green)':'var(--blue)'}"></div></div>
+          <span style="font-size:11px;font-family:var(--mono);color:var(--text3)">${t.progress||0}%</span>
+        </div>
+      </td>
+      <td>
+        <div style="display:flex;gap:4px">
+          <button class="icon-btn edit" onclick="openTaskModal('${t.id}')">✏️</button>
+          <button class="icon-btn del" onclick="deleteTask('${t.id}')">🗑️</button>
+        </div>
+      </td>
+    </tr>`;
+  }).join('');
+
+  // My tasks
+  const me = STATE.user?.fullname || STATE.user?.username;
+  const myTasks = STATE.tasks.filter(t => t.assignee === me);
+  const myTbody = document.getElementById('my-task-tbody');
+  if (!myTasks.length) { myTbody.innerHTML = `<tr><td colspan="6"><div class="empty"><div class="icon">✅</div><p>ไม่มีงานที่ได้รับมอบหมาย</p></div></td></tr>`; return; }
+  myTbody.innerHTML = myTasks.map(t => {
+    const over = isOverdue(t);
+    return `<tr>
+      <td><div style="font-weight:600">${esc(t.name)}</div></td>
+      <td>${schoolLabel(t.school)}</td>
+      <td style="font-family:var(--mono);font-size:12px;color:${over?'var(--red)':'var(--text2)'}">${fmtDate(t.due)}</td>
+      <td>${statusBadge(t.status, over)}</td>
+      <td>
+        <div style="display:flex;align-items:center;gap:8px">
+          <div class="prog-wrap"><div class="prog-bar" style="width:${t.progress||0}%;background:var(--blue)"></div></div>
+          <span style="font-size:11px;font-family:var(--mono)">${t.progress||0}%</span>
+        </div>
+      </td>
+      <td><button class="icon-btn edit" onclick="openTaskModal('${t.id}')">✏️</button></td>
+    </tr>`;
+  }).join('');
+}
+
+function renderEvents() {
+  let evs = [...STATE.events].sort((a,b) => new Date(a.date+' '+a.time) - new Date(b.date+' '+b.time));
+  if (STATE.schoolFilter !== -1) {
+    const key = STATE.schoolFilter === 0 ? 's1' : 's2';
+    evs = evs.filter(e => e.school === key || e.school === 'both' || e.school === 'personal');
+  }
+  if (STATE.eventFilter !== 'all') evs = evs.filter(e => e.type === STATE.eventFilter);
+  const el = document.getElementById('event-list');
+  if (!evs.length) { el.innerHTML = `<div class="empty"><div class="icon">📅</div><p>ไม่มีกำหนดการ</p></div>`; return; }
+  const typeColors = { training:'var(--blue)', meeting:'var(--green)', exam:'var(--red)', other:'var(--text3)' };
+  const typeLabels = { training:'📚 อบรม', meeting:'🤝 ประชุม', exam:'📝 สอบ', other:'📌 อื่นๆ' };
+  const months = ['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.'];
+  el.innerHTML = evs.map(ev => {
+    const d = new Date(ev.date);
+    const isPast = d < new Date(); d.setHours(23,59,59);
+    return `<div class="event-card" style="${isPast?'opacity:.6':''}">
+      <div class="event-date">
+        <div class="day" style="color:${typeColors[ev.type]||'var(--text)'}">${d.getDate()}</div>
+        <div class="month">${months[d.getMonth()]}</div>
+      </div>
+      <div class="event-info">
+        <div class="event-title">${esc(ev.title)}</div>
+        <div class="event-meta">
+          <span>🕐 ${ev.time}</span>
+          ${ev.location ? `<span>📍 ${esc(ev.location)}</span>` : ''}
+          <span style="color:${typeColors[ev.type]}">${typeLabels[ev.type]||'อื่นๆ'}</span>
+          <span style="color:var(--text3)">${schoolLabel(ev.school)}</span>
+        </div>
+        ${ev.desc ? `<div style="font-size:12px;color:var(--text3);margin-top:4px">${esc(ev.desc.substring(0,80))}${ev.desc.length>80?'…':''}</div>` : ''}
+      </div>
+      <div class="event-actions">
+        <button class="icon-btn edit" onclick="openEventModal('${ev.id}')">✏️</button>
+        <button class="icon-btn del" onclick="deleteEvent('${ev.id}')">🗑️</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function renderDashboard() {
+  const tasks = STATE.tasks;
+  const today = new Date(); today.setHours(0,0,0,0);
+  const total = tasks.length;
+  const prog = tasks.filter(t => t.status === 'progress').length;
+  const done = tasks.filter(t => t.status === 'done').length;
+  const over = tasks.filter(t => t.status !== 'done' && new Date(t.due) < today).length;
+  document.getElementById('s-total').textContent = total;
+  document.getElementById('s-prog').textContent = prog;
+  document.getElementById('s-done').textContent = done;
+  document.getElementById('s-over').textContent = over;
+  if (over > 0) { document.getElementById('badge-overdue').style.display=''; document.getElementById('badge-overdue').textContent = over; }
+
+  // Urgent tasks
+  const urgent = tasks.filter(t => t.status !== 'done' && (isOverdue(t) || priorityUrgent(t))).slice(0,6);
+  const ul = document.getElementById('dash-urgent-list');
+  if (!urgent.length) { ul.innerHTML = `<div class="empty" style="padding:24px"><div class="icon">✅</div><p>ไม่มีงานด่วน</p></div>`; }
+  else {
+    ul.innerHTML = `<table><thead><tr><th>งาน</th><th>ผู้รับผิดชอบ</th><th>กำหนดส่ง</th><th>สถานะ</th></tr></thead><tbody>` +
+    urgent.map(t => `<tr>
+      <td style="font-size:13px;font-weight:600">${esc(t.name)}</td>
+      <td style="font-size:12px">${esc(t.assignee)}</td>
+      <td style="font-size:12px;font-family:var(--mono);color:${isOverdue(t)?'var(--red)':'var(--text2)'}">${fmtDate(t.due)}</td>
+      <td>${statusBadge(t.status, isOverdue(t))}</td>
+    </tr>`).join('') + '</tbody></table>';
+  }
+
+  // Upcoming events
+  const upcoming = [...STATE.events]
+    .filter(e => new Date(e.date) >= new Date())
+    .sort((a,b) => new Date(a.date) - new Date(b.date))
+    .slice(0,5);
+  const evColors = { training:'var(--blue)', meeting:'var(--green)', exam:'var(--red)', other:'var(--text3)' };
+  const upl = document.getElementById('dash-upcoming-list');
+  if (!upcoming.length) { upl.innerHTML = `<p style="font-size:13px;color:var(--text3);text-align:center;padding:16px">ไม่มีกำหนดการ</p>`; }
+  else {
+    const badge_up = upcoming.filter(e => { const d = new Date(e.date); const diff = (d-new Date())/86400000; return diff <= 3; }).length;
+    if (badge_up) { document.getElementById('badge-upcoming').style.display=''; document.getElementById('badge-upcoming').textContent=badge_up; }
+    upl.innerHTML = upcoming.map(ev => `<div class="upcoming-item">
+      <div class="upcoming-dot" style="background:${evColors[ev.type]||'var(--text3)'}"></div>
+      <div class="upcoming-info">
+        <div class="t">${esc(ev.title)}</div>
+        <div class="d">${fmtDate(ev.date)} · ${schoolLabel(ev.school)}</div>
+      </div>
+      <div class="upcoming-time">${ev.time}</div>
+    </div>`).join('');
+  }
+}
+
+function renderUsers() {
+  const colors = ['#f0883e','#58a6ff','#3fb950','#bc8cff','#d29922'];
+  const tbody = document.getElementById('user-tbody');
+  const roleLabel = { admin:'Admin', teacher:'ครู', staff:'เจ้าหน้าที่' };
+  if (!STATE.users.length) { tbody.innerHTML = `<tr><td colspan="7"><div class="empty"><div class="icon">👥</div><p>ไม่มีผู้ใช้</p></div></td></tr>`; return; }
+  tbody.innerHTML = STATE.users.map((u,i) => `<tr>
+    <td><div style="display:flex;align-items:center;gap:8px">
+      <div class="user-avatar" style="background:${colors[i%colors.length]}">${(u.fullname||u.username)[0]}</div>
+      <span style="font-size:13px;font-family:var(--mono)">${esc(u.username)}</span>
+    </div></td>
+    <td style="font-size:13px">${esc(u.fullname)}</td>
+    <td style="font-size:12px;color:var(--text2)">${schoolLabel(u.school)}</td>
+    <td><span class="badge ${u.role==='admin'?'badge-high':u.role==='teacher'?'badge-progress':'badge-todo'}">${roleLabel[u.role]||u.role}</span></td>
+    <td style="font-size:12px;font-family:var(--mono);color:var(--text3)">${u.tgid||'—'}</td>
+    <td><span class="badge ${u.active!==false?'badge-done':'badge-overdue'}">${u.active!==false?'ใช้งาน':'ปิดใช้'}</span></td>
+    <td><div style="display:flex;gap:4px">
+      <button class="icon-btn edit" onclick="openUserModal('${u.username}')">✏️</button>
+      <button class="icon-btn del" onclick="deleteUser('${u.username}')">🗑️</button>
+    </div></td>
+  </tr>`).join('');
+}
+
+/* ══════════════════════════════════════════════
+   TASK CRUD
+══════════════════════════════════════════════ */
+function openTaskModal(id) {
+  clearForm('task');
+  document.getElementById('task-modal-title').textContent = id ? '✏️ แก้ไขงาน' : '➕ เพิ่มภาระงานใหม่';
+  if (id) {
+    const t = STATE.tasks.find(x => x.id === id);
+    if (!t) return;
+    document.getElementById('task-edit-id').value = id;
+    document.getElementById('task-name').value = t.name || '';
+    document.getElementById('task-desc').value = t.desc || '';
+    document.getElementById('task-assignee').value = t.assignee || '';
+    document.getElementById('task-school').value = t.school || 's1';
+    document.getElementById('task-due').value = t.due || '';
+    document.getElementById('task-priority').value = t.priority || 'med';
+    document.getElementById('task-status').value = t.status || 'todo';
+    document.getElementById('task-progress').value = t.progress || 0;
+    document.getElementById('task-note').value = t.note || '';
+  }
+  openModal('modal-task');
+}
+
+async function saveTask() {
+  const id = document.getElementById('task-edit-id').value;
+  const data = {
+    id: id || genId(),
+    name: document.getElementById('task-name').value.trim(),
+    desc: document.getElementById('task-desc').value.trim(),
+    assignee: document.getElementById('task-assignee').value,
+    school: document.getElementById('task-school').value,
+    due: document.getElementById('task-due').value,
+    priority: document.getElementById('task-priority').value,
+    status: document.getElementById('task-status').value,
+    progress: parseInt(document.getElementById('task-progress').value) || 0,
+    note: document.getElementById('task-note').value.trim(),
+  };
+  if (!data.name || !data.due) { toast('กรุณากรอกข้อมูลที่จำเป็น', 'error'); return; }
+
+  if (!localStorage.getItem('gasUrl') || STATE.token === 'demo-token') {
+    if (id) { const idx = STATE.tasks.findIndex(t => t.id === id); if (idx > -1) STATE.tasks[idx] = data; }
+    else STATE.tasks.unshift(data);
+    closeModal('modal-task'); toast(id ? 'แก้ไขงานสำเร็จ ✓' : 'เพิ่มงานสำเร็จ ✓', 'success');
+    renderTasks(); renderDashboard(); return;
+  }
+  try {
+    await api(id ? 'updateTask' : 'addTask', data);
+    await loadTasks();
+    closeModal('modal-task'); toast(id ? 'แก้ไขงานสำเร็จ ✓' : 'เพิ่มงานสำเร็จ ✓', 'success');
+    renderTasks(); renderDashboard();
+  } catch(e) { toast('บันทึกไม่สำเร็จ: ' + e.message, 'error'); }
+}
+
+async function deleteTask(id) {
+  if (!confirm('ลบงานนี้?')) return;
+  if (!localStorage.getItem('gasUrl') || STATE.token === 'demo-token') {
+    STATE.tasks = STATE.tasks.filter(t => t.id !== id);
+    toast('ลบงานสำเร็จ', 'success'); renderTasks(); renderDashboard(); return;
+  }
+  try {
+    await api('deleteTask', { id });
+    await loadTasks(); toast('ลบงานสำเร็จ', 'success'); renderTasks(); renderDashboard();
+  } catch(e) { toast('ลบไม่สำเร็จ: ' + e.message, 'error'); }
+}
+
+/* ══════════════════════════════════════════════
+   EVENT CRUD
+══════════════════════════════════════════════ */
+function openEventModal(id) {
+  clearForm('event');
+  document.getElementById('event-modal-title').textContent = id ? '✏️ แก้ไขกำหนดการ' : '📅 เพิ่มกำหนดการ';
+  if (id) {
+    const e = STATE.events.find(x => x.id === id);
+    if (!e) return;
+    document.getElementById('event-edit-id').value = id;
+    document.getElementById('event-title').value = e.title || '';
+    document.getElementById('event-desc').value = e.desc || '';
+    document.getElementById('event-date').value = e.date || '';
+    document.getElementById('event-time').value = e.time || '13:00';
+    document.getElementById('event-type').value = e.type || 'training';
+    document.getElementById('event-school').value = e.school || 's1';
+    document.getElementById('event-location').value = e.location || '';
+    document.getElementById('event-remind').value = e.remind || 1440;
+  }
+  openModal('modal-event');
+}
+
+async function saveEvent() {
+  const id = document.getElementById('event-edit-id').value;
+  const data = {
+    id: id || genId(),
+    title: document.getElementById('event-title').value.trim(),
+    desc: document.getElementById('event-desc').value.trim(),
+    date: document.getElementById('event-date').value,
+    time: document.getElementById('event-time').value,
+    type: document.getElementById('event-type').value,
+    school: document.getElementById('event-school').value,
+    location: document.getElementById('event-location').value.trim(),
+    remind: document.getElementById('event-remind').value,
+  };
+  if (!data.title || !data.date) { toast('กรุณากรอกข้อมูลที่จำเป็น', 'error'); return; }
+
+  if (!localStorage.getItem('gasUrl') || STATE.token === 'demo-token') {
+    if (id) { const idx = STATE.events.findIndex(e => e.id === id); if (idx>-1) STATE.events[idx]=data; }
+    else STATE.events.push(data);
+    closeModal('modal-event'); toast('บันทึกกำหนดการสำเร็จ ✓', 'success'); renderEvents(); renderDashboard(); return;
+  }
+  try {
+    await api(id ? 'updateEvent' : 'addEvent', data);
+    await loadEvents(); closeModal('modal-event'); toast('บันทึกกำหนดการสำเร็จ ✓', 'success'); renderEvents(); renderDashboard();
+  } catch(e) { toast('บันทึกไม่สำเร็จ: ' + e.message, 'error'); }
+}
+
+async function deleteEvent(id) {
+  if (!confirm('ลบกำหนดการนี้?')) return;
+  if (!localStorage.getItem('gasUrl') || STATE.token === 'demo-token') {
+    STATE.events = STATE.events.filter(e => e.id !== id);
+    toast('ลบสำเร็จ', 'success'); renderEvents(); renderDashboard(); return;
+  }
+  try {
+    await api('deleteEvent', { id }); await loadEvents(); toast('ลบสำเร็จ', 'success'); renderEvents(); renderDashboard();
+  } catch(e) { toast('ลบไม่สำเร็จ: ' + e.message, 'error'); }
+}
+
+/* ══════════════════════════════════════════════
+   USER CRUD
+══════════════════════════════════════════════ */
+function openUserModal(username) {
+  clearForm('user');
+  if (username) {
+    const u = STATE.users.find(x => x.username === username);
+    if (!u) return;
+    document.getElementById('user-edit-id').value = username;
+    document.getElementById('user-username').value = u.username;
+    document.getElementById('user-username').disabled = true;
+    document.getElementById('user-fullname').value = u.fullname;
+    document.getElementById('user-school').value = u.school;
+    document.getElementById('user-role').value = u.role;
+    document.getElementById('user-tgid').value = u.tgid || '';
+  } else {
+    document.getElementById('user-username').disabled = false;
+  }
+  openModal('modal-user');
+}
+
+async function saveUser() {
+  const id = document.getElementById('user-edit-id').value;
+  const data = {
+    username: document.getElementById('user-username').value.trim(),
+    password: document.getElementById('user-password').value,
+    fullname: document.getElementById('user-fullname').value.trim(),
+    school: document.getElementById('user-school').value,
+    role: document.getElementById('user-role').value,
+    tgid: document.getElementById('user-tgid').value.trim(),
+  };
+  if (!data.username || !data.fullname) { toast('กรุณากรอกข้อมูลที่จำเป็น', 'error'); return; }
+  if (!id && !data.password) { toast('กรุณาตั้งรหัสผ่าน', 'error'); return; }
+
+  if (!localStorage.getItem('gasUrl') || STATE.token === 'demo-token') {
+    if (id) { const idx = STATE.users.findIndex(u => u.username === id); if (idx>-1) STATE.users[idx] = {...STATE.users[idx], ...data}; }
+    else STATE.users.push({ ...data, active: true });
+    closeModal('modal-user'); toast('บันทึกผู้ใช้สำเร็จ ✓', 'success'); renderUsers(); return;
+  }
+  try {
+    await api(id ? 'updateUser' : 'addUser', data);
+    await loadUsers(); closeModal('modal-user'); toast('บันทึกผู้ใช้สำเร็จ ✓', 'success');
+  } catch(e) { toast('บันทึกไม่สำเร็จ: ' + e.message, 'error'); }
+}
+
+async function deleteUser(username) {
+  if (username === STATE.user?.username) { toast('ไม่สามารถลบตัวเองได้', 'error'); return; }
+  if (!confirm('ลบผู้ใช้ ' + username + '?')) return;
+  if (!localStorage.getItem('gasUrl') || STATE.token === 'demo-token') {
+    STATE.users = STATE.users.filter(u => u.username !== username);
+    toast('ลบสำเร็จ', 'success'); renderUsers(); return;
+  }
+  try {
+    await api('deleteUser', { username }); await loadUsers(); toast('ลบสำเร็จ', 'success');
+  } catch(e) { toast('ลบไม่สำเร็จ', 'error'); }
+}
+
+/* ══════════════════════════════════════════════
+   SETTINGS
+══════════════════════════════════════════════ */
+function saveGasUrl() {
+  const url = document.getElementById('inp-gas-url').value.trim();
+  localStorage.setItem('gasUrl', url);
+  CFG.gasUrl = url;
+  toast('บันทึก URL สำเร็จ ✓', 'success');
+}
+
+async function testConnection() {
+  if (!localStorage.getItem('gasUrl')) { toast('กรุณาตั้งค่า GAS URL ก่อน', 'error'); return; }
+  try {
+    const r = await api('ping');
+    toast('เชื่อมต่อสำเร็จ ✓ ' + (r.msg||''), 'success');
+  } catch(e) { toast('เชื่อมต่อไม่ได้: ' + e.message, 'error'); }
+}
+
+function saveSchoolNames() {
+  const s1 = document.getElementById('inp-school1').value.trim();
+  const s2 = document.getElementById('inp-school2').value.trim();
+  localStorage.setItem('school1', s1); localStorage.setItem('school2', s2);
+  CFG.school1 = s1; CFG.school2 = s2;
+  document.getElementById('sidebar-school-name').textContent = s1 + ' + ' + s2;
+  document.getElementById('tab-s1').textContent = s1.replace('โรงเรียน','');
+  document.getElementById('tab-s2').textContent = s2.replace('โรงเรียน','');
+  toast('บันทึกชื่อโรงเรียนสำเร็จ ✓', 'success');
+}
+
+async function saveTgSettings() {
+  toast('⚙️ Bot Token ตั้งค่าใน GAS Script Properties แทนสำหรับความปลอดภัย', 'info');
+}
+
+/* ══════════════════════════════════════════════
+   FILTERS
+══════════════════════════════════════════════ */
+function filterTasks(f, el) {
+  STATE.taskFilter = f;
+  document.querySelectorAll('#task-filters .filter-btn').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+  renderTasks();
+}
+function filterEvents(f, el) {
+  STATE.eventFilter = f;
+  document.querySelectorAll('#view-schedule .filters .filter-btn').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+  renderEvents();
+}
+
+/* ══════════════════════════════════════════════
+   HELPERS
+══════════════════════════════════════════════ */
+function genId() { return Date.now().toString(36) + Math.random().toString(36).substr(2,5); }
+function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function fmtDate(d) {
+  if (!d) return '—';
+  const months = ['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.'];
+  const dt = new Date(d);
+  return `${dt.getDate()} ${months[dt.getMonth()]} ${dt.getFullYear()+543}`;
+}
+function isOverdue(t) {
+  if (t.status === 'done') return false;
+  const today = new Date(); today.setHours(0,0,0,0);
+  return new Date(t.due) < today;
+}
+function priorityUrgent(t) { return t.priority === 'high' && t.status !== 'done'; }
+function schoolLabel(s) {
+  return { s1: CFG.school1.replace('โรงเรียน',''), s2: CFG.school2.replace('โรงเรียน',''), both:'ทั้งสองโรงเรียน', personal:'ส่วนตัว' }[s] || s;
+}
+function statusBadge(s, over) {
+  if (over) return `<span class="badge badge-overdue">⚠️ เลยกำหนด</span>`;
+  return { todo:`<span class="badge badge-todo">รอดำเนินการ</span>`, progress:`<span class="badge badge-progress">🔄 กำลังดำเนินการ</span>`, done:`<span class="badge badge-done">✅ เสร็จแล้ว</span>` }[s] || s;
+}
+function priorityBadge(p) {
+  return { high:`<span class="badge badge-high">🔴 สูง</span>`, med:`<span class="badge badge-med">🟡 ปานกลาง</span>`, low:`<span class="badge badge-low">🟢 ต่ำ</span>` }[p] || '';
+}
+function populateAssigneeSelect() {
+  const sel = document.getElementById('task-assignee');
+  const names = [...new Set(STATE.users.map(u => u.fullname))];
+  if (names.length) {
+    sel.innerHTML = names.map(n => `<option value="${esc(n)}">${esc(n)}</option>`).join('');
+  } else {
+    sel.innerHTML = `<option>ผู้ดูแลระบบ</option><option>คุณครูตัวอย่าง</option>`;
+  }
+}
+
+function openModal(id) { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+function clearForm(prefix) {
+  document.querySelectorAll(`#modal-${prefix} input, #modal-${prefix} textarea, #modal-${prefix} select`).forEach(el => {
+    if (el.type === 'hidden') el.value = '';
+    else if (el.tagName === 'SELECT') el.selectedIndex = 0;
+    else el.value = el.defaultValue || '';
+  });
+  if (prefix === 'task') document.getElementById('task-progress').value = 0;
+  if (prefix === 'event') document.getElementById('event-time').value = '13:00';
+}
+
+let toastTimer;
+function toast(msg, type='info') {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.className = `toast ${type} show`;
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => el.classList.remove('show'), 3000);
+}
+
+// Keyboard shortcuts
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') {
+    document.querySelectorAll('.overlay.open').forEach(o => o.classList.remove('open'));
+  }
+  if (e.key === 'Enter' && document.getElementById('login-screen').style.display !== 'none') {
+    doLogin();
+  }
+});
+
+// Click outside modal
+document.querySelectorAll('.overlay').forEach(o => {
+  o.addEventListener('click', e => { if (e.target === o) o.classList.remove('open'); });
+});
+
+/* ══════════════════════════════════════════════
+   DEMO DATA
+══════════════════════════════════════════════ */
+const DEMO_TASKS = [
+  { id:'t1', name:'จัดทำ SAR ปีการศึกษา 2568', desc:'รายงานการประเมินตนเองของสถานศึกษา', assignee:'ผู้ดูแลระบบ', school:'both', due:'2025-09-30', priority:'high', status:'progress', progress:40, note:'รวบรวมข้อมูลครบแล้ว อยู่ระหว่างเขียนรายงาน' },
+  { id:'t2', name:'ส่งแผนปฏิบัติการปีงบประมาณ 2569', desc:'', assignee:'คุณครูตัวอย่าง', school:'s1', due:'2025-10-15', priority:'high', status:'todo', progress:0, note:'' },
+  { id:'t3', name:'อบรม AI สำหรับครู', desc:'อบรมการใช้ AI ในการจัดการเรียนการสอน', assignee:'คุณครูตัวอย่าง', school:'s2', due:'2025-07-20', priority:'med', status:'done', progress:100, note:'เสร็จสิ้นแล้ว' },
+  { id:'t4', name:'ส่งผลการเรียนภาคเรียนที่ 1/2568', desc:'', assignee:'ผู้ดูแลระบบ', school:'s1', due:'2025-06-01', priority:'high', status:'todo', progress:10, note:'' },
+  { id:'t5', name:'จัดทำ IEP นักเรียนพิเศษ', desc:'แผนการศึกษาเฉพาะบุคคล', assignee:'คุณครูตัวอย่าง', school:'s2', due:'2025-08-31', priority:'med', status:'progress', progress:60, note:'ประสานงานผู้ปกครองแล้ว' },
+  { id:'t6', name:'ประเมินครูผู้ช่วย รอบ 2', desc:'', assignee:'ผู้ดูแลระบบ', school:'both', due:'2025-05-20', priority:'high', status:'todo', progress:0, note:'' },
+];
+
+const today = new Date();
+const fmt = d => d.toISOString().split('T')[0];
+const addDays = (d,n) => { const r=new Date(d); r.setDate(r.getDate()+n); return r; };
+
+const DEMO_EVENTS = [
+  { id:'e1', title:'ประชุม สพป. นครนายก ประจำเดือน', desc:'ประชุมผู้บริหารสถานศึกษา', date: fmt(addDays(today,3)), time:'09:00', type:'meeting', school:'both', location:'สพป. นครนายก', remind:'1440' },
+  { id:'e2', title:'อบรมหลักสูตรฐานสมรรถนะ', desc:'อบรมครูตามหลักสูตรแกนกลาง 2565', date: fmt(addDays(today,7)), time:'08:30', type:'training', school:'s1', location:'โรงแรมอมารี นครนายก', remind:'2880' },
+  { id:'e3', title:'สอบ NT ป.3', desc:'การประเมินคุณภาพผู้เรียนระดับชาติ', date: fmt(addDays(today,14)), time:'09:00', type:'exam', school:'both', location:'โรงเรียนบ้านเขาหัวนา', remind:'1440' },
+  { id:'e4', title:'นิเทศติดตามผล สพป.', desc:'', date: fmt(addDays(today,21)), time:'13:00', type:'meeting', school:'s2', location:'โรงเรียนวัดเนินสะอาด', remind:'1440' },
+  { id:'e5', title:'อบรม PISA ออนไลน์', desc:'เตรียมความพร้อมนักเรียนสู่ PISA', date: fmt(addDays(today,-5)), time:'13:00', type:'training', school:'both', location:'ออนไลน์ Zoom', remind:'60' },
+];
+
+const DEMO_USERS = [
+  { username:'admin', fullname:'ผู้ดูแลระบบ', school:'both', role:'admin', tgid:'123456789', active:true },
+  { username:'teacher', fullname:'คุณครูตัวอย่าง', school:'s1', role:'teacher', tgid:'', active:true },
+  { username:'staff01', fullname:'นายสมชาย ใจดี', school:'s2', role:'staff', tgid:'987654321', active:true },
+];
+
+// Init school tab labels
+document.getElementById('tab-s1').textContent = CFG.school1.replace('โรงเรียน','');
+document.getElementById('tab-s2').textContent = CFG.school2.replace('โรงเรียน','');
+
+// Show hint if no GAS configured
+if (!localStorage.getItem('gasUrl')) {
+  setTimeout(() => toast('💡 Demo Mode: login admin/admin1234 หรือ teacher/teacher', 'info'), 500);
+}
+</script>
+</body>
+</html>
