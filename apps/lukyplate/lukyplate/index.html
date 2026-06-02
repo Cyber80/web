@@ -1,0 +1,1183 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>เลขทะเบียนรถมงคล</title>
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600;700&family=Kanit:wght@300;500;700;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --gold: #c9a84c;
+    --gold-light: #f0d080;
+    --gold-dark: #8a6a1e;
+    --red: #c0392b;
+    --green: #1a7a4a;
+    --bg-dark: #0d0d0d;
+    --bg-card: #141414;
+    --bg-card2: #1c1c1c;
+    --text: #f0e8d5;
+    --text-dim: #a09070;
+    --border: #2e2a1e;
+    --purple: #7c3aed;
+    --purple-light: #a78bfa;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg-dark);
+    background-image:
+      radial-gradient(ellipse at 20% 10%, rgba(201,168,76,0.07) 0%, transparent 60%),
+      radial-gradient(ellipse at 80% 90%, rgba(201,168,76,0.05) 0%, transparent 50%);
+    color: var(--text);
+    font-family: 'Sarabun', sans-serif;
+    min-height: 100vh;
+    padding: 0 0 60px;
+  }
+  header {
+    text-align: center;
+    padding: 36px 20px 26px;
+    border-bottom: 1px solid var(--border);
+    position: relative;
+    overflow: hidden;
+  }
+  header::before { content:'🏮'; position:absolute; font-size:120px; opacity:0.04; top:-20px; left:10%; pointer-events:none; }
+  header::after  { content:'🏮'; position:absolute; font-size:120px; opacity:0.04; top:-20px; right:10%; pointer-events:none; }
+  .header-sub { font-family:'Kanit',sans-serif; font-size:11px; letter-spacing:4px; color:var(--gold); text-transform:uppercase; margin-bottom:8px; }
+  h1 {
+    font-family:'Kanit',sans-serif; font-size:clamp(26px,6vw,44px); font-weight:900;
+    background:linear-gradient(135deg,var(--gold-light) 0%,var(--gold) 50%,var(--gold-dark) 100%);
+    -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+    line-height:1.1; margin-bottom:6px;
+  }
+  .header-desc { font-size:13px; color:var(--text-dim); margin-top:8px; }
+  .container { max-width:780px; margin:0 auto; padding:28px 16px 0; }
+  .card { background:var(--bg-card); border:1px solid var(--border); border-radius:16px; padding:22px; margin-bottom:18px; }
+  .card-title {
+    font-family:'Kanit',sans-serif; font-size:13px; font-weight:500; color:var(--gold);
+    letter-spacing:2px; text-transform:uppercase; margin-bottom:16px;
+    display:flex; align-items:center; gap:8px;
+  }
+  .card-title::after { content:''; flex:1; height:1px; background:var(--border); }
+  label { display:block; font-size:13px; color:var(--text-dim); margin-bottom:6px; font-weight:600; }
+  .form-group { margin-bottom:16px; }
+  select, input[type="date"], input[type="text"] {
+    width:100%; background:var(--bg-card2); border:1px solid var(--border); border-radius:10px;
+    padding:11px 14px; color:var(--text); font-family:'Sarabun',sans-serif; font-size:15px;
+    outline:none; transition:border-color 0.2s; -webkit-appearance:none;
+  }
+  select:focus, input:focus { border-color:var(--gold); }
+  select option { background:#1c1c1c; }
+  .row2 { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+  @media(max-width:480px){ .row2{ grid-template-columns:1fr; } }
+
+  /* Tabs */
+  .tab-bar { display:flex; gap:0; background:var(--bg-card2); border-radius:12px; padding:4px; margin-bottom:16px; }
+  .tab-btn {
+    flex:1; padding:9px 4px; border:none; border-radius:9px; cursor:pointer;
+    font-family:'Kanit',sans-serif; font-size:13px; font-weight:500;
+    background:transparent; color:var(--text-dim); transition:all 0.2s;
+  }
+  .tab-btn.active { background:var(--gold); color:#0d0d0d; }
+
+  /* Mode cards */
+  .mode-solo { }
+  .mode-couple { display:none; }
+  .mode-couple.show { display:block; }
+
+  /* Couple person cards */
+  .couple-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+  @media(max-width:520px){ .couple-grid{ grid-template-columns:1fr; } }
+  .person-card {
+    background:var(--bg-card2); border:1px solid var(--border); border-radius:12px; padding:14px;
+  }
+  .person-label {
+    font-family:'Kanit',sans-serif; font-size:12px; letter-spacing:2px;
+    margin-bottom:10px; display:flex; align-items:center; gap:6px;
+  }
+  .person-label.p1 { color:#f0a070; }
+  .person-label.p2 { color:#70b8f0; }
+  .couple-mode-select {
+    background:var(--bg-card2); border:1px solid var(--border); border-radius:10px;
+    padding:10px 12px; width:100%; color:var(--text); font-family:'Sarabun',sans-serif; font-size:14px;
+    outline:none; margin-bottom:12px; -webkit-appearance:none;
+  }
+  .couple-mode-label { font-size:12px; color:var(--text-dim); margin-bottom:6px; display:block; }
+
+  /* Digit exclusion */
+  .digit-buttons { display:flex; flex-wrap:wrap; gap:6px; margin-top:6px; }
+  .digit-btn {
+    width:38px; height:38px; border-radius:8px; border:1px solid var(--border);
+    background:var(--bg-card2); color:var(--text); font-family:'Kanit',sans-serif;
+    font-size:16px; font-weight:700; cursor:pointer; transition:all 0.15s;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .digit-btn.excluded {
+    background:rgba(192,57,43,0.2); border-color:rgba(192,57,43,0.6); color:#e07070;
+    text-decoration:line-through;
+  }
+  .digit-btn:hover:not(.excluded) { border-color:var(--gold); color:var(--gold); }
+  .excluded-hint { font-size:11px; color:var(--text-dim); margin-top:6px; }
+
+  /* Plate preview */
+  .plate-preview {
+    background:var(--bg-card2); border:1px solid var(--border); border-radius:10px;
+    padding:12px 14px; margin-top:4px; display:flex; align-items:center; gap:10px; flex-wrap:wrap;
+  }
+  .plate-part { font-family:'Kanit',sans-serif; font-size:22px; font-weight:700; color:var(--text); min-width:40px; text-align:center; }
+  .plate-sep { color:var(--text-dim); font-size:18px; }
+  .plate-part.editable { background:rgba(201,168,76,0.1); border:1px dashed var(--gold); border-radius:6px; padding:2px 8px; color:var(--gold-light); }
+
+  .btn-calc {
+    width:100%; background:linear-gradient(135deg,var(--gold-dark),var(--gold),var(--gold-light));
+    border:none; border-radius:12px; padding:15px; font-family:'Kanit',sans-serif;
+    font-size:17px; font-weight:700; color:#0d0d0d; cursor:pointer; letter-spacing:1px;
+    transition:opacity 0.2s,transform 0.1s; margin-top:4px;
+  }
+  .btn-calc:hover{ opacity:0.9; } .btn-calc:active{ transform:scale(0.98); }
+
+  /* Results */
+  #results { display:none; }
+  .result-header { text-align:center; padding:18px; margin-bottom:18px; }
+  .result-header h2 { font-family:'Kanit',sans-serif; font-size:22px; font-weight:700; color:var(--gold); margin-bottom:4px; }
+  .result-header p { color:var(--text-dim); font-size:13px; }
+  .section-label {
+    font-family:'Kanit',sans-serif; font-size:11px; letter-spacing:3px; color:var(--text-dim);
+    text-transform:uppercase; margin-bottom:12px; display:flex; align-items:center; gap:8px;
+  }
+  .section-label::before,.section-label::after{ content:''; flex:1; height:1px; background:var(--border); }
+
+  /* Warn */
+  .warn-card { background:rgba(192,57,43,0.08); border:1px solid rgba(192,57,43,0.3); border-radius:12px; padding:14px; margin-bottom:14px; }
+  .warn-card .warn-title { font-family:'Kanit',sans-serif; font-weight:600; color:#e74c3c; font-size:13px; margin-bottom:8px; }
+  .warn-list { list-style:none; display:flex; flex-wrap:wrap; gap:6px; }
+  .warn-list li { background:rgba(192,57,43,0.12); border:1px solid rgba(192,57,43,0.25); border-radius:6px; padding:3px 10px; font-size:12px; color:#ff8080; }
+
+  /* Couple summary */
+  .couple-summary {
+    background:linear-gradient(135deg,rgba(124,58,237,0.12),rgba(124,58,237,0.04));
+    border:1px solid rgba(124,58,237,0.35); border-radius:14px; padding:16px; margin-bottom:16px;
+  }
+  .couple-summary h3 { font-family:'Kanit',sans-serif; font-size:15px; color:var(--purple-light); margin-bottom:10px; display:flex; align-items:center; gap:6px; }
+  .couple-tags { display:flex; flex-wrap:wrap; gap:8px; }
+  .couple-tag {
+    background:rgba(124,58,237,0.15); border:1px solid rgba(124,58,237,0.3);
+    border-radius:20px; padding:4px 12px; font-size:12px; color:var(--purple-light); font-family:'Kanit',sans-serif;
+  }
+
+  /* Excluded digits display */
+  .excluded-display {
+    background:rgba(192,57,43,0.08); border:1px solid rgba(192,57,43,0.25); border-radius:10px;
+    padding:10px 14px; margin-bottom:14px; font-size:13px; display:none;
+  }
+  .excluded-display.show { display:block; }
+  .excluded-display strong { color:#ff8080; }
+
+  /* Top picks */
+  .top-picks {
+    background:linear-gradient(135deg,rgba(201,168,76,0.12),rgba(201,168,76,0.04));
+    border:1px solid rgba(201,168,76,0.35); border-radius:14px; padding:18px; margin-bottom:18px;
+  }
+  .top-picks h3 { font-family:'Kanit',sans-serif; font-weight:700; color:var(--gold-light); font-size:15px; margin-bottom:10px; display:flex; align-items:center; gap:8px; }
+  .top-picks-grid { display:flex; flex-wrap:wrap; gap:8px; }
+  .top-pick-item {
+    background:rgba(201,168,76,0.12); border:1px solid rgba(201,168,76,0.4);
+    border-radius:8px; padding:6px 14px; font-family:'Kanit',sans-serif;
+    font-size:18px; font-weight:700; color:var(--gold-light); letter-spacing:1px; cursor:pointer;
+    transition:background 0.15s;
+  }
+  .top-pick-item:hover { background:rgba(201,168,76,0.22); }
+
+  /* Birthday info */
+  .birthday-info {
+    background:var(--bg-card2); border:1px solid var(--border); border-radius:10px;
+    padding:12px 14px; margin-bottom:14px; display:flex; flex-wrap:wrap; gap:12px; align-items:center;
+  }
+  .bday-tag { display:flex; flex-direction:column; gap:2px; }
+  .bday-tag .label { font-size:11px; color:var(--text-dim); letter-spacing:1px; }
+  .bday-tag .value { font-family:'Kanit',sans-serif; font-size:14px; font-weight:600; color:var(--gold-light); }
+  .divider { width:1px; height:36px; background:var(--border); }
+
+  /* Num grid */
+  .num-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(96px,1fr)); gap:8px; margin-bottom:20px; }
+  .num-cell { border-radius:10px; padding:11px 6px; text-align:center; cursor:pointer; transition:transform 0.15s,box-shadow 0.15s; position:relative; }
+  .num-cell:hover { transform:translateY(-2px); }
+  .num-cell.great { background:linear-gradient(135deg,rgba(26,122,74,0.15),rgba(26,122,74,0.08)); border:1px solid rgba(26,122,74,0.4); }
+  .num-cell.great-couple { background:linear-gradient(135deg,rgba(124,58,237,0.2),rgba(124,58,237,0.08)); border:1px solid rgba(124,58,237,0.5); box-shadow:0 2px 14px rgba(124,58,237,0.15); }
+  .num-cell.gold-pick { background:linear-gradient(135deg,rgba(201,168,76,0.2),rgba(201,168,76,0.08)); border:1px solid rgba(201,168,76,0.55); box-shadow:0 2px 14px rgba(201,168,76,0.12); }
+  .num-cell.good { background:rgba(60,100,60,0.1); border:1px solid rgba(60,120,60,0.25); }
+  .num-cell.bad { background:rgba(192,57,43,0.07); border:1px dashed rgba(192,57,43,0.3); opacity:0.5; }
+  .num-cell .num-digits { font-family:'Kanit',sans-serif; font-size:19px; font-weight:700; letter-spacing:1px; }
+  .num-cell.gold-pick .num-digits { color:var(--gold-light); }
+  .num-cell.great-couple .num-digits { color:var(--purple-light); }
+  .num-cell.great .num-digits { color:#5dbb82; }
+  .num-cell.good .num-digits { color:#8aaa8a; }
+  .num-cell.bad .num-digits { color:#e07070; }
+  .num-cell .num-sum { font-size:10px; margin-top:2px; color:var(--text-dim); }
+  .num-cell .num-badge { font-size:10px; font-family:'Kanit',sans-serif; padding:1px 5px; border-radius:4px; display:inline-block; margin-top:3px; }
+  .num-cell.gold-pick .num-badge { background:rgba(201,168,76,0.2); color:var(--gold); }
+  .num-cell.great-couple .num-badge { background:rgba(124,58,237,0.2); color:var(--purple-light); }
+  .num-cell.great .num-badge { background:rgba(26,122,74,0.2); color:#5dbb82; }
+  .num-cell.good .num-badge { background:rgba(60,100,60,0.15); color:#8aaa8a; }
+  .num-cell.bad .num-badge { background:rgba(192,57,43,0.15); color:#e07070; }
+
+  /* Detail panel */
+  .detail-panel {
+    background:var(--bg-card); border:1px solid var(--gold); border-radius:14px;
+    padding:18px; margin-bottom:18px; display:none;
+  }
+  .detail-panel.show { display:block; animation:fadeIn 0.3s ease; }
+  @keyframes fadeIn{ from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:none} }
+  .detail-plate { font-family:'Kanit',sans-serif; font-size:26px; font-weight:900; color:var(--gold-light); text-align:center; letter-spacing:4px; margin-bottom:10px; }
+  .detail-sum { text-align:center; font-size:13px; color:var(--text-dim); margin-bottom:14px; }
+  .detail-sum span { color:var(--gold); font-weight:700; }
+  .detail-meaning { background:rgba(201,168,76,0.06); border-left:3px solid var(--gold); padding:11px 13px; border-radius:0 8px 8px 0; font-size:13px; line-height:1.7; color:var(--text); margin-bottom:10px; }
+  .detail-pairs { display:flex; flex-wrap:wrap; gap:6px; margin-top:8px; }
+  .pair-tag { font-family:'Kanit',sans-serif; font-size:11px; padding:3px 10px; border-radius:20px; background:rgba(26,122,74,0.15); border:1px solid rgba(26,122,74,0.3); color:#5dbb82; }
+  .pair-tag.bad { background:rgba(192,57,43,0.1); border-color:rgba(192,57,43,0.3); color:#e07070; }
+
+  .hint { font-size:12px; color:var(--text-dim); margin-top:5px; }
+
+  /* Couple person warn inline */
+  .inline-warn { display:flex; gap:6px; flex-wrap:wrap; margin-top:6px; }
+  .iw-tag { font-size:11px; background:rgba(192,57,43,0.1); border:1px solid rgba(192,57,43,0.2); border-radius:5px; padding:2px 8px; color:#ff9090; }
+
+  /* Required feature */
+  .req-card { background:linear-gradient(135deg,rgba(16,185,129,0.08),rgba(16,185,129,0.03)); border:1px solid rgba(16,185,129,0.25); border-radius:16px; padding:22px; margin-bottom:18px; }
+  .req-card .card-title { color:#34d399; }
+  .req-card .card-title::after { background:rgba(16,185,129,0.2); }
+
+  .req-section { margin-bottom:18px; }
+  .req-section:last-child { margin-bottom:0; }
+  .req-section-title { font-family:'Kanit',sans-serif; font-size:12px; letter-spacing:2px; color:#34d399; margin-bottom:10px; display:flex; align-items:center; gap:6px; }
+
+  .req-digit-row { display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin-bottom:8px; }
+  .req-digit-btn {
+    width:38px; height:38px; border-radius:8px; border:1px solid rgba(16,185,129,0.3);
+    background:rgba(16,185,129,0.06); color:var(--text-dim); font-family:'Kanit',sans-serif;
+    font-size:16px; font-weight:700; cursor:pointer; transition:all 0.15s;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .req-digit-btn.selected { background:rgba(16,185,129,0.25); border-color:#34d399; color:#34d399; box-shadow:0 0 8px rgba(52,211,153,0.2); }
+  .req-digit-btn:hover:not(.selected) { border-color:#34d399; color:#34d399; }
+
+  .req-pos-row { display:flex; gap:6px; flex-wrap:wrap; }
+  .req-pos-btn {
+    padding:5px 12px; border-radius:20px; border:1px solid rgba(16,185,129,0.25);
+    background:transparent; color:var(--text-dim); font-family:'Kanit',sans-serif;
+    font-size:12px; cursor:pointer; transition:all 0.15s;
+  }
+  .req-pos-btn.selected { background:rgba(16,185,129,0.2); border-color:#34d399; color:#34d399; }
+
+  .req-digit-entry { display:flex; align-items:center; gap:8px; background:rgba(16,185,129,0.06); border:1px solid rgba(16,185,129,0.2); border-radius:10px; padding:8px 12px; margin-bottom:6px; flex-wrap:wrap; }
+  .req-digit-entry .entry-label { font-family:'Kanit',sans-serif; font-size:14px; font-weight:700; color:#34d399; min-width:24px; }
+  .req-digit-entry .entry-pos { font-size:12px; color:var(--text-dim); }
+  .req-digit-entry .entry-remove { margin-left:auto; background:none; border:none; color:#e07070; cursor:pointer; font-size:16px; padding:0 4px; }
+
+  .req-pair-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(58px,1fr)); gap:6px; }
+  .req-pair-cell {
+    border-radius:8px; border:1px solid rgba(16,185,129,0.2);
+    background:rgba(16,185,129,0.04); padding:6px 4px; text-align:center;
+    cursor:pointer; transition:all 0.15s;
+  }
+  .req-pair-cell.selected { background:rgba(16,185,129,0.2); border-color:#34d399; box-shadow:0 0 8px rgba(52,211,153,0.15); }
+  .req-pair-cell .pair-num { font-family:'Kanit',sans-serif; font-size:16px; font-weight:700; color:var(--text-dim); }
+  .req-pair-cell.selected .pair-num { color:#34d399; }
+  .req-pair-cell .pair-tag-label { font-size:9px; color:var(--text-dim); margin-top:2px; }
+  .req-pair-cell.selected .pair-tag-label { color:#34d399; }
+
+  .req-match-badge { display:inline-block; font-family:'Kanit',sans-serif; font-size:9px; padding:1px 5px; border-radius:4px; background:rgba(16,185,129,0.2); border:1px solid rgba(16,185,129,0.4); color:#34d399; margin-top:2px; }
+
+  .num-cell.req-match { outline:2px solid rgba(52,211,153,0.6); outline-offset:1px; }
+  .num-cell.req-match-strong { outline:2px solid #34d399; outline-offset:1px; box-shadow:0 0 12px rgba(52,211,153,0.2); }
+
+  /* Filter bar */
+  .filter-bar { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:14px; }
+  .filter-btn {
+    padding:6px 14px; border-radius:20px; border:1px solid var(--border);
+    background:transparent; color:var(--text-dim); font-family:'Kanit',sans-serif;
+    font-size:12px; cursor:pointer; transition:all 0.15s;
+  }
+  .filter-btn.active { background:var(--gold); border-color:var(--gold); color:#0d0d0d; }
+  .filter-btn.couple-active { background:var(--purple); border-color:var(--purple); color:#fff; }
+
+  /* Disclaimer */
+  .disclaimer-bar {
+    background: rgba(160,144,112,0.08);
+    border: 1px solid rgba(160,144,112,0.2);
+    border-radius: 12px;
+    padding: 14px 16px;
+    margin-bottom: 18px;
+    font-size: 12px;
+    color: var(--text-dim);
+    line-height: 1.7;
+  }
+  .disclaimer-bar .dis-title {
+    font-family: 'Kanit', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-dim);
+    margin-bottom: 5px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .disclaimer-bar a { color: var(--gold); text-decoration: none; }
+
+  .site-footer {
+    max-width: 780px;
+    margin: 40px auto 0;
+    padding: 20px 16px 40px;
+    border-top: 1px solid var(--border);
+    font-size: 11px;
+    color: var(--text-dim);
+    line-height: 1.8;
+    text-align: center;
+  }
+  .site-footer strong { color: var(--text-dim); font-weight: 600; }
+</style>
+</head>
+<body>
+<header>
+  <div class="header-sub">✦ เครื่องมือช่วยตัดสินใจ · ความเชื่อส่วนบุคคล ✦</div>
+  <h1>เลือกเลขทะเบียนรถ<br>ให้ถูกโฉลก</h1>
+  <p class="header-desc">อิงหลักทักษาโหราศาสตร์ไทย + ความเชื่อพื้นบ้านเรื่องเลขศาสตร์ · เพื่อการตัดสินใจส่วนตัวเท่านั้น</p>
+</header>
+
+<div class="container">
+
+  <!-- TAB BAR -->
+  <div class="tab-bar">
+    <button class="tab-btn active" onclick="switchTab('solo',this)">🧍 คนเดียว</button>
+    <button class="tab-btn" onclick="switchTab('couple',this)">👫 คู่รัก / สองคน</button>
+  </div>
+
+  <!-- ===== DISCLAIMER ===== -->
+  <div class="disclaimer-bar">
+    <div class="dis-title">⚠️ ข้อควรทราบก่อนใช้งาน</div>
+    แอปนี้ใช้ <strong>หลักทักษา/อัฏฐจักร</strong> จากโหราศาสตร์ไทยโบราณ ผสมกับ <strong>ความเชื่อพื้นบ้านเรื่องเลขศาสตร์</strong>
+    ที่เผยแพร่กันทั่วไปในสังคมไทย ซึ่งยังไม่มีหลักฐานทางวิทยาศาสตร์รองรับ
+    ผลลัพธ์ที่ได้เป็นเพียง <strong>ตัวช่วยประกอบการตัดสินใจส่วนตัว</strong> เท่านั้น
+    มิใช่การพยากรณ์ที่แน่นอนตายตัว ความโชคดีหรือความปลอดภัยขึ้นอยู่กับพฤติกรรมและการกระทำของผู้ขับขี่เป็นหลัก
+  </div>
+
+  <!-- ===== SOLO MODE ===== -->
+  <div id="mode_solo" class="card mode-solo">
+    <div class="card-title">⚙ ข้อมูลทะเบียนของคุณ</div>
+    <div class="form-group">
+      <label>วันเกิด</label>
+      <input type="date" id="birthdate" />
+    </div>
+    <div class="row2">
+      <div class="form-group">
+        <label>กลุ่ม 1 — เลขหน้าอักษร</label>
+        <input type="text" id="prefix_num" placeholder="เช่น 6, 7..." maxlength="4" />
+        <p class="hint">ตัวเลขก่อนอักษร (ถ้ามี)</p>
+      </div>
+      <div class="form-group">
+        <label>กลุ่ม 2 — อักษร</label>
+        <input type="text" id="prefix_alpha" placeholder="เช่น กข, บน..." maxlength="3" oninput="updatePreview()" />
+      </div>
+    </div>
+    <!-- ตัวอย่างป้าย -->
+    <div class="form-group">
+      <label>ตัวอย่างป้าย</label>
+      <div class="plate-preview">
+        <span class="plate-part" id="preview_num">–</span>
+        <span class="plate-sep">·</span>
+        <span class="plate-part" id="preview_alpha">กข</span>
+        <span class="plate-sep">·</span>
+        <span class="plate-part editable">????</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== COUPLE MODE ===== -->
+  <div id="mode_couple" class="card" style="display:none;">
+    <div class="card-title">👫 ข้อมูลทะเบียนสำหรับสองคน</div>
+
+    <div class="form-group">
+      <label class="couple-mode-label">วิธีคำนวณร่วม</label>
+      <select id="couple_method" class="couple-mode-select" onchange="updateCoupleHint()">
+        <option value="both_pass">✅ ดีสำหรับทั้งคู่ — เลือกเฉพาะเลขที่ผ่านเกณฑ์วันเกิดทั้งสองคน</option>
+        <option value="union_great">⭐ ผลรวมดีมากสำหรับทั้งคู่ — ผลรวมต้องอยู่ในกลุ่มดีมากของทั้งคู่</option>
+        <option value="p1_priority">👤 ให้ความสำคัญคนขับหลัก — ผ่านเกณฑ์คนที่ 1 แล้วกรองเลขต้องห้ามคนที่ 2</option>
+      </select>
+      <p class="hint" id="couple_hint">กรองเฉพาะเลขที่ไม่มีเลขกาลกิณี และไม่ขัดข้อห้ามของทั้งสองคน</p>
+    </div>
+
+    <div class="couple-grid">
+      <div class="person-card">
+        <div class="person-label p1">🔴 คนที่ 1 (ผู้ขับหลัก)</div>
+        <div class="form-group">
+          <label>วันเกิด</label>
+          <input type="date" id="c_birth1" />
+        </div>
+      </div>
+      <div class="person-card">
+        <div class="person-label p2">🔵 คนที่ 2</div>
+        <div class="form-group">
+          <label>วันเกิด</label>
+          <input type="date" id="c_birth2" />
+        </div>
+      </div>
+    </div>
+
+    <div class="row2" style="margin-top:8px;">
+      <div class="form-group">
+        <label>กลุ่ม 1 — เลขหน้าอักษร</label>
+        <input type="text" id="c_prefix_num" placeholder="เช่น 6..." maxlength="4" />
+      </div>
+      <div class="form-group">
+        <label>กลุ่ม 2 — อักษร</label>
+        <input type="text" id="c_prefix_alpha" placeholder="เช่น กข, บน..." maxlength="3" />
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== EXCLUSION CARD ===== -->
+  <div class="card">
+    <div class="card-title">🚫 ยกเว้นตัวเลขที่ไม่ต้องการ</div>
+    <label>กดเลขที่ไม่อยากให้ปรากฏในทะเบียน (กลุ่มที่ 3)</label>
+    <div class="digit-buttons" id="digit_btns">
+      <!-- rendered by JS -->
+    </div>
+    <p class="excluded-hint" id="excl_hint">ยังไม่ได้ยกเว้นเลขใด · คลิกเลขเพื่อยกเว้น คลิกซ้ำเพื่อยกเลิก</p>
+    
+    <div style="margin-top:14px;">
+      <label>ยกเว้นรูปแบบเพิ่มเติม</label>
+      <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:6px;" id="pattern_excl_btns">
+        <button class="filter-btn" onclick="togglePatternExcl('triple',this)" title="เลขซ้ำสามตัวติด เช่น 1119, 5550">เลขซ้ำ 3 ตัวติด</button>
+        <button class="filter-btn" onclick="togglePatternExcl('quad',this)" title="เลขเดียวกัน 4 ตัว เช่น 1111">เลขซ้ำ 4 ตัว</button>
+        <button class="filter-btn" onclick="togglePatternExcl('seq_up',this)" title="เรียงขึ้น เช่น 1234">เรียงขึ้น</button>
+        <button class="filter-btn" onclick="togglePatternExcl('seq_dn',this)" title="เรียงลง เช่น 9876">เรียงลง</button>
+        <button class="filter-btn" onclick="togglePatternExcl('has0',this)" title="มีเลข 0 ในทะเบียน">มีเลข 0</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== REQUIRED DIGITS/PAIRS CARD ===== -->
+  <div class="req-card">
+    <div class="card-title">✨ ต้องการเลขหรือคู่เลขพิเศษ</div>
+
+    <!-- Required single digits -->
+    <div class="req-section">
+      <div class="req-section-title">🔢 ต้องการเลขเฉพาะ</div>
+      <div style="display:flex;align-items:flex-start;gap:12px;flex-wrap:wrap;margin-bottom:10px;">
+        <div>
+          <div style="font-size:11px;color:var(--text-dim);margin-bottom:6px;">เลือกตัวเลข</div>
+          <div class="req-digit-row" id="req_digit_btns"></div>
+        </div>
+        <div>
+          <div style="font-size:11px;color:var(--text-dim);margin-bottom:6px;">ตำแหน่ง</div>
+          <div class="req-pos-row" id="req_pos_btns">
+            <button class="req-pos-btn selected" data-pos="any" onclick="selectPos(this)">ที่ใดก็ได้</button>
+            <button class="req-pos-btn" data-pos="0" onclick="selectPos(this)">หลักที่ 1</button>
+            <button class="req-pos-btn" data-pos="1" onclick="selectPos(this)">หลักที่ 2</button>
+            <button class="req-pos-btn" data-pos="2" onclick="selectPos(this)">หลักที่ 3</button>
+            <button class="req-pos-btn" data-pos="3" onclick="selectPos(this)">หลักที่ 4</button>
+          </div>
+        </div>
+        <div style="align-self:flex-end;">
+          <button onclick="addReqDigit()" style="padding:8px 18px;background:rgba(52,211,153,0.15);border:1px solid #34d399;border-radius:8px;color:#34d399;font-family:'Kanit',sans-serif;font-size:13px;cursor:pointer;white-space:nowrap;">+ เพิ่มเงื่อนไข</button>
+        </div>
+      </div>
+      <div id="req_digit_list" style="display:flex;flex-direction:column;gap:5px;"></div>
+      <p class="hint" style="margin-top:6px;">เลือกเลข → เลือกตำแหน่ง → กด เพิ่มเงื่อนไข · เพิ่มได้หลายเงื่อนไข</p>
+    </div>
+
+    <!-- Required pairs -->
+    <div class="req-section">
+      <div class="req-section-title">🔗 ต้องการคู่เลขติดกัน</div>
+      <div class="req-pair-grid" id="req_pair_grid"></div>
+      <p class="hint" style="margin-top:8px;">คลิกเลือกคู่ที่ต้องการ · เลือกได้หลายคู่ · เลขที่มีคู่นี้จะได้รับ boost คะแนนพิเศษ</p>
+    </div>
+
+    <!-- Required single-digit sum -->
+    <div class="req-section">
+      <div class="req-section-title">∑ ต้องการผลรวมสุดท้าย (1 หลัก)</div>
+      <div style="display:flex;gap:7px;flex-wrap:wrap;" id="req_sum_btns"></div>
+      <p class="hint" style="margin-top:6px;">กรองเฉพาะทะเบียนที่ผลรวมลดเหลือ 1 หลักตรงกับที่เลือก</p>
+    </div>
+  </div>
+
+  <button class="btn-calc" onclick="calculate()">✦ คำนวณเลขมงคล ✦</button>
+
+  <!-- ===== RESULTS ===== -->
+  <div id="results">
+    <div class="result-header">
+      <h2>ผลการวิเคราะห์</h2>
+      <p id="result_sub"></p>
+    </div>
+
+    <!-- birthday info -->
+    <div id="bday_info" class="birthday-info"></div>
+
+    <!-- couple summary (shown if couple mode) -->
+    <div id="couple_summary_block" class="couple-summary" style="display:none;">
+      <h3>💑 สรุปข้อมูลคู่</h3>
+      <div class="couple-tags" id="couple_tags"></div>
+    </div>
+
+    <!-- excluded display -->
+    <div id="excl_display" class="excluded-display">
+      <strong>⛔ เลขที่ยกเว้นออก:</strong> <span id="excl_display_text"></span>
+    </div>
+
+    <!-- warn block -->
+    <div id="warn_block" class="warn-card">
+      <div class="warn-title">⚠️ เลขที่ควรหลีกเลี่ยงตามความเชื่อทักษา (ไม่บังคับ)</div>
+      <div id="warn_content"></div>
+    </div>
+
+    <!-- filter bar -->
+    <div class="filter-bar">
+      <button class="filter-btn active" onclick="applyFilter('all',this)">ทั้งหมด</button>
+      <button class="filter-btn" onclick="applyFilter('great',this)">⭐ ดีมาก</button>
+      <button class="filter-btn" onclick="applyFilter('good',this)">🟢 ดี</button>
+      <button class="filter-btn" id="couple_filter_btn" onclick="applyFilter('couple',this)" style="display:none;">💜 ดีสำหรับคู่</button>
+      <button class="filter-btn" onclick="applyFilter('no_bad_pair',this)">✅ ไม่มีคู่อัปมงคล</button>
+      <button class="filter-btn" id="req_filter_btn" onclick="applyFilter('req_match',this)" style="display:none;">✨ ตรงเงื่อนไขพิเศษ</button>
+    </div>
+
+    <!-- top picks -->
+    <div class="top-picks">
+      <h3>⭐ เลขแนะนำอันดับต้น</h3>
+      <div class="top-picks-grid" id="top_picks_list"></div>
+    </div>
+
+    <!-- detail panel -->
+    <div id="detail_panel" class="detail-panel">
+      <div class="detail-plate" id="d_plate">–</div>
+      <div class="detail-sum" id="d_sum"></div>
+      <div class="detail-meaning" id="d_meaning"></div>
+      <div id="d_pairs"></div>
+    </div>
+
+    <div class="section-label">เลขทะเบียน 4 หลัก ที่ประเมินแล้ว</div>
+    <div class="num-grid" id="num_grid"></div>
+  </div>
+
+</div>
+
+<script>
+// ========== DATA ==========
+const DAY_NAMES = ['อาทิตย์','จันทร์','อังคาร','พุธ(กลางวัน)','พฤหัสบดี','ศุกร์','เสาร์'];
+
+const DAY_RULES = {
+  0:{ forbidden_alpha:['ศ','ษ','ส','ห','ฬ','ฮ'], forbidden_digits:[6,3], forbidden_last:[6], lucky_color:'สีเขียว', bad_color:'สีฟ้า สีน้ำเงิน' },
+  1:{ forbidden_alpha:['อ'], forbidden_alpha_note:'สระทุกตัว (รวม อ)', forbidden_digits:[1,5], forbidden_last:[1], lucky_color:'สีดำ', bad_color:'สีแดง' },
+  2:{ forbidden_alpha:['ก','ข','ค','ฆ','ง'], forbidden_digits:[2,1], forbidden_last:[3], lucky_color:'สีเหลือง', bad_color:'สีขาว สีครีม' },
+  3:{ forbidden_alpha:['จ','ฉ','ช','ซ','ฌ','ญ'], forbidden_digits:[3,8], forbidden_last:[3], lucky_color:'สีเหลือง', bad_color:'สีส้ม สีทอง' },
+  4:{ forbidden_alpha:['ด','ต','ถ','ท','ธ','น'], forbidden_digits:[7], forbidden_last:[], lucky_color:'สีดำ สีม่วง สีน้ำเงิน', bad_color:'สีส้ม' },
+  5:{ forbidden_alpha:['ย','ร','ล','ว'], forbidden_digits:[7,8], forbidden_last:[8], lucky_color:'สีชมพู สีแดง', bad_color:'สีดำ' },
+  6:{ forbidden_alpha:['ฎ','ฏ','ฐ','ฑ','ฒ','ณ'], forbidden_digits:[4,6], forbidden_last:[4], lucky_color:'สีน้ำเงิน', bad_color:'สีเขียว สีแสด' },
+};
+
+const ALPHA_VALS = {
+  'ก':1,'ด':1,'ถ':1,'ท':1,'ภ':1,'ฤ':1,
+  'ข':2,'บ':2,'ป':2,'ง':2,'ช':2,
+  'ต':3,'ฑ':3,'ฒ':3,'ฆ':3,
+  'ค':4,'ธ':4,'ร':4,'ญ':4,'ษ':4,
+  'ฉ':5,'ณ':5,'ฌ':5,'น':5,'ม':5,'ห':5,'ฮ':5,'ฎ':5,'ฬ':5,
+  'จ':6,'ล':6,'ว':6,'อ':6,
+  'ซ':7,'ศ':7,'ส':7,
+  'ย':8,'ผ':8,'ฝ':8,'พ':8,'ฟ':8,
+  'ฏ':9,'ฐ':9
+};
+
+const GREAT_SUMS = new Set([4,5,6,9,14,15,19,23,24,32,36,40,41,42,44,45,46,50,51,54]);
+const MED_SUMS   = new Set([8,10,13,16,18,22,25,26,28,31,35,38,39,47,49,52,53]);
+
+const SUM_MEANINGS = {
+  4:'ดาวธาตุน้ำ ให้ผลดีในการค้าขาย ติดต่อเจรจา เป็นคนเฉลียวฉลาดว่องไว ชีวิตประสบความสำเร็จ มนุษย์สัมพันธ์เป็นเลิศ',
+  5:'ดาวธาตุดิน ให้ผลดีด้านการศึกษา ศาสนา เต็มไปด้วยปัญญา กระทำการใดก็ราบรื่นรุ่งเรือง มีความสุขุม มองโลกในแง่ดี',
+  6:'ดาวธาตุน้ำ ให้ผลดีด้านการเงิน ความรัก ความสมหวัง เงินทองไหลมาเทมา มีเสน่ห์ มีชื่อเสียง',
+  9:'ดาวธาตุลม เลขมงคลมาก กิจการงานต่างๆ ประสบความสำเร็จ แคล้วคลาดปลอดภัย อายุยืนมั่นคง มีโชคลาภแบบไม่คาดคิด',
+  14:'ผลรวมดีมาก ทำให้ชีวิตประสบผลสำเร็จอย่างมั่นคง มีสติปัญญาไหวพริบดี งานจะประสบความสำเร็จ มีชื่อเสียงกว้างไกล ชอบความยุติธรรม',
+  15:'เลขดีมาก มีเสน่ห์ ไม่ว่าจะทำอะไรก็มีคนช่วยเหลือ สนับสนุน มีมนุษย์สัมพันธ์ดี วาจาเป็นเลิศ สติปัญญาเป็นเลิศ',
+  19:'เลขดีมาก มีความอดทนสูง ทำธุรกิจค้าขายดีมาก จะได้รับความอุปการะจากผู้ใหญ่ ได้รับเกียรติอย่างสูงในสังคม มีสิ่งศักดิ์สิทธิ์คุ้มครอง',
+  23:'เลขดี เหมาะกับผู้หญิง มีเสน่ห์ ผู้ใหญ่ให้การช่วยเหลือ มีความเข้มแข็งอดทน โชคดีในเรื่องความรัก',
+  24:'เลขดีมาก เป็นคนมีเพื่อนมาก ฉลาด ไม่ถือตัว มีความเป็นมิตร รอบคอบรู้จักวางแผน ประสบความสำเร็จดีมาก',
+  32:'เลขดี เหมาะกับผู้หญิง งานที่ลงมือทำจะประสบความสำเร็จด้วยตนเอง ผู้ใหญ่จะเอ็นดู มีเสน่ห์ดึงดูดใจ',
+  36:'เลขดีมาก ความรักเด่นมาก ครอบครัวอบอุ่น มีหลักฐานมั่นคง การงานก้าวหน้าเร็วมาก ชีวิตประสบความสำเร็จแบบก้าวกระโดด',
+  40:'เลขดี ฐานะมั่นคงร่ำรวย มีชื่อเสียงลาภยศ เป็นนักธุรกิจที่เก็งกำไรได้ มีจินตนาการกว้างไกล เก็บเงินเก่ง',
+  41:'เลขดีมาก ชีวิตประสบความสำเร็จมั่นคง ความจำแม่นยำ มีสิ่งศักดิ์สิทธิ์คุ้มครอง มีพลังความทะเยอทะยาน วาจาเป็นอาวุธ',
+  42:'เลขดีมาก เป็นที่รักและนับถือแก่คนทั่วไป มีเสน่ห์ โชคดีเรื่องเงินทอง เป็นนักพูดชั้นดี เหมาะกับศิลปิน นักสร้างสรรค์',
+  44:'เลขดีมาก เสริมความสำเร็จและบารมี',
+  45:'สติปัญญาเฉียบแหลม ทำอะไรก็ได้รับความร่วมมือ มีความก้าวหน้าสูง มีโชคลาภแบบไม่คาดฝัน',
+  46:'เลขดีมาก มากด้วยมิตรสหาย การงานและการค้าดี ชีวิตมีความสุข มีโชคดีอยู่บ่อยๆ',
+  50:'เลขดีมาก ชีวิตประสบผลสำเร็จมั่นคง สติปัญญาดี มีสิ่งศักดิ์สิทธิ์คุ้มครอง สนใจธรรมะ รักความยุติธรรม',
+  51:'เลขดีมาก สติปัญญาแตกฉาน มีความสำเร็จ ทำอะไรก็ประสบผลสำเร็จ มีผู้คอยช่วยเหลือแนะนำ',
+  54:'เลขดีมาก เสริมความสำเร็จและการงานที่ก้าวหน้า',
+  8:'ผลรวมดีปานกลาง มีอุปสรรคบ้าง แต่ถ้ามีความพยายามไม่ย่อท้อก็มีโอกาสประสบความสำเร็จ',
+  10:'ผลรวมดีปานกลาง มีอุปสรรค ต้องพยายามต่อเนื่อง',
+  13:'ผลรวมดีปานกลาง ต้องใช้ความพยายามมาก',
+  16:'ผลรวมดีปานกลาง', 18:'ผลรวมดีปานกลาง', 22:'ผลรวมดีปานกลาง',
+  25:'ผลรวมดีปานกลาง', 26:'ผลรวมดีปานกลาง', 28:'ผลรวมดีปานกลาง',
+  31:'ผลรวมดีปานกลาง', 35:'ผลรวมดีปานกลาง', 38:'ผลรวมดีปานกลาง',
+  39:'ผลรวมดีปานกลาง', 47:'ผลรวมดีปานกลาง', 49:'ผลรวมดีปานกลาง',
+  52:'ผลรวมดีปานกลาง', 53:'ผลรวมดีปานกลาง',
+};
+
+const GOOD_PAIRS = {
+  '22':['เมตตา'],'23':['เมตตา'],'32':['เมตตา'],'24':['เมตตา','การเงิน'],
+  '42':['เมตตา','การเงิน'],'26':['เมตตา'],'62':['เมตตา'],'29':['เมตตา'],
+  '92':['เมตตา'],'36':['เมตตา','การเงิน'],'63':['เมตตา','การเงิน'],
+  '66':['การเงิน'],'28':['การเงิน'],'82':['การเงิน'],
+  '15':['บารมี','แคล้วคลาด'],'51':['บารมี','แคล้วคลาด'],
+  '35':['บารมี'],'53':['บารมี'],'45':['บารมี'],'54':['บารมี'],
+  '89':['บารมี'],'98':['บารมี'],'99':['บารมี','แคล้วคลาด'],
+  '49':['แคล้วคลาด'],'94':['แคล้วคลาด'],
+  '55':['แคล้วคลาด'],'95':['แคล้วคลาด'],'59':['แคล้วคลาด'],
+};
+
+const BAD_PAIRS = {
+  '03':'หงุดหงิด ใจร้อน','30':'หงุดหงิด ใจร้อน','10':'หงุดหงิด/เข้าอู่',
+  '01':'หงุดหงิด/เข้าอู่','12':'หงุดหงิด','21':'หงุดหงิด',
+  '33':'หงุดหงิด/อุบัติเหตุ','07':'หงุดหงิด','70':'หงุดหงิด',
+  '13':'หงุดหงิด/อุบัติเหตุ','31':'หงุดหงิด/อุบัติเหตุ',
+  '37':'หงุดหงิด/อุบัติเหตุ','73':'หงุดหงิด/อุบัติเหตุ',
+  '38':'หงุดหงิด/อุบัติเหตุ','83':'หงุดหงิด/อุบัติเหตุ',
+  '11':'ไฟฟ้า','91':'ไฟฟ้า','19':'ไฟฟ้า',
+  '17':'รอยขีดข่วน','71':'รอยขีดข่วน','77':'รอยขีดข่วน','76':'รอยขีดข่วน','67':'รอยขีดข่วน',
+  '02':'เข้าอู่','20':'เข้าอู่','06':'เข้าอู่','60':'เข้าอู่',
+};
+
+// ========== STATE ==========
+let excludedDigits = new Set();
+let excludedPatterns = new Set();
+let currentMode = 'solo';
+let lastAllResults = [];
+let lastPrefixAlpha = '';
+let lastPrefixNum = '';
+let currentFilter = 'all';
+let isCouple = false;
+
+// Required conditions
+let reqDigitConditions = []; // [{digit, pos}] pos = 'any'|0|1|2|3
+let reqPairs = new Set();
+let reqSums = new Set();
+let selectedReqDigit = null;
+let selectedReqPos = 'any';
+
+const ALL_SELECTABLE_PAIRS = [
+  {p:'11',l:''},{p:'12',l:''},{p:'13',l:''},{p:'14',l:''},{p:'15',l:'บารมี'},
+  {p:'16',l:''},{p:'17',l:''},{p:'18',l:''},{p:'19',l:''},
+  {p:'22',l:'เมตตา'},{p:'23',l:'เมตตา'},{p:'24',l:'เมตตา/เงิน'},
+  {p:'25',l:''},{p:'26',l:'เมตตา'},{p:'28',l:'การเงิน'},{p:'29',l:'เมตตา'},
+  {p:'33',l:''},{p:'35',l:'บารมี'},{p:'36',l:'เมตตา/เงิน'},{p:'39',l:''},
+  {p:'42',l:'เมตตา/เงิน'},{p:'45',l:'บารมี'},{p:'49',l:'แคล้วคลาด'},
+  {p:'51',l:'บารมี'},{p:'53',l:'บารมี'},{p:'54',l:'บารมี'},
+  {p:'55',l:'แคล้วคลาด'},{p:'59',l:'แคล้วคลาด'},
+  {p:'62',l:'เมตตา'},{p:'63',l:'เมตตา/เงิน'},{p:'66',l:'การเงิน'},
+  {p:'82',l:'การเงิน'},{p:'89',l:'บารมี'},
+  {p:'92',l:'เมตตา'},{p:'94',l:'แคล้วคลาด'},{p:'95',l:'แคล้วคลาด'},
+  {p:'98',l:'บารมี'},{p:'99',l:'บารมี/แคล้วคลาด'},
+];
+
+// ========== INIT DIGIT BUTTONS ==========
+(function initDigitBtns(){
+  // Exclusion buttons
+  let wrap = document.getElementById('digit_btns');
+  for(let i=0;i<=9;i++){
+    let btn = document.createElement('button');
+    btn.className = 'digit-btn';
+    btn.textContent = i;
+    btn.dataset.digit = i;
+    btn.onclick = () => toggleDigit(i, btn);
+    wrap.appendChild(btn);
+  }
+  // Required digit buttons
+  let reqWrap = document.getElementById('req_digit_btns');
+  for(let i=0;i<=9;i++){
+    let btn = document.createElement('button');
+    btn.className = 'req-digit-btn';
+    btn.textContent = i;
+    btn.onclick = () => selectReqDigit(i, btn);
+    reqWrap.appendChild(btn);
+  }
+  // Required pair grid
+  let pairGrid = document.getElementById('req_pair_grid');
+  ALL_SELECTABLE_PAIRS.forEach(({p,l})=>{
+    let cell = document.createElement('div');
+    cell.className = 'req-pair-cell';
+    cell.dataset.pair = p;
+    cell.innerHTML = `<div class="pair-num">${p}</div><div class="pair-tag-label">${l||'&nbsp;'}</div>`;
+    cell.onclick = () => toggleReqPair(p, cell);
+    pairGrid.appendChild(cell);
+  });
+  // Required sum buttons 1-9
+  let sumWrap = document.getElementById('req_sum_btns');
+  for(let i=1;i<=9;i++){
+    let btn = document.createElement('button');
+    btn.className = 'req-pos-btn';
+    btn.textContent = i;
+    btn.style.cssText='font-family:Kanit,sans-serif;font-size:16px;font-weight:700;width:40px;height:40px;border-radius:8px;';
+    btn.onclick = () => toggleReqSum(i, btn);
+    sumWrap.appendChild(btn);
+  }
+})();
+
+function toggleDigit(d, btn){
+  if(excludedDigits.has(d)){ excludedDigits.delete(d); btn.classList.remove('excluded'); }
+  else { excludedDigits.add(d); btn.classList.add('excluded'); }
+  updateExclHint();
+}
+
+function togglePatternExcl(pat, btn){
+  if(excludedPatterns.has(pat)){ excludedPatterns.delete(pat); btn.classList.remove('active'); }
+  else { excludedPatterns.add(pat); btn.classList.add('active'); }
+}
+
+function updateExclHint(){
+  let h = document.getElementById('excl_hint');
+  if(excludedDigits.size===0){ h.textContent='ยังไม่ได้ยกเว้นเลขใด · คลิกเลขเพื่อยกเว้น คลิกซ้ำเพื่อยกเลิก'; }
+  else { h.textContent=`ยกเว้นเลข: ${[...excludedDigits].sort().join(', ')} · ทะเบียนที่มีเลขเหล่านี้จะถูกกรองออก`; }
+}
+
+// ========== REQUIRED FEATURE FUNCTIONS ==========
+function selectReqDigit(d, btn){
+  selectedReqDigit = d;
+  document.querySelectorAll('.req-digit-btn').forEach(b=>b.classList.remove('selected'));
+  btn.classList.add('selected');
+}
+
+function selectPos(btn){
+  selectedReqPos = btn.dataset.pos;
+  document.querySelectorAll('.req-pos-btn').forEach(b=>b.classList.remove('selected'));
+  btn.classList.add('selected');
+}
+
+function addReqDigit(){
+  if(selectedReqDigit===null){ alert('กรุณาเลือกตัวเลขก่อน'); return; }
+  // prevent duplicate same digit+pos
+  let dup = reqDigitConditions.find(c=>c.digit===selectedReqDigit && c.pos===selectedReqPos);
+  if(dup){ alert('เงื่อนไขนี้มีอยู่แล้ว'); return; }
+  reqDigitConditions.push({digit:selectedReqDigit, pos:selectedReqPos});
+  renderReqDigitList();
+}
+
+function removeReqDigit(idx){
+  reqDigitConditions.splice(idx,1);
+  renderReqDigitList();
+}
+
+function renderReqDigitList(){
+  let list = document.getElementById('req_digit_list');
+  let posLabel = {any:'ที่ใดก็ได้','0':'หลักที่ 1','1':'หลักที่ 2','2':'หลักที่ 3','3':'หลักที่ 4 (ท้าย)'};
+  list.innerHTML = reqDigitConditions.map((c,i)=>`
+    <div class="req-digit-entry">
+      <span class="entry-label">${c.digit}</span>
+      <span class="entry-pos">ต้องอยู่ ${posLabel[c.pos]||c.pos}</span>
+      <button class="entry-remove" onclick="removeReqDigit(${i})">✕</button>
+    </div>
+  `).join('');
+  updateReqFilterBtn();
+}
+
+function toggleReqPair(p, cell){
+  if(reqPairs.has(p)){ reqPairs.delete(p); cell.classList.remove('selected'); }
+  else { reqPairs.add(p); cell.classList.add('selected'); }
+  updateReqFilterBtn();
+}
+
+function toggleReqSum(s, btn){
+  if(reqSums.has(s)){ reqSums.delete(s); btn.classList.remove('selected'); }
+  else { reqSums.add(s); btn.classList.add('selected'); }
+  updateReqFilterBtn();
+}
+
+function updateReqFilterBtn(){
+  let hasReq = reqDigitConditions.length>0 || reqPairs.size>0 || reqSums.size>0;
+  document.getElementById('req_filter_btn').style.display = hasReq?'inline-block':'none';
+}
+
+function checkReqMatch(num4str, totalSum){
+  // Check digit conditions
+  for(let cond of reqDigitConditions){
+    if(cond.pos==='any'){
+      if(!num4str.includes(String(cond.digit))) return false;
+    } else {
+      if(parseInt(num4str[parseInt(cond.pos)])!==cond.digit) return false;
+    }
+  }
+  // Check required pairs — ALL must be present
+  for(let rp of reqPairs){
+    let found=false;
+    for(let i=0;i<3;i++) if(num4str[i]+num4str[i+1]===rp){ found=true; break; }
+    if(!found) return false;
+  }
+  // Check required sum
+  if(reqSums.size>0 && !reqSums.has(reduceToOne(totalSum))) return false;
+  return true;
+}
+
+function getReqScore(num4str, totalSum){
+  // bonus score based on how many req conditions match (beyond mandatory)
+  let bonus=0;
+  if(checkReqMatch(num4str,totalSum)) bonus+=200;
+  return bonus;
+}
+
+// ========== TABS ==========
+function switchTab(mode, btn){
+  currentMode = mode;
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('mode_solo').style.display  = mode==='solo'   ? 'block':'none';
+  document.getElementById('mode_couple').style.display= mode==='couple' ? 'block':'none';
+}
+// init
+document.getElementById('mode_couple').style.display='none';
+
+function updatePreview(){
+  let num = document.getElementById('prefix_num').value.trim()||'–';
+  let alpha = document.getElementById('prefix_alpha').value.trim()||'กข';
+  document.getElementById('preview_num').textContent=num;
+  document.getElementById('preview_alpha').textContent=alpha;
+}
+document.getElementById('prefix_num').addEventListener('input',updatePreview);
+
+function updateCoupleHint(){
+  let v = document.getElementById('couple_method').value;
+  let hints = {
+    both_pass:'กรองเฉพาะเลขที่ไม่มีเลขกาลกิณี และไม่ขัดข้อห้ามของทั้งสองคน',
+    union_great:'ผลรวมเลขทะเบียนต้องอยู่ในกลุ่ม "ดีมาก" ของทั้งสองคน (ใช้กลุ่มผลรวมร่วม)',
+    p1_priority:'ผ่านเกณฑ์คนที่ 1 อย่างเต็มที่ แล้วกรองเฉพาะเลขที่ไม่มีเลขต้องห้ามของคนที่ 2',
+  };
+  document.getElementById('couple_hint').textContent = hints[v]||'';
+}
+
+// ========== HELPERS ==========
+function digitSum(n){ return n.toString().split('').reduce((a,c)=>a+parseInt(c),0); }
+function reduceToOne(n){ while(n>=10) n=digitSum(n); return n; }
+function alphaVal(str){ let v=0; for(let c of str) if(ALPHA_VALS[c]) v+=ALPHA_VALS[c]; return v; }
+function getDay(dateStr){ return new Date(dateStr).getDay(); }
+
+function evalPairs(digits4){
+  let goodPairs=[],badPairs=[];
+  for(let i=0;i<3;i++){
+    let pair=digits4[i]+digits4[i+1];
+    if(GOOD_PAIRS[pair]) goodPairs.push({pair,tags:GOOD_PAIRS[pair]});
+    if(BAD_PAIRS[pair])  badPairs.push({pair,reason:BAD_PAIRS[pair]});
+  }
+  return {goodPairs,badPairs};
+}
+
+function hasExcludedDigit(num4str){
+  for(let c of num4str) if(excludedDigits.has(parseInt(c))) return true;
+  return false;
+}
+
+function hasExcludedPattern(num4str){
+  if(excludedPatterns.has('quad') && /^(.)\1\1\1$/.test(num4str)) return true;
+  if(excludedPatterns.has('triple') && /(.)\1\1/.test(num4str)) return true;
+  if(excludedPatterns.has('seq_up')){
+    let d=num4str.split('').map(Number);
+    if(d[1]-d[0]===1 && d[2]-d[1]===1 && d[3]-d[2]===1) return true;
+  }
+  if(excludedPatterns.has('seq_dn')){
+    let d=num4str.split('').map(Number);
+    if(d[0]-d[1]===1 && d[1]-d[2]===1 && d[2]-d[3]===1) return true;
+  }
+  if(excludedPatterns.has('has0') && num4str.includes('0')) return true;
+  return false;
+}
+
+function scoreNumber(num4str, alphaStr, dayIdx, prefixNumStr){
+  let numDigits = num4str.split('').map(Number);
+  let prefixDigits = prefixNumStr ? prefixNumStr.split('').map(Number) : [];
+  let alphaV = alphaVal(alphaStr);
+  let totalSum = [...prefixDigits,...numDigits].reduce((a,c)=>a+c,0)+alphaV;
+  let rule = DAY_RULES[dayIdx]||null;
+  let hasForbidDigit=false, hasForbidLast=false;
+  if(rule){
+    for(let d of numDigits) if(rule.forbidden_digits.includes(d)){ hasForbidDigit=true; break; }
+    let lastD=numDigits[numDigits.length-1];
+    if(rule.forbidden_last.includes(lastD)) hasForbidLast=true;
+  }
+  let pairs=evalPairs(num4str);
+  let isForbidden=hasForbidDigit||hasForbidLast;
+  let score=0, grade='bad';
+  if(!isForbidden){
+    if(GREAT_SUMS.has(totalSum)){ score=100; grade='great'; }
+    else if(MED_SUMS.has(totalSum)){ score=60; grade='good'; }
+    else{ score=20; grade='neutral'; }
+    score+=pairs.goodPairs.length*10;
+    if(pairs.badPairs.length>0) score-=20;
+  }
+  let reqMatch = checkReqMatch(num4str, totalSum);
+  if(reqMatch) score += 200;
+  return {num4str,totalSum,grade,score,pairs,isForbidden,hasForbidDigit,hasForbidLast,reqMatch};
+}
+
+// Check if passes for a second person (forbidden digits/last only)
+function passesForDay(num4str, dayIdx){
+  let rule=DAY_RULES[dayIdx];
+  if(!rule) return true;
+  let numDigits=num4str.split('').map(Number);
+  for(let d of numDigits) if(rule.forbidden_digits.includes(d)) return false;
+  let lastD=numDigits[numDigits.length-1];
+  if(rule.forbidden_last.includes(lastD)) return false;
+  return true;
+}
+
+// ========== MAIN CALCULATE ==========
+function calculate(){
+  isCouple = currentMode==='couple';
+
+  let prefixAlpha, prefixNum, dayIdx1, dayIdx2=-1, coupleMethod='both_pass';
+
+  if(!isCouple){
+    let birthdate=document.getElementById('birthdate').value;
+    prefixNum=document.getElementById('prefix_num').value.trim();
+    prefixAlpha=document.getElementById('prefix_alpha').value.trim();
+    if(!birthdate){ alert('กรุณาระบุวันเกิดก่อน'); return; }
+    if(!prefixAlpha){ alert('กรุณาระบุกลุ่มอักษร'); return; }
+    dayIdx1=getDay(birthdate);
+  } else {
+    let b1=document.getElementById('c_birth1').value;
+    let b2=document.getElementById('c_birth2').value;
+    prefixNum=document.getElementById('c_prefix_num').value.trim();
+    prefixAlpha=document.getElementById('c_prefix_alpha').value.trim();
+    coupleMethod=document.getElementById('couple_method').value;
+    if(!b1||!b2){ alert('กรุณาระบุวันเกิดทั้งสองคน'); return; }
+    if(!prefixAlpha){ alert('กรุณาระบุกลุ่มอักษร'); return; }
+    dayIdx1=getDay(b1);
+    dayIdx2=getDay(b2);
+  }
+
+  lastPrefixAlpha=prefixAlpha;
+  lastPrefixNum=prefixNum;
+
+  let rule1=DAY_RULES[dayIdx1];
+  let rule2=dayIdx2>=0?DAY_RULES[dayIdx2]:null;
+
+  // Birthday info
+  let bdayHTML = `
+    <div class="bday-tag"><span class="label">${isCouple?'คนที่ 1':'วันเกิด'}</span><span class="value" style="color:#f0a070">วัน${DAY_NAMES[dayIdx1]}</span></div>
+    <div class="divider"></div>`;
+  if(isCouple && rule2){
+    bdayHTML+=`<div class="bday-tag"><span class="label">คนที่ 2</span><span class="value" style="color:#70b8f0">วัน${DAY_NAMES[dayIdx2]}</span></div><div class="divider"></div>`;
+  }
+  bdayHTML+=`
+    <div class="bday-tag"><span class="label">อักษร</span><span class="value">${prefixAlpha}</span></div>
+    ${prefixNum?`<div class="divider"></div><div class="bday-tag"><span class="label">เลขหน้า</span><span class="value">${prefixNum}</span></div>`:''}
+    <div class="divider"></div>
+    <div class="bday-tag"><span class="label">สีมงคล${isCouple?' (คนที่ 1)':''}</span><span class="value" style="color:#c9a84c">${rule1.lucky_color}</span></div>`;
+  if(isCouple && rule2){
+    bdayHTML+=`<div class="divider"></div><div class="bday-tag"><span class="label">สีมงคล (คนที่ 2)</span><span class="value" style="color:#70b8f0">${rule2.lucky_color}</span></div>`;
+  }
+  document.getElementById('bday_info').innerHTML=bdayHTML;
+
+  // Warn
+  let warnHTML='<ul class="warn-list">';
+  let alphaNote1=rule1.forbidden_alpha_note||rule1.forbidden_alpha.join(' ');
+  warnHTML+=`<li>${isCouple?'คนที่1 · ':''} อักษรที่เชื่อว่าเป็นกาลกิณี: ${alphaNote1}</li>`;
+  warnHTML+=`<li>${isCouple?'คนที่1 · ':''} เลขที่ควรหลีกเลี่ยง: ${rule1.forbidden_digits.join(', ')}</li>`;
+  if(rule1.forbidden_last.length>0) warnHTML+=`<li>${isCouple?'คนที่1 · ':''} เลขท้ายที่ควรหลีกเลี่ยง: ${rule1.forbidden_last.join(', ')}</li>`;
+  if(isCouple && rule2){
+    let alphaNote2=rule2.forbidden_alpha_note||rule2.forbidden_alpha.join(' ');
+    warnHTML+=`<li>คนที่2 · อักษรที่เชื่อว่าเป็นกาลกิณี: ${alphaNote2}</li>`;
+    warnHTML+=`<li>คนที่2 · เลขที่ควรหลีกเลี่ยง: ${rule2.forbidden_digits.join(', ')}</li>`;
+    if(rule2.forbidden_last.length>0) warnHTML+=`<li>คนที่2 · เลขท้ายที่ควรหลีกเลี่ยง: ${rule2.forbidden_last.join(', ')}</li>`;
+  }
+  if(excludedDigits.size>0) warnHTML+=`<li>ยกเว้นเลข: ${[...excludedDigits].sort().join(', ')}</li>`;
+  warnHTML+='</ul>';
+  document.getElementById('warn_content').innerHTML=warnHTML;
+
+  // Couple summary block
+  document.getElementById('couple_summary_block').style.display=isCouple?'block':'none';
+  if(isCouple && rule2){
+    let methodLabels={both_pass:'ผ่านเกณฑ์ทั้งคู่',union_great:'ผลรวมดีมากร่วม',p1_priority:'คนที่ 1 หลัก'};
+    document.getElementById('couple_tags').innerHTML=`
+      <div class="couple-tag">คนที่ 1: วัน${DAY_NAMES[dayIdx1]}</div>
+      <div class="couple-tag">คนที่ 2: วัน${DAY_NAMES[dayIdx2]}</div>
+      <div class="couple-tag">โหมด: ${methodLabels[coupleMethod]||coupleMethod}</div>
+    `;
+  }
+
+  // Excluded display
+  let exclDisp=document.getElementById('excl_display');
+  let exclParts=[];
+  if(excludedDigits.size>0) exclParts.push(`เลข ${[...excludedDigits].sort().join(', ')}`);
+  if(excludedPatterns.size>0) exclParts.push([...excludedPatterns].join(', '));
+  if(exclParts.length>0){
+    exclDisp.classList.add('show');
+    document.getElementById('excl_display_text').textContent=exclParts.join(' · ');
+  } else { exclDisp.classList.remove('show'); }
+
+  // Show couple filter btn
+  document.getElementById('couple_filter_btn').style.display=isCouple?'inline-block':'none';
+  // Show req filter btn
+  let hasReq2=reqDigitConditions.length>0||reqPairs.size>0||reqSums.size>0;
+  document.getElementById('req_filter_btn').style.display=hasReq2?'inline-block':'none';
+
+  // Score all
+  let allResults=[];
+  for(let n=1;n<=9999;n++){
+    let num4=String(n).padStart(4,'0');
+    // exclusion filter
+    if(hasExcludedDigit(num4)) continue;
+    if(hasExcludedPattern(num4)) continue;
+    let res=scoreNumber(num4,prefixAlpha,dayIdx1,prefixNum);
+    res.passP2=true;
+    res.goodForCouple=false;
+    if(isCouple && dayIdx2>=0){
+      res.passP2=passesForDay(num4,dayIdx2);
+      // goodForCouple depends on method
+      if(coupleMethod==='both_pass'){
+        res.goodForCouple=!res.isForbidden && res.passP2;
+      } else if(coupleMethod==='union_great'){
+        // ผลรวมต้องอยู่ใน GREAT_SUMS
+        res.goodForCouple=GREAT_SUMS.has(res.totalSum) && !res.isForbidden && res.passP2;
+      } else if(coupleMethod==='p1_priority'){
+        res.goodForCouple=!res.isForbidden && res.passP2;
+      }
+    }
+    allResults.push(res);
+  }
+  allResults.sort((a,b)=>{
+    let hasReq = reqDigitConditions.length>0 || reqPairs.size>0 || reqSums.size>0;
+    if(isCouple){
+      let aS=(a.goodForCouple?1000:0)+(hasReq&&a.reqMatch?500:0)+a.score;
+      let bS=(b.goodForCouple?1000:0)+(hasReq&&b.reqMatch?500:0)+b.score;
+      return bS-aS;
+    }
+    return b.score-a.score;
+  });
+
+  lastAllResults=[...allResults];
+
+  // Top picks
+  let hasReqFilter = reqDigitConditions.length>0 || reqPairs.size>0 || reqSums.size>0;
+  let topPicks;
+  if(isCouple){
+    topPicks=allResults.filter(r=>r.goodForCouple && r.grade==='great' && r.pairs.badPairs.length===0 && (!hasReqFilter||r.reqMatch)).slice(0,12);
+  } else {
+    topPicks=allResults.filter(r=>r.grade==='great' && r.pairs.badPairs.length===0 && (!hasReqFilter||r.reqMatch)).slice(0,12);
+  }
+  document.getElementById('top_picks_list').innerHTML=topPicks.map(r=>
+    `<div class="top-pick-item" onclick="showDetail('${r.num4str}')">${r.num4str}</div>`
+  ).join('');
+
+  renderGrid(allResults,'all');
+  currentFilter='all';
+  document.querySelectorAll('.filter-btn').forEach(b=>{ b.classList.remove('active','couple-active'); });
+  document.querySelector('.filter-btn').classList.add('active');
+
+  document.getElementById('result_sub').textContent=
+    isCouple
+      ? `คนที่1: วัน${DAY_NAMES[dayIdx1]} · คนที่2: วัน${DAY_NAMES[dayIdx2]} · อักษร: ${prefixAlpha}`
+      : `วันเกิด: วัน${DAY_NAMES[dayIdx1]} · อักษร: ${prefixAlpha}${prefixNum?' · เลขหน้า: '+prefixNum:''}`;
+
+  document.getElementById('results').style.display='block';
+  document.getElementById('results').scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+function renderGrid(allResults, filter){
+  let items;
+  if(filter==='great')       items=allResults.filter(r=>r.grade==='great');
+  else if(filter==='good')   items=allResults.filter(r=>r.grade==='good'||r.grade==='great');
+  else if(filter==='couple') items=allResults.filter(r=>r.goodForCouple);
+  else if(filter==='no_bad_pair') items=allResults.filter(r=>r.pairs.badPairs.length===0 && r.grade!=='bad');
+  else if(filter==='req_match') items=allResults.filter(r=>r.reqMatch);
+  else items=allResults;
+
+  items=items.slice(0,150);
+
+  let html=items.map(r=>{
+    let cls, badge;
+    if(isCouple && r.goodForCouple && r.grade==='great'){
+      cls='gold-pick'; badge='💜 ดีสำหรับคู่';
+    } else if(isCouple && r.goodForCouple){
+      cls='great-couple'; badge='💜 ผ่านทั้งคู่';
+    } else if(r.grade==='great'){
+      cls='great'; badge='⭐ ดีมาก';
+    } else if(r.grade==='good'||r.grade==='neutral'){
+      cls='good'; badge='ดี';
+    } else {
+      cls='bad'; badge='⚠️';
+    }
+    let pairIcons=r.pairs.goodPairs.map(p=>p.pair).join(' ');
+    let p2Icon=isCouple && !r.passP2 ? '<div style="font-size:9px;color:#ff8080;margin-top:2px">⚠️คนที่2</div>' : '';
+    let reqBadge=r.reqMatch ? '<div class="req-match-badge">✨ ตรง</div>' : '';
+    let reqOutline=r.reqMatch ? (r.grade==='great'?' req-match-strong':' req-match') : '';
+    return `<div class="num-cell ${cls}${reqOutline}" onclick="showDetail('${r.num4str}')">
+      <div class="num-digits">${r.num4str}</div>
+      <div class="num-sum">∑${r.totalSum}→${reduceToOne(r.totalSum)}</div>
+      <div class="num-badge">${badge}</div>
+      ${pairIcons?`<div style="font-size:9px;color:#c9a84c;margin-top:2px">${pairIcons}</div>`:''}
+      ${reqBadge}
+      ${p2Icon}
+    </div>`;
+  }).join('');
+  document.getElementById('num_grid').innerHTML=html||'<p style="color:var(--text-dim);padding:20px;text-align:center;">ไม่พบเลขที่ตรงเกณฑ์ที่เลือก</p>';
+}
+
+function applyFilter(f, btn){
+  currentFilter=f;
+  document.querySelectorAll('.filter-btn').forEach(b=>{ b.classList.remove('active','couple-active'); });
+  if(f==='couple') btn.classList.add('couple-active');
+  else btn.classList.add('active');
+  renderGrid(lastAllResults, f);
+}
+
+function showDetail(num4){
+  let r=lastAllResults.find(x=>x.num4str===num4);
+  if(!r) return;
+  let plate=`${lastPrefixNum?lastPrefixNum+' ':''}${lastPrefixAlpha} ${num4}`;
+  document.getElementById('d_plate').textContent=plate;
+  document.getElementById('d_sum').innerHTML=`ผลรวมทั้งหมด: <span>${r.totalSum}</span> (ลดเหลือหลักเดียว: <span>${reduceToOne(r.totalSum)}</span>)`;
+
+  let grade=GREAT_SUMS.has(r.totalSum)?'ดี (ตามความเชื่อ)':MED_SUMS.has(r.totalSum)?'ปานกลาง (ตามความเชื่อ)':'ควรพิจารณา';
+  let meaning=SUM_MEANINGS[r.totalSum]||(GREAT_SUMS.has(r.totalSum)?'ตามความเชื่อเรื่องเลขศาสตร์ไทย เลขนี้ถือว่าส่งเสริมในด้านต่างๆ':MED_SUMS.has(r.totalSum)?'ตามความเชื่อ ระดับปานกลาง อาจมีอุปสรรคบ้าง':'ตามความเชื่อ ผลรวมนี้อาจไม่เป็นมงคล ควรพิจารณาเลขอื่น');
+
+  let coupleNote='';
+  if(isCouple){
+    coupleNote=r.goodForCouple
+      ? `<br><span style="color:#a78bfa">✅ ผ่านเกณฑ์สำหรับทั้งคู่</span>`
+      : r.passP2===false
+        ? `<br><span style="color:#ff8080">⚠️ มีเลขต้องห้ามของคนที่ 2</span>`
+        : '';
+  }
+
+  let reqNote = r.reqMatch
+    ? `<br><span style="color:#34d399">✨ ตรงเงื่อนไขพิเศษที่ต้องการทุกข้อ</span>`
+    : (reqDigitConditions.length>0||reqPairs.size>0||reqSums.size>0)
+      ? `<br><span style="color:#a09070">— ไม่ตรงเงื่อนไขพิเศษทั้งหมด</span>` : '';
+  document.getElementById('d_meaning').innerHTML=`<strong>ผลรวม ${r.totalSum} (${grade})</strong>${coupleNote}${reqNote}<br>${meaning}`;
+
+  let pairs=evalPairs(num4);
+  let pairsHTML='';
+  if(pairs.goodPairs.length>0){
+    pairsHTML+=`<div style="font-size:13px;color:var(--text-dim);margin-bottom:6px;">คู่เลขมงคลในทะเบียน:</div><div class="detail-pairs">`;
+    pairsHTML+=pairs.goodPairs.map(p=>`<span class="pair-tag">คู่ ${p.pair} — ${p.tags.join(', ')}</span>`).join('');
+    pairsHTML+=`</div>`;
+  }
+  if(pairs.badPairs.length>0){
+    pairsHTML+=`<div style="font-size:13px;color:var(--text-dim);margin:10px 0 6px;">คู่เลขอัปมงคล:</div><div class="detail-pairs">`;
+    pairsHTML+=pairs.badPairs.map(p=>`<span class="pair-tag bad">คู่ ${p.pair} — ${p.reason}</span>`).join('');
+    pairsHTML+=`</div>`;
+  }
+  document.getElementById('d_pairs').innerHTML=pairsHTML;
+
+  let panel=document.getElementById('detail_panel');
+  panel.classList.add('show');
+  panel.scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+</script>
+
+<div class="site-footer">
+  <strong>เกี่ยวกับข้อมูลที่ใช้ในแอปนี้</strong><br>
+  หลักทักษาและอัฏฐจักรอิงจากโหราศาสตร์ไทยดั้งเดิม (คัมภีร์หลวงวิศาลดรุณกร ซึ่งเป็นสาธารณสมบัติ) ·
+  ค่าตัวเลขของอักษรไทย คู่เลขมงคล/อัปมงคล และตารางผลรวม อิงจากความเชื่อพื้นบ้านที่เผยแพร่กันทั่วไปในสังคมไทย
+  โดยไม่มีตำราโหราศาสตร์เล่มใดเล่มหนึ่งเป็นต้นทางเดียว<br><br>
+  <strong>ข้อจำกัดความรับผิดชอบ</strong><br>
+  ผลลัพธ์จากแอปนี้เป็นเพียงข้อมูลประกอบความเชื่อส่วนบุคคลเท่านั้น
+  ผู้พัฒนาไม่รับประกันความถูกต้อง ความครบถ้วน หรือผลที่จะเกิดขึ้นจากการเลือกเลขทะเบียน
+  การตัดสินใจขั้นสุดท้ายเป็นสิทธิ์และความรับผิดชอบของผู้ใช้แต่เพียงผู้เดียว<br><br>
+  ความปลอดภัยบนท้องถนนมาจากวินัยและสติของผู้ขับขี่ · ไม่ใช่ตัวเลขบนป้ายทะเบียน
+</div>
+
+</body>
+</html>
