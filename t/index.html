@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ระบบนิเทศภายในสถานศึกษา</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <style>
+        body { font-family: 'Prompt', sans-serif; }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+
+    <nav class="bg-blue-950 text-white shadow-md sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-16">
+            <div class="flex items-center space-x-3">
+                <div class="bg-white px-3 py-1 rounded-lg text-blue-900 font-bold text-xl shadow-sm">QA</div>
+                <div>
+                    <span class="font-semibold text-base block leading-tight">ระบบนิเทศภายใน</span>
+                    <span class="text-xs text-blue-200 block">สถานศึกษาและโรงเรียนส่วนกลาง</span>
+                </div>
+            </div>
+            <div class="flex items-center space-x-3">
+                <div id="userProfileArea" class="hidden text-right mr-2">
+                    <span id="profileName" class="text-sm font-medium block"></span>
+                    <span class="text-xs text-blue-300 block">ผู้ดูแลระบบ</span>
+                </div>
+                <div id="googleBtnWrapper">
+                    <div id="googleBtn"></div>
+                </div>
+                <button id="logoutBtn" onclick="logout()" class="hidden bg-red-600 hover:bg-red-700 text-white text-xs font-medium px-3 py-1.5 rounded-lg transition shadow">ออกจากระบบ</button>
+            </div>
+        </div>
+    </nav>
+
+    <div id="publicZone">
+        <div class="bg-gradient-to-r from-blue-950 to-indigo-900 text-white py-12 px-4 shadow">
+            <div class="max-w-7xl mx-auto flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6">
+                <div>
+                    <h1 class="text-2xl font-bold">ปฏิทินและความคืบหน้าการนิเทศการสอน</h1>
+                    <p class="text-blue-200 text-sm mt-1">ข้อมูลแบบเรียลไทม์เพื่อขับเคลื่อนคุณภาพการศึกษาอย่างเป็นระบบ</p>
+                </div>
+                <div class="bg-white bg-opacity-10 rounded-xl p-4 border border-white border-opacity-10 text-center min-w-[180px]">
+                    <span class="text-xs text-blue-300 block uppercase tracking-wider">ภาคเรียนปัจจุบัน</span>
+                    <span id="currentStatusText" class="text-lg font-bold block mt-1">กำลังโหลด...</span>
+                </div>
+            </div>
+        </div>
+
+        <main class="max-w-7xl mx-auto px-4 py-8">
+            <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+                <div class="px-6 py-4 bg-gray-50 border-b border-gray-200">
+                    <h3 class="font-semibold text-gray-900">ตารางความคืบหน้าการนิเทศทั้งหมด</h3>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse text-sm">
+                        <thead>
+                            <tr class="bg-gray-100 border-b border-gray-200 text-gray-600 font-semibold uppercase tracking-wider text-xs">
+                                <th class="px-6 py-4">วันที่นิเทศ</th>
+                                <th class="px-6 py-4">ผู้รับการนิเทศ</th>
+                                <th class="px-6 py-4">ผู้นิเทศ</th>
+                                <th class="px-6 py-4">รูปแบบ/ชนิดการนิเทศ</th>
+                                <th class="px-6 py-4 text-center">สถานะ</th>
+                            </tr>
+                        </thead>
+                        <tbody id="scheduleTableBody" class="divide-y divide-gray-100">
+                            <tr>
+                                <td colspan="5" class="px-6 py-10 text-center text-gray-400">กำลังดึงข้อมูลปฏิทินจากฐานข้อมูลส่วนกลาง...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <div id="adminZone" class="hidden">
+        <div class="bg-gray-900 text-white py-6 px-4">
+            <div class="max-w-7xl mx-auto">
+                <span class="bg-blue-500 text-white text-xs font-semibold px-2.5 py-1 rounded-full uppercase">Admin Workspace</span>
+                <h2 class="text-2xl font-bold mt-1" id="welcomeUser">ยินดีต้อนรับ ผู้ดูแลระบบ</h2>
+            </div>
+        </div>
+
+        <main class="max-w-7xl mx-auto px-4 py-8 space-y-6">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <div class="bg-white p-5 rounded-xl shadow-sm border border-gray-200">
+                    <span class="text-xs text-gray-500 block font-medium">คะแนนเฉลี่ยรวมทั้งโรงเรียน</span>
+                    <span class="text-3xl font-bold text-blue-600 mt-2 block" id="kpiAvg">0.00</span>
+                </div>
+                <div class="bg-white p-5 rounded-xl shadow-sm border border-gray-200">
+                    <span class="text-xs text-gray-500 block font-medium">ด้านการจัดกิจกรรม (Q1)</span>
+                    <span class="text-2xl font-bold text-gray-800 mt-2 block" id="kpiQ1">0.00</span>
+                </div>
+                <div class="bg-white p-5 rounded-xl shadow-sm border border-gray-200">
+                    <span class="text-xs text-gray-500 block font-medium">ด้านสื่อและนวัตกรรม (Q2)</span>
+                    <span class="text-2xl font-bold text-gray-800 mt-2 block" id="kpiQ2">0.00</span>
+                </div>
+                <div class="bg-white p-5 rounded-xl shadow-sm border border-gray-200">
+                    <span class="text-xs text-gray-500 block font-medium">ด้านการวัดและประเมินผล (Q3)</span>
+                    <span class="text-2xl font-bold text-gray-800 mt-2 block" id="kpiQ3">0.00</span>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200 lg:col-span-2">
+                    <h4 class="font-semibold text-gray-900 mb-4">กราฟเปรียบเทียบผลคะแนนเฉลี่ยการนิเทศในแต่ละภาคเรียน</h4>
+                    <div style="position: relative; height:250px; width:100%"><canvas id="progressChart"></canvas></div>
+                </div>
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+                    <h4 class="font-semibold text-gray-900 mb-4">ความคิดเห็น/ข้อเสนอแนะล่าสุด</h4>
+                    <ul id="feedbackStream" class="space-y-3 text-xs text-gray-600 divide-y divide-gray-100">
+                        </ul>
+                </div>
+            </div>
+
+            <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+                <h4 class="font-semibold text-gray-900 mb-3">ระบบจัดการข้อมูลภายใน</h4>
+                <div class="flex flex-wrap gap-3">
+                    <button class="bg-blue-600 text-white text-sm px-4 py-2 rounded-lg opacity-50 cursor-not-allowed">📝 บันทึกแบบฟอร์มนิเทศใหม่</button>
+                    <button class="bg-gray-200 text-gray-700 text-sm px-4 py-2 rounded-lg opacity-50 cursor-not-allowed">👥 จัดการรายชื่อครู</button>
+                    <button class="bg-gray-200 text-gray-700 text-sm px-4 py-2 rounded-lg opacity-50 cursor-not-allowed">📅 กำหนดปฏิทิน</button>
+                    <button class="bg-gray-200 text-gray-700 text-sm px-4 py-2 rounded-lg opacity-50 cursor-not-allowed">🖨️ ออกรายงานทางการ (A4)</button>
+                </div>
+                <p class="text-gray-400 text-xs mt-2">*ปุ่มระบบจัดการจะเปิดให้ใช้งานในเฟสถัดไปหลังจากทดสอบการล็อกอินเรียบร้อย*</p>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // ⚠️ สั่งสำคัญ: นำลิงก์ Web App URL ที่ได้จากการ Deploy รอบล่าสุดใน Apps Script มาวางที่นี่ครับ
+        const API_URL = "https://script.google.com/macros/s/AKfycbwxY5CwTBYIw9P-7V9_QESKKtwVWd0WRhwTOHWHjWvcKeSq6vr_z1ihbS8vVxBGzPbR/exec";//https://script.google.com/macros/s/XXXXX/exec"; 
+        
+        let myChart = null;
+
+        window.addEventListener('DOMContentLoaded', () => {
+            loadSystemSettings();
+            loadPublicSchedules();
+            // หน่วงเวลาเล็กน้อยเพื่อให้ Library ของ Google โหลดเสร็จเรียบร้อยก่อนสร้างปุ่ม
+            setTimeout(initGoogleAuth, 1000);
+        });
+
+        function loadSystemSettings() {
+            fetch(`${API_URL}?action=getSystemSettings`)
+                .then(res => res.json())
+                .then(res => {
+                    if (res.status === "success") {
+                        document.getElementById('currentStatusText').innerText = `ปีการศึกษา ${res.data.current_year} (เทอม ${res.data.current_term})`;
+                    }
+                })
+                .catch(err => {
+                    document.getElementById('currentStatusText').innerText = "เชื่อมต่อล้มเหลว";
+                });
+        }
+
+        function loadPublicSchedules() {
+            fetch(`${API_URL}?action=getPublicSchedules`)
+                .then(res => res.json())
+                .then(res => {
+                    const tbody = document.getElementById('scheduleTableBody');
+                    tbody.innerHTML = '';
+                    if (res.status === "success" && res.data.length > 0) {
+                        res.data.forEach(item => {
+                            let badgeClass = item.status === "นิเทศแล้ว" ? "bg-green-100 text-green-800" : "bg-yellow-100 text-yellow-800";
+                            tbody.innerHTML += `
+                                <tr class="hover:bg-gray-50">
+                                    <td class="px-6 py-4 whitespace-nowrap font-medium">${item.date}</td>
+                                    <td class="px-6 py-4 whitespace-nowrap">${item.teacher_name}</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-gray-500">${item.supervisor_name}</td>
+                                    <td class="px-6 py-4"><strong>${item.type}</strong><br><span class="text-xs text-gray-400">${item.kind}</span></td>
+                                    <td class="px-6 py-4 text-center"><span class="px-2.5 py-1 rounded-full text-xs font-semibold ${badgeClass}">${item.status}</span></td>
+                                </tr>`;
+                        });
+                    } else {
+                        tbody.innerHTML = `<tr><td colspan="5" class="px-6 py-8 text-center text-gray-400">ยังไม่มีข้อมูลตารางการนิเทศ</td></tr>`;
+                    }
+                })
+                .catch(err => {
+                    document.getElementById('scheduleTableBody').innerHTML = `<tr><td colspan="5" class="px-6 py-8 text-center text-red-500">ไม่สามารถโหลดข้อมูลตารางได้ กรุณาตรวจสอบการตั้งค่า API</td></tr>`;
+                });
+        }
+
+        // --- ระบบล็อกอินด้วย Google Account ---
+        function initGoogleAuth() {
+            try {
+                google.accounts.id.initialize({
+                    // ใช้ Client ID กลางสำหรับการทดสอบ
+                    client_id: "967733246337-v4f0re5ubunv4n44it1aed4nklcdais0.apps.googleusercontent.com", 
+                    callback: handleCredentialResponse
+                });
+                google.accounts.id.renderButton(
+                    document.getElementById("googleBtn"),
+                    { theme: "outline", size: "medium", text: "signin_with" }
+                );
+            } catch (e) {
+                console.error("Google Identity Services โหลดไม่สำเร็จ:", e);
+            }
+        }
+
+        function handleCredentialResponse(response) {
+            // ส่ง Token ล็อกอินไปตรวจสอบที่ฝั่งหลังบ้าน (Google Apps Script)
+            fetch(API_URL, {
+                method: "POST",
+                body: JSON.stringify({ action: "loginWithGoogle", credential: response.credential })
+            })
+            .then(res => res.json())
+            .then(res => {
+                if(res.status === "success") {
+                    if(res.user.role === "Admin") {
+                        enterAdminDashboard(res.user);
+                    } else {
+                        alert(`ยินดีต้อนรับ คุณ ${res.user.name}\nคุณเข้าใช้งานในสิทธิ์ ครูผู้สอน (เมนูส่วนเฉพาะครูกำลังพัฒนา)`);
+                    }
+                } else {
+                    alert(res.message);
+                }
+            })
+            .catch(err => alert("เกิดข้อผิดพลาดในการตรวจสอบสิทธิ์กับเซิร์ฟเวอร์"));
+        }
+
+        function enterAdminDashboard(user) {
+            // ซ่อนหน้าแรกสาธารณะ เปิดหน้าแดชบอร์ดหลังบ้าน
+            document.getElementById("publicZone").classList.add("hidden");
+            document.getElementById("adminZone").classList.remove("hidden");
+            
+            // แสดงข้อมูลผู้ใช้บนแถบเนฟบาร์แทนปุ่มล็อกอิน
+            document.getElementById("googleBtnWrapper").classList.add("hidden");
+            document.getElementById("userProfileArea").classList.remove("hidden");
+            document.getElementById("profileName").innerText = user.name;
+            document.getElementById("logoutBtn").classList.remove("hidden");
+            
+            document.getElementById("welcomeUser").innerText = `ยินดีต้อนรับ ผอ.โหน่ง (${user.name})`;
+            
+            // เรียกโหลดข้อมูลคะแนนและสถิติมาทำกราฟ
+            loadDashboardData();
+        }
+
+        function loadDashboardData() {
+            fetch(`${API_URL}?action=getDashboardData`)
+                .then(res => res.json())
+                .then(res => {
+                    if(res.status === "success") {
+                        // อัปเดตตัวเลข KPI ในการ์ด
+                        document.getElementById("kpiAvg").innerText = res.summary.avgTotal;
+                        document.getElementById("kpiQ1").innerText = res.summary.avgQ1;
+                        document.getElementById("kpiQ2").innerText = res.summary.avgQ2;
+                        document.getElementById("kpiQ3").innerText = res.summary.avgQ3;
+                        
+                        // แสดงข้อเสนอแนะล่าสุด
+                        const fbList = document.getElementById("feedbackStream");
+                        if(res.summary.feedbacks.length > 0) {
+                            fbList.innerHTML = res.summary.feedbacks.map(f => `<li class="py-2 border-b border-gray-100 font-light">" ${f} "</li>`).join('');
+                        } else {
+                            fbList.innerHTML = `<li class="text-gray-400 italic">ยังไม่มีข้อเสนอแนะ</li>`;
+                        }
+
+                        // วาดกราฟเส้นสรุปแต่ละเทอม
+                        const ctx = document.getElementById('progressChart').getContext('2d');
+                        if (myChart) myChart.destroy(); 
+                        myChart = new Chart(ctx, {
+                            type: 'line',
+                            data: {
+                                labels: res.chart.labels,
+                                datasets: [{
+                                    label: 'คะแนนเฉลี่ยภาพรวมการนิเทศ',
+                                    data: res.chart.data,
+                                    borderColor: '#1e3a8a',
+                                    backgroundColor: 'rgba(30, 58, 138, 0.05)',
+                                    borderWidth: 3,
+                                    fill: true,
+                                    tension: 0.2
+                                }]
+                            },
+                            options: { 
+                                responsive: true, 
+                                maintainAspectRatio: false,
+                                scales: { y: { min: 0, max: 5 } } // คะแนนเต็ม 5
+                            }
+                        });
+                    }
+                });
+        }
+
+        function logout() {
+            window.location.reload(); 
+        }
+    </script>
+</body>
+</html>
