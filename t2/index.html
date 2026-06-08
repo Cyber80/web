@@ -1,0 +1,2902 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ระบบจัดการเอกสารครู</title>
+
+<!-- Google Sign-In -->
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+
+<!-- Google API -->
+<script src="https://apis.google.com/js/api.js"></script>
+
+<!-- Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&family=Noto+Sans+Thai:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+  /* ===== DESIGN TOKENS ===== */
+  :root {
+    --bg: #0d1117;
+    --bg2: #161b22;
+    --bg3: #1c2128;
+    --bg4: #21262d;
+    --border: #30363d;
+    --border2: #444c56;
+    --text: #e6edf3;
+    --text2: #8b949e;
+    --text3: #6e7681;
+    --accent: #f0883e;
+    --accent2: #d1742f;
+    --blue: #58a6ff;
+    --green: #3fb950;
+    --red: #f85149;
+    --purple: #bc8cff;
+    --yellow: #e3b341;
+    --teal: #39d353;
+    --shadow: 0 8px 32px rgba(0,0,0,.5);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Sarabun', 'Noto Sans Thai', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    font-size: 15px;
+    line-height: 1.6;
+  }
+
+  /* ===== SCROLLBAR ===== */
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg2); }
+  ::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3px; }
+
+  /* ===== LOGIN SCREEN ===== */
+  #login-screen {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    background: radial-gradient(ellipse at 20% 50%, rgba(240,136,62,.08) 0%, transparent 60%),
+                radial-gradient(ellipse at 80% 20%, rgba(88,166,255,.06) 0%, transparent 50%),
+                var(--bg);
+    padding: 2rem;
+  }
+
+  .login-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 3rem 2.5rem;
+    width: 100%;
+    max-width: 420px;
+    text-align: center;
+    box-shadow: var(--shadow);
+    animation: fadeUp .5s ease;
+  }
+
+  .login-logo {
+    width: 64px;
+    height: 64px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    margin: 0 auto 1.5rem;
+    box-shadow: 0 4px 16px rgba(240,136,62,.3);
+  }
+
+  .login-title {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: .25rem;
+  }
+
+  .login-sub {
+    color: var(--text2);
+    font-size: .9rem;
+    margin-bottom: 2rem;
+  }
+
+  .login-school {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: .75rem 1rem;
+    margin-bottom: 2rem;
+    font-size: .85rem;
+    color: var(--text2);
+  }
+
+  #g_id_signin { display: flex; justify-content: center; }
+
+  .config-section {
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border);
+    text-align: left;
+  }
+
+  .config-label {
+    font-size: .8rem;
+    color: var(--text3);
+    margin-bottom: .5rem;
+    display: block;
+  }
+
+  .config-input {
+    width: 100%;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: .5rem .75rem;
+    color: var(--text);
+    font-family: inherit;
+    font-size: .85rem;
+    margin-bottom: .5rem;
+    outline: none;
+    transition: border-color .2s;
+  }
+
+  .config-input:focus { border-color: var(--accent); }
+
+  /* ===== APP LAYOUT ===== */
+  #app { display: none; min-height: 100vh; }
+
+  .app-container {
+    display: grid;
+    grid-template-columns: 240px 1fr;
+    grid-template-rows: 56px 1fr;
+    min-height: 100vh;
+  }
+
+  /* ===== TOPBAR ===== */
+  .topbar {
+    grid-column: 1 / -1;
+    background: var(--bg2);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    padding: 0 1.5rem;
+    gap: 1rem;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  .topbar-logo {
+    display: flex;
+    align-items: center;
+    gap: .6rem;
+    font-weight: 700;
+    color: var(--accent);
+    font-size: 1rem;
+  }
+
+  .topbar-logo span { font-size: 1.2rem; }
+
+  .topbar-spacer { flex: 1; }
+
+  .topbar-year {
+    background: var(--bg4);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: .25rem .75rem;
+    font-size: .8rem;
+    color: var(--text2);
+    display: flex;
+    align-items: center;
+    gap: .4rem;
+  }
+
+  .topbar-year select {
+    background: transparent;
+    border: none;
+    color: var(--text);
+    font-family: inherit;
+    font-size: .8rem;
+    outline: none;
+    cursor: pointer;
+  }
+
+  .user-menu {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    cursor: pointer;
+    padding: .25rem .5rem;
+    border-radius: 8px;
+    transition: background .2s;
+  }
+
+  .user-menu:hover { background: var(--bg4); }
+
+  .user-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--accent), var(--purple));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: .8rem;
+    font-weight: 700;
+    color: white;
+    overflow: hidden;
+  }
+
+  .user-avatar img { width: 100%; height: 100%; object-fit: cover; }
+  .user-name { font-size: .85rem; color: var(--text2); }
+
+  /* ===== SIDEBAR ===== */
+  .sidebar {
+    background: var(--bg2);
+    border-right: 1px solid var(--border);
+    padding: 1rem 0;
+    overflow-y: auto;
+  }
+
+  .nav-section {
+    padding: 0 .75rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .nav-section-label {
+    font-size: .7rem;
+    font-weight: 600;
+    color: var(--text3);
+    text-transform: uppercase;
+    letter-spacing: .05em;
+    padding: 0 .5rem;
+    margin-bottom: .5rem;
+  }
+
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: .6rem;
+    padding: .5rem .75rem;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: .9rem;
+    color: var(--text2);
+    transition: all .15s;
+    border: 1px solid transparent;
+    position: relative;
+  }
+
+  .nav-item:hover { background: var(--bg4); color: var(--text); }
+
+  .nav-item.active {
+    background: rgba(240,136,62,.12);
+    color: var(--accent);
+    border-color: rgba(240,136,62,.2);
+  }
+
+  .nav-item .icon { font-size: 1rem; width: 20px; text-align: center; }
+  .nav-item .badge {
+    margin-left: auto;
+    background: var(--accent);
+    color: white;
+    font-size: .65rem;
+    font-weight: 700;
+    padding: .1rem .35rem;
+    border-radius: 10px;
+    min-width: 18px;
+    text-align: center;
+  }
+
+  /* ===== MAIN CONTENT ===== */
+  .main-content {
+    padding: 1.5rem;
+    overflow-y: auto;
+    background: var(--bg);
+  }
+
+  .page { display: none; }
+  .page.active { display: block; animation: fadeIn .25s ease; }
+
+  /* ===== PAGE HEADER ===== */
+  .page-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  .page-title {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--text);
+  }
+
+  .page-title-sub {
+    font-size: .85rem;
+    color: var(--text2);
+    margin-top: .15rem;
+  }
+
+  /* ===== BUTTONS ===== */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: .4rem;
+    padding: .5rem 1rem;
+    border-radius: 8px;
+    border: 1px solid transparent;
+    font-family: inherit;
+    font-size: .85rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all .15s;
+    text-decoration: none;
+    white-space: nowrap;
+  }
+
+  .btn-primary {
+    background: var(--accent);
+    color: white;
+    border-color: var(--accent);
+  }
+
+  .btn-primary:hover { background: var(--accent2); }
+
+  .btn-secondary {
+    background: var(--bg4);
+    color: var(--text);
+    border-color: var(--border);
+  }
+
+  .btn-secondary:hover { border-color: var(--border2); background: var(--bg3); }
+
+  .btn-ghost {
+    background: transparent;
+    color: var(--text2);
+    border-color: transparent;
+  }
+
+  .btn-ghost:hover { background: var(--bg4); color: var(--text); }
+
+  .btn-danger {
+    background: rgba(248,81,73,.1);
+    color: var(--red);
+    border-color: rgba(248,81,73,.2);
+  }
+
+  .btn-danger:hover { background: rgba(248,81,73,.2); }
+
+  .btn-sm { padding: .3rem .6rem; font-size: .8rem; }
+  .btn-icon { padding: .4rem; }
+
+  /* ===== CARDS ===== */
+  .card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+
+  .card-header {
+    padding: 1rem 1.25rem;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+
+  .card-title {
+    font-size: .95rem;
+    font-weight: 600;
+    color: var(--text);
+  }
+
+  .card-body { padding: 1.25rem; }
+
+  /* ===== STATS GRID ===== */
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .stat-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: .5rem;
+    transition: border-color .2s;
+    cursor: pointer;
+  }
+
+  .stat-card:hover { border-color: var(--border2); }
+
+  .stat-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    margin-bottom: .25rem;
+  }
+
+  .stat-value {
+    font-size: 1.8rem;
+    font-weight: 700;
+    line-height: 1;
+    font-feature-settings: "tnum";
+  }
+
+  .stat-label {
+    font-size: .8rem;
+    color: var(--text2);
+  }
+
+  .stat-change {
+    font-size: .75rem;
+    display: flex;
+    align-items: center;
+    gap: .2rem;
+    margin-top: auto;
+  }
+
+  /* ===== TABLE ===== */
+  .table-wrap { overflow-x: auto; }
+
+  table { width: 100%; border-collapse: collapse; }
+
+  th {
+    text-align: left;
+    padding: .6rem 1rem;
+    font-size: .78rem;
+    font-weight: 600;
+    color: var(--text3);
+    text-transform: uppercase;
+    letter-spacing: .04em;
+    border-bottom: 1px solid var(--border);
+    white-space: nowrap;
+  }
+
+  td {
+    padding: .75rem 1rem;
+    border-bottom: 1px solid var(--border);
+    font-size: .87rem;
+    vertical-align: middle;
+  }
+
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: var(--bg3); }
+
+  /* ===== BADGES ===== */
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: .25rem;
+    padding: .15rem .5rem;
+    border-radius: 20px;
+    font-size: .75rem;
+    font-weight: 500;
+    white-space: nowrap;
+  }
+
+  .badge-green { background: rgba(63,185,80,.12); color: var(--green); border: 1px solid rgba(63,185,80,.2); }
+  .badge-blue { background: rgba(88,166,255,.12); color: var(--blue); border: 1px solid rgba(88,166,255,.2); }
+  .badge-orange { background: rgba(240,136,62,.12); color: var(--accent); border: 1px solid rgba(240,136,62,.2); }
+  .badge-red { background: rgba(248,81,73,.12); color: var(--red); border: 1px solid rgba(248,81,73,.2); }
+  .badge-purple { background: rgba(188,140,255,.12); color: var(--purple); border: 1px solid rgba(188,140,255,.2); }
+  .badge-yellow { background: rgba(227,179,65,.12); color: var(--yellow); border: 1px solid rgba(227,179,65,.2); }
+  .badge-gray { background: var(--bg4); color: var(--text2); border: 1px solid var(--border); }
+
+  /* ===== FORM ELEMENTS ===== */
+  .form-group { margin-bottom: 1rem; }
+  .form-label {
+    display: block;
+    font-size: .83rem;
+    font-weight: 500;
+    color: var(--text2);
+    margin-bottom: .4rem;
+  }
+
+  .form-label .required { color: var(--red); margin-left: .15rem; }
+
+  .form-control {
+    width: 100%;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: .55rem .8rem;
+    color: var(--text);
+    font-family: inherit;
+    font-size: .9rem;
+    outline: none;
+    transition: border-color .2s;
+  }
+
+  .form-control:focus { border-color: var(--accent); }
+
+  .form-control::placeholder { color: var(--text3); }
+
+  select.form-control option { background: var(--bg3); }
+
+  .form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+  }
+
+  /* ===== MODAL ===== */
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    padding: 1rem;
+    backdrop-filter: blur(4px);
+    animation: fadeIn .15s ease;
+  }
+
+  .modal {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    width: 100%;
+    max-width: 520px;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: var(--shadow);
+    animation: slideUp .2s ease;
+  }
+
+  .modal-lg { max-width: 700px; }
+
+  .modal-header {
+    padding: 1.25rem 1.5rem;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .modal-title { font-size: 1rem; font-weight: 600; }
+  .modal-body { padding: 1.5rem; }
+  .modal-footer {
+    padding: 1rem 1.5rem;
+    border-top: 1px solid var(--border);
+    display: flex;
+    gap: .75rem;
+    justify-content: flex-end;
+  }
+
+  .btn-close {
+    background: none;
+    border: none;
+    color: var(--text2);
+    cursor: pointer;
+    font-size: 1.1rem;
+    padding: .25rem;
+    border-radius: 4px;
+    transition: color .15s;
+  }
+
+  .btn-close:hover { color: var(--text); }
+
+  /* ===== PROGRESS BAR ===== */
+  .progress-bar {
+    background: var(--bg4);
+    border-radius: 4px;
+    height: 6px;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    border-radius: 4px;
+    transition: width .4s ease;
+  }
+
+  /* ===== UPLOAD AREA ===== */
+  .upload-area {
+    border: 2px dashed var(--border);
+    border-radius: 12px;
+    padding: 2rem;
+    text-align: center;
+    cursor: pointer;
+    transition: all .2s;
+    background: var(--bg3);
+  }
+
+  .upload-area:hover, .upload-area.drag-over {
+    border-color: var(--accent);
+    background: rgba(240,136,62,.05);
+  }
+
+  .upload-icon { font-size: 2.5rem; margin-bottom: .75rem; opacity: .6; }
+  .upload-text { color: var(--text2); font-size: .9rem; }
+  .upload-hint { font-size: .8rem; color: var(--text3); margin-top: .25rem; }
+
+  .file-list { margin-top: 1rem; display: flex; flex-direction: column; gap: .5rem; }
+
+  .file-item {
+    display: flex;
+    align-items: center;
+    gap: .75rem;
+    padding: .6rem .8rem;
+    background: var(--bg4);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-size: .85rem;
+  }
+
+  .file-item-icon { font-size: 1.1rem; }
+  .file-item-name { flex: 1; color: var(--text); }
+  .file-item-size { color: var(--text3); font-size: .8rem; }
+
+  /* ===== DASHBOARD CHARTS ===== */
+  .chart-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .chart-container {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.25rem;
+  }
+
+  .chart-title {
+    font-size: .9rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+  }
+
+  /* Simple bar chart */
+  .bar-chart { display: flex; flex-direction: column; gap: .6rem; }
+
+  .bar-row {
+    display: grid;
+    grid-template-columns: 110px 1fr 40px;
+    align-items: center;
+    gap: .6rem;
+  }
+
+  .bar-label { font-size: .8rem; color: var(--text2); text-align: right; }
+  .bar-track { background: var(--bg4); border-radius: 4px; height: 22px; overflow: hidden; }
+  .bar-fill { height: 100%; border-radius: 4px; display: flex; align-items: center; justify-content: flex-end; padding-right: .4rem; font-size: .7rem; font-weight: 600; color: white; transition: width .5s ease; }
+  .bar-count { font-size: .8rem; font-weight: 600; text-align: center; }
+
+  /* Donut chart */
+  .donut-wrap {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+  }
+
+  .donut-svg { flex-shrink: 0; }
+
+  .donut-legend { flex: 1; display: flex; flex-direction: column; gap: .5rem; }
+  .donut-legend-item {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    font-size: .82rem;
+  }
+
+  .donut-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  /* ===== TEACHER CARDS ===== */
+  .teacher-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 1rem;
+  }
+
+  .teacher-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.25rem;
+    transition: border-color .2s, transform .15s;
+    cursor: pointer;
+  }
+
+  .teacher-card:hover {
+    border-color: var(--border2);
+    transform: translateY(-2px);
+  }
+
+  .teacher-header {
+    display: flex;
+    align-items: center;
+    gap: .75rem;
+    margin-bottom: 1rem;
+  }
+
+  .teacher-avatar {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--accent), var(--purple));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: white;
+    flex-shrink: 0;
+    overflow: hidden;
+  }
+
+  .teacher-avatar img { width: 100%; height: 100%; object-fit: cover; }
+  .teacher-name { font-weight: 600; font-size: .95rem; }
+  .teacher-subject { font-size: .8rem; color: var(--text2); }
+
+  .teacher-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: .5rem;
+  }
+
+  .teacher-stat {
+    background: var(--bg3);
+    border-radius: 8px;
+    padding: .5rem .75rem;
+    text-align: center;
+  }
+
+  .teacher-stat-val { font-size: 1.1rem; font-weight: 700; }
+  .teacher-stat-label { font-size: .72rem; color: var(--text3); }
+
+  /* ===== TASK ITEM ===== */
+  .task-item {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1rem 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: .5rem;
+    transition: border-color .15s;
+    cursor: pointer;
+  }
+
+  .task-item:hover { border-color: var(--border2); }
+
+  .task-color {
+    width: 4px;
+    height: 40px;
+    border-radius: 2px;
+    flex-shrink: 0;
+  }
+
+  .task-info { flex: 1 }
+  .task-name { font-weight: 600; font-size: .92rem; }
+  .task-meta { font-size: .78rem; color: var(--text3); margin-top: .15rem; }
+
+  .task-actions { display: flex; gap: .4rem; opacity: 0; transition: opacity .15s; }
+  .task-item:hover .task-actions { opacity: 1; }
+
+  /* ===== SUBMISSION TABLE ===== */
+  .sub-status {
+    display: flex;
+    align-items: center;
+    gap: .4rem;
+  }
+
+  .sub-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+  }
+
+  /* ===== TOAST ===== */
+  .toast-container {
+    position: fixed;
+    bottom: 1.5rem;
+    right: 1.5rem;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    gap: .5rem;
+    pointer-events: none;
+  }
+
+  .toast {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: .75rem 1rem;
+    font-size: .85rem;
+    box-shadow: var(--shadow);
+    display: flex;
+    align-items: center;
+    gap: .6rem;
+    min-width: 260px;
+    pointer-events: auto;
+    animation: slideLeft .25s ease;
+  }
+
+  .toast.success { border-left: 3px solid var(--green); }
+  .toast.error { border-left: 3px solid var(--red); }
+  .toast.info { border-left: 3px solid var(--blue); }
+
+  /* ===== EMPTY STATE ===== */
+  .empty-state {
+    text-align: center;
+    padding: 3rem 1rem;
+    color: var(--text2);
+  }
+
+  .empty-icon { font-size: 3rem; margin-bottom: 1rem; opacity: .4; }
+  .empty-title { font-size: 1rem; font-weight: 600; margin-bottom: .25rem; }
+  .empty-sub { font-size: .85rem; color: var(--text3); }
+
+  /* ===== SEARCH ===== */
+  .search-wrap {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+
+  .search-icon {
+    position: absolute;
+    left: .75rem;
+    color: var(--text3);
+    font-size: .9rem;
+    pointer-events: none;
+  }
+
+  .search-input {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: .5rem .75rem .5rem 2.25rem;
+    color: var(--text);
+    font-family: inherit;
+    font-size: .85rem;
+    outline: none;
+    width: 220px;
+    transition: border-color .2s, width .2s;
+  }
+
+  .search-input:focus { border-color: var(--accent); width: 280px; }
+
+  /* ===== TERM TABS ===== */
+  .term-tabs {
+    display: flex;
+    gap: .25rem;
+    background: var(--bg3);
+    padding: .25rem;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    margin-bottom: 1.25rem;
+  }
+
+  .term-tab {
+    padding: .4rem .9rem;
+    border-radius: 7px;
+    font-size: .82rem;
+    cursor: pointer;
+    color: var(--text2);
+    transition: all .15s;
+    white-space: nowrap;
+  }
+
+  .term-tab.active {
+    background: var(--bg2);
+    color: var(--text);
+    box-shadow: 0 1px 4px rgba(0,0,0,.3);
+  }
+
+  /* ===== LOADING ===== */
+  .loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 3rem;
+    gap: 1rem;
+    color: var(--text2);
+    font-size: .9rem;
+  }
+
+  .spinner {
+    width: 32px;
+    height: 32px;
+    border: 3px solid var(--bg4);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: spin .7s linear infinite;
+  }
+
+  /* ===== SETUP GUIDE ===== */
+  .setup-step {
+    display: flex;
+    gap: 1rem;
+    padding: 1rem;
+    border-radius: 10px;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    margin-bottom: .75rem;
+  }
+
+  .setup-num {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: var(--accent);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: .8rem;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+
+  .setup-content .setup-title { font-weight: 600; font-size: .9rem; margin-bottom: .2rem; }
+  .setup-content p { font-size: .82rem; color: var(--text2); }
+
+  code {
+    background: var(--bg4);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: .1rem .35rem;
+    font-family: 'Courier New', monospace;
+    font-size: .8rem;
+    color: var(--accent);
+  }
+
+  /* ===== ANIMATIONS ===== */
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes slideLeft { from { opacity: 0; transform: translateX(20px); } to { opacity: 1; transform: translateX(0); } }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ===== RESPONSIVE ===== */
+  @media (max-width: 768px) {
+    .app-container {
+      grid-template-columns: 1fr;
+      grid-template-rows: 56px auto 1fr;
+    }
+
+    .sidebar {
+      display: none;
+      position: fixed;
+      inset: 56px 0 0 0;
+      z-index: 50;
+      width: 240px;
+      box-shadow: 4px 0 20px rgba(0,0,0,.5);
+    }
+
+    .sidebar.open { display: block; }
+    .chart-grid { grid-template-columns: 1fr; }
+    .form-row { grid-template-columns: 1fr; }
+    .stats-grid { grid-template-columns: 1fr 1fr; }
+    .teacher-grid { grid-template-columns: 1fr; }
+  }
+
+  .hamburger-btn { display: none; }
+
+  @media (max-width: 768px) {
+    .hamburger-btn { display: flex; }
+  }
+
+  /* Tag input */
+  .tags-wrap {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .4rem;
+    padding: .4rem;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    min-height: 40px;
+    cursor: text;
+  }
+
+  .tag-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: .25rem;
+    background: rgba(88,166,255,.12);
+    color: var(--blue);
+    border: 1px solid rgba(88,166,255,.2);
+    border-radius: 20px;
+    padding: .1rem .5rem;
+    font-size: .78rem;
+  }
+
+  .tag-chip button {
+    background: none;
+    border: none;
+    color: inherit;
+    cursor: pointer;
+    padding: 0;
+    line-height: 1;
+    font-size: .9rem;
+  }
+
+  .color-picker-row {
+    display: flex;
+    gap: .5rem;
+    flex-wrap: wrap;
+  }
+
+  .color-dot {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    cursor: pointer;
+    border: 2px solid transparent;
+    transition: transform .15s;
+  }
+
+  .color-dot:hover, .color-dot.selected { transform: scale(1.2); border-color: white; }
+
+  /* Drive link */
+  .drive-link {
+    display: inline-flex;
+    align-items: center;
+    gap: .3rem;
+    color: var(--blue);
+    font-size: .82rem;
+    text-decoration: none;
+    padding: .2rem .5rem;
+    border-radius: 6px;
+    transition: background .15s;
+  }
+
+  .drive-link:hover { background: rgba(88,166,255,.1); }
+
+  /* ===== TERM BADGE ===== */
+  .term-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: .25rem;
+    background: var(--bg4);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: .15rem .5rem;
+    font-size: .75rem;
+    color: var(--text2);
+  }
+
+  /* Popover menu */
+  .popover {
+    position: absolute;
+    right: 0;
+    top: calc(100% + 4px);
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    box-shadow: var(--shadow);
+    min-width: 160px;
+    z-index: 200;
+    overflow: hidden;
+    animation: fadeIn .1s ease;
+  }
+
+  .popover-item {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    padding: .6rem 1rem;
+    font-size: .85rem;
+    color: var(--text2);
+    cursor: pointer;
+    transition: background .1s;
+  }
+
+  .popover-item:hover { background: var(--bg4); color: var(--text); }
+  .popover-item.danger:hover { background: rgba(248,81,73,.1); color: var(--red); }
+
+  .relative { position: relative; }
+</style>
+</head>
+<body>
+
+<!-- ===== TOAST ===== -->
+<div class="toast-container" id="toastContainer"></div>
+
+<!-- ===== LOGIN SCREEN ===== -->
+<div id="login-screen">
+  <div class="login-card">
+    <div class="login-logo">📋</div>
+    <div class="login-title">ระบบจัดการเอกสารครู</div>
+    <div class="login-sub">Teacher Document Management System</div>
+    <div class="login-school">
+      🏫 โรงเรียนวัดธรรมปัญญา &nbsp;|&nbsp; สพป.นครนายก
+    </div>
+
+    <div id="g_id_signin"></div>
+    <div id="loginStatus" style="margin-top:1rem; font-size:.82rem; color:var(--text3); text-align:center;"></div>
+
+    <div class="config-section">
+      <span class="config-label">⚙️ ตั้งค่า Google API Client ID</span>
+      <input class="config-input" id="clientIdInput" placeholder="xxxxxxxx.apps.googleusercontent.com" />
+      <span class="config-label">Google Sheet ID (สำหรับเก็บข้อมูล)</span>
+      <input class="config-input" id="sheetIdInput" placeholder="1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgVE2upms" />
+      <button class="btn btn-primary" style="width:100%;justify-content:center;margin-top:.5rem;" onclick="initApp()">🚀 เชื่อมต่อ &amp; เข้าสู่ระบบ</button>
+      <div style="margin-top:.75rem; font-size:.78rem; color:var(--text3); text-align:center;">
+        <a href="#" onclick="showSetupGuide()" style="color:var(--blue);">📖 วิธีตั้งค่า Google API</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== SETUP GUIDE MODAL ===== -->
+<div id="setupModal" class="modal-overlay" style="display:none;">
+  <div class="modal modal-lg">
+    <div class="modal-header">
+      <span class="modal-title">📖 คู่มือตั้งค่า Google API</span>
+      <button class="btn-close" onclick="closeModal('setupModal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="setup-step">
+        <div class="setup-num">1</div>
+        <div class="setup-content">
+          <div class="setup-title">สร้าง Google Cloud Project</div>
+          <p>ไปที่ <a href="https://console.cloud.google.com" target="_blank" style="color:var(--blue)">console.cloud.google.com</a> → สร้าง Project ใหม่ → เปิดใช้งาน <strong>Google Drive API</strong> และ <strong>Google Sheets API</strong></p>
+        </div>
+      </div>
+      <div class="setup-step">
+        <div class="setup-num">2</div>
+        <div class="setup-content">
+          <div class="setup-title">สร้าง OAuth 2.0 Client ID</div>
+          <p>APIs & Services → Credentials → Create Credentials → OAuth Client ID → Web Application → ใส่ <code>https://yourdomain.com</code> ใน Authorized Origins</p>
+        </div>
+      </div>
+      <div class="setup-step">
+        <div class="setup-num">3</div>
+        <div class="setup-content">
+          <div class="setup-title">สร้าง Google Sheet</div>
+          <p>สร้าง Google Sheet ใหม่ → Copy ID จาก URL (<code>docs.google.com/spreadsheets/d/<strong>SHEET_ID</strong>/edit</code>) → ตั้งชื่อ Sheet: <code>teachers</code>, <code>tasks</code>, <code>submissions</code></p>
+        </div>
+      </div>
+      <div class="setup-step">
+        <div class="setup-num">4</div>
+        <div class="setup-content">
+          <div class="setup-title">สร้างโฟลเดอร์ใน Google Drive</div>
+          <p>สร้างโฟลเดอร์สำหรับเก็บเอกสาร → Share โฟลเดอร์กับ Google Account ทุกครู → Copy Folder ID ใส่ในระบบ</p>
+        </div>
+      </div>
+      <div class="setup-step">
+        <div class="setup-num">5</div>
+        <div class="setup-content">
+          <div class="setup-title">Deploy บน GitHub Pages หรือ Netlify</div>
+          <p>อัปโหลดไฟล์ HTML ขึ้น GitHub Pages ฟรี → ใส่ URL ที่ได้ใน Authorized Origins ของ OAuth Client</p>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal('setupModal')">ปิด</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== APP ===== -->
+<div id="app">
+  <div class="app-container">
+
+    <!-- Topbar -->
+    <header class="topbar">
+      <button class="btn btn-ghost btn-icon hamburger-btn" onclick="toggleSidebar()">☰</button>
+      <div class="topbar-logo">
+        <span>📋</span> DocManager
+      </div>
+      <div class="topbar-spacer"></div>
+
+      <div class="topbar-year">
+        📅 ปีการศึกษา
+        <select id="yearSelector" onchange="onYearChange()">
+          <option value="2568">2568</option>
+          <option value="2567">2567</option>
+          <option value="2569">2569</option>
+        </select>
+      </div>
+
+      <div class="topbar-year" style="margin-left:.25rem;">
+        เทอม
+        <select id="termSelector" onchange="onTermChange()">
+          <option value="1">1</option>
+          <option value="2">2</option>
+        </select>
+      </div>
+
+      <div class="relative">
+        <div class="user-menu" id="userMenuBtn" onclick="toggleUserMenu()">
+          <div class="user-avatar" id="topbarAvatar">?</div>
+          <span class="user-name" id="topbarName">ผู้ใช้</span>
+        </div>
+        <div id="userMenuPopover" class="popover" style="display:none;">
+          <div class="popover-item" onclick="navigate('profile')">👤 ข้อมูลส่วนตัว</div>
+          <div class="popover-item" onclick="navigate('settings')">⚙️ ตั้งค่า</div>
+          <div style="border-top:1px solid var(--border); margin:.25rem 0;"></div>
+          <div class="popover-item danger" onclick="signOut()">🚪 ออกจากระบบ</div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Sidebar -->
+    <nav class="sidebar" id="sidebar">
+      <div class="nav-section">
+        <div class="nav-section-label">หลัก</div>
+        <div class="nav-item active" onclick="navigate('dashboard')" id="nav-dashboard">
+          <span class="icon">📊</span> แดชบอร์ด
+        </div>
+        <div class="nav-item" onclick="navigate('tasks')" id="nav-tasks">
+          <span class="icon">📋</span> รายการงาน
+          <span class="badge" id="badge-tasks">0</span>
+        </div>
+        <div class="nav-item" onclick="navigate('submit')" id="nav-submit">
+          <span class="icon">📤</span> ส่งงาน
+        </div>
+        <div class="nav-item" onclick="navigate('submissions')" id="nav-submissions">
+          <span class="icon">🗂️</span> ไฟล์ที่ส่งแล้ว
+        </div>
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-section-label">จัดการ (Admin)</div>
+        <div class="nav-item" onclick="navigate('teachers')" id="nav-teachers">
+          <span class="icon">👩‍🏫</span> ข้อมูลครู
+        </div>
+        <div class="nav-item" onclick="navigate('manage-tasks')" id="nav-manage-tasks">
+          <span class="icon">⚙️</span> จัดการรายการงาน
+        </div>
+        <div class="nav-item" onclick="navigate('reports')" id="nav-reports">
+          <span class="icon">📈</span> รายงานสรุป
+        </div>
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-section-label">ระบบ</div>
+        <div class="nav-item" onclick="navigate('settings')" id="nav-settings">
+          <span class="icon">⚙️</span> ตั้งค่า
+        </div>
+      </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+
+      <!-- DASHBOARD PAGE -->
+      <div class="page active" id="page-dashboard">
+        <div class="page-header">
+          <div>
+            <div class="page-title">แดชบอร์ด</div>
+            <div class="page-title-sub" id="dashboardSub">ภาพรวมการส่งงาน ปีการศึกษา 2568 เทอม 1</div>
+          </div>
+          <button class="btn btn-secondary" onclick="refreshData()">🔄 รีเฟรช</button>
+        </div>
+
+        <!-- Stats -->
+        <div class="stats-grid" id="statsGrid">
+          <div class="stat-card" onclick="navigate('teachers')">
+            <div class="stat-icon" style="background:rgba(88,166,255,.12);color:var(--blue)">👩‍🏫</div>
+            <div class="stat-value" style="color:var(--blue)" id="stat-teachers">0</div>
+            <div class="stat-label">จำนวนครูทั้งหมด</div>
+          </div>
+          <div class="stat-card" onclick="navigate('tasks')">
+            <div class="stat-icon" style="background:rgba(240,136,62,.12);color:var(--accent)">📋</div>
+            <div class="stat-value" style="color:var(--accent)" id="stat-tasks">0</div>
+            <div class="stat-label">รายการงานทั้งหมด</div>
+          </div>
+          <div class="stat-card" onclick="navigate('submissions')">
+            <div class="stat-icon" style="background:rgba(63,185,80,.12);color:var(--green)">✅</div>
+            <div class="stat-value" style="color:var(--green)" id="stat-submitted">0</div>
+            <div class="stat-label">ส่งแล้ว</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon" style="background:rgba(248,81,73,.12);color:var(--red)">⏰</div>
+            <div class="stat-value" style="color:var(--red)" id="stat-pending">0</div>
+            <div class="stat-label">ยังไม่ส่ง</div>
+          </div>
+        </div>
+
+        <!-- Charts Row -->
+        <div class="chart-grid">
+          <!-- Submission by task type -->
+          <div class="chart-container">
+            <div class="chart-title">📊 การส่งงานแยกตามประเภท</div>
+            <div class="bar-chart" id="chartByType"></div>
+          </div>
+
+          <!-- Submission rate donut -->
+          <div class="chart-container">
+            <div class="chart-title">🎯 อัตราการส่งงานรวม</div>
+            <div class="donut-wrap">
+              <svg class="donut-svg" width="120" height="120" viewBox="0 0 120 120">
+                <circle cx="60" cy="60" r="48" fill="none" stroke="var(--bg4)" stroke-width="16"/>
+                <circle id="donutFill" cx="60" cy="60" r="48" fill="none" stroke="var(--green)" stroke-width="16"
+                  stroke-dasharray="301.6 301.6" stroke-dashoffset="301.6"
+                  stroke-linecap="round" transform="rotate(-90 60 60)"
+                  style="transition:stroke-dashoffset .6s ease"/>
+                <text x="60" y="56" text-anchor="middle" fill="var(--text)" font-size="18" font-weight="700" font-family="Sarabun">
+                  <tspan id="donutPct">0%</tspan>
+                </text>
+                <text x="60" y="72" text-anchor="middle" fill="var(--text2)" font-size="9" font-family="Sarabun">ส่งแล้ว</text>
+              </svg>
+              <div class="donut-legend" id="donutLegend"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Teacher submission matrix -->
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">👩‍🏫 สถานะการส่งงานรายครู</span>
+            <button class="btn btn-secondary btn-sm" onclick="navigate('reports')">ดูรายงานเต็ม →</button>
+          </div>
+          <div class="table-wrap">
+            <table id="dashTeacherTable">
+              <thead>
+                <tr>
+                  <th>ครู</th>
+                  <th id="dashTaskHeaders"></th>
+                  <th>ความคืบหน้า</th>
+                </tr>
+              </thead>
+              <tbody id="dashTeacherBody">
+                <tr><td colspan="10"><div class="loading"><div class="spinner"></div>กำลังโหลด...</div></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- TASKS PAGE -->
+      <div class="page" id="page-tasks">
+        <div class="page-header">
+          <div>
+            <div class="page-title">รายการงาน</div>
+            <div class="page-title-sub" id="taskPageSub">ปีการศึกษา 2568 เทอม 1</div>
+          </div>
+          <div style="display:flex;gap:.5rem;flex-wrap:wrap;">
+            <div class="search-wrap">
+              <span class="search-icon">🔍</span>
+              <input class="search-input" id="taskSearch" placeholder="ค้นหารายการ..." oninput="filterTasks()">
+            </div>
+          </div>
+        </div>
+
+        <div id="taskList">
+          <div class="loading"><div class="spinner"></div>กำลังโหลด...</div>
+        </div>
+      </div>
+
+      <!-- SUBMIT PAGE -->
+      <div class="page" id="page-submit">
+        <div class="page-header">
+          <div>
+            <div class="page-title">ส่งงาน</div>
+            <div class="page-title-sub">อัปโหลดไฟล์เอกสารไปยัง Google Drive</div>
+          </div>
+        </div>
+
+        <div class="card" style="max-width:600px;">
+          <div class="card-header"><span class="card-title">📤 ส่งเอกสาร</span></div>
+          <div class="card-body">
+            <div class="form-group">
+              <label class="form-label">ประเภทงาน <span class="required">*</span></label>
+              <select class="form-control" id="submitCategory" onchange="loadTasksByCategory()">
+                <option value="">-- เลือกประเภทงาน --</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">รายการงาน <span class="required">*</span></label>
+              <select class="form-control" id="submitTaskSelect">
+                <option value="">-- เลือกรายการงาน --</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">หมายเหตุ (ถ้ามี)</label>
+              <input class="form-control" id="submitNote" placeholder="ระบุหมายเหตุเพิ่มเติม...">
+            </div>
+            <div class="form-group">
+              <label class="form-label">ไฟล์เอกสาร <span class="required">*</span></label>
+              <div class="upload-area" id="uploadArea"
+                ondragover="dragOver(event)" ondragleave="dragLeave(event)" ondrop="dropFile(event)"
+                onclick="document.getElementById('fileInput').click()">
+                <div class="upload-icon">📁</div>
+                <div class="upload-text">คลิกหรือลากไฟล์มาวางที่นี่</div>
+                <div class="upload-hint">รองรับ PDF, Word, Excel, PowerPoint (สูงสุด 50MB)</div>
+              </div>
+              <input type="file" id="fileInput" style="display:none;" multiple
+                accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.zip,.rar" onchange="onFileSelect(event)">
+              <div class="file-list" id="fileList"></div>
+            </div>
+
+            <div id="uploadProgress" style="display:none; margin-bottom:1rem;">
+              <div style="display:flex;justify-content:space-between;font-size:.82rem;color:var(--text2);margin-bottom:.3rem;">
+                <span id="uploadProgressText">กำลังอัปโหลด...</span>
+                <span id="uploadProgressPct">0%</span>
+              </div>
+              <div class="progress-bar">
+                <div class="progress-fill" id="uploadProgressBar" style="width:0%;background:var(--accent);"></div>
+              </div>
+            </div>
+
+            <div style="display:flex;gap:.75rem;">
+              <button class="btn btn-primary" onclick="submitWork()" id="submitBtn">
+                📤 ส่งงาน
+              </button>
+              <button class="btn btn-secondary" onclick="clearSubmitForm()">🗑️ ล้างฟอร์ม</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SUBMISSIONS PAGE -->
+      <div class="page" id="page-submissions">
+        <div class="page-header">
+          <div>
+            <div class="page-title">ไฟล์ที่ส่งแล้ว</div>
+          </div>
+          <div style="display:flex;gap:.5rem;flex-wrap:wrap;">
+            <div class="search-wrap">
+              <span class="search-icon">🔍</span>
+              <input class="search-input" id="subSearch" placeholder="ค้นหา..." oninput="filterSubmissions()">
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>วันที่ส่ง</th>
+                  <th>รายการงาน</th>
+                  <th>ประเภท</th>
+                  <th>ครู</th>
+                  <th>ไฟล์</th>
+                  <th>หมายเหตุ</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody id="subTableBody">
+                <tr><td colspan="7"><div class="loading"><div class="spinner"></div>กำลังโหลด...</div></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- TEACHERS PAGE -->
+      <div class="page" id="page-teachers">
+        <div class="page-header">
+          <div>
+            <div class="page-title">ข้อมูลครู</div>
+            <div class="page-title-sub" id="teacherCount">-</div>
+          </div>
+          <button class="btn btn-primary" onclick="openAddTeacherModal()">+ เพิ่มครู</button>
+        </div>
+        <div class="teacher-grid" id="teacherGrid">
+          <div class="loading"><div class="spinner"></div>กำลังโหลด...</div>
+        </div>
+      </div>
+
+      <!-- MANAGE TASKS PAGE -->
+      <div class="page" id="page-manage-tasks">
+        <div class="page-header">
+          <div>
+            <div class="page-title">จัดการรายการงาน</div>
+          </div>
+          <div style="display:flex;gap:.5rem;flex-wrap:wrap;">
+            <button class="btn btn-secondary" onclick="openAddCategoryModal()">+ เพิ่มประเภทงาน</button>
+            <button class="btn btn-primary" onclick="openAddTaskModal()">+ เพิ่มรายการงาน</button>
+          </div>
+        </div>
+
+        <div id="manageTasksContent">
+          <div class="loading"><div class="spinner"></div>กำลังโหลด...</div>
+        </div>
+      </div>
+
+      <!-- REPORTS PAGE -->
+      <div class="page" id="page-reports">
+        <div class="page-header">
+          <div>
+            <div class="page-title">รายงานสรุป</div>
+          </div>
+          <button class="btn btn-secondary" onclick="exportReport()">📥 Export Excel</button>
+        </div>
+
+        <div class="card">
+          <div class="card-header"><span class="card-title">📊 ตารางสรุปการส่งงานรายครู × รายการงาน</span></div>
+          <div class="table-wrap">
+            <table id="reportTable">
+              <thead id="reportHead"></thead>
+              <tbody id="reportBody">
+                <tr><td><div class="loading"><div class="spinner"></div>กำลังโหลด...</div></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- SETTINGS PAGE -->
+      <div class="page" id="page-settings">
+        <div class="page-header">
+          <div class="page-title">ตั้งค่าระบบ</div>
+        </div>
+        <div class="card" style="max-width:500px;">
+          <div class="card-header"><span class="card-title">🔗 การเชื่อมต่อ Google</span></div>
+          <div class="card-body">
+            <div class="form-group">
+              <label class="form-label">Google Sheet ID</label>
+              <input class="form-control" id="settingSheetId" placeholder="Sheet ID...">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Google Drive Folder ID (สำหรับเก็บไฟล์)</label>
+              <input class="form-control" id="settingFolderId" placeholder="Folder ID...">
+            </div>
+            <div class="form-group">
+              <label class="form-label">โรงเรียน</label>
+              <input class="form-control" id="settingSchool" placeholder="ชื่อโรงเรียน...">
+            </div>
+            <button class="btn btn-primary" onclick="saveSettings()">💾 บันทึกการตั้งค่า</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- PROFILE PAGE -->
+      <div class="page" id="page-profile">
+        <div class="page-header">
+          <div class="page-title">ข้อมูลส่วนตัว</div>
+        </div>
+        <div class="card" style="max-width:500px;">
+          <div class="card-body" id="profileContent">
+            <div class="loading"><div class="spinner"></div>กำลังโหลด...</div>
+          </div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+</div>
+
+<!-- ===== MODALS ===== -->
+
+<!-- Add Teacher Modal -->
+<div id="addTeacherModal" class="modal-overlay" style="display:none;">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title" id="teacherModalTitle">➕ เพิ่มข้อมูลครู</span>
+      <button class="btn-close" onclick="closeModal('addTeacherModal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="editTeacherId">
+      <div class="form-group">
+        <label class="form-label">ชื่อ-นามสกุล <span class="required">*</span></label>
+        <input class="form-control" id="teacherName" placeholder="เช่น นางสาวสมใจ รักดี">
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">ตำแหน่ง</label>
+          <select class="form-control" id="teacherPosition">
+            <option>ครู</option>
+            <option>ครูชำนาญการ</option>
+            <option>ครูชำนาญการพิเศษ</option>
+            <option>ครูเชี่ยวชาญ</option>
+            <option>ผู้อำนวยการโรงเรียน</option>
+            <option>รองผู้อำนวยการ</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">วิทยฐานะ</label>
+          <select class="form-control" id="teacherRank">
+            <option value="">ไม่มี</option>
+            <option>ชำนาญการ</option>
+            <option>ชำนาญการพิเศษ</option>
+            <option>เชี่ยวชาญ</option>
+            <option>เชี่ยวชาญพิเศษ</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">กลุ่มสาระ / วิชาที่สอน</label>
+        <input class="form-control" id="teacherSubject" placeholder="เช่น ภาษาไทย, คณิตศาสตร์">
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">ระดับชั้นที่สอน</label>
+          <input class="form-control" id="teacherGrade" placeholder="เช่น ป.4–ป.6">
+        </div>
+        <div class="form-group">
+          <label class="form-label">อีเมล (Google)</label>
+          <input class="form-control" id="teacherEmail" placeholder="teacher@gmail.com">
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">บทบาทในระบบ</label>
+        <select class="form-control" id="teacherRole">
+          <option value="teacher">ครู (ส่งงานได้)</option>
+          <option value="admin">ผู้ดูแล (จัดการระบบได้)</option>
+        </select>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal('addTeacherModal')">ยกเลิก</button>
+      <button class="btn btn-primary" onclick="saveTeacher()">💾 บันทึก</button>
+    </div>
+  </div>
+</div>
+
+<!-- Add Task Modal -->
+<div id="addTaskModal" class="modal-overlay" style="display:none;">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title" id="taskModalTitle">➕ เพิ่มรายการงาน</span>
+      <button class="btn-close" onclick="closeModal('addTaskModal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="editTaskId">
+      <div class="form-group">
+        <label class="form-label">ชื่อรายการงาน <span class="required">*</span></label>
+        <input class="form-control" id="taskName" placeholder="เช่น วิจัยในชั้นเรียน ภาคเรียนที่ 1/2568">
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">ประเภทงาน <span class="required">*</span></label>
+          <select class="form-control" id="taskCategory">
+            <option value="">-- เลือก --</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">สีแสดงผล</label>
+          <div class="color-picker-row" id="colorPicker">
+            <div class="color-dot selected" style="background:#58a6ff" data-color="#58a6ff" onclick="selectColor(this)"></div>
+            <div class="color-dot" style="background:#3fb950" data-color="#3fb950" onclick="selectColor(this)"></div>
+            <div class="color-dot" style="background:#f0883e" data-color="#f0883e" onclick="selectColor(this)"></div>
+            <div class="color-dot" style="background:#f85149" data-color="#f85149" onclick="selectColor(this)"></div>
+            <div class="color-dot" style="background:#bc8cff" data-color="#bc8cff" onclick="selectColor(this)"></div>
+            <div class="color-dot" style="background:#e3b341" data-color="#e3b341" onclick="selectColor(this)"></div>
+            <div class="color-dot" style="background:#39d353" data-color="#39d353" onclick="selectColor(this)"></div>
+          </div>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">ปีการศึกษา <span class="required">*</span></label>
+          <select class="form-control" id="taskYear">
+            <option value="2568">2568</option>
+            <option value="2567">2567</option>
+            <option value="2569">2569</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">ภาคเรียน <span class="required">*</span></label>
+          <select class="form-control" id="taskTerm">
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="0">ตลอดปี</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">กำหนดส่ง</label>
+        <input type="date" class="form-control" id="taskDue">
+      </div>
+      <div class="form-group">
+        <label class="form-label">รายละเอียด</label>
+        <textarea class="form-control" id="taskDesc" rows="2" placeholder="รายละเอียดเพิ่มเติม..."></textarea>
+      </div>
+      <div class="form-group">
+        <label class="form-label">ผู้ที่ต้องส่ง (ถ้าระบุ จะจำกัดเฉพาะครูที่เลือก)</label>
+        <select class="form-control" id="taskAssignTo" multiple style="height:80px;">
+          <option value="all" selected>ครูทุกคน</option>
+        </select>
+        <div style="font-size:.78rem;color:var(--text3);margin-top:.25rem;">กด Ctrl/Cmd ค้างเพื่อเลือกหลายคน</div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal('addTaskModal')">ยกเลิก</button>
+      <button class="btn btn-primary" onclick="saveTask()">💾 บันทึก</button>
+    </div>
+  </div>
+</div>
+
+<!-- Add Category Modal -->
+<div id="addCategoryModal" class="modal-overlay" style="display:none;">
+  <div class="modal" style="max-width:400px;">
+    <div class="modal-header">
+      <span class="modal-title">➕ เพิ่มประเภทงาน</span>
+      <button class="btn-close" onclick="closeModal('addCategoryModal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label class="form-label">ชื่อประเภทงาน <span class="required">*</span></label>
+        <input class="form-control" id="catName" placeholder="เช่น แผนการสอน, วิจัย...">
+      </div>
+      <div class="form-group">
+        <label class="form-label">ไอคอน</label>
+        <div style="display:flex;flex-wrap:wrap;gap:.3rem;" id="iconPicker">
+          <span style="cursor:pointer;font-size:1.3rem;padding:.2rem;" onclick="selectIcon(this)" data-icon="📋">📋</span>
+          <span style="cursor:pointer;font-size:1.3rem;padding:.2rem;" onclick="selectIcon(this)" data-icon="🔬">🔬</span>
+          <span style="cursor:pointer;font-size:1.3rem;padding:.2rem;" onclick="selectIcon(this)" data-icon="📖">📖</span>
+          <span style="cursor:pointer;font-size:1.3rem;padding:.2rem;" onclick="selectIcon(this)" data-icon="🎯">🎯</span>
+          <span style="cursor:pointer;font-size:1.3rem;padding:.2rem;" onclick="selectIcon(this)" data-icon="📝">📝</span>
+          <span style="cursor:pointer;font-size:1.3rem;padding:.2rem;" onclick="selectIcon(this)" data-icon="🏆">🏆</span>
+          <span style="cursor:pointer;font-size:1.3rem;padding:.2rem;" onclick="selectIcon(this)" data-icon="📊">📊</span>
+          <span style="cursor:pointer;font-size:1.3rem;padding:.2rem;" onclick="selectIcon(this)" data-icon="💡">💡</span>
+          <span style="cursor:pointer;font-size:1.3rem;padding:.2rem;" onclick="selectIcon(this)" data-icon="🌱">🌱</span>
+          <span style="cursor:pointer;font-size:1.3rem;padding:.2rem;" onclick="selectIcon(this)" data-icon="🎨">🎨</span>
+        </div>
+        <input type="hidden" id="catIcon" value="📋">
+      </div>
+      <div class="form-group">
+        <label class="form-label">สี</label>
+        <div class="color-picker-row" id="catColorPicker">
+          <div class="color-dot selected" style="background:#58a6ff" data-color="#58a6ff" onclick="selectCatColor(this)"></div>
+          <div class="color-dot" style="background:#3fb950" data-color="#3fb950" onclick="selectCatColor(this)"></div>
+          <div class="color-dot" style="background:#f0883e" data-color="#f0883e" onclick="selectCatColor(this)"></div>
+          <div class="color-dot" style="background:#f85149" data-color="#f85149" onclick="selectCatColor(this)"></div>
+          <div class="color-dot" style="background:#bc8cff" data-color="#bc8cff" onclick="selectCatColor(this)"></div>
+          <div class="color-dot" style="background:#e3b341" data-color="#e3b341" onclick="selectCatColor(this)"></div>
+        </div>
+        <input type="hidden" id="catColor" value="#58a6ff">
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal('addCategoryModal')">ยกเลิก</button>
+      <button class="btn btn-primary" onclick="saveCategory()">💾 บันทึก</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ===== CONFIG & STATE =====
+const CONFIG = {
+  CLIENT_ID: '',
+  SHEET_ID: '',
+  FOLDER_ID: '',
+  SCHOOL: 'โรงเรียนวัดธรรมปัญญา',
+  SCOPES: [
+    'https://www.googleapis.com/auth/spreadsheets',
+    'https://www.googleapis.com/auth/drive.file',
+    'https://www.googleapis.com/auth/userinfo.email',
+    'https://www.googleapis.com/auth/userinfo.profile'
+  ].join(' ')
+};
+
+let STATE = {
+  user: null,
+  teachers: [],
+  tasks: [],
+  categories: [],
+  submissions: [],
+  currentYear: '2568',
+  currentTerm: '1',
+  currentPage: 'dashboard',
+  selectedFiles: [],
+  selectedColor: '#58a6ff',
+  selectedCatColor: '#58a6ff',
+  accessToken: null,
+  isAdmin: false,
+  isDemo: false
+};
+
+// Default categories & sample data for demo
+const DEFAULT_CATEGORIES = [
+  { id: 'c1', name: 'วิจัยในชั้นเรียน', icon: '🔬', color: '#58a6ff' },
+  { id: 'c2', name: 'แผนการสอน', icon: '📖', color: '#3fb950' },
+  { id: 'c3', name: 'SAR', icon: '📊', color: '#bc8cff' },
+  { id: 'c4', name: 'โครงการ/กิจกรรม', icon: '🎯', color: '#f0883e' },
+  { id: 'c5', name: 'อื่น ๆ', icon: '📋', color: '#e3b341' },
+];
+
+const DEMO_TEACHERS = [
+  { id: 't1', name: 'นางสาวสมใจ รักดี', position: 'ครูชำนาญการ', subject: 'ภาษาไทย', grade: 'ป.4–ป.6', email: 'somjai@gmail.com', role: 'admin' },
+  { id: 't2', name: 'นายวิชัย สุขสม', position: 'ครู', subject: 'คณิตศาสตร์', grade: 'ป.1–ป.6', email: 'wichai@gmail.com', role: 'teacher' },
+  { id: 't3', name: 'นางมาลี ดีงาม', position: 'ครูชำนาญการพิเศษ', subject: 'วิทยาศาสตร์', grade: 'ม.1–ม.2', email: 'malee@gmail.com', role: 'teacher' },
+  { id: 't4', name: 'นายสมชาย ใจดี', position: 'ครู', subject: 'สังคมศึกษา', grade: 'ป.1–ม.2', email: 'somchai@gmail.com', role: 'teacher' },
+];
+
+const DEMO_TASKS = [
+  { id: 'tk1', name: 'วิจัยในชั้นเรียน 1/2568', category: 'c1', year: '2568', term: '1', due: '2568-12-31', color: '#58a6ff', desc: '' },
+  { id: 'tk2', name: 'แผนการสอนภาคเรียนที่ 1', category: 'c2', year: '2568', term: '1', due: '2568-06-30', color: '#3fb950', desc: '' },
+  { id: 'tk3', name: 'SAR ประจำปี 2568', category: 'c3', year: '2568', term: '2', due: '2569-03-31', color: '#bc8cff', desc: '' },
+  { id: 'tk4', name: 'โครงการวันไหว้ครู', category: 'c4', year: '2568', term: '1', due: '2568-07-15', color: '#f0883e', desc: '' },
+  { id: 'tk5', name: 'แผนการสอนภาคเรียนที่ 2', category: 'c2', year: '2568', term: '2', due: '2568-11-30', color: '#3fb950', desc: '' },
+  { id: 'tk6', name: 'วิจัยในชั้นเรียน 2/2568', category: 'c1', year: '2568', term: '2', due: '2569-03-01', color: '#58a6ff', desc: '' },
+];
+
+const DEMO_SUBMISSIONS = [
+  { id: 's1', taskId: 'tk1', teacherId: 't1', date: '2568-07-10', filename: 'วิจัย_สมใจ.pdf', fileUrl: '#', note: '' },
+  { id: 's2', taskId: 'tk2', teacherId: 't1', date: '2568-06-20', filename: 'แผน_สมใจ.docx', fileUrl: '#', note: '' },
+  { id: 's3', taskId: 'tk1', teacherId: 't2', date: '2568-07-15', filename: 'วิจัย_วิชัย.pdf', fileUrl: '#', note: '' },
+  { id: 's4', taskId: 'tk2', teacherId: 't3', date: '2568-06-25', filename: 'แผน_มาลี.pdf', fileUrl: '#', note: '' },
+  { id: 's5', taskId: 'tk4', teacherId: 't1', date: '2568-07-14', filename: 'โครงการไหว้ครู.pdf', fileUrl: '#', note: '' },
+];
+
+// ===== INIT =====
+window.onload = () => {
+  const saved = loadSettings();
+  if (saved.clientId) document.getElementById('clientIdInput').value = saved.clientId;
+  if (saved.sheetId) document.getElementById('sheetIdInput').value = saved.sheetId;
+};
+
+function loadSettings() {
+  try { return JSON.parse(localStorage.getItem('docManagerConfig') || '{}'); } catch { return {}; }
+}
+
+function saveToStorage() {
+  localStorage.setItem('docManagerConfig', JSON.stringify({
+    clientId: CONFIG.CLIENT_ID,
+    sheetId: CONFIG.SHEET_ID,
+    folderId: CONFIG.FOLDER_ID,
+    school: CONFIG.SCHOOL
+  }));
+}
+
+function initApp() {
+  const clientId = document.getElementById('clientIdInput').value.trim();
+  const sheetId = document.getElementById('sheetIdInput').value.trim();
+
+  if (!clientId) {
+    // Demo mode
+    STATE.isDemo = true;
+    STATE.user = { name: 'ผู้ดูแลระบบ (Demo)', email: 'admin@school.ac.th', picture: null };
+    STATE.isAdmin = true;
+    loadDemoData();
+    showApp();
+    toast('info', 'ℹ️ โหมด Demo — ข้อมูลจะไม่ถูกบันทึกจริง ใส่ Client ID เพื่อเชื่อมต่อ Google');
+    return;
+  }
+
+  CONFIG.CLIENT_ID = clientId;
+  CONFIG.SHEET_ID = sheetId;
+  saveToStorage();
+
+  document.getElementById('loginStatus').textContent = 'กำลังเชื่อมต่อ Google...';
+
+  // Init Google Identity Services
+  google.accounts.id.initialize({
+    client_id: CONFIG.CLIENT_ID,
+    callback: handleCredential,
+    auto_select: false,
+    cancel_on_tap_outside: true
+  });
+
+  google.accounts.id.renderButton(
+    document.getElementById('g_id_signin'),
+    { theme: 'outline', size: 'large', text: 'signin_with', locale: 'th' }
+  );
+
+  document.getElementById('loginStatus').textContent = '';
+}
+
+async function handleCredential(response) {
+  try {
+    const payload = parseJwt(response.credential);
+    STATE.user = {
+      name: payload.name,
+      email: payload.email,
+      picture: payload.picture
+    };
+    STATE.accessToken = response.credential;
+
+    // OAuth2 token for Drive/Sheets
+    const client = google.accounts.oauth2.initTokenClient({
+      client_id: CONFIG.CLIENT_ID,
+      scope: CONFIG.SCOPES,
+      callback: async (tokenResponse) => {
+        if (tokenResponse.error) { toast('error', '❌ ขอสิทธิ์ไม่สำเร็จ'); return; }
+        STATE.accessToken = tokenResponse.access_token;
+        await loadAllData();
+        showApp();
+      }
+    });
+    client.requestAccessToken({ prompt: 'consent' });
+  } catch (e) {
+    toast('error', '❌ Login ไม่สำเร็จ: ' + e.message);
+  }
+}
+
+function parseJwt(token) {
+  const base64 = token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/');
+  return JSON.parse(atob(base64));
+}
+
+function showApp() {
+  document.getElementById('login-screen').style.display = 'none';
+  document.getElementById('app').style.display = 'block';
+  updateUserUI();
+  navigate('dashboard');
+  renderDashboard();
+  updateBadges();
+}
+
+function signOut() {
+  STATE.user = null;
+  STATE.accessToken = null;
+  document.getElementById('app').style.display = 'none';
+  document.getElementById('login-screen').style.display = 'flex';
+  closePopover();
+  toast('info', '👋 ออกจากระบบแล้ว');
+}
+
+function loadDemoData() {
+  STATE.categories = [...DEFAULT_CATEGORIES];
+  STATE.teachers = [...DEMO_TEACHERS];
+  STATE.tasks = [...DEMO_TASKS];
+  STATE.submissions = [...DEMO_SUBMISSIONS];
+}
+
+// ===== GOOGLE SHEETS API =====
+async function sheetsGet(range) {
+  if (STATE.isDemo) return null;
+  const res = await fetch(
+    `https://sheets.googleapis.com/v4/spreadsheets/${CONFIG.SHEET_ID}/values/${encodeURIComponent(range)}`,
+    { headers: { 'Authorization': `Bearer ${STATE.accessToken}` } }
+  );
+  return res.json();
+}
+
+async function sheetsAppend(sheetName, values) {
+  if (STATE.isDemo) {
+    toast('info', '⚠️ Demo mode — ข้อมูลไม่ถูกบันทึก กรุณาตั้งค่า Google Sheet');
+    return;
+  }
+  await fetch(
+    `https://sheets.googleapis.com/v4/spreadsheets/${CONFIG.SHEET_ID}/values/${encodeURIComponent(sheetName)}:append?valueInputOption=RAW&insertDataOption=INSERT_ROWS`,
+    {
+      method: 'POST',
+      headers: { 'Authorization': `Bearer ${STATE.accessToken}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ values })
+    }
+  );
+}
+
+async function sheetsClear(sheetName) {
+  if (STATE.isDemo) return;
+  await fetch(
+    `https://sheets.googleapis.com/v4/spreadsheets/${CONFIG.SHEET_ID}/values/${encodeURIComponent(sheetName)}:clear`,
+    { method: 'POST', headers: { 'Authorization': `Bearer ${STATE.accessToken}` } }
+  );
+}
+
+async function sheetsWrite(sheetName, values) {
+  if (STATE.isDemo) return;
+  await fetch(
+    `https://sheets.googleapis.com/v4/spreadsheets/${CONFIG.SHEET_ID}/values/${encodeURIComponent(sheetName)}?valueInputOption=RAW`,
+    {
+      method: 'PUT',
+      headers: { 'Authorization': `Bearer ${STATE.accessToken}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ values })
+    }
+  );
+}
+
+async function loadAllData() {
+  await Promise.all([loadTeachers(), loadCategories(), loadTasks(), loadSubmissions()]);
+}
+
+async function loadTeachers() {
+  if (STATE.isDemo) return;
+  const data = await sheetsGet('teachers!A:F');
+  if (!data || !data.values || data.values.length < 2) { STATE.teachers = []; return; }
+  STATE.teachers = data.values.slice(1).map(r => ({
+    id: r[0]||'', name: r[1]||'', position: r[2]||'', subject: r[3]||'', grade: r[4]||'', email: r[5]||'', role: r[6]||'teacher'
+  }));
+}
+
+async function loadCategories() {
+  if (STATE.isDemo) return;
+  const data = await sheetsGet('categories!A:D');
+  if (!data || !data.values || data.values.length < 2) {
+    STATE.categories = [...DEFAULT_CATEGORIES];
+    return;
+  }
+  STATE.categories = data.values.slice(1).map(r => ({ id: r[0], name: r[1], icon: r[2]||'📋', color: r[3]||'#58a6ff' }));
+}
+
+async function loadTasks() {
+  if (STATE.isDemo) return;
+  const data = await sheetsGet('tasks!A:I');
+  if (!data || !data.values || data.values.length < 2) { STATE.tasks = []; return; }
+  STATE.tasks = data.values.slice(1).map(r => ({
+    id: r[0], name: r[1], category: r[2], year: r[3], term: r[4], due: r[5], color: r[6]||'#58a6ff', desc: r[7]||'', assignTo: r[8]||'all'
+  }));
+}
+
+async function loadSubmissions() {
+  if (STATE.isDemo) return;
+  const data = await sheetsGet('submissions!A:H');
+  if (!data || !data.values || data.values.length < 2) { STATE.submissions = []; return; }
+  STATE.submissions = data.values.slice(1).map(r => ({
+    id: r[0], taskId: r[1], teacherId: r[2], date: r[3], filename: r[4], fileUrl: r[5]||'#', note: r[6]||''
+  }));
+}
+
+// ===== NAVIGATION =====
+function navigate(page) {
+  STATE.currentPage = page;
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+
+  const pg = document.getElementById('page-' + page);
+  const nv = document.getElementById('nav-' + page);
+  if (pg) pg.classList.add('active');
+  if (nv) nv.classList.add('active');
+
+  closePopover();
+  closeSidebar();
+
+  // Render page
+  if (page === 'dashboard') renderDashboard();
+  else if (page === 'tasks') renderTasks();
+  else if (page === 'submit') renderSubmitPage();
+  else if (page === 'submissions') renderSubmissions();
+  else if (page === 'teachers') renderTeachers();
+  else if (page === 'manage-tasks') renderManageTasks();
+  else if (page === 'reports') renderReports();
+  else if (page === 'profile') renderProfile();
+  else if (page === 'settings') renderSettingsPage();
+}
+
+async function refreshData() {
+  toast('info', '🔄 กำลังรีเฟรช...');
+  await loadAllData();
+  navigate(STATE.currentPage);
+}
+
+// ===== DASHBOARD =====
+function getFilteredTasks() {
+  return STATE.tasks.filter(t => t.year === STATE.currentYear && (t.term === STATE.currentTerm || t.term === '0'));
+}
+
+function getSubmissionsFor(taskId, teacherId) {
+  return STATE.submissions.find(s => s.taskId === taskId && s.teacherId === teacherId);
+}
+
+function renderDashboard() {
+  document.getElementById('dashboardSub').textContent =
+    `ภาพรวมการส่งงาน ปีการศึกษา ${STATE.currentYear} เทอม ${STATE.currentTerm}`;
+
+  const tasks = getFilteredTasks();
+  const teachers = STATE.teachers;
+  const totalPossible = tasks.length * teachers.length;
+  const totalSubmitted = STATE.submissions.filter(s =>
+    tasks.find(t => t.id === s.taskId)
+  ).length;
+  const pending = totalPossible - totalSubmitted;
+
+  document.getElementById('stat-teachers').textContent = teachers.length;
+  document.getElementById('stat-tasks').textContent = tasks.length;
+  document.getElementById('stat-submitted').textContent = totalSubmitted;
+  document.getElementById('stat-pending').textContent = Math.max(0, pending);
+
+  // Donut
+  const pct = totalPossible > 0 ? Math.round(totalSubmitted / totalPossible * 100) : 0;
+  const circumference = 301.6;
+  const offset = circumference - (pct / 100) * circumference;
+  document.getElementById('donutFill').style.strokeDashoffset = offset;
+  document.getElementById('donutPct').textContent = pct + '%';
+  document.getElementById('donutLegend').innerHTML = `
+    <div class="donut-legend-item"><div class="donut-dot" style="background:var(--green)"></div>ส่งแล้ว ${totalSubmitted}</div>
+    <div class="donut-legend-item"><div class="donut-dot" style="background:var(--bg4)"></div>ยังไม่ส่ง ${Math.max(0,pending)}</div>
+  `;
+
+  // Bar chart by category
+  const catData = STATE.categories.map(cat => {
+    const catTasks = tasks.filter(t => t.category === cat.id);
+    const submitted = STATE.submissions.filter(s => catTasks.find(t => t.id === s.taskId)).length;
+    const total = catTasks.length * teachers.length;
+    return { name: cat.name, color: cat.color, submitted, total, pct: total > 0 ? Math.round(submitted/total*100) : 0 };
+  }).filter(c => c.total > 0);
+
+  const maxVal = Math.max(...catData.map(c => c.total), 1);
+  document.getElementById('chartByType').innerHTML = catData.length ? catData.map(c => `
+    <div class="bar-row">
+      <div class="bar-label">${c.name}</div>
+      <div class="bar-track">
+        <div class="bar-fill" style="width:${c.submitted/maxVal*100}%;background:${c.color}">${c.pct}%</div>
+      </div>
+      <div class="bar-count" style="color:${c.color}">${c.submitted}</div>
+    </div>
+  `).join('') : '<div style="color:var(--text3);font-size:.85rem;text-align:center;padding:1rem;">ไม่มีข้อมูล</div>';
+
+  // Teacher matrix
+  const headers = tasks.map(t => {
+    const cat = STATE.categories.find(c => c.id === t.category);
+    return `<th title="${t.name}" style="color:${t.color||'var(--text2)'}; max-width:80px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${cat?.icon||''} ${t.name.substring(0,12)}${t.name.length>12?'…':''}</th>`;
+  }).join('');
+  document.getElementById('dashTeacherTable').querySelector('thead').innerHTML = `<tr><th>ครู</th>${headers}<th>ความคืบหน้า</th></tr>`;
+
+  document.getElementById('dashTeacherBody').innerHTML = teachers.length ? teachers.map(teacher => {
+    const cells = tasks.map(task => {
+      const sub = getSubmissionsFor(task.id, teacher.id);
+      return sub
+        ? `<td><span title="${sub.filename}" style="color:var(--green)">✅</span></td>`
+        : `<td><span style="color:var(--text3)">—</span></td>`;
+    }).join('');
+    const done = tasks.filter(t => getSubmissionsFor(t.id, teacher.id)).length;
+    const pctTeacher = tasks.length > 0 ? Math.round(done/tasks.length*100) : 0;
+    return `<tr>
+      <td><div style="font-weight:500">${teacher.name}</div><div style="font-size:.75rem;color:var(--text3)">${teacher.subject||''}</div></td>
+      ${cells}
+      <td>
+        <div style="display:flex;align-items:center;gap:.5rem;">
+          <div class="progress-bar" style="width:80px">
+            <div class="progress-fill" style="width:${pctTeacher}%;background:${pctTeacher>=80?'var(--green)':pctTeacher>=50?'var(--yellow)':'var(--red)'}"></div>
+          </div>
+          <span style="font-size:.78rem;color:var(--text2)">${done}/${tasks.length}</span>
+        </div>
+      </td>
+    </tr>`;
+  }).join('') : `<tr><td colspan="${tasks.length+2}"><div class="empty-state"><div class="empty-icon">👩‍🏫</div><div class="empty-title">ยังไม่มีข้อมูลครู</div></div></td></tr>`;
+}
+
+// ===== TASKS PAGE =====
+function renderTasks() {
+  document.getElementById('taskPageSub').textContent = `ปีการศึกษา ${STATE.currentYear} เทอม ${STATE.currentTerm}`;
+  const tasks = getFilteredTasks();
+  const q = (document.getElementById('taskSearch')?.value || '').toLowerCase();
+  const filtered = tasks.filter(t => !q || t.name.toLowerCase().includes(q));
+
+  const grouped = {};
+  STATE.categories.forEach(cat => {
+    const catTasks = filtered.filter(t => t.category === cat.id);
+    if (catTasks.length) grouped[cat.id] = { cat, tasks: catTasks };
+  });
+
+  document.getElementById('taskList').innerHTML = Object.keys(grouped).length
+    ? Object.values(grouped).map(({ cat, tasks: ts }) => `
+      <div style="margin-bottom:1.5rem;">
+        <div style="display:flex;align-items:center;gap:.5rem;margin-bottom:.6rem;">
+          <span style="font-size:1.1rem">${cat.icon}</span>
+          <span style="font-weight:600;color:${cat.color}">${cat.name}</span>
+          <span class="badge badge-gray">${ts.length} รายการ</span>
+        </div>
+        ${ts.map(t => {
+          const cat2 = STATE.categories.find(c => c.id === t.category);
+          const submittedCount = STATE.submissions.filter(s => s.taskId === t.id).length;
+          const teacherCount = STATE.teachers.length;
+          const pct = teacherCount ? Math.round(submittedCount/teacherCount*100) : 0;
+          const due = t.due ? formatDate(t.due) : '—';
+          const me = STATE.teachers.find(tc => tc.email === STATE.user?.email);
+          const mySubmit = me ? getSubmissionsFor(t.id, me.id) : null;
+
+          return `<div class="task-item" onclick="navigate('submit')">
+            <div class="task-color" style="background:${t.color}"></div>
+            <div class="task-info">
+              <div class="task-name">${t.name}</div>
+              <div class="task-meta">กำหนดส่ง: ${due} &nbsp;·&nbsp; ส่งแล้ว ${submittedCount}/${teacherCount} คน</div>
+            </div>
+            <div style="min-width:100px;">
+              <div class="progress-bar" style="margin-bottom:.25rem;">
+                <div class="progress-fill" style="width:${pct}%;background:${pct>=80?'var(--green)':pct>=50?'var(--yellow)':'var(--red)'}"></div>
+              </div>
+              <div style="font-size:.75rem;text-align:right;color:var(--text3)">${pct}%</div>
+            </div>
+            ${mySubmit ? `<span class="badge badge-green">✅ ส่งแล้ว</span>` : `<span class="badge badge-orange">⏳ รอส่ง</span>`}
+            ${STATE.isAdmin ? `<div class="task-actions">
+              <button class="btn btn-ghost btn-icon btn-sm" onclick="event.stopPropagation();editTask('${t.id}')" title="แก้ไข">✏️</button>
+              <button class="btn btn-danger btn-icon btn-sm" onclick="event.stopPropagation();deleteTask('${t.id}')" title="ลบ">🗑️</button>
+            </div>` : ''}
+          </div>`;
+        }).join('')}
+      </div>
+    `).join('')
+    : `<div class="empty-state"><div class="empty-icon">📋</div><div class="empty-title">ไม่มีรายการงานในเทอมนี้</div><div class="empty-sub">Admin สามารถเพิ่มรายการงานได้ที่เมนู "จัดการรายการงาน"</div></div>`;
+
+  updateBadges();
+}
+
+function filterTasks() { renderTasks(); }
+
+// ===== SUBMIT PAGE =====
+function renderSubmitPage() {
+  const sel = document.getElementById('submitCategory');
+  sel.innerHTML = '<option value="">-- เลือกประเภทงาน --</option>' +
+    STATE.categories.map(c => `<option value="${c.id}">${c.icon} ${c.name}</option>`).join('');
+}
+
+function loadTasksByCategory() {
+  const catId = document.getElementById('submitCategory').value;
+  const tasks = getFilteredTasks().filter(t => !catId || t.category === catId);
+  const sel = document.getElementById('submitTaskSelect');
+  sel.innerHTML = '<option value="">-- เลือกรายการงาน --</option>' +
+    tasks.map(t => `<option value="${t.id}">${t.name}</option>`).join('');
+}
+
+function onFileSelect(e) {
+  STATE.selectedFiles = Array.from(e.target.files);
+  renderFileList();
+}
+
+function dragOver(e) { e.preventDefault(); document.getElementById('uploadArea').classList.add('drag-over'); }
+function dragLeave(e) { document.getElementById('uploadArea').classList.remove('drag-over'); }
+function dropFile(e) {
+  e.preventDefault();
+  document.getElementById('uploadArea').classList.remove('drag-over');
+  STATE.selectedFiles = Array.from(e.dataTransfer.files);
+  renderFileList();
+}
+
+function renderFileList() {
+  const icons = { pdf:'📄', doc:'📝', docx:'📝', xls:'📊', xlsx:'📊', ppt:'📑', pptx:'📑', zip:'🗜️' };
+  document.getElementById('fileList').innerHTML = STATE.selectedFiles.map((f, i) => {
+    const ext = f.name.split('.').pop().toLowerCase();
+    return `<div class="file-item">
+      <span class="file-item-icon">${icons[ext]||'📎'}</span>
+      <span class="file-item-name">${f.name}</span>
+      <span class="file-item-size">${formatSize(f.size)}</span>
+      <button class="btn btn-ghost btn-icon btn-sm" onclick="removeFile(${i})">✕</button>
+    </div>`;
+  }).join('');
+}
+
+function removeFile(idx) {
+  STATE.selectedFiles.splice(idx, 1);
+  renderFileList();
+}
+
+async function submitWork() {
+  const taskId = document.getElementById('submitTaskSelect').value;
+  const note = document.getElementById('submitNote').value;
+  if (!taskId) { toast('error', '❌ กรุณาเลือกรายการงาน'); return; }
+  if (!STATE.selectedFiles.length) { toast('error', '❌ กรุณาเลือกไฟล์'); return; }
+
+  const me = STATE.teachers.find(t => t.email === STATE.user?.email) || STATE.teachers[0];
+  if (!me) { toast('error', '❌ ไม่พบข้อมูลครูในระบบ'); return; }
+
+  document.getElementById('submitBtn').disabled = true;
+  document.getElementById('uploadProgress').style.display = 'block';
+
+  let fileUrl = '#';
+
+  if (!STATE.isDemo && CONFIG.FOLDER_ID) {
+    // Upload to Drive
+    try {
+      const file = STATE.selectedFiles[0];
+      const metadata = { name: file.name, parents: [CONFIG.FOLDER_ID] };
+      const form = new FormData();
+      form.append('metadata', new Blob([JSON.stringify(metadata)], { type: 'application/json' }));
+      form.append('file', file);
+
+      const xhr = new XMLHttpRequest();
+      xhr.open('POST', 'https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id,webViewLink');
+      xhr.setRequestHeader('Authorization', `Bearer ${STATE.accessToken}`);
+      xhr.upload.onprogress = e => {
+        const pct = Math.round(e.loaded/e.total*100);
+        document.getElementById('uploadProgressBar').style.width = pct + '%';
+        document.getElementById('uploadProgressPct').textContent = pct + '%';
+      };
+      const driveRes = await new Promise((res, rej) => {
+        xhr.onload = () => res(JSON.parse(xhr.responseText));
+        xhr.onerror = rej;
+        xhr.send(form);
+      });
+      fileUrl = driveRes.webViewLink || '#';
+    } catch (e) {
+      toast('error', '❌ อัปโหลดไฟล์ไม่สำเร็จ: ' + e.message);
+      document.getElementById('submitBtn').disabled = false;
+      document.getElementById('uploadProgress').style.display = 'none';
+      return;
+    }
+  } else {
+    // Simulate
+    for (let i = 0; i <= 100; i += 20) {
+      await new Promise(r => setTimeout(r, 100));
+      document.getElementById('uploadProgressBar').style.width = i + '%';
+      document.getElementById('uploadProgressPct').textContent = i + '%';
+    }
+  }
+
+  const sub = {
+    id: 's' + Date.now(),
+    taskId,
+    teacherId: me.id,
+    date: new Date().toLocaleDateString('th-TH', { year: 'numeric', month: '2-digit', day: '2-digit' }),
+    filename: STATE.selectedFiles[0].name,
+    fileUrl,
+    note
+  };
+
+  STATE.submissions.push(sub);
+  await sheetsAppend('submissions', [[sub.id, sub.taskId, sub.teacherId, sub.date, sub.filename, sub.fileUrl, sub.note]]);
+
+  document.getElementById('uploadProgress').style.display = 'none';
+  document.getElementById('submitBtn').disabled = false;
+  document.getElementById('uploadProgressBar').style.width = '0%';
+
+  toast('success', '✅ ส่งงานสำเร็จ!');
+  clearSubmitForm();
+  updateBadges();
+}
+
+function clearSubmitForm() {
+  document.getElementById('submitCategory').value = '';
+  document.getElementById('submitTaskSelect').innerHTML = '<option value="">-- เลือกรายการงาน --</option>';
+  document.getElementById('submitNote').value = '';
+  document.getElementById('fileInput').value = '';
+  STATE.selectedFiles = [];
+  document.getElementById('fileList').innerHTML = '';
+}
+
+// ===== SUBMISSIONS PAGE =====
+function renderSubmissions() {
+  const all = [...STATE.submissions].reverse();
+  const q = (document.getElementById('subSearch')?.value || '').toLowerCase();
+  const filtered = all.filter(s => {
+    if (!q) return true;
+    const task = STATE.tasks.find(t => t.id === s.taskId);
+    const teacher = STATE.teachers.find(t => t.id === s.teacherId);
+    return (task?.name||'').toLowerCase().includes(q) ||
+           (teacher?.name||'').toLowerCase().includes(q) ||
+           s.filename.toLowerCase().includes(q);
+  });
+
+  document.getElementById('subTableBody').innerHTML = filtered.length ? filtered.map(s => {
+    const task = STATE.tasks.find(t => t.id === s.taskId);
+    const teacher = STATE.teachers.find(t => t.id === s.teacherId);
+    const cat = task ? STATE.categories.find(c => c.id === task.category) : null;
+    return `<tr>
+      <td style="white-space:nowrap;color:var(--text2);font-size:.82rem">${s.date}</td>
+      <td><span style="font-weight:500">${task?.name||s.taskId}</span></td>
+      <td>${cat ? `<span class="badge" style="background:${cat.color}18;color:${cat.color};border-color:${cat.color}30">${cat.icon} ${cat.name}</span>` : '—'}</td>
+      <td>${teacher?.name||s.teacherId}</td>
+      <td>
+        <a class="drive-link" href="${s.fileUrl}" target="_blank">
+          📎 ${s.filename}
+        </a>
+      </td>
+      <td style="color:var(--text3);font-size:.82rem">${s.note||'—'}</td>
+      <td>
+        ${STATE.isAdmin ? `<button class="btn btn-danger btn-sm" onclick="deleteSubmission('${s.id}')">🗑️</button>` : ''}
+      </td>
+    </tr>`;
+  }).join('') : `<tr><td colspan="7"><div class="empty-state"><div class="empty-icon">🗂️</div><div class="empty-title">ยังไม่มีไฟล์ที่ส่ง</div></div></td></tr>`;
+}
+
+function filterSubmissions() { renderSubmissions(); }
+
+function deleteSubmission(id) {
+  if (!confirm('ยืนยันลบรายการนี้?')) return;
+  STATE.submissions = STATE.submissions.filter(s => s.id !== id);
+  renderSubmissions();
+  toast('success', '🗑️ ลบรายการแล้ว');
+}
+
+// ===== TEACHERS PAGE =====
+function renderTeachers() {
+  document.getElementById('teacherCount').textContent = `ครูทั้งหมด ${STATE.teachers.length} คน`;
+  document.getElementById('teacherGrid').innerHTML = STATE.teachers.length
+    ? STATE.teachers.map(t => {
+      const submitted = STATE.submissions.filter(s => s.teacherId === t.id).length;
+      const total = getFilteredTasks().length;
+      const pct = total > 0 ? Math.round(submitted/total*100) : 0;
+      const initials = t.name.length > 2 ? t.name.slice(1, 3) : t.name.slice(0,2);
+      return `<div class="teacher-card" onclick="openEditTeacherModal('${t.id}')">
+        <div class="teacher-header">
+          <div class="teacher-avatar">${initials}</div>
+          <div>
+            <div class="teacher-name">${t.name}</div>
+            <div class="teacher-subject">${t.position||'ครู'} ${t.subject ? '· ' + t.subject : ''}</div>
+          </div>
+          ${t.role==='admin' ? '<span class="badge badge-purple" style="margin-left:auto">Admin</span>' : ''}
+        </div>
+        <div class="teacher-stats">
+          <div class="teacher-stat">
+            <div class="teacher-stat-val" style="color:var(--green)">${submitted}</div>
+            <div class="teacher-stat-label">ส่งแล้ว</div>
+          </div>
+          <div class="teacher-stat">
+            <div class="teacher-stat-val" style="color:${pct>=80?'var(--green)':pct>=50?'var(--yellow)':'var(--red)'}">${pct}%</div>
+            <div class="teacher-stat-label">ความคืบหน้า</div>
+          </div>
+        </div>
+        <div style="margin-top:.75rem;">
+          <div class="progress-bar">
+            <div class="progress-fill" style="width:${pct}%;background:${pct>=80?'var(--green)':pct>=50?'var(--yellow)':'var(--red)'}"></div>
+          </div>
+        </div>
+        ${t.grade ? `<div style="font-size:.78rem;color:var(--text3);margin-top:.5rem;">ระดับ: ${t.grade}</div>` : ''}
+      </div>`;
+    }).join('')
+    : `<div class="empty-state" style="grid-column:1/-1"><div class="empty-icon">👩‍🏫</div><div class="empty-title">ยังไม่มีข้อมูลครู</div></div>`;
+}
+
+function openAddTeacherModal() {
+  document.getElementById('teacherModalTitle').textContent = '➕ เพิ่มข้อมูลครู';
+  document.getElementById('editTeacherId').value = '';
+  ['teacherName','teacherSubject','teacherGrade','teacherEmail'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('teacherPosition').value = 'ครู';
+  document.getElementById('teacherRank').value = '';
+  document.getElementById('teacherRole').value = 'teacher';
+  openModal('addTeacherModal');
+}
+
+function openEditTeacherModal(id) {
+  if (!STATE.isAdmin) return;
+  const t = STATE.teachers.find(tc => tc.id === id);
+  if (!t) return;
+  document.getElementById('teacherModalTitle').textContent = '✏️ แก้ไขข้อมูลครู';
+  document.getElementById('editTeacherId').value = t.id;
+  document.getElementById('teacherName').value = t.name;
+  document.getElementById('teacherPosition').value = t.position||'ครู';
+  document.getElementById('teacherSubject').value = t.subject||'';
+  document.getElementById('teacherGrade').value = t.grade||'';
+  document.getElementById('teacherEmail').value = t.email||'';
+  document.getElementById('teacherRole').value = t.role||'teacher';
+  openModal('addTeacherModal');
+}
+
+async function saveTeacher() {
+  const name = document.getElementById('teacherName').value.trim();
+  if (!name) { toast('error', '❌ กรุณากรอกชื่อครู'); return; }
+  const editId = document.getElementById('editTeacherId').value;
+  const teacher = {
+    id: editId || 't' + Date.now(),
+    name,
+    position: document.getElementById('teacherPosition').value,
+    subject: document.getElementById('teacherSubject').value,
+    grade: document.getElementById('teacherGrade').value,
+    email: document.getElementById('teacherEmail').value,
+    role: document.getElementById('teacherRole').value,
+  };
+
+  if (editId) {
+    STATE.teachers = STATE.teachers.map(t => t.id === editId ? teacher : t);
+  } else {
+    STATE.teachers.push(teacher);
+  }
+
+  await syncTeachers();
+  closeModal('addTeacherModal');
+  renderTeachers();
+  toast('success', editId ? '✅ แก้ไขข้อมูลครูแล้ว' : '✅ เพิ่มครูแล้ว');
+}
+
+async function syncTeachers() {
+  await sheetsClear('teachers');
+  await sheetsWrite('teachers', [
+    ['id','name','position','subject','grade','email','role'],
+    ...STATE.teachers.map(t => [t.id, t.name, t.position, t.subject, t.grade, t.email, t.role])
+  ]);
+}
+
+// ===== MANAGE TASKS PAGE =====
+function renderManageTasks() {
+  const grouped = {};
+  STATE.categories.forEach(cat => {
+    grouped[cat.id] = { cat, tasks: STATE.tasks.filter(t => t.category === cat.id) };
+  });
+
+  document.getElementById('manageTasksContent').innerHTML = `
+    <div style="margin-bottom:1.25rem;">
+      <div style="font-size:.9rem;color:var(--text2);margin-bottom:.75rem;">ประเภทงานทั้งหมด</div>
+      <div style="display:flex;flex-wrap:wrap;gap:.5rem;margin-bottom:1rem;">
+        ${STATE.categories.map(cat => `
+          <span class="badge" style="background:${cat.color}18;color:${cat.color};border-color:${cat.color}30;padding:.25rem .6rem;font-size:.82rem;cursor:pointer;" onclick="deleteCategory('${cat.id}')">
+            ${cat.icon} ${cat.name} ✕
+          </span>
+        `).join('')}
+        <button class="btn btn-secondary btn-sm" onclick="openAddCategoryModal()">+ เพิ่มประเภท</button>
+      </div>
+    </div>
+    ${Object.values(grouped).map(({ cat, tasks }) => `
+      <div class="card" style="margin-bottom:1rem;">
+        <div class="card-header" style="background:${cat.color}08;">
+          <span class="card-title" style="color:${cat.color}">${cat.icon} ${cat.name}</span>
+          <span style="font-size:.8rem;color:var(--text3)">${tasks.length} รายการ</span>
+        </div>
+        ${tasks.length ? `
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>ชื่อรายการ</th><th>ปี/เทอม</th><th>กำหนดส่ง</th><th>ส่งแล้ว</th><th></th></tr></thead>
+            <tbody>
+              ${tasks.map(t => `
+                <tr>
+                  <td><div style="display:flex;align-items:center;gap:.4rem;"><div style="width:8px;height:8px;border-radius:50%;background:${t.color};flex-shrink:0"></div>${t.name}</div></td>
+                  <td><span class="term-badge">${t.year} เทอม ${t.term==='0'?'ตลอดปี':t.term}</span></td>
+                  <td style="color:var(--text2);font-size:.83rem">${t.due ? formatDate(t.due) : '—'}</td>
+                  <td><span class="badge badge-blue">${STATE.submissions.filter(s=>s.taskId===t.id).length} คน</span></td>
+                  <td><div style="display:flex;gap:.4rem;">
+                    <button class="btn btn-secondary btn-sm" onclick="editTask('${t.id}')">✏️ แก้ไข</button>
+                    <button class="btn btn-danger btn-sm" onclick="deleteTask('${t.id}')">🗑️</button>
+                  </div></td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+        </div>` : `<div style="padding:1rem;color:var(--text3);font-size:.85rem;text-align:center">ยังไม่มีรายการงาน</div>`}
+      </div>
+    `).join('')}
+  `;
+}
+
+function openAddTaskModal() {
+  document.getElementById('taskModalTitle').textContent = '➕ เพิ่มรายการงาน';
+  document.getElementById('editTaskId').value = '';
+  document.getElementById('taskName').value = '';
+  document.getElementById('taskDesc').value = '';
+  document.getElementById('taskDue').value = '';
+  document.getElementById('taskYear').value = STATE.currentYear;
+  document.getElementById('taskTerm').value = STATE.currentTerm;
+  STATE.selectedColor = '#58a6ff';
+  document.querySelectorAll('#colorPicker .color-dot').forEach(d => {
+    d.classList.toggle('selected', d.dataset.color === '#58a6ff');
+  });
+
+  // Populate category
+  const sel = document.getElementById('taskCategory');
+  sel.innerHTML = '<option value="">-- เลือก --</option>' + STATE.categories.map(c => `<option value="${c.id}">${c.icon} ${c.name}</option>`).join('');
+
+  // Populate teachers
+  const assignSel = document.getElementById('taskAssignTo');
+  assignSel.innerHTML = '<option value="all" selected>ครูทุกคน</option>' + STATE.teachers.map(t => `<option value="${t.id}">${t.name}</option>`).join('');
+
+  openModal('addTaskModal');
+}
+
+function editTask(id) {
+  const t = STATE.tasks.find(tk => tk.id === id);
+  if (!t) return;
+  openAddTaskModal();
+  document.getElementById('taskModalTitle').textContent = '✏️ แก้ไขรายการงาน';
+  document.getElementById('editTaskId').value = t.id;
+  document.getElementById('taskName').value = t.name;
+  document.getElementById('taskCategory').value = t.category;
+  document.getElementById('taskYear').value = t.year;
+  document.getElementById('taskTerm').value = t.term;
+  document.getElementById('taskDue').value = t.due||'';
+  document.getElementById('taskDesc').value = t.desc||'';
+  STATE.selectedColor = t.color || '#58a6ff';
+  document.querySelectorAll('#colorPicker .color-dot').forEach(d => {
+    d.classList.toggle('selected', d.dataset.color === t.color);
+  });
+}
+
+async function saveTask() {
+  const name = document.getElementById('taskName').value.trim();
+  const category = document.getElementById('taskCategory').value;
+  if (!name || !category) { toast('error', '❌ กรุณากรอกข้อมูลให้ครบ'); return; }
+
+  const editId = document.getElementById('editTaskId').value;
+  const task = {
+    id: editId || 'tk' + Date.now(),
+    name,
+    category,
+    year: document.getElementById('taskYear').value,
+    term: document.getElementById('taskTerm').value,
+    due: document.getElementById('taskDue').value,
+    color: STATE.selectedColor,
+    desc: document.getElementById('taskDesc').value,
+    assignTo: 'all'
+  };
+
+  if (editId) {
+    STATE.tasks = STATE.tasks.map(t => t.id === editId ? task : t);
+  } else {
+    STATE.tasks.push(task);
+  }
+
+  await syncTasks();
+  closeModal('addTaskModal');
+  renderManageTasks();
+  updateBadges();
+  toast('success', editId ? '✅ แก้ไขรายการงานแล้ว' : '✅ เพิ่มรายการงานแล้ว');
+}
+
+async function deleteTask(id) {
+  if (!confirm('ยืนยันลบรายการงานนี้?')) return;
+  STATE.tasks = STATE.tasks.filter(t => t.id !== id);
+  await syncTasks();
+  renderManageTasks();
+  toast('success', '🗑️ ลบรายการงานแล้ว');
+}
+
+async function syncTasks() {
+  await sheetsClear('tasks');
+  await sheetsWrite('tasks', [
+    ['id','name','category','year','term','due','color','desc','assignTo'],
+    ...STATE.tasks.map(t => [t.id,t.name,t.category,t.year,t.term,t.due||'',t.color,t.desc||'',t.assignTo||'all'])
+  ]);
+}
+
+// ===== CATEGORIES =====
+function openAddCategoryModal() {
+  document.getElementById('catName').value = '';
+  document.getElementById('catIcon').value = '📋';
+  STATE.selectedCatColor = '#58a6ff';
+  document.querySelectorAll('#catColorPicker .color-dot').forEach(d => d.classList.toggle('selected', d.dataset.color === '#58a6ff'));
+  openModal('addCategoryModal');
+}
+
+async function saveCategory() {
+  const name = document.getElementById('catName').value.trim();
+  if (!name) { toast('error', '❌ กรุณากรอกชื่อประเภท'); return; }
+  const cat = {
+    id: 'c' + Date.now(),
+    name,
+    icon: document.getElementById('catIcon').value || '📋',
+    color: STATE.selectedCatColor
+  };
+  STATE.categories.push(cat);
+  await syncCategories();
+  closeModal('addCategoryModal');
+  renderManageTasks();
+  toast('success', '✅ เพิ่มประเภทงานแล้ว');
+}
+
+async function deleteCategory(id) {
+  if (STATE.tasks.find(t => t.category === id)) {
+    toast('error', '❌ ไม่สามารถลบได้ เพราะมีรายการงานอยู่ในประเภทนี้');
+    return;
+  }
+  if (!confirm('ยืนยันลบประเภทนี้?')) return;
+  STATE.categories = STATE.categories.filter(c => c.id !== id);
+  await syncCategories();
+  renderManageTasks();
+  toast('success', '🗑️ ลบประเภทงานแล้ว');
+}
+
+async function syncCategories() {
+  await sheetsClear('categories');
+  await sheetsWrite('categories', [
+    ['id','name','icon','color'],
+    ...STATE.categories.map(c => [c.id,c.name,c.icon,c.color])
+  ]);
+}
+
+// ===== REPORTS PAGE =====
+function renderReports() {
+  const tasks = getFilteredTasks();
+  const teachers = STATE.teachers;
+
+  const headCols = tasks.map(t => {
+    const cat = STATE.categories.find(c => c.id === t.category);
+    return `<th style="max-width:100px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${cat?.icon||''} ${t.name.substring(0,15)}${t.name.length>15?'…':''}</th>`;
+  }).join('');
+  document.getElementById('reportHead').innerHTML = `<tr><th>ครู</th>${headCols}<th>รวม</th><th>%</th></tr>`;
+
+  document.getElementById('reportBody').innerHTML = teachers.length ? teachers.map(teacher => {
+    const cells = tasks.map(task => {
+      const sub = getSubmissionsFor(task.id, teacher.id);
+      return sub ? `<td style="text-align:center"><a class="drive-link" href="${sub.fileUrl}" target="_blank" title="${sub.filename}">✅</a></td>`
+                 : `<td style="text-align:center;color:var(--text3)">—</td>`;
+    }).join('');
+    const done = tasks.filter(t => getSubmissionsFor(t.id, teacher.id)).length;
+    const pct = tasks.length > 0 ? Math.round(done/tasks.length*100) : 0;
+    return `<tr>
+      <td style="white-space:nowrap;font-weight:500">${teacher.name}</td>
+      ${cells}
+      <td style="text-align:center">${done}/${tasks.length}</td>
+      <td style="text-align:center"><span class="badge ${pct>=80?'badge-green':pct>=50?'badge-yellow':'badge-red'}">${pct}%</span></td>
+    </tr>`;
+  }).join('') + `
+    <tr style="border-top:2px solid var(--border2);font-weight:600">
+      <td>รวม</td>
+      ${tasks.map(t => {
+        const cnt = STATE.submissions.filter(s => s.taskId === t.id).length;
+        const pct = teachers.length ? Math.round(cnt/teachers.length*100) : 0;
+        return `<td style="text-align:center;font-size:.82rem;color:var(--text2)">${cnt}/${teachers.length}<br><span style="font-size:.75rem;color:${pct>=80?'var(--green)':pct>=50?'var(--yellow)':'var(--red)'}">${pct}%</span></td>`;
+      }).join('')}
+      <td></td><td></td>
+    </tr>
+  ` : `<tr><td colspan="${tasks.length+3}"><div class="empty-state"><div class="empty-icon">📊</div><div class="empty-title">ยังไม่มีข้อมูล</div></div></td></tr>`;
+}
+
+function exportReport() {
+  toast('info', '📥 กำลังสร้าง CSV...');
+  const tasks = getFilteredTasks();
+  const teachers = STATE.teachers;
+  const headers = ['ครู', ...tasks.map(t => t.name), 'รวม', '%'];
+  const rows = teachers.map(teacher => {
+    const done = tasks.filter(t => getSubmissionsFor(t.id, teacher.id)).length;
+    const pct = tasks.length > 0 ? Math.round(done/tasks.length*100) : 0;
+    return [teacher.name, ...tasks.map(t => getSubmissionsFor(t.id, teacher.id) ? 'ส่งแล้ว' : '—'), `${done}/${tasks.length}`, pct + '%'];
+  });
+
+  const csv = [headers, ...rows].map(r => r.map(c => `"${c}"`).join(',')).join('\n');
+  const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `รายงาน_${STATE.currentYear}_เทอม${STATE.currentTerm}.csv`;
+  a.click();
+}
+
+// ===== SETTINGS =====
+function renderSettingsPage() {
+  document.getElementById('settingSheetId').value = CONFIG.SHEET_ID;
+  document.getElementById('settingFolderId').value = CONFIG.FOLDER_ID;
+  document.getElementById('settingSchool').value = CONFIG.SCHOOL;
+}
+
+function saveSettings() {
+  CONFIG.SHEET_ID = document.getElementById('settingSheetId').value;
+  CONFIG.FOLDER_ID = document.getElementById('settingFolderId').value;
+  CONFIG.SCHOOL = document.getElementById('settingSchool').value;
+  saveToStorage();
+  toast('success', '✅ บันทึกการตั้งค่าแล้ว');
+}
+
+// ===== PROFILE =====
+function renderProfile() {
+  const me = STATE.teachers.find(t => t.email === STATE.user?.email) || null;
+  document.getElementById('profileContent').innerHTML = `
+    <div style="display:flex;align-items:center;gap:1rem;margin-bottom:1.5rem;">
+      <div class="teacher-avatar" style="width:60px;height:60px;font-size:1.5rem;">
+        ${STATE.user?.picture ? `<img src="${STATE.user.picture}">` : (STATE.user?.name?.slice(1,3)||'?')}
+      </div>
+      <div>
+        <div style="font-weight:700;font-size:1.1rem">${STATE.user?.name||'—'}</div>
+        <div style="color:var(--text2);font-size:.85rem">${STATE.user?.email||'—'}</div>
+        ${STATE.isAdmin ? '<span class="badge badge-purple" style="margin-top:.25rem">Admin</span>' : ''}
+        ${STATE.isDemo ? '<span class="badge badge-orange" style="margin-top:.25rem">Demo Mode</span>' : ''}
+      </div>
+    </div>
+    ${me ? `
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:.75rem;">
+        <div class="teacher-stat"><div class="teacher-stat-val" style="color:var(--blue)">${STATE.submissions.filter(s=>s.teacherId===me.id).length}</div><div class="teacher-stat-label">ไฟล์ที่ส่ง</div></div>
+        <div class="teacher-stat"><div class="teacher-stat-val" style="color:var(--green)">${getFilteredTasks().filter(t=>getSubmissionsFor(t.id,me.id)).length}/${getFilteredTasks().length}</div><div class="teacher-stat-label">งานที่ส่งเทอมนี้</div></div>
+      </div>
+      <div style="margin-top:1rem;font-size:.85rem;color:var(--text2)">วิชา: ${me.subject||'—'} | ระดับ: ${me.grade||'—'}</div>
+    ` : '<div style="color:var(--text3);font-size:.9rem">ไม่พบข้อมูลครูในระบบ กรุณาแจ้ง Admin เพิ่มข้อมูล</div>'}
+  `;
+}
+
+// ===== YEAR/TERM =====
+function onYearChange() {
+  STATE.currentYear = document.getElementById('yearSelector').value;
+  if (STATE.currentPage === 'dashboard' || STATE.currentPage === 'tasks' || STATE.currentPage === 'reports') {
+    navigate(STATE.currentPage);
+  }
+}
+
+function onTermChange() {
+  STATE.currentTerm = document.getElementById('termSelector').value;
+  if (STATE.currentPage === 'dashboard' || STATE.currentPage === 'tasks' || STATE.currentPage === 'reports') {
+    navigate(STATE.currentPage);
+  }
+}
+
+// ===== UI HELPERS =====
+function updateUserUI() {
+  const u = STATE.user;
+  const name = document.getElementById('topbarName');
+  const avatar = document.getElementById('topbarAvatar');
+  if (u) {
+    name.textContent = u.name?.split(' ')[0] || u.email || 'ผู้ใช้';
+    avatar.innerHTML = u.picture ? `<img src="${u.picture}" alt="">` : (u.name?.slice(1,3) || '?');
+  }
+  STATE.isAdmin = STATE.isDemo || STATE.teachers.find(t => t.email === u?.email && t.role === 'admin') != null || STATE.teachers.length === 0;
+}
+
+function updateBadges() {
+  const tasks = getFilteredTasks();
+  document.getElementById('badge-tasks').textContent = tasks.length;
+  const me = STATE.teachers.find(t => t.email === STATE.user?.email);
+  if (me) {
+    const pending = tasks.filter(t => !getSubmissionsFor(t.id, me.id)).length;
+    document.getElementById('badge-tasks').textContent = tasks.length;
+  }
+}
+
+function toggleUserMenu() {
+  const pop = document.getElementById('userMenuPopover');
+  pop.style.display = pop.style.display === 'none' ? 'block' : 'none';
+}
+
+function closePopover() {
+  document.getElementById('userMenuPopover').style.display = 'none';
+}
+
+function toggleSidebar() {
+  document.getElementById('sidebar').classList.toggle('open');
+}
+
+function closeSidebar() {
+  document.getElementById('sidebar').classList.remove('open');
+}
+
+document.addEventListener('click', e => {
+  const btn = document.getElementById('userMenuBtn');
+  const pop = document.getElementById('userMenuPopover');
+  if (btn && pop && !btn.contains(e.target) && !pop.contains(e.target)) {
+    pop.style.display = 'none';
+  }
+});
+
+// ===== MODAL HELPERS =====
+function openModal(id) { document.getElementById(id).style.display = 'flex'; }
+function closeModal(id) { document.getElementById(id).style.display = 'none'; }
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') {
+    document.querySelectorAll('.modal-overlay:not([style*="display: none"])').forEach(m => m.style.display = 'none');
+  }
+});
+
+document.querySelectorAll('.modal-overlay').forEach(overlay => {
+  overlay.addEventListener('click', e => {
+    if (e.target === overlay) overlay.style.display = 'none';
+  });
+});
+
+// ===== COLOR PICKER =====
+function selectColor(el) {
+  document.querySelectorAll('#colorPicker .color-dot').forEach(d => d.classList.remove('selected'));
+  el.classList.add('selected');
+  STATE.selectedColor = el.dataset.color;
+}
+
+function selectCatColor(el) {
+  document.querySelectorAll('#catColorPicker .color-dot').forEach(d => d.classList.remove('selected'));
+  el.classList.add('selected');
+  STATE.selectedCatColor = el.dataset.color;
+}
+
+function selectIcon(el) {
+  document.querySelectorAll('#iconPicker span').forEach(s => s.style.background = 'transparent');
+  el.style.background = 'var(--bg4)';
+  document.getElementById('catIcon').value = el.dataset.icon;
+}
+
+// ===== SETUP GUIDE =====
+function showSetupGuide() { openModal('setupModal'); }
+
+// ===== TOAST =====
+function toast(type, msg) {
+  const icons = { success:'✅', error:'❌', info:'ℹ️' };
+  const t = document.createElement('div');
+  t.className = `toast ${type}`;
+  t.innerHTML = `<span>${icons[type]}</span><span>${msg}</span>`;
+  document.getElementById('toastContainer').appendChild(t);
+  setTimeout(() => { t.style.opacity = '0'; t.style.transition = 'opacity .3s'; setTimeout(() => t.remove(), 300); }, 3500);
+}
+
+// ===== UTILS =====
+function formatDate(d) {
+  if (!d) return '—';
+  try {
+    const [y, m, day] = d.split('-');
+    const months = ['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.'];
+    return `${parseInt(day)} ${months[parseInt(m)-1]} ${y}`;
+  } catch { return d; }
+}
+
+function formatSize(bytes) {
+  if (bytes < 1024) return bytes + ' B';
+  if (bytes < 1048576) return (bytes/1024).toFixed(1) + ' KB';
+  return (bytes/1048576).toFixed(1) + ' MB';
+}
+</script>
+</body>
+</html>
