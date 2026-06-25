@@ -9,6 +9,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         body { font-family: 'Sarabun', sans-serif; background-color: #f8fafc; }
+        /* ปรับแต่ง Scrollbar */
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
     </style>
@@ -50,7 +51,17 @@
             <a href="dashboard.html" class="flex items-center px-4 py-3 text-blue-100 hover:bg-white/10 hover:text-white rounded-xl border-l-4 border-transparent hover:border-white/50 transition">
                 <i class="fa-regular fa-file-lines w-6 text-center mr-2"></i> รายงาน
             </a>
+
+            <a href="#" class="flex items-center px-4 py-3 text-blue-100 hover:bg-white/10 hover:text-white rounded-xl border-l-4 border-transparent hover:border-white/50 transition mt-6">
+                <i class="fa-solid fa-gear w-6 text-center mr-2"></i> ตั้งค่า
+            </a>
         </nav>
+        
+        <div class="p-4 border-t border-white/10">
+            <button class="flex items-center w-full px-4 py-2 text-blue-200 hover:text-white transition">
+                <i class="fa-solid fa-arrow-right-from-bracket w-6 text-center mr-2"></i> ออกจากระบบ
+            </button>
+        </div>
     </aside>
 
     <main class="flex-1 flex flex-col h-screen overflow-hidden">
@@ -61,7 +72,7 @@
                 <span class="bg-blue-100 text-[#3b5bdb] text-xs font-bold px-2.5 py-1 rounded-full">Core Database</span>
             </div>
             
-            <button class="bg-[#3b5bdb] hover:bg-blue-700 text-white font-medium py-2 px-5 rounded-lg shadow-sm transition flex items-center text-sm">
+            <button onclick="openTeacherModal()" class="bg-[#3b5bdb] hover:bg-blue-700 text-white font-medium py-2 px-5 rounded-lg shadow-sm transition flex items-center text-sm">
                 <i class="fa-solid fa-plus mr-2"></i> เพิ่มบุคลากรใหม่
             </button>
         </header>
@@ -122,7 +133,7 @@
                                     </span>
                                 </td>
                                 <td class="p-4 text-center">
-                                    <button class="text-slate-400 hover:text-[#3b5bdb] mx-1 transition tooltip" title="แก้ไขข้อมูล"><i class="fa-regular fa-pen-to-square"></i></button>
+                                    <button class="text-slate-400 hover:text-[#3b5bdb] mx-1 transition tooltip" title="แก้ไขข้อมูล" onclick="openTeacherModal(true, {id: 'T001'})"><i class="fa-regular fa-pen-to-square"></i></button>
                                     <button class="text-slate-400 hover:text-amber-500 mx-1 transition tooltip" title="ปรับสถานะ/ย้าย"><i class="fa-solid fa-power-off"></i></button>
                                 </td>
                             </tr>
@@ -191,5 +202,164 @@
         </div>
     </main>
 
+    <div id="teacher-modal" class="fixed inset-0 z-50 hidden">
+        <div class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm transition-opacity" onclick="closeTeacherModal()"></div>
+        
+        <div class="fixed inset-0 z-10 overflow-y-auto">
+            <div class="flex min-h-full items-center justify-center p-4 text-center sm:p-0">
+                <div class="relative transform overflow-hidden rounded-2xl bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-2xl border border-slate-100">
+                    
+                    <div class="bg-slate-50 px-6 py-4 border-b border-slate-100 flex justify-between items-center">
+                        <h3 class="text-lg font-bold text-[#3b5bdb]" id="modal-title">เพิ่มบุคลากรใหม่</h3>
+                        <button type="button" onclick="closeTeacherModal()" class="text-slate-400 hover:text-red-500 transition">
+                            <i class="fa-solid fa-xmark text-xl"></i>
+                        </button>
+                    </div>
+
+                    <form id="teacher-form" onsubmit="saveTeacherData(event)" class="px-6 py-6">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 mb-1">รหัสประจำตัว <span class="text-red-500">*</span></label>
+                                <input type="text" id="t-id" placeholder="เช่น T004" required class="w-full bg-white border border-slate-300 text-slate-800 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-[#3b5bdb] focus:ring-1 focus:ring-[#3b5bdb]">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 mb-1">อีเมลองค์กร</label>
+                                <input type="email" id="t-email" placeholder="email@school.ac.th" class="w-full bg-white border border-slate-300 text-slate-800 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-[#3b5bdb] focus:ring-1 focus:ring-[#3b5bdb]">
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-4 gap-4 mb-4">
+                            <div class="sm:col-span-1">
+                                <label class="block text-sm font-medium text-slate-700 mb-1">คำนำหน้า</label>
+                                <select id="t-prefix" class="w-full bg-white border border-slate-300 text-slate-800 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-[#3b5bdb] focus:ring-1 focus:ring-[#3b5bdb]">
+                                    <option value="นาย">นาย</option>
+                                    <option value="นาง">นาง</option>
+                                    <option value="นางสาว">นางสาว</option>
+                                    <option value="ว่าที่ ร.ต.">ว่าที่ ร.ต.</option>
+                                </select>
+                            </div>
+                            <div class="sm:col-span-1 md:col-span-1 lg:col-span-1">
+                                <label class="block text-sm font-medium text-slate-700 mb-1">ชื่อ <span class="text-red-500">*</span></label>
+                                <input type="text" id="t-fname" required class="w-full bg-white border border-slate-300 text-slate-800 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-[#3b5bdb] focus:ring-1 focus:ring-[#3b5bdb]">
+                            </div>
+                            <div class="sm:col-span-2">
+                                <label class="block text-sm font-medium text-slate-700 mb-1">นามสกุล <span class="text-red-500">*</span></label>
+                                <input type="text" id="t-lname" required class="w-full bg-white border border-slate-300 text-slate-800 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-[#3b5bdb] focus:ring-1 focus:ring-[#3b5bdb]">
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 mb-1">กลุ่มสาระการเรียนรู้</label>
+                                <select id="t-dept" class="w-full bg-white border border-slate-300 text-slate-800 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-[#3b5bdb] focus:ring-1 focus:ring-[#3b5bdb]">
+                                    <option value="วิทยาศาสตร์และเทคโนโลยี">วิทยาศาสตร์และเทคโนโลยี</option>
+                                    <option value="คณิตศาสตร์">คณิตศาสตร์</option>
+                                    <option value="ภาษาไทย">ภาษาไทย</option>
+                                    <option value="ภาษาต่างประเทศ">ภาษาต่างประเทศ</option>
+                                    <option value="สังคมศึกษาฯ">สังคมศึกษาฯ</option>
+                                    <option value="สุขศึกษาและพลศึกษา">สุขศึกษาและพลศึกษา</option>
+                                    <option value="ศิลปะ">ศิลปะ</option>
+                                    <option value="การงานอาชีพ">การงานอาชีพ</option>
+                                    <option value="ปฐมวัย">ปฐมวัย</option>
+                                    <option value="บริหารการศึกษา">บริหารการศึกษา</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 mb-1">วิทยฐานะ</label>
+                                <select id="t-academic" class="w-full bg-white border border-slate-300 text-slate-800 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-[#3b5bdb] focus:ring-1 focus:ring-[#3b5bdb]">
+                                    <option value="-">ไม่มีวิทยฐานะ</option>
+                                    <option value="ชำนาญการ">ชำนาญการ</option>
+                                    <option value="ชำนาญการพิเศษ">ชำนาญการพิเศษ</option>
+                                    <option value="เชี่ยวชาญ">เชี่ยวชาญ</option>
+                                    <option value="เชี่ยวชาญพิเศษ">เชี่ยวชาญพิเศษ</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 mb-1">สถานะ</label>
+                                <select id="t-status" class="w-full bg-white border border-slate-300 text-slate-800 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-[#3b5bdb] focus:ring-1 focus:ring-[#3b5bdb]">
+                                    <option value="Active">ปฏิบัติงาน (Active)</option>
+                                    <option value="Inactive">พ้นสภาพ/ย้าย (Inactive)</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="flex justify-end space-x-3 pt-4 border-t border-slate-100">
+                            <button type="button" onclick="closeTeacherModal()" class="px-4 py-2 rounded-lg border border-slate-300 text-slate-600 hover:bg-slate-50 text-sm font-medium transition">
+                                ยกเลิก
+                            </button>
+                            <button type="submit" id="btn-save" class="px-5 py-2 rounded-lg bg-[#3b5bdb] hover:bg-blue-700 text-white text-sm font-medium shadow-sm transition flex items-center">
+                                <i class="fa-solid fa-floppy-disk mr-2"></i> บันทึกข้อมูล
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const modal = document.getElementById('teacher-modal');
+        const form = document.getElementById('teacher-form');
+        const modalTitle = document.getElementById('modal-title');
+
+        // ฟังก์ชันเปิด Modal
+        function openTeacherModal(isEdit = false, teacherData = null) {
+            // เคลียร์ค่าในฟอร์มก่อนเปิด
+            form.reset();
+            
+            if(isEdit && teacherData) {
+                modalTitle.innerText = "แก้ไขข้อมูลบุคลากร";
+                document.getElementById('t-id').value = teacherData.id;
+                document.getElementById('t-id').readOnly = true; // รหัสครูไม่ควรแก้ได้เมื่อแก้ไขข้อมูล
+                document.getElementById('t-id').classList.add('bg-slate-100', 'cursor-not-allowed');
+            } else {
+                modalTitle.innerText = "เพิ่มบุคลากรใหม่";
+                document.getElementById('t-id').readOnly = false;
+                document.getElementById('t-id').classList.remove('bg-slate-100', 'cursor-not-allowed');
+            }
+
+            modal.classList.remove('hidden');
+        }
+
+        // ฟังก์ชันปิด Modal
+        function closeTeacherModal() {
+            modal.classList.add('hidden');
+        }
+
+        // ฟังก์ชันเมื่อกดปุ่มบันทึก
+        function saveTeacherData(event) {
+            event.preventDefault(); // ป้องกันหน้าเว็บ Refresh
+
+            // เปลี่ยนปุ่มเป็นสถานะกำลังโหลด
+            const btnSave = document.getElementById('btn-save');
+            const originalText = btnSave.innerHTML;
+            btnSave.innerHTML = `<i class="fa-solid fa-spinner fa-spin mr-2"></i> กำลังบันทึก...`;
+            btnSave.disabled = true;
+
+            // รวบรวมข้อมูลจากฟอร์มเตรียมส่งขึ้น Cloud
+            const payload = {
+                teacher_id: document.getElementById('t-id').value,
+                prefix: document.getElementById('t-prefix').value,
+                first_name: document.getElementById('t-fname').value,
+                last_name: document.getElementById('t-lname').value,
+                email: document.getElementById('t-email').value,
+                department: document.getElementById('t-dept').value,
+                academic_standing: document.getElementById('t-academic').value,
+                status: document.getElementById('t-status').value
+            };
+
+            console.log("ข้อมูลที่จะเตรียมส่งไปยัง Core DB:", payload);
+
+            // จำลองการโหลดส่งข้อมูล (ในระบบจริงจะใช้ fetch ยิงไปที่ Web App URL ของ Core DB)
+            setTimeout(() => {
+                alert(`บันทึกข้อมูลของ ${payload.prefix}${payload.first_name} ${payload.last_name} เรียบร้อยแล้ว!`);
+                closeTeacherModal();
+                
+                // คืนสถานะปุ่ม
+                btnSave.innerHTML = originalText;
+                btnSave.disabled = false;
+            }, 1000);
+        }
+    </script>
 </body>
 </html>
