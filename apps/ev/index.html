@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#0f172a">
+<title>EV Charge Advisor</title>
+<style>
+  :root {
+    --bg: #0f172a;
+    --surface: rgba(255,255,255,0.05);
+    --border: rgba(255,255,255,0.1);
+    --text: #f1f5f9;
+    --muted: #94a3b8;
+    --dim: #475569;
+    --green: #10b981;
+    --green-bg: rgba(16,185,129,0.15);
+    --green-border: rgba(16,185,129,0.3);
+    --red: #f87171;
+    --red-bg: rgba(248,113,113,0.15);
+    --amber: #fbbf24;
+    --amber-bg: rgba(251,191,36,0.15);
+    --font-mono: 'SF Mono', 'Fira Code', ui-monospace, monospace;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  html { font-size: 16px; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, 'Sarabun', sans-serif;
+    min-height: 100vh;
+    padding-bottom: env(safe-area-inset-bottom, 20px);
+  }
+
+  /* HEADER */
+  .header {
+    background: linear-gradient(180deg, #0f172a 0%, #1e293b 100%);
+    padding: 52px 16px 16px;
+    border-bottom: 1px solid var(--border);
+  }
+  .header-row { display: flex; justify-content: space-between; align-items: flex-start; }
+  .header-label { color: var(--green); font-size: 11px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; margin-bottom: 4px; }
+  .header-title { font-size: 24px; font-weight: 800; }
+  .header-sub { color: var(--muted); font-size: 13px; margin-top: 2px; }
+  .peak-badge {
+    font-size: 11px; font-weight: 700; padding: 6px 12px;
+    border-radius: 99px; border: 1px solid; white-space: nowrap;
+  }
+  .peak-badge.on { background: rgba(239,68,68,.15); border-color: rgba(239,68,68,.4); color: #fca5a5; }
+  .peak-badge.off { background: var(--green-bg); border-color: var(--green-border); color: #6ee7b7; }
+  .peak-time { color: var(--dim); font-size: 11px; text-align: right; margin-top: 4px; }
+
+  /* CHARGE HERO */
+  .hero { padding: 16px; }
+  .hero-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 16px;
+  }
+  .hero-row { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+  .kwh-input-wrap { flex: 1; }
+  .kwh-input-wrap label { display: block; font-size: 11px; color: var(--muted); margin-bottom: 4px; }
+  .kwh-input {
+    width: 100%; background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.2);
+    border-radius: 14px; padding: 12px 16px; font-size: 32px; font-weight: 800;
+    color: var(--green); font-family: var(--font-mono);
+    -webkit-appearance: none; appearance: none;
+    outline: none; transition: border-color .2s;
+  }
+  .kwh-input:focus { border-color: var(--green); }
+  .hero-stats { text-align: center; min-width: 64px; }
+  .hero-stats .pct { font-size: 24px; font-weight: 800; }
+  .hero-stats .km { font-size: 11px; color: var(--dim); margin-top: 2px; }
+  .battery-bar { height: 10px; background: rgba(255,255,255,.1); border-radius: 99px; overflow: hidden; margin-bottom: 12px; }
+  .battery-fill { height: 100%; border-radius: 99px; transition: width .4s, background .4s; }
+  .peak-btns { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+  .peak-btns span { font-size: 11px; color: var(--muted); }
+  .peak-btn {
+    font-size: 11px; padding: 5px 12px; border-radius: 99px;
+    border: 1px solid rgba(255,255,255,.1); background: rgba(255,255,255,.05);
+    color: var(--muted); cursor: pointer; transition: all .15s;
+  }
+  .peak-btn.active { background: var(--green); border-color: var(--green); color: #fff; }
+
+  /* TABS */
+  .tabs { padding: 0 16px 12px; }
+  .tab-bar { display: flex; gap: 4px; background: rgba(255,255,255,.05); border-radius: 14px; padding: 4px; }
+  .tab-btn {
+    flex: 1; font-size: 11px; padding: 8px 4px; border-radius: 10px;
+    border: none; background: transparent; color: var(--muted); cursor: pointer;
+    font-weight: 600; transition: all .15s; white-space: nowrap;
+  }
+  .tab-btn.active { background: var(--green); color: #fff; }
+
+  /* CONTENT */
+  .content { padding: 0 16px 32px; }
+
+  /* CARDS */
+  .card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 20px; padding: 16px; margin-bottom: 12px;
+  }
+  .card.winner { border-color: var(--green-border); background: var(--green-bg); }
+  .card.highlight { border-color: var(--green-border); }
+
+  .winner-row { display: flex; align-items: center; gap: 12px; }
+  .winner-emoji { font-size: 32px; }
+  .winner-label { font-size: 11px; color: #6ee7b7; font-weight: 700; }
+  .winner-name { font-size: 20px; font-weight: 800; }
+  .winner-cost { color: #6ee7b7; font-family: var(--font-mono); font-size: 14px; margin-top: 2px; }
+
+  .station-head { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; }
+  .station-name-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .station-name { font-weight: 700; font-size: 15px; }
+  .station-sub { font-size: 11px; color: var(--muted); margin-top: 2px; }
+  .station-total { text-align: right; }
+  .station-total .price { font-size: 22px; font-weight: 800; font-family: var(--font-mono); }
+  .station-total .vs { font-size: 11px; font-weight: 700; margin-top: 2px; }
+  .vs.cheaper { color: var(--green); }
+  .vs.pricier { color: var(--red); }
+
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .stat-box { background: rgba(255,255,255,.04); border-radius: 12px; padding: 10px; text-align: center; }
+  .stat-label { font-size: 10px; color: var(--muted); margin-bottom: 4px; }
+  .stat-val { font-size: 14px; font-weight: 700; font-family: var(--font-mono); }
+  .stat-sub { font-size: 10px; color: var(--dim); margin-top: 2px; }
+
+  .divider { border: none; border-top: 1px solid var(--border); margin: 12px 0; }
+
+  /* BADGE */
+  .badge {
+    display: inline-flex; align-items: center; padding: 2px 8px;
+    border-radius: 99px; font-size: 10px; font-weight: 700; border: 1px solid;
+  }
+  .badge.green { background: var(--green-bg); border-color: var(--green-border); color: #6ee7b7; }
+  .badge.amber { background: var(--amber-bg); border-color: rgba(251,191,36,.3); color: var(--amber); }
+
+  /* COMPARISON TABLE */
+  .comp-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  .comp-table th { color: var(--muted); font-weight: 600; padding: 6px 0; border-bottom: 1px solid var(--border); text-align: left; }
+  .comp-table th:not(:first-child) { text-align: right; }
+  .comp-table td { padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,.04); }
+  .comp-table td:not(:first-child) { text-align: right; font-family: var(--font-mono); }
+  .comp-table tr.best td { color: var(--green); font-weight: 700; }
+  .mono { font-family: var(--font-mono); }
+
+  /* SETTINGS */
+  .field { margin-bottom: 14px; }
+  .field label { display: block; font-size: 11px; color: var(--muted); margin-bottom: 6px; }
+  .field input[type=text], .field input[type=number], .field input[type=time] {
+    width: 100%; background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.15);
+    border-radius: 12px; padding: 10px 14px; color: var(--text); font-size: 14px;
+    outline: none; -webkit-appearance: none; appearance: none; transition: border-color .2s;
+  }
+  .field input:focus { border-color: var(--green); }
+
+  .section-title { font-size: 13px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: .08em; margin-bottom: 14px; }
+  .btn {
+    padding: 10px 16px; border-radius: 12px; font-size: 13px; font-weight: 700;
+    border: none; cursor: pointer; transition: all .15s;
+  }
+  .btn-green { background: var(--green); color: #fff; }
+  .btn-green:active { opacity: .8; }
+  .btn-outline { background: transparent; border: 1px solid var(--border); color: var(--muted); }
+  .btn-outline:active { background: var(--surface); }
+  .btn-red { background: rgba(239,68,68,.15); border: 1px solid rgba(239,68,68,.3); color: var(--red); }
+  .btn-row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 8px; }
+
+  .station-edit-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 18px; padding: 14px; margin-bottom: 12px;
+  }
+  .station-edit-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+  .station-edit-name { font-weight: 700; font-size: 15px; }
+
+  .info-box {
+    background: rgba(251,191,36,.1); border: 1px solid rgba(251,191,36,.2);
+    border-radius: 12px; padding: 12px; font-size: 12px; color: var(--amber); line-height: 1.6;
+  }
+  .info-box strong { display: block; margin-bottom: 4px; }
+
+  /* SAVE TOAST */
+  .toast {
+    position: fixed; bottom: calc(24px + env(safe-area-inset-bottom, 0px)); right: 16px;
+    background: var(--green); color: #fff; font-size: 12px; font-weight: 700;
+    padding: 10px 18px; border-radius: 99px; box-shadow: 0 4px 20px rgba(0,0,0,.4);
+    opacity: 0; transform: translateY(8px); transition: all .25s; pointer-events: none;
+    z-index: 999;
+  }
+  .toast.show { opacity: 1; transform: translateY(0); }
+
+  /* SCROLLBAR */
+  ::-webkit-scrollbar { display: none; }
+
+  @media (min-width: 480px) {
+    .header { padding-top: 32px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-row">
+    <div>
+      <div class="header-label">EV Charge Advisor</div>
+      <div class="header-title">เปรียบราคาชาร์จไฟ</div>
+      <div class="header-sub" id="car-label">—</div>
+    </div>
+    <div>
+      <div class="peak-badge" id="peak-badge">—</div>
+      <div class="peak-time" id="clock">—</div>
+    </div>
+  </div>
+</div>
+
+<!-- CHARGE HERO -->
+<div class="hero">
+  <div class="hero-card">
+    <div class="hero-row">
+      <div class="kwh-input-wrap">
+        <label>ต้องการชาร์จ (kWh)</label>
+        <input type="number" class="kwh-input" id="charge-kwh" value="30" min="0.5" step="0.5">
+      </div>
+      <div class="hero-stats">
+        <div class="pct" id="hero-pct">—%</div>
+        <div class="km" id="hero-km">— km</div>
+      </div>
+    </div>
+    <div class="battery-bar"><div class="battery-fill" id="battery-fill"></div></div>
+    <div class="peak-btns">
+      <span>ช่วงเวลา:</span>
+      <button class="peak-btn active" data-peak="auto" onclick="setPeak('auto')">อัตโนมัติ</button>
+      <button class="peak-btn" data-peak="on" onclick="setPeak('on')">On Peak</button>
+      <button class="peak-btn" data-peak="off" onclick="setPeak('off')">Off Peak</button>
+    </div>
+  </div>
+</div>
+
+<!-- TABS -->
+<div class="tabs">
+  <div class="tab-bar">
+    <button class="tab-btn active" onclick="setTab(0)">⚡ คำนวณ</button>
+    <button class="tab-btn" onclick="setTab(1)">📊 สถานี</button>
+    <button class="tab-btn" onclick="setTab(2)">🚗 รถ</button>
+    <button class="tab-btn" onclick="setTab(3)">⚙️ ตั้งค่า</button>
+  </div>
+</div>
+
+<!-- CONTENT -->
+<div class="content" id="content"></div>
+
+<!-- TOAST -->
+<div class="toast" id="toast">✓ บันทึกแล้ว</div>
+
+<script>
+// ─── DATA ─────────────────────────────────────────────────────────
+const STORAGE_KEY = 'ev_charge_advisor_v2';
+
+const DEFAULT = {
+  car: {
+    model: 'JAECOO 6 EV',
+    batteryKwh: 64.4,
+    rangePerKwh: 6.2,
+    homeOnPeak: 4.72,
+    homeOffPeak: 2.60,
+  },
+  onPeakStart: '09:00',
+  onPeakEnd: '22:00',
+  stations: [
+    { id: 1, name: 'EA Anywhere', distance: 3.5, onPeak: 8.50, offPeak: 6.50, connector: 'CCS2 / CHAdeMO', maxKw: 50, note: 'ห้างสรรพสินค้า' },
+    { id: 2, name: 'PEA VOLTA',   distance: 7.2, onPeak: 7.80, offPeak: 5.90, connector: 'CCS2',           maxKw: 22, note: 'การไฟฟ้าส่วนภูมิภาค' },
+    { id: 3, name: 'Sharge / Eletec', distance: 12.0, onPeak: 6.99, offPeak: 5.50, connector: 'CCS2 / AC', maxKw: 120, note: 'ฟาสต์ชาร์จ' },
+  ],
+};
+
+let db = loadDb();
+let currentTab = 0;
+let peakMode = 'auto'; // 'auto' | 'on' | 'off'
+
+function loadDb() {
+  try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || structuredClone(DEFAULT); }
+  catch { return structuredClone(DEFAULT); }
+}
+function saveDb() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(db));
+  showToast();
+}
+function showToast() {
+  const t = document.getElementById('toast');
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 1800);
+}
+
+// ─── TIME / PEAK ──────────────────────────────────────────────────
+function isOnPeakNow() {
+  const now = new Date(), h = now.getHours() * 60 + now.getMinutes();
+  const [sh, sm] = db.onPeakStart.split(':').map(Number);
+  const [eh, em] = db.onPeakEnd.split(':').map(Number);
+  return h >= sh * 60 + sm && h < eh * 60 + em;
+}
+function isPeak() {
+  if (peakMode === 'on')  return true;
+  if (peakMode === 'off') return false;
+  return isOnPeakNow();
+}
+function setPeak(v) {
+  peakMode = v;
+  document.querySelectorAll('.peak-btn').forEach(b => b.classList.toggle('active', b.dataset.peak === v));
+  render();
+}
+
+function updateClock() {
+  const now = new Date();
+  document.getElementById('clock').textContent = now.toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' });
+  const peak = isPeak();
+  const badge = document.getElementById('peak-badge');
+  badge.textContent = peak ? '🔴 ON PEAK' : '🟢 OFF PEAK';
+  badge.className = 'peak-badge ' + (peak ? 'on' : 'off');
+}
+
+// ─── CALC ─────────────────────────────────────────────────────────
+function fmt(n, d = 2) {
+  return Number(n).toLocaleString('th-TH', { minimumFractionDigits: d, maximumFractionDigits: d });
+}
+
+function chargeKwh() { return parseFloat(document.getElementById('charge-kwh').value) || 0; }
+
+function calcStation(s) {
+  const kwh = chargeKwh(), peak = isPeak(), car = db.car;
+  const rate     = peak ? s.onPeak : s.offPeak;
+  const tripKm   = s.distance * 2;
+  const tripKwh  = tripKm / car.rangePerKwh;
+  const chargeCost = kwh * rate;
+  const tripCost = tripKwh * (peak ? car.homeOnPeak : car.homeOffPeak);
+  const totalCost = chargeCost + tripCost;
+  const netKwh   = kwh + tripKwh;
+  const effectiveRate = totalCost / kwh;
+  return { rate, tripKm, tripKwh, chargeCost, tripCost, totalCost, netKwh, effectiveRate };
+}
+function calcHome() {
+  const kwh = chargeKwh(), peak = isPeak(), car = db.car;
+  const rate = peak ? car.homeOnPeak : car.homeOffPeak;
+  return { rate, totalCost: kwh * rate };
+}
+
+// ─── HERO UPDATE ──────────────────────────────────────────────────
+function updateHero() {
+  const kwh = chargeKwh(), bat = db.car.batteryKwh, eff = db.car.rangePerKwh;
+  const pct = Math.min(100, (kwh / bat) * 100);
+  document.getElementById('hero-pct').textContent = fmt(pct, 0) + '%';
+  document.getElementById('hero-km').textContent  = fmt(kwh * eff, 0) + ' km';
+  const fill = document.getElementById('battery-fill');
+  fill.style.width = pct + '%';
+  fill.style.background = pct > 70 ? '#10b981' : pct > 35 ? '#f59e0b' : '#ef4444';
+  document.getElementById('car-label').textContent = db.car.model + ' · แบต ' + db.car.batteryKwh + ' kWh';
+}
+
+// ─── TABS ─────────────────────────────────────────────────────────
+function setTab(n) {
+  currentTab = n;
+  document.querySelectorAll('.tab-btn').forEach((b, i) => b.classList.toggle('active', i === n));
+  render();
+}
+
+function render() {
+  updateClock();
+  updateHero();
+  const el = document.getElementById('content');
+  if (currentTab === 0) el.innerHTML = renderCalc();
+  else if (currentTab === 1) el.innerHTML = renderStations();
+  else if (currentTab === 2) el.innerHTML = renderCar();
+  else el.innerHTML = renderSettings();
+  attachEvents();
+}
+
+// ─── TAB 0: CALC ──────────────────────────────────────────────────
+function renderCalc() {
+  const kwh = chargeKwh(), peak = isPeak();
+  const home = calcHome();
+  const stations = db.stations.map(s => ({ ...s, c: calcStation(s) }));
+
+  const all = [
+    { name: '🏠 บ้าน', cost: home.totalCost },
+    ...stations.map(s => ({ name: s.name, cost: s.c.totalCost })),
+  ].sort((a, b) => a.cost - b.cost);
+  const cheapest = all[0];
+
+  let html = `
+  <div class="card winner">
+    <div class="winner-row">
+      <div class="winner-emoji">🏆</div>
+      <div>
+        <div class="winner-label">ถูกที่สุด ณ ตอนนี้</div>
+        <div class="winner-name">${cheapest.name}</div>
+        <div class="winner-cost">฿${fmt(cheapest.cost)}</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- HOME -->
+  <div class="card">
+    <div class="station-head">
+      <div>
+        <div class="station-name-row">
+          <span class="station-name">🏠 ชาร์จที่บ้าน</span>
+          ${cheapest.name.includes('บ้าน') ? '<span class="badge green">ถูกสุด</span>' : ''}
+        </div>
+        <div class="station-sub">ไม่มีค่าเดินทาง</div>
+      </div>
+      <div class="station-total">
+        <div class="price">฿${fmt(home.totalCost)}</div>
+        <div class="vs" style="color:var(--muted)">${fmt(home.rate)} บ/kWh</div>
+      </div>
+    </div>
+    <div class="grid2">
+      <div class="stat-box"><div class="stat-label">ชาร์จ</div><div class="stat-val">${fmt(kwh)} kWh</div></div>
+      <div class="stat-box"><div class="stat-label">ราคา/kWh</div><div class="stat-val">฿${fmt(home.rate)}</div></div>
+      <div class="stat-box"><div class="stat-label">ระยะทาง</div><div class="stat-val">0 km</div></div>
+      <div class="stat-box"><div class="stat-label">ค่าเดินทาง</div><div class="stat-val">฿0</div></div>
+    </div>
+  </div>`;
+
+  for (const s of stations) {
+    const diff = s.c.totalCost - home.totalCost;
+    const cheaper = diff < 0;
+    const isWinner = all[0].name === s.name;
+    html += `
+  <div class="card ${isWinner ? 'highlight' : ''}">
+    <div class="station-head">
+      <div>
+        <div class="station-name-row">
+          <span class="station-name">⚡ ${s.name}</span>
+          ${isWinner ? '<span class="badge green">ถูกสุด</span>' : ''}
+        </div>
+        <div class="station-sub">${s.note} · ${s.connector} · ${s.maxKw} kW</div>
+      </div>
+      <div class="station-total">
+        <div class="price">฿${fmt(s.c.totalCost)}</div>
+        <div class="vs ${cheaper ? 'cheaper' : 'pricier'}">
+          ${cheaper ? '▼' : '▲'} ฿${fmt(Math.abs(diff))} vs บ้าน
+        </div>
+      </div>
+    </div>
+    <div class="grid2">
+      <div class="stat-box"><div class="stat-label">ค่าไฟสถานี</div><div class="stat-val">฿${fmt(s.c.chargeCost)}</div><div class="stat-sub">${fmt(s.c.rate)} บ/kWh</div></div>
+      <div class="stat-box" style="background:rgba(251,191,36,.07)"><div class="stat-label">ค่าไฟเดินทาง</div><div class="stat-val" style="color:var(--amber)">฿${fmt(s.c.tripCost)}</div><div class="stat-sub">${fmt(s.c.tripKwh, 2)} kWh · ${fmt(s.c.tripKm, 1)} km</div></div>
+      <div class="stat-box"><div class="stat-label">kWh ทั้งหมด</div><div class="stat-val">${fmt(s.c.netKwh)} kWh</div></div>
+      <div class="stat-box"><div class="stat-label">ต้นทุน/kWh จริง</div><div class="stat-val">฿${fmt(s.c.effectiveRate)}</div></div>
+    </div>
+  </div>`;
+  }
+
+  // Summary table
+  html += `
+  <div class="card">
+    <div class="section-title">สรุปเปรียบเทียบ</div>
+    <table class="comp-table">
+      <thead><tr><th>ตัวเลือก</th><th>รวม (฿)</th><th>ต่างจากถูกสุด</th></tr></thead>
+      <tbody>`;
+  for (let i = 0; i < all.length; i++) {
+    const diff = all[i].cost - cheapest.cost;
+    html += `<tr class="${i === 0 ? 'best' : ''}">
+      <td>${i === 0 ? '🏆 ' : ''}${all[i].name}</td>
+      <td>${fmt(all[i].cost)}</td>
+      <td style="color:${diff === 0 ? 'var(--green)' : 'var(--red)'}">${diff === 0 ? '–' : '+' + fmt(diff)}</td>
+    </tr>`;
+  }
+  html += '</tbody></table></div>';
+  return html;
+}
+
+// ─── TAB 1: STATIONS ──────────────────────────────────────────────
+function renderStations() {
+  let html = `
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+    <div class="section-title" style="margin:0">สถานีชาร์จ</div>
+    <button class="btn btn-green" onclick="addStation()">+ เพิ่มสถานี</button>
+  </div>`;
+
+  db.stations.forEach((s, i) => {
+    html += `
+  <div class="station-edit-card">
+    <div class="station-edit-head">
+      <input type="text" value="${esc(s.name)}" class="field" style="background:transparent;border:none;border-bottom:1px solid var(--border);border-radius:0;padding:0 0 6px;font-size:15px;font-weight:700;color:var(--text);width:100%;"
+        onchange="updateStation(${i},'name',this.value)">
+      <button class="btn btn-red" style="margin-left:10px;padding:6px 12px;font-size:12px;flex-shrink:0"
+        onclick="removeStation(${i})">ลบ</button>
+    </div>
+    <div class="grid2">
+      <div class="field"><label>ระยะทาง (km)</label>
+        <input type="number" value="${s.distance}" step="0.5" onchange="updateStation(${i},'distance',+this.value)"></div>
+      <div class="field"><label>On Peak (฿/kWh)</label>
+        <input type="number" value="${s.onPeak}" step="0.01" onchange="updateStation(${i},'onPeak',+this.value)"></div>
+      <div class="field"><label>Off Peak (฿/kWh)</label>
+        <input type="number" value="${s.offPeak}" step="0.01" onchange="updateStation(${i},'offPeak',+this.value)"></div>
+      <div class="field"><label>กำลังชาร์จสูงสุด (kW)</label>
+        <input type="number" value="${s.maxKw}" step="1" onchange="updateStation(${i},'maxKw',+this.value)"></div>
+    </div>
+    <div class="grid2">
+      <div class="field"><label>ประเภทหัวชาร์จ</label>
+        <input type="text" value="${esc(s.connector)}" onchange="updateStation(${i},'connector',this.value)"></div>
+      <div class="field"><label>หมายเหตุ</label>
+        <input type="text" value="${esc(s.note)}" onchange="updateStation(${i},'note',this.value)"></div>
+    </div>
+    <div style="font-size:11px;color:var(--dim);padding-top:8px;border-top:1px solid var(--border)">
+      ไป-กลับ ${fmt(s.distance * 2, 1)} km · ใช้ไฟ ${fmt((s.distance * 2) / db.car.rangePerKwh, 2)} kWh
+    </div>
+  </div>`;
+  });
+  return html;
+}
+
+// ─── TAB 2: CAR ───────────────────────────────────────────────────
+function renderCar() {
+  const car = db.car;
+  return `
+  <div class="card">
+    <div class="section-title">ข้อมูลรถ EV</div>
+    <div class="field"><label>ชื่อรุ่นรถ</label>
+      <input type="text" id="c-model" value="${esc(car.model)}"></div>
+    <div class="grid2">
+      <div class="field"><label>ความจุแบต (kWh)</label>
+        <input type="number" id="c-bat" value="${car.batteryKwh}" step="0.1"></div>
+      <div class="field"><label>ประสิทธิภาพ (km/kWh)</label>
+        <input type="number" id="c-eff" value="${car.rangePerKwh}" step="0.1"></div>
+      <div class="field"><label>ค่าไฟบ้าน On Peak (฿/kWh)</label>
+        <input type="number" id="c-hon" value="${car.homeOnPeak}" step="0.01"></div>
+      <div class="field"><label>ค่าไฟบ้าน Off Peak (฿/kWh)</label>
+        <input type="number" id="c-hoff" value="${car.homeOffPeak}" step="0.01"></div>
+    </div>
+    <button class="btn btn-green" style="width:100%;margin-top:4px" onclick="saveCar()">💾 บันทึกข้อมูลรถ</button>
+  </div>
+  <div class="card">
+    <div class="section-title">สรุปสเป็ค</div>
+    <div class="grid2">
+      <div class="stat-box"><div class="stat-label">วิ่งได้ทั้งแบต</div><div class="stat-val">${fmt(car.batteryKwh * car.rangePerKwh, 0)} km</div></div>
+      <div class="stat-box"><div class="stat-label">ค่าไฟ/100km (บ้าน)</div><div class="stat-val">฿${fmt((100 / car.rangePerKwh) * (isPeak() ? car.homeOnPeak : car.homeOffPeak))}</div></div>
+    </div>
+  </div>`;
+}
+
+// ─── TAB 3: SETTINGS ──────────────────────────────────────────────
+function renderSettings() {
+  return `
+  <div class="card">
+    <div class="section-title">ช่วงเวลา On Peak</div>
+    <div class="grid2">
+      <div class="field"><label>เริ่มต้น</label>
+        <input type="time" id="s-start" value="${db.onPeakStart}"></div>
+      <div class="field"><label>สิ้นสุด</label>
+        <input type="time" id="s-end" value="${db.onPeakEnd}"></div>
+    </div>
+    <button class="btn btn-green" style="width:100%" onclick="savePeakHours()">💾 บันทึกช่วงเวลา</button>
+    <div style="margin-top:12px" class="info-box">
+      <strong>💡 อ้างอิง MEA (การไฟฟ้านครหลวง)</strong>
+      On Peak: 09:00–22:00 (วันจันทร์–ศุกร์)<br>
+      Off Peak: 22:00–09:00 และวันหยุดราชการ
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="section-title">สำรอง / กู้คืนข้อมูล</div>
+    <div class="btn-row">
+      <button class="btn btn-outline" onclick="exportData()">📤 Export JSON</button>
+      <button class="btn btn-outline" onclick="document.getElementById('import-file').click()">📥 Import JSON</button>
+    </div>
+    <input type="file" id="import-file" accept=".json" style="display:none" onchange="importData(event)">
+    <p style="font-size:11px;color:var(--dim);margin-top:10px">Export เพื่อสำรองข้อมูล หรือแชร์ให้อุปกรณ์อื่น</p>
+  </div>
+
+  <div class="card">
+    <div class="section-title">รีเซ็ตข้อมูล</div>
+    <button class="btn btn-red" onclick="resetData()">🗑 รีเซ็ตกลับค่าเริ่มต้น</button>
+    <p style="font-size:11px;color:var(--dim);margin-top:10px">ข้อมูลทั้งหมดจะถูกลบและกลับสู่ค่า default</p>
+  </div>
+
+  <div class="card" style="text-align:center;padding:20px">
+    <div style="font-size:11px;color:var(--dim)">EV Charge Advisor · ข้อมูลเก็บใน localStorage ของเบราว์เซอร์</div>
+  </div>`;
+}
+
+// ─── ACTIONS ──────────────────────────────────────────────────────
+function attachEvents() {
+  document.getElementById('charge-kwh')?.addEventListener('input', render);
+}
+
+function updateStation(i, key, val) {
+  db.stations[i][key] = val;
+  saveDb();
+  if (currentTab === 0) render();
+}
+function addStation() {
+  db.stations.push({ id: Date.now(), name: 'สถานีใหม่', distance: 5, onPeak: 8, offPeak: 6, connector: 'CCS2', maxKw: 50, note: '' });
+  saveDb(); render();
+}
+function removeStation(i) {
+  if (!confirm(`ลบสถานี "${db.stations[i].name}" ?`)) return;
+  db.stations.splice(i, 1);
+  saveDb(); render();
+}
+function saveCar() {
+  db.car.model       = document.getElementById('c-model').value;
+  db.car.batteryKwh  = +document.getElementById('c-bat').value;
+  db.car.rangePerKwh = +document.getElementById('c-eff').value;
+  db.car.homeOnPeak  = +document.getElementById('c-hon').value;
+  db.car.homeOffPeak = +document.getElementById('c-hoff').value;
+  saveDb(); render();
+}
+function savePeakHours() {
+  db.onPeakStart = document.getElementById('s-start').value;
+  db.onPeakEnd   = document.getElementById('s-end').value;
+  saveDb(); render();
+}
+function exportData() {
+  const blob = new Blob([JSON.stringify(db, null, 2)], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'ev-charge-data.json';
+  a.click();
+}
+function importData(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    try {
+      db = JSON.parse(ev.target.result);
+      saveDb(); render();
+    } catch { alert('ไฟล์ไม่ถูกต้อง'); }
+  };
+  reader.readAsText(file);
+}
+function resetData() {
+  if (!confirm('รีเซ็ตข้อมูลทั้งหมดกลับค่าเริ่มต้น?')) return;
+  db = structuredClone(DEFAULT);
+  saveDb(); render();
+}
+function esc(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;');
+}
+
+// ─── INIT ─────────────────────────────────────────────────────────
+render();
+setInterval(() => { updateClock(); if (peakMode === 'auto') render(); }, 60000);
+</script>
+</body>
+</html>
