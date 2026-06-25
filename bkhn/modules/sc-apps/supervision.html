@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>บันทึกการนิเทศภายในดิจิทัล</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <nav class="bg-indigo-900 text-white shadow-md no-print">
+        <div class="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
+            <div class="flex items-center space-x-3">
+                <i class="fa-solid fa-graduation-cap text-2xl text-amber-400"></i>
+                <div>
+                    <h1 id="school-name" class="font-bold text-lg">กำลังโหลดข้อมูลโรงเรียน...</h1>
+                    <p class="text-xs text-indigo-200">ระบบนิเทศภายในและเชื่อมโยงตัวชี้วัดสากล</p>
+                </div>
+            </div>
+            <div class="flex space-x-2">
+                <a href="index.html" class="px-3 py-2 rounded bg-indigo-800 hover:bg-indigo-700 transition text-sm"><i class="fa-solid fa-house mr-1"></i> หน้าแรก</a>
+                <a href="dashboard.html" class="px-3 py-2 rounded bg-indigo-800 hover:bg-indigo-700 transition text-sm"><i class="fa-solid fa-chart-line mr-1"></i> ดูสถิติ/รายงาน</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="flex-grow max-w-7xl w-full mx-auto p-4 print-area">
+        <div class="bg-gradient-to-r from-amber-500 to-orange-600 p-6 rounded-xl shadow-sm text-white mb-6 no-print">
+            <h2 class="text-xl font-bold flex items-center"><i class="fa-solid fa-file-signature mr-2"></i> ฟอร์มบันทึกการนิเทศภายในดิจิทัล</h2>
+            <p class="text-sm opacity-90 mt-1">คะแนนรายข้อจะถูกนำไปประมวลผลแยกตามตัวชี้วัด PA, สมศ, SAR โดยอัตโนมัติ</p>
+        </div>
+
+        <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 grid grid-cols-1 md:grid-cols-4 gap-4 mb-6 no-print">
+            <div>
+                <label class="block text-sm font-medium text-slate-600 mb-1">ปีการศึกษาที่นิเทศ</label>
+                <input type="text" id="form-year" class="w-full bg-slate-100 border border-slate-300 rounded-lg p-2.5" readonly>
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-slate-600 mb-1">ภาคเรียน</label>
+                <input type="text" id="form-semester" class="w-full bg-slate-100 border border-slate-300 rounded-lg p-2.5" readonly>
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-slate-600 mb-1">เลือกครูผู้รับการนิเทศ</label>
+                <select id="form-teacher-select" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2.5 focus:ring-2 focus:ring-indigo-500 focus:outline-none" required></select>
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-slate-600 mb-1">ระบุรหัสผู้ประเมิน</label>
+                <input type="text" id="form-supervisor-id" placeholder="รหัส ผอ. หรือ หัวหน้าผู้ประเมิน" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2.5 focus:ring-2 focus:ring-indigo-500 focus:outline-none" required>
+            </div>
+        </div>
+
+        <form id="evaluation-dynamic-form" onsubmit="submitForm(event)" class="space-y-4">
+            <div id="dynamic-questions-container" class="space-y-4">
+                <div class="text-center py-8 text-slate-400 bg-white rounded-xl border border-dashed border-slate-300">
+                    <i class="fa-solid fa-spinner fa-spin mr-2"></i>กำลังดึงข้อคำถามจากคลังข้อมูลระบบนิเทศ...
+                </div>
+            </div>
+
+            <div class="bg-white p-4 rounded-xl border border-slate-200 flex justify-end space-x-3 no-print">
+                <button type="button" onclick="window.history.back()" class="px-5 py-2.5 rounded-lg border border-slate-300 text-slate-700 hover:bg-slate-50 font-medium transition text-sm">ยกเลิก</button>
+                <button type="submit" class="px-6 py-2.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-medium transition text-sm shadow-sm"><i class="fa-solid fa-cloud-arrow-up mr-1"></i> บันทึกข้อมูลขึ้นระบบคลาวด์</button>
+            </div>
+        </form>
+    </main>
+
+    <footer class="bg-slate-900 text-slate-400 text-center py-4 text-xs no-print border-t border-slate-800 mt-6">
+        <p>© 2026 Smart School Platform - ระบบนิเทศภายในดิจิทัล</p>
+    </footer>
+
+    <script src="app.js"></script>
+    <script>
+        // โลจิกเฉพาะหน้าฟอร์มประเมิน
+        window.addEventListener("DOMContentLoaded", async () => {
+            await loadInitialData(); // ฟังก์ชันหลักจาก app.js เพื่อดึงโปรไฟล์โรงเรียนและครู
+            if (currentSchoolProfile.Current_Academic_Year) {
+                await loadQuestionsForm(currentSchoolProfile.Current_Academic_Year);
+            }
+        });
+
+        async function loadQuestionsForm(year) {
+            const container = document.getElementById("dynamic-questions-container");
+            try {
+                const res = await fetch(`${SUPERVISION_DB_URL}?action=getForm&year=${year}`);
+                const json = await res.json();
+                if (json.status === "success") {
+                    currentFormQuestions = json.data;
+                    renderFormRows(currentFormQuestions);
+                }
+            } catch (error) {
+                container.innerHTML = `<div class="text-center py-6 text-red-500 bg-white rounded-xl">ดึงคลังคำถามล้มเหลว ตรวจสอบ API</div>`;
+            }
+        }
+
+        function renderFormRows(questions) {
+            const container = document.getElementById("dynamic-questions-container");
+            let html = "";
+            questions.forEach((q, index) => {
+                let kpiBadges = "";
+                if (q.Mapped_KPIs && q.Mapped_KPIs.length > 0) {
+                    q.Mapped_KPIs.forEach(kpi => {
+                        let color = "bg-slate-100 text-slate-700";
+                        if (kpi.category === "PA") color = "bg-sky-100 text-sky-800 border-sky-200";
+                        if (kpi.category === "สมศ") color = "bg-emerald-100 text-emerald-800 border-emerald-200";
+                        if (kpi.category === "SAR") color = "bg-purple-100 text-purple-800 border-purple-200";
+                        kpiBadges += `<span class="text-xs px-2 py-0.5 rounded border font-medium mr-1 inline-block ${color}">#${kpi.category}: ${kpi.code}</span>`;
+                    });
+                }
+                html += `
+                <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200 space-y-3">
+                    <div class="flex justify-between items-start gap-4">
+                        <div>
+                            <span class="text-xs font-semibold text-indigo-600 uppercase tracking-wider">${q.Section || 'หมวดทั่วไป'}</span>
+                            <h3 class="font-medium text-slate-900">${index + 1}. ${q.Question_Text}</h3>
+                            <div class="pt-1">${kpiBadges}</div>
+                        </div>
+                        <div class="flex items-center space-x-1 bg-slate-50 p-1.5 rounded-lg border border-slate-200">
+                            ${Array.from({ length: q.Max_Score || 5 }, (_, i) => i + 1).map(num => `
+                                <label class="cursor-pointer">
+                                    <input type="radio" name="score_${q.Question_ID}" value="${num}" required class="sr-only peer">
+                                    <div class="w-8 h-8 flex items-center justify-center rounded-md text-sm font-semibold text-slate-400 peer-checked:bg-indigo-600 peer-checked:text-white hover:bg-slate-200 transition">${num}</div>
+                                </label>
+                            `).join('')}
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3 pt-2 border-t border-slate-100">
+                        <input type="url" id="link_${q.Question_ID}" placeholder="🔗 ลิงก์หลักฐานเชิงประจักษ์/ร่องรอยดิจิทัล" class="w-full text-xs bg-slate-50 border border-slate-200 rounded-lg p-2 focus:outline-none focus:ring-1 focus:ring-indigo-500">
+                        <input type="text" id="comment_${q.Question_ID}" placeholder="✍️ ข้อเสนอแนะเพิ่มเติมจากผู้ประเมิน" class="w-full text-xs bg-slate-50 border border-slate-200 rounded-lg p-2 focus:outline-none focus:ring-1 focus:ring-indigo-500">
+                    </div>
+                </div>`;
+            });
+            container.innerHTML = html;
+        }
+
+        async function submitForm(e) {
+            e.preventDefault();
+            const teacherId = document.getElementById("form-teacher-select").value;
+            const supervisorId = document.getElementById("form-supervisor-id").value;
+            const year = document.getElementById("form-year").value;
+            const semester = document.getElementById("form-semester").value;
+
+            const assessmentData = currentFormQuestions.map(q => {
+                const scoreRadio = document.querySelector(`input[name="score_${q.Question_ID}"]:checked`);
+                return {
+                    academic_year: year,
+                    semester: semester,
+                    teacher_id: teacherId,
+                    supervisor_id: supervisorId,
+                    question_id: q.Question_ID,
+                    score: scoreRadio ? parseInt(scoreRadio.value) : 0,
+                    evidence_link: document.getElementById(`link_${q.Question_ID}`).value,
+                    comment: document.getElementById(`comment_${q.Question_ID}`).value
+                };
+            });
+
+            const result = await saveAssessmentToCloud(assessmentData);
+            if(result.status === "success") {
+                alert("✨ บันทึกผลสำเร็จ!");
+                window.location.href = "dashboard.html";
+            } else {
+                alert("เกิดข้อผิดพลาด: " + result.message);
+            }
+        }
+    </script>
+</body>
+</html>

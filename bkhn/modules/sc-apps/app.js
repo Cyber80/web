@@ -263,3 +263,21 @@ async function loadTeacherHistory() {
         tableBody.innerHTML = `<tr><td colspan="5" class="text-center py-6 text-red-500">เกิดข้อผิดพลาดในการโหลดผลรายงานสถิติ</td></tr>`;
     }
 }
+
+// เพิ่มฟังก์ชันส่งบันทึกคะแนนเข้าสู่ฐานข้อมูลประเมินลงในไฟล์ app.js หลัก
+async function saveAssessmentToCloud(assessmentData) {
+    try {
+        const payload = {
+            action: "saveAssessment",
+            assessment_data: assessmentData
+        };
+        const response = await fetch(SUPERVISION_DB_URL, {
+            method: "POST",
+            body: JSON.stringify(payload)
+        });
+        return await response.json();
+    } catch (error) {
+        console.error("การส่งบันทึกคลาวด์ขัดข้อง:", error);
+        return { status: "error", message: error.toString() };
+    }
+}

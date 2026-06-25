@@ -1,0 +1,42 @@
+/* style.css */
+@import "https://cdn.jsdelivr.net/npm/tailwindcss@4";
+
+@layer base {
+  body {
+    font-family: 'Sarabun', sans-serif;
+    @apply bg-slate-50 text-slate-800 min-h-screen flex flex-col;
+  }
+}
+
+/* 🖨️ Print CSS: ส่วนสำคัญสำหรับการ Export รายงานแบบไร้กระดาษ */
+@media print {
+  /* ซ่อนสิ่งที่ไม่จำเป็นในรายงาน */
+  .no-print, 
+  nav, 
+  footer, 
+  button, 
+  .btn,
+  input[type="radio"],
+  .input-hide-print { 
+    display: none !important; 
+  }
+  
+  /* ปรับแต่งหน้ากระดาษพิมพ์ */
+  body {
+    background-color: #ffffff !important;
+    color: #000000 !important;
+  }
+  
+  .print-area {
+    padding: 0 !important;
+    margin: 0 !important;
+    border: none !important;
+    box-shadow: none !important;
+  }
+
+  /* บังคับให้เบราว์เซอร์พิมพ์สีพื้นหลังและสี Badge ด้วย */
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+}
