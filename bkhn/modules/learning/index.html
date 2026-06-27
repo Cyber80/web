@@ -3,254 +3,469 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>วิทยาศาสตร์ประถมศึกษา | โรงเรียนบ้านเขาหัวนา</title>
+<title>วิทยาศาสตร์ ป.6</title>
 <link href="https://fonts.googleapis.com/css2?family=Mitr:wght@300;400;500;600;700&family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
-  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
-
+  *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
   :root {
-    --forest:   #1B4332;
-    --forest2:  #2D6A4F;
-    --leaf:     #52B788;
-    --lime:     #95D5B2;
-    --sky:      #48CAE4;
-    --sun:      #F4A261;
-    --cream:    #F8F5EE;
-    --bark:     #6B4226;
-    --header-h: 80px;
+    --c1: #7f4f24; --c2: #e07c35; --c3: #f4a261; --c4: #fde8d4;
+    --bg: #fff8f2; --text: #3d1f0a; --card: #ffffff;
   }
+  html { scroll-behavior: smooth; }
+  body { font-family:'Sarabun',sans-serif; background:var(--bg); color:var(--text); overflow-x:hidden; }
 
-  html, body { height: 100%; }
-
-  body {
-    font-family: 'Sarabun', sans-serif;
-    background: var(--cream);
-    display: flex;
-    flex-direction: column;
-    height: 100vh;
-    overflow: hidden;
+  .page-header {
+    background:linear-gradient(135deg,#3d1a00 0%,var(--c1) 50%,#a0522d 100%);
+    padding:44px 28px 60px; position:relative; overflow:hidden;
   }
-
-  /* ─── HEADER ─── */
-  header {
-    position: fixed;
-    top: 0; left: 0; right: 0;
-    height: var(--header-h);
-    z-index: 1000;
-    background: var(--forest);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0 28px;
-    box-shadow: 0 4px 24px rgba(0,0,0,0.3);
-    gap: 20px;
+  .page-header::before {
+    content:'🌍'; font-size:160px; position:absolute; right:20px; bottom:-20px;
+    opacity:0.07; pointer-events:none; line-height:1;
   }
-
-  /* leaf-vein decoration */
-  header::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background:
-      repeating-linear-gradient(
-        105deg,
-        transparent,
-        transparent 60px,
-        rgba(82,183,136,0.07) 60px,
-        rgba(82,183,136,0.07) 61px
-      );
-    pointer-events: none;
+  .page-header::after {
+    content:''; position:absolute; width:400px; height:400px;
+    background:radial-gradient(circle,rgba(244,162,97,0.2),transparent 65%);
+    top:-80px; right:-80px; pointer-events:none;
   }
-
-  .brand {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    text-decoration: none;
-    flex-shrink: 0;
+  .breadcrumb { display:flex; gap:8px; align-items:center; margin-bottom:16px; font-size:12px; color:rgba(255,255,255,0.5); }
+  .breadcrumb a { color:var(--c4); text-decoration:none; }
+  .grade-tag {
+    display:inline-flex; align-items:center; gap:8px;
+    background:rgba(255,255,255,0.1); border:1px solid rgba(255,255,255,0.18);
+    color:var(--c4); font-size:11px; font-weight:700; letter-spacing:2px;
+    text-transform:uppercase; padding:5px 14px; border-radius:999px; margin-bottom:16px;
   }
+  .page-header h1 { font-family:'Mitr',sans-serif; font-size:clamp(26px,4vw,38px); font-weight:600; color:#fff; margin-bottom:10px; }
+  .page-header p { font-size:14px; color:rgba(255,255,255,0.7); max-width:520px; line-height:1.7; }
+  .wave { display:block; width:100%; margin-bottom:-4px; }
+  .container { max-width:960px; margin:0 auto; padding:40px 24px 60px; }
 
-  .brand-icon {
-    width: 46px; height: 46px;
-    background: linear-gradient(135deg, var(--leaf), var(--lime));
-    border-radius: 12px;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 24px;
-    box-shadow: 0 4px 12px rgba(82,183,136,0.4);
-    flex-shrink: 0;
+  .unit-tabs { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:32px; }
+  .unit-tabs-button { display:flex; justify-content:center; gap:8px; flex-wrap:wrap; margin-bottom:32px; }
+  .unit-tab {
+    padding:8px 20px; border-radius:999px; border:2px solid #f0d0b8;
+    background:#fff; font-size:13px; font-weight:600; cursor:pointer;
+    color:#a0683a; transition:all .18s;
   }
-
-  .brand-text { line-height: 1.2; }
-  .brand-title {
-    font-family: 'Mitr', sans-serif;
-    font-size: 15px;
-    font-weight: 600;
-    color: #ffffff;
-    letter-spacing: 0.3px;
+  .unit-tab-button {
+    padding:8px 20px; border-radius:999px; border:2px solid #f0d0b8;
+    background:#fff; font-size:13px; font-weight:600; cursor:pointer;
+    color:#1565c0; transition:all .18s;
   }
-  .brand-sub {
-    font-size: 11px;
-    color: var(--lime);
-    font-weight: 300;
-    letter-spacing: 0.5px;
-  }
+  .unit-tab-button:hover { background:#f0f9ff; }
 
-  /* ─── NAV ─── */
-  nav {
-    display: flex;
-    gap: 6px;
-    align-items: center;
-    flex-wrap: nowrap;
-  }
+  .unit-tab:hover { border-color:var(--c2); color:var(--c2); }
+  .unit-tab.active { background:var(--c1); color:#fff; border-color:var(--c1); }
+  .unit-tab-button.active { background:var(--c1); color:#fff; border-color:var(--c1); }
 
-  .nav-btn {
-    position: relative;
-    padding: 9px 20px;
-    border: none;
-    border-radius: 10px;
-    font-family: 'Mitr', sans-serif;
-    font-size: 14px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.22s cubic-bezier(.4,0,.2,1);
-    white-space: nowrap;
-    color: var(--lime);
-    background: rgba(255,255,255,0.06);
-    border: 1px solid rgba(255,255,255,0.1);
-    letter-spacing: 0.4px;
-  }
+  .unit-section { display:none; animation:fadeIn .3s ease; }
+  .unit-section.active { display:block; }
+  @keyframes fadeIn { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
 
-  .nav-btn:hover {
-    background: rgba(82,183,136,0.18);
-    color: #fff;
-    border-color: rgba(82,183,136,0.4);
-    transform: translateY(-1px);
-  }
+  .lbl { font-size:18px; font-weight:700; letter-spacing:0px; text-transform:uppercase; color:var(--c2); margin-bottom:6px; }
+  .ttl { font-family:'Mitr',sans-serif; font-size:clamp(20px,3vw,26px); font-weight:600; color:var(--c1); margin-bottom:24px; }
 
-  .nav-btn.active {
-    background: linear-gradient(135deg, var(--leaf), var(--forest2));
-    color: #fff;
-    border-color: transparent;
-    box-shadow: 0 4px 14px rgba(82,183,136,0.45);
-    transform: translateY(-1px);
-  }
+  .ch-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:20px; margin-bottom:36px; }
+  .ch-card { background:var(--card); border-radius:18px; box-shadow:0 4px 20px rgba(127,79,36,0.09); overflow:hidden; transition:transform .2s, box-shadow .2s; cursor:pointer; }
+  .ch-card:hover { transform:translateY(-4px); box-shadow:0 12px 36px rgba(127,79,36,0.16); }
+  .ch-top { height:110px; display:flex; align-items:flex-end; padding:14px 18px; position:relative; }
+  .ch-top .ch-num { font-family:'Mitr',sans-serif; font-size:64px; font-weight:700; color:rgba(255,255,255,0.18); position:absolute; right:12px; bottom:0; line-height:1; }
+  .ch-top .ch-label { font-family:'Mitr',sans-serif; font-size:16px; font-weight:600; color:#fff; position:relative; z-index:1; }
+  .ch-top .ch-label span { font-size:11px; font-weight:400; opacity:.75; display:block; }
+  .ch-body { padding:18px 18px 20px; }
+  .ch-desc { font-size:13px; color:#5a3a1a; line-height:1.7; margin-bottom:14px; }
+  .topic-list { list-style:none; display:flex; flex-direction:column; gap:7px; margin-bottom:14px; }
+  .topic-list li { display:flex; align-items:center; gap:8px; font-size:12.5px; color:#374151; }
+  .topic-list li::before { content:''; width:6px; height:6px; border-radius:50%; background:var(--c2); flex-shrink:0; }
+  .ch-footer { display:flex; align-items:center; justify-content:space-between; font-size:12px; color:#9ca3af; }
+  .ch-btn { font-size:12px; font-weight:700; color:var(--c2); display:flex; align-items:center; gap:4px; }
+  .ch-btn .arr { transition:transform .18s; }
+  .ch-card:hover .arr { transform:translateX(4px); }
 
-  .nav-btn .grade-dot {
-    display: inline-block;
-    width: 7px; height: 7px;
-    border-radius: 50%;
-    margin-right: 6px;
-    vertical-align: middle;
-  }
+  .panel { background:var(--card); border-radius:20px; box-shadow:0 4px 24px rgba(127,79,36,0.1); overflow:hidden; margin-bottom:28px; display:none; }
+  .panel.open { display:block; animation:fadeIn .3s ease; }
+  .panel-head { background:linear-gradient(135deg,var(--c1),var(--c2)); padding:22px 26px; display:flex; align-items:center; justify-content:space-between; }
+  .panel-head h2 { font-family:'Mitr',sans-serif; font-size:18px; color:#fff; font-weight:600; }
+  .panel-head .close-btn { background:rgba(255,255,255,0.15); border:none; color:#fff; width:32px; height:32px; border-radius:8px; font-size:16px; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:background .18s; }
+  .panel-head .close-btn:hover { background:rgba(255,255,255,0.25); }
+  .panel-body { padding:26px; }
 
-  /* grade colors */
-  .dot-home { background: var(--sun); }
-  .dot-p4   { background: var(--sky); }
-  .dot-p5   { background: #a29bfe; }
-  .dot-p6   { background: var(--sun); }
+  .info-box { border-radius:14px; padding:16px 20px; margin-bottom:18px; font-size:14px; line-height:1.8; }
+  .info-box.orange { background:#FFF5ED; border-left:4px solid var(--c2); }
+  .info-box.blue   { background:#EFF6FF; border-left:4px solid #3b82f6; }
+  .info-box.red    { background:#FEF2F2; border-left:4px solid #ef4444; }
+  .info-box.green  { background:#F0FDF4; border-left:4px solid #22c55e; }
+  .info-box strong { display:block; font-size:12px; font-weight:700; letter-spacing:.5px; margin-bottom:6px; }
 
-  /* ─── CONTENT FRAME ─── */
-  .frame-wrapper {
-    margin-top: var(--header-h);
-    flex: 1;
-    overflow: hidden;
-    position: relative;
-  }
+  .tbl { width:100%; border-collapse:collapse; margin:12px 0 20px; font-size:13.5px; }
+  .tbl th { background:var(--c1); color:#fff; padding:10px 14px; text-align:left; font-weight:600; }
+  .tbl td { padding:9px 14px; border-bottom:1px solid #fde8d4; }
+  .tbl tr:nth-child(even) td { background:#fff8f2; }
 
-  #content-frame {
-    width: 100%;
-    height: 100%;
-    border: none;
-    display: block;
-    transition: opacity 0.2s ease;
-  }
+  .quiz-wrap { background:linear-gradient(135deg,#3d1a00,var(--c1)); border-radius:16px; padding:24px; margin-top:24px; }
+  .quiz-wrap h3 { font-family:'Mitr',sans-serif; font-size:18px; color:#fff; margin-bottom:16px; }
+  .q-item { background:rgba(255,255,255,0.08); border-radius:12px; padding:14px 16px; margin-bottom:14px; }
+  .q-text { font-size:14.5px; color:#fff; margin-bottom:10px; font-weight:500; }
+  .q-opts { display:flex; flex-direction:column; gap:7px; }
+  .q-opt { padding:9px 14px; border-radius:8px; background:rgba(255,255,255,0.07); border:1px solid rgba(255,255,255,0.12); color:rgba(255,255,255,0.8); font-size:13.5px; font-family:'Sarabun',sans-serif; cursor:pointer; transition:all .18s; text-align:left; }
+  .q-opt:hover:not(.correct):not(.wrong):not(.disabled) { background:rgba(255,255,255,0.14); color:#fff; }
+  .q-opt.selected { background:rgba(59,130,246,0.25); border-color:rgba(59,130,246,0.6); color:#fff; }
+  .q-opt.correct { background:rgba(34,197,94,0.25); border-color:rgba(34,197,94,0.5); color:#fff; }
+  .q-opt.wrong   { background:rgba(239,68,68,0.22); border-color:rgba(239,68,68,0.45); color:#fff; }
+  .q-opt.disabled { pointer-events:none; }
 
-  #content-frame.loading { opacity: 0; }
+  .submit-btn { display:block; width:100%; padding:14px; background:#e07c35; color:#fff; font-family:'Mitr',sans-serif; font-size:16px; font-weight:600; border:none; border-radius:10px; cursor:pointer; margin-top:20px; transition:background 0.2s; }
+  .submit-btn:hover { background:#d46a20; }
+  .score-board { display:none; text-align:center; padding:20px; background:rgba(255,255,255,0.1); border-radius:12px; margin-top:20px; color:#fff; }
+  .score-board h2 { font-family:'Mitr',sans-serif; font-size:32px; color:#f4a261; }
 
-  /* loading overlay */
-  .frame-loader {
-    position: absolute;
-    inset: 0;
-    background: var(--cream);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 10;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.2s;
-  }
-  .frame-loader.show { opacity: 1; pointer-events: auto; }
-
-  .loader-ring {
-    width: 48px; height: 48px;
-    border: 4px solid rgba(82,183,136,0.2);
-    border-top-color: var(--leaf);
-    border-radius: 50%;
-    animation: spin 0.8s linear infinite;
-  }
-  @keyframes spin { to { transform: rotate(360deg); } }
+  /* Utilities */
+  .sum-grid, .circuit-grid, .disaster-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:12px; margin:14px 0; }
+  .circuit-card, .dis-card, .sum-item { border-radius:12px; padding:16px 12px; text-align:center; }
+  .wind-box { background:linear-gradient(180deg,#bde0fe 0%,#90caf9 50%,#a8d8a8 100%); border-radius:14px; padding:20px; text-align:center; margin:14px 0; }
 </style>
 </head>
 <body>
 
-<header>
-  <a class="brand" href="#" onclick="navigate('p0.html','home'); return false;">
-    <div class="brand-icon">🌿</div>
-    <div class="brand-text">
-      <div class="brand-title">วิทยาศาสตร์ประถมศึกษา</div>
-      <div class="brand-sub">โรงเรียนบ้านเขาหัวนา</div>
-    </div>
-  </a>
-
-  <nav>
-    <button class="nav-btn active" id="btn-home" onclick="navigate('p0.html','home')">
-      <span class="grade-dot dot-home"></span>หน้าหลัก
-    </button>
-    <button class="nav-btn" id="btn-p4" onclick="navigate('p4.html','p4')">
-      <span class="grade-dot dot-p4"></span>ป.4
-    </button>
-    <button class="nav-btn" id="btn-p5" onclick="navigate('p5.html','p5')">
-      <span class="grade-dot dot-p5"></span>ป.5
-    </button>
-    <button class="nav-btn" id="btn-p6" onclick="navigate('p6.html','p6')">
-      <span class="grade-dot dot-p6"></span>ป.6
-    </button>
-  </nav>
-</header>
-
-<div class="frame-wrapper">
-  <div class="frame-loader" id="loader">
-    <div class="loader-ring"></div>
+<div class="page-header">
+  <div class="breadcrumb">
+    <a href="#">หน้าหลัก</a>
+    <span>/</span>
+    <span style="color:rgba(255,255,255,0.7);">ชั้นประถมศึกษาปีที่ 6</span>
   </div>
-  <iframe id="content-frame" src="p0.html" title="เนื้อหา"></iframe>
+  <div class="grade-tag">🌍 ป.6 · Primary 6</div>
+  <h1>วิทยาศาสตร์และเทคโนโลยี<br>ชั้นประถมศึกษาปีที่ 6</h1>
+  <p>หน่วยการเรียนรู้วิทยาศาสตร์ ป.6 ตามหลักสูตร สสวท. ครอบคลุมปรากฏการณ์ของโลก ภัยธรรมชาติ เงาและอุปราคา เทคโนโลยีอวกาศ และวงจรไฟฟ้า</p>
+</div>
+
+<svg class="wave" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 40" preserveAspectRatio="none" style="background:#3d1a00;">
+  <path fill="#fff8f2" d="M0,20 C480,40 960,0 1440,20 L1440,40 L0,40 Z"/>
+</svg>
+
+<div class="container">
+
+  <div class="unit-tabs" id="main-tabs">
+    <button class="unit-tab active" onclick="switchUnit('u1',this)">🌏 หน่วยที่ 4: ปรากฏการณ์ของโลก</button>
+    <button class="unit-tab" onclick="switchUnit('u2',this)">🌑 หน่วยที่ 5: เงา อุปราคาฯ</button>
+    <button class="unit-tab" onclick="switchUnit('u3',this)">⚡ หน่วยที่ 6: แรงไฟฟ้าฯ</button>
+  </div>
+
+  <div class="unit-tabs-button" id="test-tabs">
+    <button class="unit-tab-button" onclick="startMainQuiz('ก่อนเรียน', this)">❓ แบบทดสอบก่อนเรียน</button>
+    <button class="unit-tab-button" onclick="startMainQuiz('หลังเรียน', this)">✔️ แบบทดสอบหลังเรียน</button>
+  </div>
+
+  <div id="main-quiz-section" class="unit-section">
+    <div class="lbl">ประเมินผลสัมฤทธิ์</div>
+    <div class="ttl" id="quiz-title">แบบทดสอบ 20 ข้อ</div>
+    <div class="quiz-wrap" style="background:linear-gradient(135deg,#1e3a8a,#312e81);">
+      <h3 style="text-align: center; margin-bottom: 24px;">กรุณาเลือกคำตอบที่ถูกต้องที่สุด</h3>
+      <div id="quiz-container">
+        </div>
+      <button class="submit-btn" id="submit-quiz" onclick="calculateScore()">ส่งคำตอบ</button>
+      <div class="score-board" id="score-board">
+        <p>คะแนนของคุณคือ</p>
+        <h2 id="final-score">0 / 20</h2>
+        <button class="submit-btn" style="background:#10b981; margin-top:15px;" onclick="location.reload()">กลับสู่หน้าเนื้อหา</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="u1" class="unit-section active">
+    <div class="lbl">หน่วยที่ 4</div>
+    <div class="ttl">ปรากฏการณ์ของโลกและภัยธรรมชาติ</div>
+
+    <div class="ch-grid">
+      <div class="ch-card" onclick="openPanel('ch1')">
+        <div class="ch-top" style="background:linear-gradient(135deg,#1565c0,#42a5f5);">
+          <div class="ch-num">1</div>
+          <div class="ch-label">ลมบก ลมทะเล และมรสุม<span>บทที่ 1 · 6 ชั่วโมง</span></div>
+        </div>
+        <div class="ch-body">
+          <p class="ch-desc">เปรียบเทียบการเกิดลมบก ลมทะเล และมรสุม รวมทั้งอธิบายผลที่มีต่อสิ่งมีชีวิตและสิ่งแวดล้อม</p>
+          <div class="ch-footer"><span></span><div class="ch-btn" style="color:#1565c0;">ทบทวน <span class="arr">→</span></div></div>
+        </div>
+      </div>
+      <div class="ch-card" onclick="openPanel('ch2')">
+        <div class="ch-top" style="background:linear-gradient(135deg,#b71c1c,#e53935);">
+          <div class="ch-num">2</div>
+          <div class="ch-label">ปรากฏการณ์เรือนกระจก<span>บทที่ 2 · 6 ชั่วโมง</span></div>
+        </div>
+        <div class="ch-body">
+          <p class="ch-desc">ศึกษาปรากฏการณ์เรือนกระจก ภาวะโลกร้อน และแนวทางการลดปริมาณก๊าซเรือนกระจก</p>
+          <div class="ch-footer"><span></span><div class="ch-btn" style="color:#e53935;">ทบทวน <span class="arr">→</span></div></div>
+        </div>
+      </div>
+      <div class="ch-card" onclick="openPanel('ch3')">
+        <div class="ch-top" style="background:linear-gradient(135deg,#4a148c,#7b1fa2);">
+          <div class="ch-num">3</div>
+          <div class="ch-label">ภัยธรรมชาติ<span>บทที่ 3 · 4 ชั่วโมง</span></div>
+        </div>
+        <div class="ch-body">
+          <p class="ch-desc">รู้จักภัยธรรมชาติประเภทต่าง ๆ และวิธีปฏิบัติตนให้ปลอดภัยจากภัยธรรมชาติ</p>
+          <div class="ch-footer"><span></span><div class="ch-btn" style="color:#7b1fa2;">ทบทวน <span class="arr">→</span></div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel" id="ch1">
+      <div class="panel-head" style="background:linear-gradient(135deg,#1565c0,#1976d2);">
+        <h2>💨 บทที่ 1: ลมบก ลมทะเล และมรสุม</h2>
+        <button class="close-btn" onclick="closePanel('ch1')">✕</button>
+      </div>
+      <div class="panel-body">
+        <div class="info-box blue"><strong>💡 แนวคิดสำคัญ</strong>ลมบก ลมทะเล เกิดจากความแตกต่างระหว่างอุณหภูมิอากาศเหนือพื้นดินและน้ำ</div>
+      </div>
+    </div>
+    <div class="panel" id="ch2">
+      <div class="panel-head" style="background:linear-gradient(135deg,#b71c1c,#c62828);">
+        <h2>🏭 บทที่ 2: ปรากฏการณ์เรือนกระจก</h2>
+        <button class="close-btn" onclick="closePanel('ch2')">✕</button>
+      </div>
+      <div class="panel-body">
+        <div class="info-box red"><strong>🔥 แนวคิดสำคัญ</strong>ภาวะโลกร้อนเกิดจากก๊าซเรือนกระจก (เช่น CO2) ที่มากเกินไปจากการกระทำมนุษย์</div>
+      </div>
+    </div>
+    <div class="panel" id="ch3">
+      <div class="panel-head" style="background:linear-gradient(135deg,#4a148c,#6a1b9a);">
+        <h2>⛈️ บทที่ 3: ภัยธรรมชาติ</h2>
+        <button class="close-btn" onclick="closePanel('ch3')">✕</button>
+      </div>
+      <div class="panel-body">
+        <div class="info-box" style="background:#f3e5f5;border-color:#ab47bc;"><strong style="color:#4a148c;">💡 แนวคิดสำคัญ</strong>หากเกิดแผ่นดินไหวต้อง "หมอบ คลุม ยึด" หากเกิดสึนามิให้สังเกตระดับน้ำทะเลที่ลดลงอย่างรวดเร็ว</div>
+      </div>
+    </div>
+  </div>
+
+  <div id="u2" class="unit-section">
+    <div class="lbl">หน่วยที่ 5</div>
+    <div class="ttl">เงา อุปราคา และเทคโนโลยีอวกาศ</div>
+    <div class="ch-grid">
+      <div class="ch-card" onclick="openPanel('ch5')">
+        <div class="ch-top" style="background:linear-gradient(135deg,#0d0d0d,#37474f);">
+          <div class="ch-num">1</div>
+          <div class="ch-label" style="color:#eceff1;">เงาและอุปราคา<span style="color:rgba(236,239,241,.7);">บทที่ 1</span></div>
+        </div>
+        <div class="ch-body">
+          <p class="ch-desc">การเกิดเงา สุริยุปราคา และจันทรุปราคา</p>
+          <div class="ch-footer"><span></span><div class="ch-btn" style="color:#607d8b;">ทบทวน <span class="arr">→</span></div></div>
+        </div>
+      </div>
+      <div class="ch-card" onclick="openPanel('ch6')">
+        <div class="ch-top" style="background:linear-gradient(135deg,#003087,#0d47a1);">
+          <div class="ch-num">2</div>
+          <div class="ch-label" style="color:#e3f2fd;">เทคโนโลยีอวกาศ<span style="color:rgba(227,242,253,.7);">บทที่ 2</span></div>
+        </div>
+        <div class="ch-body">
+          <p class="ch-desc">ดาวเทียม กล้องโทรทรรศน์ และสถานีอวกาศ</p>
+          <div class="ch-footer"><span></span><div class="ch-btn" style="color:#1565c0;">ทบทวน <span class="arr">→</span></div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel" id="ch5">
+      <div class="panel-head" style="background:linear-gradient(135deg,#0d0d0d,#37474f);">
+        <h2>🌑 บทที่ 1: เงาและอุปราคา</h2>
+        <button class="close-btn" onclick="closePanel('ch5')">✕</button>
+      </div>
+      <div class="panel-body">
+        <div class="info-box" style="background:rgba(100,100,120,0.15);border-color:#607d8b;"><strong style="color:#37474f;">💡 แนวคิดสำคัญ</strong>สุริยุปราคา: ดวงอาทิตย์-ดวงจันทร์-โลก / จันทรุปราคา: ดวงอาทิตย์-โลก-ดวงจันทร์</div>
+      </div>
+    </div>
+    <div class="panel" id="ch6">
+      <div class="panel-head" style="background:linear-gradient(135deg,#003087,#0d47a1);">
+        <h2>🚀 บทที่ 2: เทคโนโลยีอวกาศ</h2>
+        <button class="close-btn" onclick="closePanel('ch6')">✕</button>
+      </div>
+      <div class="panel-body">
+        <div class="info-box blue"><strong>💡 แนวคิดสำคัญ</strong>ดาวเทียม GPS ใช้บอกตำแหน่ง กล้องอวกาศทำให้ศึกษาจักรวาลได้ชัดเจนเพราะไม่มีชั้นบรรยากาศบัง</div>
+      </div>
+    </div>
+  </div>
+
+  <div id="u3" class="unit-section">
+    <div class="lbl">หน่วยที่ 6</div>
+    <div class="ttl">แรงไฟฟ้าและพลังงานไฟฟ้า</div>
+    <div class="ch-grid">
+      <div class="ch-card" onclick="openPanel('ch7')">
+        <div class="ch-top" style="background:linear-gradient(135deg,#f57f17,#fbc02d);">
+          <div class="ch-num">1</div>
+          <div class="ch-label" style="color:#1a237e;">แรงไฟฟ้า<span style="color:rgba(26,35,126,.7);">บทที่ 1</span></div>
+        </div>
+        <div class="ch-body">
+          <p class="ch-desc">ประจุไฟฟ้าต่างชนิดดูดกัน ชนิดเดียวกันผลักกัน</p>
+          <div class="ch-footer"><span></span><div class="ch-btn" style="color:#f57f17;">ทบทวน <span class="arr">→</span></div></div>
+        </div>
+      </div>
+      <div class="ch-card" onclick="openPanel('ch8')">
+        <div class="ch-top" style="background:linear-gradient(135deg,#1a237e,#283593);">
+          <div class="ch-num">2</div>
+          <div class="ch-label" style="color:#e8eaf6;">วงจรไฟฟ้าอย่างง่าย<span style="color:rgba(232,234,246,.7);">บทที่ 2</span></div>
+        </div>
+        <div class="ch-body">
+          <p class="ch-desc">การต่อเซลล์ไฟฟ้าและหลอดไฟแบบอนุกรม-ขนาน</p>
+          <div class="ch-footer"><span></span><div class="ch-btn" style="color:#5c6bc0;">ทบทวน <span class="arr">→</span></div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel" id="ch7">
+      <div class="panel-head" style="background:linear-gradient(135deg,#f57f17,#f9a825);">
+        <h2>⚡ บทที่ 1: แรงไฟฟ้า</h2>
+        <button class="close-btn" onclick="closePanel('ch7')">✕</button>
+      </div>
+      <div class="panel-body">
+        <div class="info-box orange"><strong>💡 แนวคิดสำคัญ</strong>แรงไฟฟ้าสถิตเกิดจากการขัดถู ประจุเหมือนกันผลักกัน ประจุต่างกันดูดกัน</div>
+      </div>
+    </div>
+    <div class="panel" id="ch8">
+      <div class="panel-head" style="background:linear-gradient(135deg,#1a237e,#283593);">
+        <h2>🔌 บทที่ 2: วงจรไฟฟ้าอย่างง่าย</h2>
+        <button class="close-btn" onclick="closePanel('ch8')">✕</button>
+      </div>
+      <div class="panel-body">
+        <div class="info-box blue"><strong>💡 แนวคิดสำคัญ</strong>ต่อหลอดไฟแบบอนุกรม ถ้าขาดจะดับทั้งหมด / ต่อแบบขนาน ขาดหนึ่งดวงที่เหลือยังติด (นิยมใช้ในบ้านเรือน)</div>
+      </div>
+    </div>
+  </div>
+
 </div>
 
 <script>
-  const buttons = {
-    home: document.getElementById('btn-home'),
-    p4:   document.getElementById('btn-p4'),
-    p5:   document.getElementById('btn-p5'),
-    p6:   document.getElementById('btn-p6'),
-  };
-  const frame  = document.getElementById('content-frame');
-  const loader = document.getElementById('loader');
-
-  function navigate(page, key) {
-    // Update active button
-    Object.values(buttons).forEach(b => b.classList.remove('active'));
-    buttons[key].classList.add('active');
-
-    // Show loader, swap src
-    loader.classList.add('show');
-    frame.style.opacity = '0';
-    frame.src = page;
+  // ----------------------------------------------------
+  // ควบคุมการแสดงเนื้อหา (UI)
+  // ----------------------------------------------------
+  function switchUnit(id, btn) {
+    document.querySelectorAll('.unit-section').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('.unit-tab').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.unit-tab-button').forEach(b => b.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    btn.classList.add('active');
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('open'));
   }
 
-  frame.addEventListener('load', () => {
-    loader.classList.remove('show');
-    frame.style.opacity = '1';
-  });
+  function openPanel(id) {
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('open'));
+    const p = document.getElementById(id);
+    p.classList.add('open');
+    setTimeout(() => p.scrollIntoView({ behavior:'smooth', block:'nearest' }), 80);
+  }
+  function closePanel(id) { document.getElementById(id).classList.remove('open'); }
+
+  // ----------------------------------------------------
+  // ระบบข้อสอบ 20 ข้อ (Pre-test / Post-test)
+  // ----------------------------------------------------
+  const quizQuestions = [
+    { q: "1. ลมบก ลมทะเล เกิดจากความแตกต่างของสิ่งใด?", options: ["ก. ความกดอากาศ", "ข. ความชื้นในอากาศ", "ค. อุณหภูมิเหนือพื้นดินและพื้นน้ำ", "ง. ทิศทางของลมมรสุม"], ans: 2 },
+    { q: "2. ช่วงเวลาใดที่ 'ลมทะเล' จะพัดจากทะเลเข้าสู่ฝั่ง?", options: ["ก. เวลากลางวัน", "ข. เวลากลางคืน", "ค. ช่วงเช้ามืด", "ง. พัดตลอดเวลา"], ans: 0 },
+    { q: "3. มรสุมตะวันตกเฉียงใต้ส่งผลอย่างไรต่อประเทศไทย?", options: ["ก. ทำให้เกิดฤดูหนาว", "ข. ทำให้เกิดฤดูฝน", "ค. ทำให้เกิดฤดูร้อน", "ง. ทำให้เกิดความแห้งแล้ง"], ans: 1 },
+    { q: "4. ก๊าซเรือนกระจกชนิดใดที่เกิดจากการกระทำของมนุษย์(การเผาไหม้เชื้อเพลิง) มากที่สุด?", options: ["ก. ก๊าซมีเทน", "ข. ก๊าซคาร์บอนไดออกไซด์", "ค. ก๊าซไนตรัสออกไซด์", "ง. คลอโรฟลูออโรคาร์บอน"], ans: 1 },
+    { q: "5. ผลกระทบที่ร้ายแรงและเห็นได้ชัดเจนที่สุดจากภาวะโลกร้อนคือข้อใด?", options: ["ก. ฝนตกต้องตามฤดูกาล", "ข. ระดับน้ำทะเลสูงขึ้นเนื่องจากน้ำแข็งขั้วโลกละลาย", "ค. พืชเจริญเติบโตได้ดีขึ้น", "ง. ฤดูหนาวยาวนานกว่าปกติ"], ans: 1 },
+    { q: "6. หากนักเรียนอยู่บนอาคารขณะเกิดแผ่นดินไหว ควรปฏิบัติตนอย่างไรจึงจะปลอดภัยที่สุด?", options: ["ก. วิ่งลงบันไดหนีไฟทันที", "ข. รีบใช้ลิฟต์ลงมาชั้นล่าง", "ค. หมอบใต้โต๊ะที่แข็งแรงและยึดจับให้แน่น", "ง. กระโดดออกทางหน้าต่าง"], ans: 2 },
+    { q: "7. ข้อใดคือสัญญาณเตือนจากธรรมชาติก่อนเกิดคลื่นสึนามิ?", options: ["ก. น้ำทะเลมีอุณหภูมิสูงขึ้น", "ข. น้ำทะเลมีสีแดง", "ค. ท้องฟ้ามืดครึ้มมีลมพายุรุนแรง", "ง. น้ำทะเลลดระดับลงอย่างรวดเร็วผิดปกติ"], ans: 3 },
+    { q: "8. การเกิด 'สุริยุปราคา' ดวงดาวเรียงตัวกันตามลำดับในข้อใด?", options: ["ก. ดวงอาทิตย์ - โลก - ดวงจันทร์", "ข. โลก - ดวงอาทิตย์ - ดวงจันทร์", "ค. ดวงอาทิตย์ - ดวงจันทร์ - โลก", "ง. ดวงจันทร์ - ดวงอาทิตย์ - โลก"], ans: 2 },
+    { q: "9. 'จันทรุปราคา' จะเกิดขึ้นในคืนที่มีลักษณะใด?", options: ["ก. คืนเดือนมืด", "ข. คืนวันเพ็ญ (ขึ้น 15 ค่ำ)", "ค. คืนแรม 8 ค่ำ", "ง. คืนวันใดก็ได้"], ans: 1 },
+    { q: "10. เพราะเหตุใดเราจึงไม่เห็นสุริยุปราคาหรือจันทรุปราคาทุกเดือน?", options: ["ก. เพราะโลกหมุนรอบตัวเองเร็วเกินไป", "ข. เพราะดวงจันทร์มีขนาดเล็กกว่าโลกมาก", "ค. เพราะระนาบวงโคจรของดวงจันทร์เอียงทำมุมกับระนาบวงโคจรของโลก", "ง. เพราะดวงอาทิตย์อยู่ไกลจากโลกมาก"], ans: 2 },
+    { q: "11. ดาวเทียมที่ใช้ประโยชน์ในการถ่ายทอดสดกีฬาข้ามทวีป คือดาวเทียมประเภทใด?", options: ["ก. ดาวเทียมสื่อสาร", "ข. ดาวเทียมอุตุนิยมวิทยา", "ค. ดาวเทียมสำรวจทรัพยากร", "ง. ดาวเทียมดาราศาสตร์"], ans: 0 },
+    { q: "12. กล้องโทรทรรศน์อวกาศที่โคจรอยู่นอกโลก มีข้อดีกว่ากล้องโทรทรรศน์บนพื้นโลกอย่างไร?", options: ["ก. มีขนาดเล็กกว่าพกพาได้", "ข. ซ่อมแซมได้ง่ายกว่า", "ค. ไม่มีชั้นบรรยากาศของโลกคอยบดบังทัศนวิสัย", "ง. ใช้พลังงานไฟฟ้าน้อยกว่า"], ans: 2 },
+    { q: "13. สถานีอวกาศนานาชาติ (ISS) มีวัตถุประสงค์หลักเพื่อสิ่งใด?", options: ["ก. ใช้เป็นโรงแรมสำหรับนักท่องเที่ยวอวกาศ", "ข. เป็นห้องปฏิบัติการทดลองทางวิทยาศาสตร์ในสภาพไร้น้ำหนัก", "ค. เป็นคลังเก็บอาวุธนิวเคลียร์ป้องกันโลก", "ง. เป็นศูนย์กลางติดต่อกับมนุษย์ต่างดาว"], ans: 1 },
+    { q: "14. วัตถุคู่ใดเมื่อนำมาขัดถูกัน จะสามารถทำให้เกิดแรงไฟฟ้าสถิตได้ดี?", options: ["ก. ไม้บรรทัดเหล็ก กับ ผ้าเปียก", "ข. ลูกโป่งยาง กับ เส้นผมที่แห้ง", "ค. แท่งแก้ว กับ แผ่นทองแดง", "ง. เหรียญบาท กับ กระดาษ"], ans: 1 },
+    { q: "15. ประจุไฟฟ้าชนิดเดียวกัน (เช่น ลบ กับ ลบ) จะส่งผลต่อกันอย่างไร?", options: ["ก. เกิดแรงดึงดูดกัน", "ข. เกิดแรงผลักกัน", "ค. หยุดนิ่งไม่มีแรงกระทำ", "ง. ทำให้เกิดประกายไฟเสมอ"], ans: 1 },
+    { q: "16. อุปกรณ์ใดทำหน้าที่เป็น 'แหล่งกำเนิดพลังงานไฟฟ้า' ในวงจรไฟฟ้าอย่างง่าย?", options: ["ก. หลอดไฟ", "ข. สวิตช์", "ค. เซลล์ไฟฟ้า (ถ่านไฟฉาย)", "ง. สายไฟ"], ans: 2 },
+    { q: "17. หากต้องการให้หลอดไฟสว่างมากขึ้น ควรนำถ่านไฟฉายมาต่อกันแบบใด?", options: ["ก. ต่อแบบขนาน", "ข. ต่อแบบอนุกรม", "ค. ต่อแบบสลับขั้ว", "ง. แบบใดก็ได้สว่างเท่ากัน"], ans: 1 },
+    { q: "18. ข้อดีของการต่อหลอดไฟฟ้าแบบ 'ขนาน' คือข้อใด?", options: ["ก. ทำให้หลอดไฟสว่างน้อยลง ประหยัดไฟ", "ข. ใช้สายไฟน้อยกว่าการต่อแบบอื่น", "ค. เมื่อหลอดใดหลอดหนึ่งเสีย หลอดอื่นยังทำงานได้ตามปกติ", "ง. อุปกรณ์ทุกชิ้นจะมีกระแสไฟฟ้าไหลผ่านเท่ากันเสมอ"], ans: 2 },
+    { q: "19. เครื่องใช้ไฟฟ้าภายในบ้านเรือนของเรา นิยมต่อวงจรไฟฟ้าแบบใด?", options: ["ก. แบบอนุกรม", "ข. แบบขนาน", "ค. แบบผสม", "ง. แบบลัดวงจร"], ans: 1 },
+    { q: "20. วัสดุในข้อใดที่มีสมบัติเป็น 'ตัวนำไฟฟ้า' ที่ดีที่สุดในชีวิตประจำวัน?", options: ["ก. พลาสติก", "ข. ยาง", "ค. ไม้แห้ง", "ง. ทองแดง"], ans: 3 }
+  ];
+
+  let userAnswers = new Array(20).fill(null);
+
+  function startMainQuiz(type, btn) {
+    // ปิดแท็บอื่น
+    document.querySelectorAll('.unit-section').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('.unit-tab').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.unit-tab-button').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+
+    // ล้างข้อมูลเก่า
+    userAnswers.fill(null);
+    document.getElementById('score-board').style.display = 'none';
+    document.getElementById('submit-quiz').style.display = 'block';
+
+    const section = document.getElementById('main-quiz-section');
+    section.classList.add('active');
+    document.getElementById('quiz-title').innerText = `แบบทดสอบ${type} 20 ข้อ`;
+    
+    renderQuestions();
+  }
+
+  function renderQuestions() {
+    const container = document.getElementById('quiz-container');
+    container.innerHTML = ''; // Clear container
+
+    quizQuestions.forEach((qObj, qIndex) => {
+      let html = `<div class="q-item" id="mq${qIndex}">
+                    <div class="q-text">${qObj.q}</div>
+                    <div class="q-opts">`;
+      qObj.options.forEach((opt, optIndex) => {
+        html += `<button class="q-opt" onclick="selectAnswer(${qIndex}, ${optIndex}, this)">${opt}</button>`;
+      });
+      html += `   </div>
+                </div>`;
+      container.innerHTML += html;
+    });
+  }
+
+  function selectAnswer(qIndex, optIndex, btn) {
+    // อัปเดต Array คำตอบ
+    userAnswers[qIndex] = optIndex;
+    
+    // ล้าง selection เดิมในข้อนั้นๆ
+    const parent = btn.parentElement;
+    parent.querySelectorAll('.q-opt').forEach(b => b.classList.remove('selected'));
+    
+    // ใส่ highlight อันที่เลือก
+    btn.classList.add('selected');
+  }
+
+  function calculateScore() {
+    // ตรวจว่าทำครบไหม
+    if(userAnswers.includes(null)) {
+      alert("กรุณาตอบคำถามให้ครบทั้ง 20 ข้อครับ");
+      return;
+    }
+
+    let score = 0;
+    
+    // ตรวจคำตอบและเฉลยบนหน้าจอ
+    quizQuestions.forEach((qObj, qIndex) => {
+      const qDiv = document.getElementById(`mq${qIndex}`);
+      const opts = qDiv.querySelectorAll('.q-opt');
+      
+      // ปิดปุ่มไม่ให้กดซ้ำ
+      opts.forEach(b => b.classList.add('disabled'));
+
+      // เช็คคำตอบ
+      if (userAnswers[qIndex] === qObj.ans) {
+        score++;
+        opts[userAnswers[qIndex]].classList.remove('selected');
+        opts[userAnswers[qIndex]].classList.add('correct');
+      } else {
+        opts[userAnswers[qIndex]].classList.remove('selected');
+        opts[userAnswers[qIndex]].classList.add('wrong'); // อันที่ตอบผิด
+        opts[qObj.ans].classList.add('correct'); // เฉลยอันที่ถูก
+      }
+    });
+
+    // ซ่อนปุ่มส่งคำตอบ และแสดงคะแนน
+    document.getElementById('submit-quiz').style.display = 'none';
+    const scoreBoard = document.getElementById('score-board');
+    scoreBoard.style.display = 'block';
+    document.getElementById('final-score').innerText = `${score} / 20`;
+    
+    // เลื่อนจอลงมาที่คะแนน
+    scoreBoard.scrollIntoView({ behavior:'smooth', block:'center' });
+  }
 </script>
 </body>
 </html>
