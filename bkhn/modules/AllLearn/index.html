@@ -1,0 +1,1409 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>เก่งได้ - ระบบจัดการการเรียนรวม LD (โรงเรียนบ้านเขาหัวนา)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Mitr:wght@400;500;600;700&family=Sarabun:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#F1F6F4; --bg-card:#FFFFFF; --sidebar:#1B3E42;
+    --ink:#1F3A3D; --ink-soft:#5A7377; --ink-faint:#8FA5A8;
+    --teal:#2D6E7E; --teal-dark:#204F5B; --teal-pale:#E4F0EE;
+    --amber:#F2A65A; --amber-dark:#D98A3D; --amber-pale:#FBEADB;
+    --leaf:#6FA96D; --leaf-pale:#E7F4E6;
+    --coral:#E2685E; --coral-pale:#FBEAE8;
+    --plum:#8B7FD1; --plum-pale:#EEEBFB;
+    --border:#DCE8E6;
+    --radius-lg:24px; --radius-md:16px; --radius-sm:10px;
+    --shadow:0 6px 18px rgba(27,62,66,0.08);
+    --shadow-lg:0 16px 36px rgba(27,62,66,0.14);
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{ font-family:'Sarabun',sans-serif; color:var(--ink); background:var(--bg); }
+  h1,h2,h3,h4{font-family:'Mitr',sans-serif; margin:0;}
+  button{font-family:inherit;}
+
+  .shell{display:flex; min-height:100vh;}
+
+  /* ---------- Sidebar ---------- */
+  .sidebar{
+    width:236px; flex-shrink:0; background:var(--sidebar); color:#DCEAE8;
+    display:flex; flex-direction:column; padding:22px 14px;
+  }
+  .sb-brand{display:flex; align-items:center; gap:10px; padding:0 8px 22px; border-bottom:1px solid rgba(255,255,255,0.08); margin-bottom:16px;}
+  .sb-brand .mark{width:38px;height:38px;border-radius:11px; background:linear-gradient(135deg,var(--teal),var(--leaf)); display:flex;align-items:center;justify-content:center; font-size:19px;}
+  .sb-brand h1{font-size:17px; color:#fff;}
+  .sb-brand p{margin:1px 0 0; font-size:11px; color:#9FC4C0;}
+  .sb-nav{display:flex; flex-direction:column; gap:3px; flex:1;}
+  .sb-nav button{
+    display:flex; align-items:center; gap:10px; text-align:left;
+    background:transparent; border:none; color:#B9D3D0; padding:11px 12px;
+    border-radius:var(--radius-sm); font-size:14.5px; cursor:pointer; font-weight:500;
+    transition:all .12s ease;
+  }
+  .sb-nav button .ic{font-size:16px; width:20px; text-align:center;}
+  .sb-nav button:hover{background:rgba(255,255,255,0.06); color:#fff;}
+  .sb-nav button.active{background:var(--teal); color:#fff; box-shadow:var(--shadow);}
+  .sb-foot{font-size:11px; color:#6E9490; padding:10px 8px 0;}
+
+  /* ---------- Main ---------- */
+  .main{flex:1; min-width:0; padding:26px 32px 60px; max-width:1180px;}
+  @media (max-width:900px){ .shell{flex-direction:column;} .sidebar{width:100%; flex-direction:row; align-items:center; overflow-x:auto;} .sb-nav{flex-direction:row;} .sb-foot{display:none;} .main{padding:20px 16px 48px;} }
+
+  .page-head{display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:22px; gap:16px; flex-wrap:wrap;}
+  .page-head h2{font-size:23px; color:var(--teal-dark);}
+  .page-head p{margin:4px 0 0; font-size:13.5px; color:var(--ink-soft);}
+  .yr-select{
+    display:flex; align-items:center; gap:8px; background:var(--bg-card); border:1px solid var(--border);
+    border-radius:999px; padding:8px 16px; box-shadow:var(--shadow); font-size:13.5px; font-weight:600; color:var(--teal-dark);
+  }
+  .yr-select select{border:none; background:transparent; font-family:'Sarabun',sans-serif; font-weight:600; color:var(--teal-dark); font-size:13.5px;}
+
+  .card{background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius-lg); box-shadow:var(--shadow); padding:26px;}
+  .card + .card{margin-top:18px;}
+  .card h3{font-size:16.5px; color:var(--ink); margin-bottom:4px;}
+  .card .sub{font-size:13px; color:var(--ink-soft); margin-bottom:16px;}
+
+  .btn{border:none; border-radius:999px; padding:10px 18px; font-size:14px; font-weight:500; font-family:'Mitr',sans-serif; cursor:pointer; transition:transform .1s ease;}
+  .btn:hover{transform:translateY(-1px);}
+  .btn-primary{background:var(--teal); color:#fff; box-shadow:var(--shadow);}
+  .btn-primary:hover{background:var(--teal-dark);}
+  .btn-ghost{background:transparent; border:1.5px solid var(--border); color:var(--ink-soft);}
+  .btn-danger{background:var(--coral-pale); color:#8C332C;}
+  .btn-sm{padding:6px 13px; font-size:12.5px;}
+
+  /* stat cards */
+  .stat-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin-bottom:20px;}
+  @media (max-width:900px){ .stat-grid{grid-template-columns:repeat(2,1fr);} }
+  .stat-card{background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius-md); padding:18px; box-shadow:var(--shadow);}
+  .stat-card .num{font-family:'Mitr',sans-serif; font-size:27px; font-weight:600; color:var(--teal-dark);}
+  .stat-card .lbl{font-size:12.5px; color:var(--ink-soft); margin-top:2px;}
+
+  /* table */
+  table{width:100%; border-collapse:collapse; font-size:13.8px;}
+  th{text-align:left; font-family:'Mitr',sans-serif; font-weight:500; font-size:12.5px; color:var(--ink-soft); padding:9px 10px; border-bottom:2px solid var(--border);}
+  td{padding:11px 10px; border-bottom:1px solid var(--border); vertical-align:middle;}
+  tr:last-child td{border-bottom:none;}
+  tr:hover td{background:#FAFDFC;}
+  .badge{display:inline-block; padding:3px 10px; border-radius:999px; font-size:11.5px; font-weight:600; margin:2px 3px 2px 0;}
+  .badge.teal{background:var(--teal-pale); color:var(--teal-dark);}
+  .badge.amber{background:var(--amber-pale); color:var(--amber-dark);}
+  .badge.leaf{background:var(--leaf-pale); color:#2E5A2C;}
+  .badge.coral{background:var(--coral-pale); color:#8C332C;}
+  .badge.plum{background:var(--plum-pale); color:#5B4FA0;}
+  .row-actions{display:flex; gap:6px;}
+
+  /* forms */
+  .form-grid{display:grid; grid-template-columns:1fr 1fr; gap:16px;}
+  @media (max-width:640px){ .form-grid{grid-template-columns:1fr;} }
+  .field{display:flex; flex-direction:column; gap:6px;}
+  .field.full{grid-column:1/-1;}
+  .field label{font-size:13px; font-weight:600; color:var(--ink);}
+  .field input[type=text], .field input[type=number], .field select, .field textarea{
+    font-family:'Sarabun',sans-serif; font-size:14px; padding:10px 12px; border-radius:var(--radius-sm);
+    border:1.5px solid var(--border); background:#FBFDFC; color:var(--ink);
+  }
+  .field textarea{resize:vertical; min-height:70px;}
+  .checkbox-grid{display:flex; flex-wrap:wrap; gap:8px;}
+  .chip-toggle{
+    border:1.5px solid var(--border); background:#FBFDFC; padding:8px 14px; border-radius:999px;
+    font-size:13px; cursor:pointer; color:var(--ink-soft); transition:all .12s ease;
+  }
+  .chip-toggle.on{background:var(--teal); border-color:var(--teal); color:#fff;}
+
+  .empty{text-align:center; padding:44px 20px; color:var(--ink-soft);}
+  .empty .glyph{font-size:40px; margin-bottom:10px;}
+
+  .modal-backdrop{position:fixed; inset:0; background:rgba(27,62,66,0.35); display:flex; align-items:center; justify-content:center; padding:20px; z-index:50;}
+  .modal{background:#fff; border-radius:var(--radius-lg); box-shadow:var(--shadow-lg); padding:28px; max-width:560px; width:100%; max-height:88vh; overflow-y:auto;}
+  .modal h3{margin-bottom:16px;}
+  .modal-actions{display:flex; justify-content:flex-end; gap:10px; margin-top:20px;}
+
+  /* difficulty pill */
+  .diff-1{background:var(--leaf-pale); color:#2E5A2C;}
+  .diff-2{background:var(--amber-pale); color:var(--amber-dark);}
+  .diff-3{background:var(--coral-pale); color:#8C332C;}
+
+  /* bars for report */
+  .bar-row{display:flex; align-items:center; gap:10px; margin-bottom:9px;}
+  .bar-label{width:120px; font-size:13px; color:var(--ink-soft); flex-shrink:0;}
+  .bar-track{flex:1; background:#EEF4F3; border-radius:999px; height:14px; overflow:hidden;}
+  .bar-fill{height:100%; border-radius:999px; background:linear-gradient(90deg,var(--teal),var(--leaf));}
+  .bar-val{width:42px; text-align:right; font-size:12.5px; color:var(--ink-soft); flex-shrink:0;}
+
+  /* practice screen reuse */
+  .prompt-row{display:flex; align-items:center; gap:16px; justify-content:center; margin:6px 0 26px;}
+  .emoji-tile{font-size:58px; background:#F6FAF9; border-radius:var(--radius-md); width:108px;height:108px; display:flex; align-items:center; justify-content:center; border:1px solid var(--border); flex-shrink:0;}
+  .speak-btn{border:none; background:var(--teal); color:#fff; width:58px;height:58px; border-radius:50%; font-size:24px; cursor:pointer; box-shadow:var(--shadow); display:flex;align-items:center;justify-content:center;}
+  .choices{display:grid; grid-template-columns:1fr 1fr; gap:12px;}
+  @media (max-width:520px){ .choices{grid-template-columns:1fr;} }
+  .choice-btn{font-size:21px; font-weight:600; padding:18px; border-radius:var(--radius-md); border:2px solid var(--border); background:#fff; cursor:pointer;}
+  .choice-btn.correct{background:var(--leaf-pale); border-color:var(--leaf); color:#2E5A2C;}
+  .choice-btn.wrong{background:var(--coral-pale); border-color:var(--coral); color:#8C332C;}
+  .word-target{display:flex; justify-content:center; gap:9px; margin-bottom:22px; flex-wrap:wrap;}
+  .letter-slot{width:50px;height:58px; border-radius:var(--radius-sm); border:2px dashed var(--border); background:#F6FAF9; display:flex; align-items:center; justify-content:center; font-size:25px; font-weight:700; color:var(--teal-dark);}
+  .letter-slot.filled{border-style:solid; border-color:var(--teal);}
+  .letter-bank{display:flex; gap:9px; justify-content:center; flex-wrap:wrap;}
+  .letter-tile{width:50px;height:50px; border-radius:var(--radius-sm); border:none; background:var(--amber); color:#fff; font-size:21px; font-weight:700; cursor:pointer; box-shadow:var(--shadow);}
+  .letter-tile:disabled{opacity:0.25;}
+  .feedback-banner{text-align:center; font-family:'Mitr',sans-serif; font-size:15px; padding:11px; border-radius:var(--radius-sm); margin-top:16px;}
+  .feedback-banner.ok{background:var(--leaf-pale); color:#2E5A2C;}
+  .feedback-banner.no{background:var(--coral-pale); color:#8C332C;}
+  .action-row{display:flex; gap:10px; justify-content:center; margin-top:20px; flex-wrap:wrap;}
+
+  @media print{
+    .sidebar, .page-head .yr-select, .no-print{display:none !important;}
+    .main{padding:0; max-width:100%;}
+    body{background:#fff;}
+    .card{box-shadow:none; border:1px solid #ccc;}
+  }
+</style>
+</head>
+<body>
+<div class="shell" id="shell"></div>
+
+<script>
+/* ================== CONFIG ==================
+   แก้ 2 ค่านี้หลัง Deploy Apps Script เสร็จแล้ว:
+   1. APPS_SCRIPT_URL = URL ที่ได้จากตอน Deploy > New deployment > Web app
+   2. SECRET_KEY = ต้องตรงกับ SECRET_KEY ที่ตั้งไว้ในไฟล์ Code.gs
+================================================= */
+const CONFIG = {
+  APPS_SCRIPT_URL: "https://script.google.com/macros/s/AKfycbzLtosz31N3zeOynEBP2bIudZhafSCX4DUZRG89As8AH4nOzBTXiq8WphBI2OMw4Itp/exec", // เช่น "https://script.google.com/macros/s/XXXXXXXX/exec"
+  SECRET_KEY: "Bk90919293949596979899$",       // ต้องตรงกับ Code.gs
+  SCHOOL_NAME: "โรงเรียนบ้านเขาหัวนา",
+};
+
+/* ================== CONSTANTS ================== */
+const DISABILITY_TYPES = [
+  {id:"dyslexia", label:"บกพร่องด้านการอ่าน (Dyslexia)"},
+  {id:"dysgraphia", label:"บกพร่องด้านการเขียน (Dysgraphia)"},
+  {id:"dyscalculia", label:"บกพร่องด้านคณิตศาสตร์ (Dyscalculia)"},
+  {id:"adhd", label:"สมาธิสั้นร่วม (ADHD)"},
+  {id:"language", label:"บกพร่องด้านภาษา-สื่อสาร"},
+  {id:"visualmotor", label:"บกพร่องด้านการรับรู้ภาพ-การเคลื่อนไหว"},
+];
+const MEDIA_OPTIONS = [
+  "Text-to-Speech", "Speech-to-Text", "ใบงานดิจิทัลลากวาง", "แอป AAC",
+  "ตัวจับเวลาแบบภาพ", "ฟอนต์อ่านง่าย", "คีย์บอร์ด/ปุ่มขนาดใหญ่", "วิดีโอขั้นตอนพร้อมภาพ"
+];
+const DIFF_LABEL = {1:"ง่าย", 2:"กลาง", 3:"ยาก"};
+const DIFF_CLASS = {1:"diff-1", 2:"diff-2", 3:"diff-3"};
+const CATEGORIES = ["สัตว์","ธรรมชาติ","ของใช้","การกระทำ","ครอบครัว","อาหาร","อื่นๆ"];
+
+const DEFAULT_WORDS = [
+  {id:"w1", word:"แมว", emoji:"🐱", difficulty:1, category:"สัตว์", distract:["แหม","แมง","แขว"]},
+  {id:"w2", word:"หมา", emoji:"🐶", difficulty:1, category:"สัตว์", distract:["หนา","หมู","มา"]},
+  {id:"w3", word:"ปลา", emoji:"🐟", difficulty:1, category:"สัตว์", distract:["ผลา","บลา","ปา"]},
+  {id:"w4", word:"นก", emoji:"🐦", difficulty:1, category:"สัตว์", distract:["นค","ยก","ลก"]},
+  {id:"w5", word:"ไก่", emoji:"🐔", difficulty:1, category:"สัตว์", distract:["ไก","ใก่","ไข่"]},
+  {id:"w6", word:"บ้าน", emoji:"🏠", difficulty:2, category:"ของใช้", distract:["ปาน","บาน","ป้าน"]},
+  {id:"w7", word:"ดอกไม้", emoji:"🌸", difficulty:2, category:"ธรรมชาติ", distract:["ดอกไข่","ตอกไม้","ดอกไม"]},
+  {id:"w8", word:"รถ", emoji:"🚗", difficulty:1, category:"ของใช้", distract:["รด","ลด","รส"]},
+  {id:"w9", word:"เรือ", emoji:"⛵", difficulty:2, category:"ของใช้", distract:["เรีอ","เมือ","เรือง"]},
+  {id:"w10", word:"หนังสือ", emoji:"📖", difficulty:2, category:"ของใช้", distract:["หนังสีอ","หนังสั้น","นังสือ"]},
+  {id:"w11", word:"ดวงจันทร์", emoji:"🌙", difficulty:3, category:"ธรรมชาติ", distract:["ดวงจันร์","ควงจันทร์","ดวงจัน"]},
+  {id:"w12", word:"ดาว", emoji:"⭐", difficulty:1, category:"ธรรมชาติ", distract:["ดาย","ดว","ตาว"]},
+  {id:"w13", word:"แดด", emoji:"☀️", difficulty:1, category:"ธรรมชาติ", distract:["แคด","แดค","แดง"]},
+  {id:"w14", word:"ฝน", emoji:"🌧️", difficulty:1, category:"ธรรมชาติ", distract:["ผน","ฝม","ฟน"]},
+  {id:"w15", word:"ต้นไม้", emoji:"🌳", difficulty:2, category:"ธรรมชาติ", distract:["ต้นไข่","ตันไม้","ต้นไม"]},
+  {id:"w16", word:"กระโดด", emoji:"🤸", difficulty:3, category:"การกระทำ", distract:["กระโดก","กระดด","กระโด"]},
+  {id:"w17", word:"ข้าว", emoji:"🍚", difficulty:1, category:"อาหาร", distract:["ค้าว","ข่าว","เข้า"]},
+  {id:"w18", word:"แม่", emoji:"👩", difficulty:1, category:"ครอบครัว", distract:["แหม่","แม","แน่"]},
+];
+
+function currentThaiAcademicYear(){
+  const now = new Date();
+  const y = now.getFullYear() + 543;
+  return (now.getMonth() >= 4) ? y : y - 1; // ปีการศึกษาเริ่มพ.ค.
+}
+const uid = ()=> Math.random().toString(36).slice(2,10);
+
+/* ================== STATE ================== */
+let state = {
+  page: "dashboard",
+  academicYear: currentThaiAcademicYear(),
+  students: [],
+  iepMap: {},      // key `${studentId}:${year}` -> iep obj
+  words: [],
+  progress: {},     // studentId -> {attempts:{wordId:{correct,tries}}, totalCorrect, totalTries, history:[]}
+  modal: null,      // {type, payload}
+  practice: { studentId:null, module:null, difficulty:null, ex:null },
+  reportStudentId: null,
+  auth: null,        // {token, teacherId, name, role, assignedStudentIds}
+  teachers: [],
+  loginError: null,
+};
+
+/* ================== PERSISTENCE (Google Sheets via Apps Script) ================== */
+function safeParseArr(str){ try{ const v = JSON.parse(str); return Array.isArray(v)?v:[]; }catch(e){ return []; } }
+
+async function apiCall(action, data){
+  // ใช้ body เป็น string ธรรมดา ไม่ตั้ง Content-Type เอง เพื่อเลี่ยง CORS preflight ที่ Apps Script Web App จัดการเองไม่ได้
+  const res = await fetch(CONFIG.APPS_SCRIPT_URL, {
+    method: "POST",
+    body: JSON.stringify({ key: CONFIG.SECRET_KEY, action, data, token: state.auth ? state.auth.token : null }),
+  });
+  const json = await res.json();
+  if(!json.ok){
+    if(json.error === "session-expired"){ state.auth = null; boot(); }
+    throw new Error(json.error || "เกิดข้อผิดพลาดจากเซิร์ฟเวอร์");
+  }
+  return json.result;
+}
+
+async function apiLogin(email, pin){
+  const res = await fetch(CONFIG.APPS_SCRIPT_URL, {
+    method: "POST",
+    body: JSON.stringify({ key: CONFIG.SECRET_KEY, action: "login", data: { email, pin } }),
+  });
+  const json = await res.json();
+  if(!json.ok) throw new Error(json.error || "เข้าสู่ระบบไม่สำเร็จ");
+  return json.result;
+}
+
+async function apiSaveTeacher(t){ return apiCall("saveTeacher", t); }
+async function apiDeleteTeacher(id){ return apiCall("deleteTeacher", {id}); }
+async function apiListTeachers(){ return apiCall("listTeachers", {}); }
+async function apiSaveAssignments(teacherId, studentIds){ return apiCall("saveAssignments", {teacherId, studentIds}); }
+
+async function loadAll(){
+  state.loadError = null;
+  try{
+    const result = await apiCall("getAll", {});
+    state.students = (result.students||[]).map(s=>({...s, academicYear: parseInt(s.academicYear)}));
+
+    let words = (result.words||[]).map(w=>({...w, difficulty: parseInt(w.difficulty), distract: Array.isArray(w.distract)?w.distract:safeParseArr(w.distract)}));
+    if(words.length===0 && state.auth && state.auth.role==="admin"){
+      // ครั้งแรกที่ยังไม่มีคำในชีต: ส่งคำตั้งต้นขึ้นไปเก็บไว้ (แอดมินเท่านั้นที่ทำได้)
+      for(const w of DEFAULT_WORDS){ await apiCall("saveWord", w); }
+      words = DEFAULT_WORDS;
+    }
+    state.words = words;
+
+    state.iepMap = {};
+    (result.iep||[]).forEach(r=>{
+      const key = `${r.studentId}:${parseInt(r.academicYear)}`;
+      state.iepMap[key] = {
+        disabilities: Array.isArray(r.disabilities)?r.disabilities:safeParseArr(r.disabilities),
+        mediaUsed: Array.isArray(r.mediaUsed)?r.mediaUsed:safeParseArr(r.mediaUsed),
+        difficulty: parseInt(r.difficulty)||2,
+        shortGoal: r.shortGoal||"", longGoal: r.longGoal||"", notes: r.notes||"",
+        updatedAt: r.updatedAt,
+      };
+    });
+
+    state.progress = {};
+    (result.attempts||[]).forEach(a=>{
+      if(!state.progress[a.studentId]) state.progress[a.studentId] = {attempts:{}, totalCorrect:0, totalTries:0, history:[]};
+      const correct = parseInt(a.correct)||0, tries = parseInt(a.tries)||0;
+      state.progress[a.studentId].attempts[a.wordId] = {correct, tries};
+      state.progress[a.studentId].totalCorrect += correct;
+      state.progress[a.studentId].totalTries += tries;
+    });
+  }catch(e){
+    console.error("load failed", e);
+    state.loadError = e.message;
+    state.words = state.words.length ? state.words : DEFAULT_WORDS;
+  }
+}
+
+async function apiSaveStudent(student){ return apiCall("saveStudent", student); }
+async function apiDeleteStudent(id){ return apiCall("deleteStudent", {id}); }
+async function apiSaveIep(iepRecord){ return apiCall("saveIep", iepRecord); }
+async function apiSaveWord(word){ return apiCall("saveWord", word); }
+async function apiDeleteWord(id){ return apiCall("deleteWord", {id}); }
+async function apiRecordAttempt(payload){ return apiCall("recordAttempt", payload); }
+
+/* ================== HELPERS ================== */
+function el(tag, cls, html){ const e=document.createElement(tag); if(cls) e.className=cls; if(html!==undefined) e.innerHTML=html; return e; }
+function studentsInYear(){ return state.students.filter(s=>s.academicYear===state.academicYear); }
+function getIep(studentId, year){ return state.iepMap[`${studentId}:${year}`] || null; }
+function getProgress(studentId){ return state.progress[studentId] || {attempts:{}, totalCorrect:0, totalTries:0, history:[]}; }
+function ensureProgress(studentId){ if(!state.progress[studentId]) state.progress[studentId] = {attempts:{}, totalCorrect:0, totalTries:0, history:[]}; return state.progress[studentId]; }
+
+function speak(text, rate){
+  if(!('speechSynthesis' in window)) return;
+  window.speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(text);
+  u.lang = "th-TH"; u.rate = rate || 0.9;
+  const voices = window.speechSynthesis.getVoices();
+  const thV = voices.find(v=>v.lang && v.lang.toLowerCase().startsWith("th"));
+  if(thV) u.voice = thV;
+  window.speechSynthesis.speak(u);
+}
+function shuffle(arr){ const a=[...arr]; for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]];} return a; }
+
+/* ================== RENDER SHELL ================== */
+const shell = document.getElementById('shell');
+function render(){
+  shell.innerHTML = "";
+  shell.appendChild(renderSidebar());
+  const main = el('div','main');
+  main.appendChild(renderPageHead());
+  main.appendChild(renderPageBody());
+  shell.appendChild(main);
+  if(state.modal) shell.appendChild(renderModal());
+}
+
+function renderSidebar(){
+  const sb = el('div','sidebar');
+  const brand = el('div','sb-brand');
+  brand.appendChild(el('div','mark','📚'));
+  const bt = el('div');
+  bt.appendChild(el('h1',null,'AllLearn'));
+  bt.appendChild(el('p',null, CONFIG.SCHOOL_NAME));
+  brand.appendChild(bt);
+  sb.appendChild(brand);
+
+  const nav = el('div','sb-nav');
+  const items = [
+    ["dashboard","📊","แดชบอร์ด"],
+    ["students","🧒","นักเรียน"],
+    ["iep","🗂️","แผน IEP"],
+    ["wordbank","🔤","คลังคำศัพท์"],
+    ["practice","🎯","ฝึกอ่าน-เขียน"],
+    ["report","📄","รายงาน"],
+  ];
+  if(state.auth && state.auth.role === "admin"){
+    items.push(["teachers","👥","จัดการครู"]);
+  }
+  items.forEach(([key,ic,label])=>{
+    const b = document.createElement('button');
+    if(state.page===key) b.classList.add('active');
+    b.innerHTML = `<span class="ic">${ic}</span><span>${label}</span>`;
+    b.onclick = ()=>{ state.page=key; state.modal=null; render(); };
+    nav.appendChild(b);
+  });
+  sb.appendChild(nav);
+
+  if(state.auth){
+    const who = el('div','sb-foot');
+    who.innerHTML = `เข้าสู่ระบบ: <strong style="color:#DCEAE8;">${state.auth.name}</strong><br>สิทธิ์: ${state.auth.role==='admin'?'แอดมิน':'ครู'}`;
+    sb.appendChild(who);
+    const logoutBtn = document.createElement('button');
+    logoutBtn.textContent = "🚪 ออกจากระบบ";
+    logoutBtn.style.cssText = "margin-top:10px; background:transparent; border:1px solid rgba(255,255,255,0.15); color:#DCEAE8; padding:8px 12px; border-radius:10px; font-size:12.5px; cursor:pointer; width:100%;";
+    logoutBtn.onclick = ()=>{ state.auth=null; state.page='dashboard'; boot(); };
+    sb.appendChild(logoutBtn);
+  }
+  sb.appendChild(el('div','sb-foot', `นักเรียนในระบบ: ${state.students.length} คน`));
+  return sb;
+}
+
+function renderPageHead(){
+  const head = el('div','page-head');
+  const titles = {
+    dashboard:["แดชบอร์ด","ภาพรวมความก้าวหน้าของนักเรียนเรียนรวมทั้งหมด"],
+    students:["จัดการนักเรียน","เพิ่ม แก้ไข และดูข้อมูลนักเรียนรายบุคคล"],
+    iep:["แผนการจัดการศึกษาเฉพาะบุคคล (IEP)","บันทึกเป้าหมายและสื่อที่ใช้ ต่อปีการศึกษา"],
+    wordbank:["คลังคำศัพท์","จัดการคำศัพท์ที่ใช้ในแบบฝึกอ่าน-เขียน"],
+    practice:["ฝึกอ่าน-เขียน","เลือกนักเรียนและเริ่มแบบฝึกหัด"],
+    report:["รายงานความก้าวหน้า","สรุปผลรายบุคคล พร้อมพิมพ์/บันทึกเป็น PDF"],
+    teachers:["จัดการครู","เพิ่มบัญชีครูและมอบหมายนักเรียนที่ดูแล"],
+  };
+  const [t,s] = titles[state.page] || ["",""];
+  const left = el('div');
+  left.appendChild(el('h2',null,t));
+  left.appendChild(el('p',null,s));
+  head.appendChild(left);
+
+  if(state.page!=="report"){
+    const yrWrap = el('div','yr-select no-print');
+    yrWrap.appendChild(el('span',null,'ปีการศึกษา'));
+    const sel = document.createElement('select');
+    const years = new Set(state.students.map(s=>s.academicYear));
+    years.add(state.academicYear);
+    Array.from(years).sort((a,b)=>b-a).forEach(y=>{
+      const o = document.createElement('option'); o.value=y; o.textContent=y;
+      if(y===state.academicYear) o.selected=true;
+      sel.appendChild(o);
+    });
+    sel.onchange = e=>{ state.academicYear = parseInt(e.target.value); render(); };
+    yrWrap.appendChild(sel);
+    head.appendChild(yrWrap);
+  }
+  return head;
+}
+
+function renderPageBody(){
+  if(state.page==="dashboard") return renderDashboard();
+  if(state.page==="students") return renderStudents();
+  if(state.page==="iep") return renderIepPage();
+  if(state.page==="wordbank") return renderWordBank();
+  if(state.page==="practice") return renderPracticePage();
+  if(state.page==="report") return renderReportPage();
+  if(state.page==="teachers" && state.auth && state.auth.role==="admin") return renderTeachersPage();
+  return el('div');
+}
+
+/* ================== DASHBOARD ================== */
+function renderDashboard(){
+  const wrap = el('div');
+  const list = studentsInYear();
+  let totalTries=0, totalCorrect=0, weakCount=0;
+  list.forEach(s=>{
+    const p = getProgress(s.id);
+    totalTries += p.totalTries; totalCorrect += p.totalCorrect;
+    const weak = Object.values(p.attempts).filter(a=>a.tries>0 && a.correct/a.tries<0.6).length;
+    if(weak>0) weakCount++;
+  });
+  const acc = totalTries>0 ? Math.round(100*totalCorrect/totalTries) : 0;
+
+  const grid = el('div','stat-grid');
+  const stats = [
+    [list.length, "นักเรียนในปีการศึกษานี้"],
+    [totalTries, "ครั้งที่ฝึกทั้งหมด"],
+    [acc+'%', "ความแม่นยำเฉลี่ย"],
+    [weakCount, "คนที่มีคำอ่อนที่ควรฝึกเพิ่ม"],
+  ];
+  stats.forEach(([n,l])=>{
+    const c = el('div','stat-card');
+    c.appendChild(el('div','num',n));
+    c.appendChild(el('div','lbl',l));
+    grid.appendChild(c);
+  });
+  wrap.appendChild(grid);
+
+  const card = el('div','card');
+  card.appendChild(el('h3',null,'สรุปรายนักเรียน'));
+  card.appendChild(el('p','sub','เรียงตามความแม่นยำ จากน้อยไปมาก เพื่อดูว่าใครควรได้รับการฝึกเพิ่มก่อน'));
+  if(list.length===0){
+    const e = el('div','empty');
+    e.appendChild(el('div','glyph','🧒'));
+    e.appendChild(el('p',null,'ยังไม่มีนักเรียนในปีการศึกษานี้ ไปที่เมนู "นักเรียน" เพื่อเพิ่ม'));
+    card.appendChild(e);
+  }else{
+    const rows = list.map(s=>{
+      const p = getProgress(s.id);
+      const acc2 = p.totalTries>0 ? Math.round(100*p.totalCorrect/p.totalTries) : null;
+      return {s, acc:acc2, tries:p.totalTries};
+    }).sort((a,b)=>(a.acc??101)-(b.acc??101));
+    const tbl = document.createElement('table');
+    tbl.innerHTML = `<thead><tr><th>ชื่อ</th><th>ชั้น</th><th>ความบกพร่อง</th><th>ครั้งที่ฝึก</th><th>ความแม่นยำ</th></tr></thead>`;
+    const tb = document.createElement('tbody');
+    rows.forEach(({s,acc,tries})=>{
+      const tr = document.createElement('tr');
+      const iep = getIep(s.id, state.academicYear);
+      const badges = (iep?.disabilities||[]).map(d=>{
+        const lbl = DISABILITY_TYPES.find(x=>x.id===d)?.label.split(' (')[0] || d;
+        return `<span class="badge teal">${lbl}</span>`;
+      }).join('');
+      tr.innerHTML = `<td><strong>${s.name}</strong></td><td>${s.grade||'-'}</td><td>${badges||'<span class="badge plum">ยังไม่ระบุ</span>'}</td><td>${tries}</td><td>${acc===null?'-':acc+'%'}</td>`;
+      tb.appendChild(tr);
+    });
+    tbl.appendChild(tb);
+    card.appendChild(tbl);
+  }
+  wrap.appendChild(card);
+  return wrap;
+}
+
+/* ================== STUDENTS ================== */
+function renderStudents(){
+  const wrap = el('div');
+  const card = el('div','card');
+  const headRow = el('div');
+  headRow.style.cssText = "display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;";
+  headRow.appendChild(el('h3',null,`รายชื่อนักเรียน ปีการศึกษา ${state.academicYear}`));
+  const isAdmin = state.auth && state.auth.role === "admin";
+  if(isAdmin){
+    const addBtn = el('button','btn btn-primary','+ เพิ่มนักเรียน');
+    addBtn.onclick = ()=>{ state.modal = {type:'student', payload:null}; render(); };
+    headRow.appendChild(addBtn);
+  }
+  card.appendChild(headRow);
+
+  const list = studentsInYear();
+  if(list.length===0){
+    const e = el('div','empty');
+    e.appendChild(el('div','glyph','🧒'));
+    e.appendChild(el('p',null,'ยังไม่มีนักเรียน กดปุ่ม "เพิ่มนักเรียน" เพื่อเริ่มต้น'));
+    card.appendChild(e);
+  }else{
+    const tbl = document.createElement('table');
+    tbl.innerHTML = `<thead><tr><th>ชื่อ</th><th>ชั้น</th><th>IEP ปีนี้</th><th></th></tr></thead>`;
+    const tb = document.createElement('tbody');
+    list.forEach(s=>{
+      const tr = document.createElement('tr');
+      const hasIep = !!getIep(s.id, state.academicYear);
+      const tdName = document.createElement('td'); tdName.innerHTML = `<strong>${s.name}</strong>`;
+      const tdGrade = document.createElement('td'); tdGrade.textContent = s.grade || '-';
+      const tdIep = document.createElement('td'); tdIep.innerHTML = hasIep ? '<span class="badge leaf">มีแผนแล้ว</span>' : '<span class="badge coral">ยังไม่มี</span>';
+      const tdAct = document.createElement('td');
+      const actWrap = el('div','row-actions');
+      if(isAdmin){
+        const editB = el('button','btn btn-ghost btn-sm','แก้ไข');
+        editB.onclick = ()=>{ state.modal = {type:'student', payload:s}; render(); };
+        actWrap.appendChild(editB);
+      }
+      const iepB = el('button','btn btn-ghost btn-sm','IEP');
+      iepB.onclick = ()=>{ state.page='iep'; state._iepFocus = s.id; render(); };
+      actWrap.appendChild(iepB);
+      if(isAdmin){
+        const delB = el('button','btn btn-danger btn-sm','ลบ');
+        delB.onclick = async ()=>{
+          if(confirm(`ลบข้อมูลของ "${s.name}" ใช่หรือไม่? ข้อมูลสถิติจะถูกลบด้วย`)){
+            try{
+              await apiDeleteStudent(s.id);
+              state.students = state.students.filter(x=>x.id!==s.id);
+              delete state.progress[s.id];
+              render();
+            }catch(e){ alert("ลบไม่สำเร็จ: " + e.message); }
+          }
+        };
+        actWrap.appendChild(delB);
+      }
+      tdAct.appendChild(actWrap);
+      tr.appendChild(tdName); tr.appendChild(tdGrade); tr.appendChild(tdIep); tr.appendChild(tdAct);
+      tb.appendChild(tr);
+    });
+    tbl.appendChild(tb);
+    card.appendChild(tbl);
+  }
+  wrap.appendChild(card);
+  return wrap;
+}
+
+/* ================== IEP ================== */
+function renderIepPage(){
+  const wrap = el('div');
+  const list = studentsInYear();
+  if(list.length===0){
+    const card = el('div','card');
+    const e = el('div','empty');
+    e.appendChild(el('div','glyph','🗂️'));
+    e.appendChild(el('p',null,'ยังไม่มีนักเรียนในปีการศึกษานี้ กรุณาเพิ่มนักเรียนก่อน'));
+    card.appendChild(e);
+    wrap.appendChild(card);
+    return wrap;
+  }
+  const focusId = state._iepFocus || list[0].id;
+  const card = el('div','card');
+  const pickerRow = el('div');
+  pickerRow.style.cssText = "margin-bottom:18px;";
+  pickerRow.appendChild(el('label',null,'เลือกนักเรียน'));
+  const sel = document.createElement('select');
+  sel.style.cssText = "display:block; margin-top:6px; padding:10px 12px; border-radius:10px; border:1.5px solid var(--border); font-family:'Sarabun',sans-serif; font-size:14px; min-width:220px;";
+  list.forEach(s=>{
+    const o = document.createElement('option'); o.value=s.id; o.textContent = `${s.name} (${s.grade||'-'})`;
+    if(s.id===focusId) o.selected=true;
+    sel.appendChild(o);
+  });
+  sel.onchange = e=>{ state._iepFocus = e.target.value; render(); };
+  pickerRow.appendChild(sel);
+  card.appendChild(pickerRow);
+
+  const student = list.find(s=>s.id===focusId);
+  const existing = getIep(focusId, state.academicYear) || {disabilities:[], mediaUsed:[], shortGoal:"", longGoal:"", difficulty:1, notes:""};
+
+  const form = el('div','form-grid');
+
+  const f1 = el('div','field full');
+  f1.appendChild(el('label',null,'ประเภทความบกพร่อง (เลือกได้หลายข้อ)'));
+  const cg1 = el('div','checkbox-grid');
+  const selectedDis = new Set(existing.disabilities);
+  DISABILITY_TYPES.forEach(d=>{
+    const chip = el('button','chip-toggle' + (selectedDis.has(d.id)?' on':''), d.label);
+    chip.type='button';
+    chip.onclick = ()=>{
+      if(selectedDis.has(d.id)) selectedDis.delete(d.id); else selectedDis.add(d.id);
+      chip.classList.toggle('on');
+    };
+    cg1.appendChild(chip);
+  });
+  f1.appendChild(cg1);
+  form.appendChild(f1);
+
+  const f2 = el('div','field full');
+  f2.appendChild(el('label',null,'สื่อ/เทคโนโลยีที่ใช้'));
+  const cg2 = el('div','checkbox-grid');
+  const selectedMedia = new Set(existing.mediaUsed);
+  MEDIA_OPTIONS.forEach(m=>{
+    const chip = el('button','chip-toggle' + (selectedMedia.has(m)?' on':''), m);
+    chip.type='button';
+    chip.onclick = ()=>{
+      if(selectedMedia.has(m)) selectedMedia.delete(m); else selectedMedia.add(m);
+      chip.classList.toggle('on');
+    };
+    cg2.appendChild(chip);
+  });
+  f2.appendChild(cg2);
+  form.appendChild(f2);
+
+  const f3 = el('div','field');
+  f3.appendChild(el('label',null,'ระดับความยากที่เหมาะสมสำหรับแบบฝึก'));
+  const diffSel = document.createElement('select');
+  [1,2,3].forEach(d=>{ const o=document.createElement('option'); o.value=d; o.textContent=DIFF_LABEL[d]; if(existing.difficulty===d) o.selected=true; diffSel.appendChild(o); });
+  f3.appendChild(diffSel);
+  form.appendChild(f3);
+
+  const f4 = el('div','field full');
+  f4.appendChild(el('label',null,'เป้าหมายระยะสั้น (ภาคเรียนนี้)'));
+  const t1 = document.createElement('textarea'); t1.value = existing.shortGoal || "";
+  f4.appendChild(t1);
+  form.appendChild(f4);
+
+  const f5 = el('div','field full');
+  f5.appendChild(el('label',null,'เป้าหมายระยะยาว (ปีการศึกษานี้)'));
+  const t2 = document.createElement('textarea'); t2.value = existing.longGoal || "";
+  f5.appendChild(t2);
+  form.appendChild(f5);
+
+  const f6 = el('div','field full');
+  f6.appendChild(el('label',null,'หมายเหตุเพิ่มเติม'));
+  const t3 = document.createElement('textarea'); t3.value = existing.notes || "";
+  f6.appendChild(t3);
+  form.appendChild(f6);
+
+  card.appendChild(form);
+
+  const saveBtn = el('button','btn btn-primary','บันทึกแผน IEP');
+  saveBtn.style.marginTop = "18px";
+  saveBtn.onclick = async ()=>{
+    const record = {
+      studentId: focusId,
+      academicYear: state.academicYear,
+      disabilities: Array.from(selectedDis),
+      mediaUsed: Array.from(selectedMedia),
+      difficulty: parseInt(diffSel.value),
+      shortGoal: t1.value, longGoal: t2.value, notes: t3.value,
+      updatedAt: new Date().toISOString(),
+    };
+    try{
+      await apiSaveIep(record);
+      state.iepMap[`${focusId}:${state.academicYear}`] = record;
+      alert(`บันทึกแผน IEP ของ ${student.name} สำหรับปีการศึกษา ${state.academicYear} เรียบร้อยแล้ว`);
+      render();
+    }catch(e){ alert("บันทึกไม่สำเร็จ: " + e.message); }
+  };
+  card.appendChild(saveBtn);
+
+  wrap.appendChild(card);
+  return wrap;
+}
+
+/* ================== WORD BANK ================== */
+function renderWordBank(){
+  const wrap = el('div');
+  const card = el('div','card');
+  const isAdmin = state.auth && state.auth.role === "admin";
+  const headRow = el('div');
+  headRow.style.cssText = "display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;";
+  headRow.appendChild(el('h3',null,`คลังคำศัพท์ (${state.words.length} คำ)`));
+  if(isAdmin){
+    const addBtn = el('button','btn btn-primary','+ เพิ่มคำศัพท์');
+    addBtn.onclick = ()=>{ state.modal = {type:'word', payload:null}; render(); };
+    headRow.appendChild(addBtn);
+  }
+  card.appendChild(headRow);
+  if(!isAdmin){
+    card.appendChild(el('p','sub','คุณดูคลังคำศัพท์ได้ แต่การเพิ่ม/แก้ไข/ลบทำได้เฉพาะแอดมิน'));
+  }
+
+  const tbl = document.createElement('table');
+  tbl.innerHTML = `<thead><tr><th>คำ</th><th>รูป</th><th>หมวด</th><th>ระดับ</th><th>คำหลอก</th><th></th></tr></thead>`;
+  const tb = document.createElement('tbody');
+  state.words.forEach(w=>{
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td><strong>${w.word}</strong></td><td style="font-size:22px;">${w.emoji||''}</td>
+      <td><span class="badge plum">${w.category||'อื่นๆ'}</span></td>
+      <td><span class="badge ${DIFF_CLASS[w.difficulty]}">${DIFF_LABEL[w.difficulty]}</span></td>
+      <td style="color:var(--ink-soft); font-size:13px;">${(w.distract||[]).join(', ')}</td>`;
+    if(isAdmin){
+      const tdAct = document.createElement('td');
+      const actWrap = el('div','row-actions');
+      const editB = el('button','btn btn-ghost btn-sm','แก้ไข');
+      editB.onclick = ()=>{ state.modal = {type:'word', payload:w}; render(); };
+      const delB = el('button','btn btn-danger btn-sm','ลบ');
+      delB.onclick = async ()=>{
+        if(confirm(`ลบคำว่า "${w.word}" ใช่หรือไม่?`)){
+          try{
+            await apiDeleteWord(w.id);
+            state.words = state.words.filter(x=>x.id!==w.id);
+            render();
+          }catch(e){ alert("ลบไม่สำเร็จ: " + e.message); }
+        }
+      };
+      actWrap.appendChild(editB); actWrap.appendChild(delB);
+      tdAct.appendChild(actWrap);
+      tr.appendChild(tdAct);
+    }
+    tb.appendChild(tr);
+  });
+  tbl.appendChild(tb);
+  card.appendChild(tbl);
+  wrap.appendChild(card);
+  return wrap;
+}
+
+/* ================== PRACTICE ================== */
+function renderPracticePage(){
+  const wrap = el('div');
+  const list = studentsInYear();
+  if(list.length===0){
+    const card = el('div','card');
+    const e = el('div','empty'); e.appendChild(el('div','glyph','🎯')); e.appendChild(el('p',null,'ยังไม่มีนักเรียน กรุณาเพิ่มนักเรียนก่อน'));
+    card.appendChild(e); wrap.appendChild(card); return wrap;
+  }
+  if(!state.practice.studentId || !list.find(s=>s.id===state.practice.studentId)){
+    state.practice.studentId = list[0].id;
+  }
+  const student = list.find(s=>s.id===state.practice.studentId);
+  const iep = getIep(student.id, state.academicYear);
+
+  if(!state.practice.module){
+    const card = el('div','card');
+    const row = el('div','field');
+    row.appendChild(el('label',null,'เลือกนักเรียน'));
+    const sel = document.createElement('select');
+    sel.style.cssText = "margin-top:6px; padding:10px 12px; border-radius:10px; border:1.5px solid var(--border); font-family:'Sarabun',sans-serif; font-size:14px; min-width:220px;";
+    list.forEach(s=>{ const o=document.createElement('option'); o.value=s.id; o.textContent=s.name; if(s.id===student.id) o.selected=true; sel.appendChild(o); });
+    sel.onchange = e=>{ state.practice.studentId = e.target.value; render(); };
+    row.appendChild(sel);
+    card.appendChild(row);
+
+    if(iep){
+      card.appendChild(el('p','sub', `ระดับความยากตาม IEP: ${DIFF_LABEL[iep.difficulty]} — สื่อที่แนะนำ: ${(iep.mediaUsed||[]).join(', ')||'ยังไม่ระบุ'}`));
+    }else{
+      card.appendChild(el('p','sub', 'ยังไม่มีแผน IEP สำหรับปีการศึกษานี้ — ระบบจะใช้ระดับความยาก "กลาง" เป็นค่าเริ่มต้น'));
+    }
+
+    const diffRow = el('div','field'); diffRow.style.marginTop="12px";
+    diffRow.appendChild(el('label',null,'ระดับความยากของแบบฝึก'));
+    const diffSel = document.createElement('select');
+    diffSel.style.cssText = "margin-top:6px; padding:10px 12px; border-radius:10px; border:1.5px solid var(--border); font-family:'Sarabun',sans-serif; font-size:14px; min-width:150px;";
+    [1,2,3].forEach(d=>{ const o=document.createElement('option'); o.value=d; o.textContent=DIFF_LABEL[d]; diffSel.appendChild(o); });
+    diffSel.value = iep?.difficulty || 2;
+    diffRow.appendChild(diffSel);
+    card.appendChild(diffRow);
+
+    const modeGrid = el('div','home-grid');
+    modeGrid.style.cssText = "display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-top:20px;";
+    const readCard = el('div','card'); readCard.style.cursor='pointer';
+    readCard.innerHTML = `<h3>🔊 ฝึกอ่าน</h3><p class="sub">ฟังเสียง เลือกคำที่ตรงกัน</p>`;
+    readCard.onclick = ()=>{ state.practice.module='read'; state.practice.difficulty=parseInt(diffSel.value); state.practice.ex=null; render(); };
+    const writeCard = el('div','card'); writeCard.style.cursor='pointer';
+    writeCard.innerHTML = `<h3>✏️ ฝึกเขียน</h3><p class="sub">ฟังเสียง ลากตัวอักษรเรียงคำ</p>`;
+    writeCard.onclick = ()=>{ state.practice.module='write'; state.practice.difficulty=parseInt(diffSel.value); state.practice.ex=null; render(); };
+    modeGrid.appendChild(readCard); modeGrid.appendChild(writeCard);
+    card.appendChild(modeGrid);
+
+    wrap.appendChild(card);
+    return wrap;
+  }
+
+  // active exercise
+  const card = el('div','card');
+  const backBtn = el('button','btn btn-ghost btn-sm no-print','← กลับ');
+  backBtn.onclick = ()=>{ state.practice.module=null; render(); };
+  card.appendChild(backBtn);
+  const headTag = el('div'); headTag.style.cssText="margin:14px 0 6px; font-family:'Mitr',sans-serif; font-size:14px; color:var(--teal-dark); font-weight:600;";
+  headTag.textContent = `${student.name} · ${state.practice.module==='read'?'ฝึกอ่าน':'ฝึกเขียน'} · ระดับ${DIFF_LABEL[state.practice.difficulty]}`;
+  card.appendChild(headTag);
+
+  const pool = state.words.filter(w=>w.difficulty===state.practice.difficulty);
+  const usePool = pool.length>=4 ? pool : state.words; // fallback ถ้าคำในระดับนี้น้อยเกินไป
+
+  if(state.practice.module==='read') renderReadInto(card, student, usePool);
+  else renderWriteInto(card, student, usePool);
+
+  wrap.appendChild(card);
+  return wrap;
+}
+
+function pickWordFor(student, pool, excludeWord){
+  const prog = getProgress(student.id);
+  const weighted = [];
+  pool.forEach(w=>{
+    const rec = prog.attempts[w.id];
+    let weight = 3;
+    if(rec){ const a = rec.correct/Math.max(1,rec.tries); weight = a<0.5?6:a<0.8?3:1; }
+    if(w.word===excludeWord) weight = Math.max(1, Math.floor(weight/3));
+    for(let i=0;i<weight;i++) weighted.push(w);
+  });
+  return weighted[Math.floor(Math.random()*weighted.length)];
+}
+
+async function recordAttempt(student, wordId, correct, module){
+  const prog = ensureProgress(student.id);
+  if(!prog.attempts[wordId]) prog.attempts[wordId] = {correct:0, tries:0};
+  prog.attempts[wordId].tries += 1;
+  if(correct) prog.attempts[wordId].correct += 1;
+  prog.totalTries += 1;
+  if(correct) prog.totalCorrect += 1;
+  try{
+    await apiRecordAttempt({ studentId: student.id, wordId, correct: !!correct, module });
+  }catch(e){
+    console.error("บันทึกผลไปที่ Sheets ไม่สำเร็จ", e);
+  }
+}
+
+function renderReadInto(card, student, pool){
+  if(!state.practice.ex){
+    const item = pickWordFor(student, pool, null);
+    const distractSrc = item.distract && item.distract.length>=3 ? item.distract : shuffle(pool.filter(x=>x.id!==item.id).map(x=>x.word)).slice(0,3);
+    const options = shuffle([item.word, ...shuffle(distractSrc).slice(0,3)]);
+    state.practice.ex = {item, options, answered:false, played:false};
+  }
+  const ex = state.practice.ex;
+  const promptRow = el('div','prompt-row');
+  promptRow.appendChild(el('div','emoji-tile', ex.item.emoji||'🔤'));
+  const sBtn = el('button','speak-btn','🔊'); sBtn.onclick = ()=>speak(ex.item.word);
+  promptRow.appendChild(sBtn);
+  card.appendChild(promptRow);
+
+  const choices = el('div','choices');
+  ex.options.forEach(opt=>{
+    const b = document.createElement('button');
+    b.className='choice-btn'; b.textContent=opt;
+    b.onclick = async ()=>{
+      if(ex.answered) return;
+      ex.answered = true;
+      const correct = opt===ex.item.word;
+      Array.from(choices.children).forEach(c=>{
+        c.disabled = true;
+        if(c.textContent===ex.item.word) c.classList.add('correct');
+        else if(c===b && !correct) c.classList.add('wrong');
+      });
+      await recordAttempt(student, ex.item.id, correct, 'read');
+      const banner = el('div','feedback-banner '+(correct?'ok':'no'), correct?'✅ เก่งมาก! ถูกต้อง':`ลองใหม่นะ คำตอบคือ "${ex.item.word}"`);
+      card.appendChild(banner);
+      const actions = el('div','action-row');
+      const nextBtn = el('button','btn btn-primary','คำถัดไป →');
+      nextBtn.onclick = ()=>{ state.practice.ex=null; render(); };
+      actions.appendChild(nextBtn);
+      card.appendChild(actions);
+    };
+    choices.appendChild(b);
+  });
+  card.appendChild(choices);
+  const actions = el('div','action-row');
+  const replay = el('button','btn btn-ghost','🔁 ฟังอีกครั้ง'); replay.onclick=()=>speak(ex.item.word);
+  actions.appendChild(replay);
+  card.appendChild(actions);
+  if(!ex.played){ ex.played=true; setTimeout(()=>speak(ex.item.word),250); }
+}
+
+function renderWriteInto(card, student, pool){
+  if(!state.practice.ex){
+    const item = pickWordFor(student, pool, null);
+    state.practice.ex = {item, letters:shuffle(item.word.split('')), slots:new Array(item.word.length).fill(null), usedIdx:new Set(), answered:false, played:false};
+  }
+  const ex = state.practice.ex;
+  const promptRow = el('div','prompt-row');
+  promptRow.appendChild(el('div','emoji-tile', ex.item.emoji||'🔤'));
+  const sBtn = el('button','speak-btn','🔊'); sBtn.onclick = ()=>speak(ex.item.word);
+  promptRow.appendChild(sBtn);
+  card.appendChild(promptRow);
+
+  const target = el('div','word-target');
+  ex.slots.forEach(val=>{ target.appendChild(el('div','letter-slot'+(val!==null?' filled':''), val!==null?val:'')); });
+  card.appendChild(target);
+
+  const bank = el('div','letter-bank');
+  ex.letters.forEach((ch, idx)=>{
+    const t = document.createElement('button');
+    t.className='letter-tile'; t.textContent=ch; t.disabled = ex.usedIdx.has(idx);
+    t.onclick = async ()=>{
+      if(ex.answered) return;
+      const pos = ex.slots.findIndex(s=>s===null);
+      if(pos===-1) return;
+      ex.slots[pos]=ch; ex.usedIdx.add(idx);
+      render();
+      if(ex.slots.every(s=>s!==null)){
+        const built = ex.slots.join('');
+        const correct = built===ex.item.word;
+        ex.answered = true;
+        await recordAttempt(student, ex.item.id, correct, 'write');
+        setTimeout(()=>{
+          const card2 = document.querySelectorAll('.card')[document.querySelectorAll('.card').length-1] || card;
+          const banner = el('div','feedback-banner '+(correct?'ok':'no'), correct?'✅ สะกดถูกต้อง เก่งมาก!':`ยังไม่ถูกนะ คำที่ถูกต้องคือ "${ex.item.word}"`);
+          card2.appendChild(banner);
+          const actions = el('div','action-row');
+          if(!correct){
+            const retry = el('button','btn btn-ghost','↺ ลองใหม่');
+            retry.onclick = ()=>{ ex.slots.fill(null); ex.usedIdx.clear(); ex.answered=false; render(); };
+            actions.appendChild(retry);
+          }
+          const nextBtn = el('button','btn btn-primary','คำถัดไป →');
+          nextBtn.onclick = ()=>{ state.practice.ex=null; render(); };
+          actions.appendChild(nextBtn);
+          card2.appendChild(actions);
+        }, 50);
+      }
+    };
+    bank.appendChild(t);
+  });
+  card.appendChild(bank);
+  const actions = el('div','action-row');
+  const clearBtn = el('button','btn btn-ghost','↺ เริ่มคำนี้ใหม่');
+  clearBtn.onclick = ()=>{ ex.slots.fill(null); ex.usedIdx.clear(); ex.answered=false; render(); };
+  actions.appendChild(clearBtn);
+  const replay = el('button','btn btn-ghost','🔁 ฟังอีกครั้ง'); replay.onclick=()=>speak(ex.item.word);
+  actions.appendChild(replay);
+  card.appendChild(actions);
+  if(!ex.played){ ex.played=true; setTimeout(()=>speak(ex.item.word),250); }
+}
+
+/* ================== REPORT ================== */
+function renderReportPage(){
+  const wrap = el('div');
+  const list = studentsInYear();
+  if(list.length===0){
+    const card = el('div','card');
+    card.appendChild(el('p',null,'ยังไม่มีนักเรียนในปีการศึกษานี้'));
+    wrap.appendChild(card); return wrap;
+  }
+  if(!state.reportStudentId || !list.find(s=>s.id===state.reportStudentId)) state.reportStudentId = list[0].id;
+  const student = list.find(s=>s.id===state.reportStudentId);
+  const iep = getIep(student.id, state.academicYear);
+  const prog = getProgress(student.id);
+
+  const controlCard = el('div','card no-print');
+  const row = el('div','field');
+  row.appendChild(el('label',null,'เลือกนักเรียนเพื่อออกรายงาน'));
+  const sel = document.createElement('select');
+  sel.style.cssText = "margin-top:6px; padding:10px 12px; border-radius:10px; border:1.5px solid var(--border); font-family:'Sarabun',sans-serif; font-size:14px; min-width:220px;";
+  list.forEach(s=>{ const o=document.createElement('option'); o.value=s.id; o.textContent=s.name; if(s.id===student.id) o.selected=true; sel.appendChild(o); });
+  sel.onchange = e=>{ state.reportStudentId = e.target.value; render(); };
+  row.appendChild(sel);
+  controlCard.appendChild(row);
+  const printBtn = el('button','btn btn-primary','🖨️ พิมพ์ / บันทึกเป็น PDF');
+  printBtn.style.marginTop = "14px";
+  printBtn.onclick = ()=> window.print();
+  controlCard.appendChild(printBtn);
+  wrap.appendChild(controlCard);
+
+  const repCard = el('div','card');
+  repCard.appendChild(el('p',null, `<strong>${CONFIG.SCHOOL_NAME}</strong>`));
+  repCard.appendChild(el('h3',null,`รายงานความก้าวหน้า: ${student.name}`));
+  repCard.appendChild(el('p','sub', `ชั้น ${student.grade||'-'} · ปีการศึกษา ${state.academicYear} · ออกรายงานวันที่ ${new Date().toLocaleDateString('th-TH')}`));
+
+  // IEP summary
+  const iepBlock = el('div'); iepBlock.style.marginBottom="20px";
+  iepBlock.appendChild(el('h4',null,'สรุปแผน IEP'));
+  if(iep){
+    const disNames = (iep.disabilities||[]).map(d=>DISABILITY_TYPES.find(x=>x.id===d)?.label||d).join(' / ') || 'ยังไม่ระบุ';
+    iepBlock.appendChild(el('p',null,`<strong>ประเภทความบกพร่อง:</strong> ${disNames}`));
+    iepBlock.appendChild(el('p',null,`<strong>สื่อที่ใช้:</strong> ${(iep.mediaUsed||[]).join(', ')||'ยังไม่ระบุ'}`));
+    iepBlock.appendChild(el('p',null,`<strong>ระดับความยากที่ใช้ฝึก:</strong> ${DIFF_LABEL[iep.difficulty]}`));
+    if(iep.shortGoal) iepBlock.appendChild(el('p',null,`<strong>เป้าหมายระยะสั้น:</strong> ${iep.shortGoal}`));
+    if(iep.longGoal) iepBlock.appendChild(el('p',null,`<strong>เป้าหมายระยะยาว:</strong> ${iep.longGoal}`));
+  }else{
+    iepBlock.appendChild(el('p',null,'ยังไม่มีการบันทึกแผน IEP สำหรับปีการศึกษานี้'));
+  }
+  repCard.appendChild(iepBlock);
+
+  // stats
+  const statGrid = el('div','stat-grid');
+  const acc = prog.totalTries>0 ? Math.round(100*prog.totalCorrect/prog.totalTries) : 0;
+  [[prog.totalTries,'ครั้งที่ฝึกทั้งหมด'],[acc+'%','ความแม่นยำรวม'],
+   [Object.keys(prog.attempts).length,'คำที่เคยฝึก'],
+   [Object.values(prog.attempts).filter(a=>a.tries>0 && a.correct/a.tries<0.6).length,'คำที่ยังอ่อน']
+  ].forEach(([n,l])=>{ const c=el('div','stat-card'); c.appendChild(el('div','num',n)); c.appendChild(el('div','lbl',l)); statGrid.appendChild(c); });
+  repCard.appendChild(statGrid);
+
+  // per-word bars
+  const wordBlock = el('div');
+  wordBlock.appendChild(el('h4',null,'ความแม่นยำรายคำ'));
+  const attemptedWords = Object.entries(prog.attempts).map(([wid,rec])=>{
+    const w = state.words.find(x=>x.id===wid);
+    return {word: w?w.word:wid, acc: rec.tries>0?Math.round(100*rec.correct/rec.tries):0, tries:rec.tries};
+  }).sort((a,b)=>a.acc-b.acc);
+  if(attemptedWords.length===0){
+    wordBlock.appendChild(el('p','sub','ยังไม่มีประวัติการฝึก'));
+  }else{
+    attemptedWords.forEach(w=>{
+      const row = el('div','bar-row');
+      row.appendChild(el('div','bar-label', w.word));
+      const track = el('div','bar-track');
+      const fill = el('div','bar-fill'); fill.style.width = w.acc+'%';
+      track.appendChild(fill);
+      row.appendChild(track);
+      row.appendChild(el('div','bar-val', w.acc+'%'));
+      wordBlock.appendChild(row);
+    });
+  }
+  repCard.appendChild(wordBlock);
+
+  // recommendation
+  const weakList = attemptedWords.filter(w=>w.acc<60).map(w=>w.word);
+  const recBlock = el('div'); recBlock.style.marginTop="20px";
+  recBlock.appendChild(el('h4',null,'ข้อเสนอแนะสำหรับการฝึกต่อ'));
+  recBlock.appendChild(el('p',null, weakList.length>0
+    ? `ควรเน้นฝึกซ้ำคำต่อไปนี้: ${weakList.join(', ')}`
+    : 'นักเรียนทำได้ดีในคำที่ฝึกมาแล้ว แนะนำเพิ่มระดับความยากในการฝึกครั้งถัดไป'));
+  repCard.appendChild(recBlock);
+
+  wrap.appendChild(repCard);
+  return wrap;
+}
+
+/* ================== TEACHERS (admin only) ================== */
+function renderTeachersPage(){
+  const wrap = el('div');
+  const card = el('div','card');
+  const headRow = el('div');
+  headRow.style.cssText = "display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;";
+  headRow.appendChild(el('h3',null,'บัญชีครู'));
+  const addBtn = el('button','btn btn-primary','+ เพิ่มครู');
+  addBtn.onclick = ()=>{ state.modal = {type:'teacher', payload:null}; render(); };
+  headRow.appendChild(addBtn);
+  card.appendChild(headRow);
+  card.appendChild(el('p','sub','ครูที่ไม่ใช่แอดมินจะเห็นและแก้ไขข้อมูลได้เฉพาะนักเรียนที่มอบหมายให้เท่านั้น'));
+
+  if(!state._teachersLoaded){
+    apiListTeachers().then(list=>{ state.teachers = list; state._teachersLoaded = true; render(); });
+    card.appendChild(el('p',null,'กำลังโหลด...'));
+    wrap.appendChild(card);
+    return wrap;
+  }
+
+  const tbl = document.createElement('table');
+  tbl.innerHTML = `<thead><tr><th>ชื่อ</th><th>อีเมล</th><th>สิทธิ์</th><th></th></tr></thead>`;
+  const tb = document.createElement('tbody');
+  state.teachers.forEach(t=>{
+    const tr = document.createElement('tr');
+    const tdName = document.createElement('td'); tdName.innerHTML = `<strong>${t.name}</strong>`;
+    const tdEmail = document.createElement('td'); tdEmail.textContent = t.email;
+    const tdRole = document.createElement('td'); tdRole.innerHTML = t.role==='admin' ? '<span class="badge plum">แอดมิน</span>' : '<span class="badge teal">ครู</span>';
+    const tdAct = document.createElement('td');
+    const actWrap = el('div','row-actions');
+    if(t.role !== 'admin'){
+      const assignB = el('button','btn btn-ghost btn-sm','มอบหมายนักเรียน');
+      assignB.onclick = ()=>{ state.modal = {type:'assign', payload:t}; render(); };
+      actWrap.appendChild(assignB);
+    }
+    const editB = el('button','btn btn-ghost btn-sm','แก้ไข');
+    editB.onclick = ()=>{ state.modal = {type:'teacher', payload:t}; render(); };
+    actWrap.appendChild(editB);
+    if(t.id !== state.auth.teacherId){
+      const delB = el('button','btn btn-danger btn-sm','ลบ');
+      delB.onclick = async ()=>{
+        if(confirm(`ลบบัญชีครู "${t.name}" ใช่หรือไม่?`)){
+          try{ await apiDeleteTeacher(t.id); state.teachers = state.teachers.filter(x=>x.id!==t.id); render(); }
+          catch(e){ alert("ลบไม่สำเร็จ: "+e.message); }
+        }
+      };
+      actWrap.appendChild(delB);
+    }
+    tdAct.appendChild(actWrap);
+    tr.appendChild(tdName); tr.appendChild(tdEmail); tr.appendChild(tdRole); tr.appendChild(tdAct);
+    tb.appendChild(tr);
+  });
+  tbl.appendChild(tb);
+  card.appendChild(tbl);
+  wrap.appendChild(card);
+  return wrap;
+}
+
+function teacherForm(existing){
+  const wrap = el('div');
+  wrap.appendChild(el('h3',null, existing?'แก้ไขบัญชีครู':'เพิ่มครูใหม่'));
+  const grid = el('div','form-grid');
+
+  const f1 = el('div','field');
+  f1.appendChild(el('label',null,'ชื่อครู'));
+  const nameInp = document.createElement('input'); nameInp.type='text'; nameInp.value = existing?.name||'';
+  f1.appendChild(nameInp); grid.appendChild(f1);
+
+  const f2 = el('div','field');
+  f2.appendChild(el('label',null,'อีเมล (ใช้ล็อกอิน)'));
+  const emailInp = document.createElement('input'); emailInp.type='text'; emailInp.value = existing?.email||'';
+  f2.appendChild(emailInp); grid.appendChild(f2);
+
+  const f3 = el('div','field');
+  f3.appendChild(el('label',null,'PIN 4 หลัก'));
+  const pinInp = document.createElement('input'); pinInp.type='text'; pinInp.maxLength=4; pinInp.placeholder=existing?'(เว้นว่างถ้าไม่เปลี่ยน)':'';
+  f3.appendChild(pinInp); grid.appendChild(f3);
+
+  const f4 = el('div','field');
+  f4.appendChild(el('label',null,'สิทธิ์'));
+  const roleSel = document.createElement('select');
+  [["teacher","ครู (เห็นเฉพาะนักเรียนที่มอบหมาย)"],["admin","แอดมิน (เห็นทุกคน จัดการทุกอย่าง)"]].forEach(([v,l])=>{
+    const o = document.createElement('option'); o.value=v; o.textContent=l; if(existing?.role===v) o.selected=true; roleSel.appendChild(o);
+  });
+  f4.appendChild(roleSel); grid.appendChild(f4);
+
+  wrap.appendChild(grid);
+  const actions = el('div','modal-actions');
+  const cancel = el('button','btn btn-ghost','ยกเลิก'); cancel.onclick = ()=>{ state.modal=null; render(); };
+  const save = el('button','btn btn-primary', existing?'บันทึกการแก้ไข':'เพิ่มครู');
+  save.onclick = async ()=>{
+    if(!nameInp.value.trim() || !emailInp.value.trim()){ alert('กรุณากรอกชื่อและอีเมล'); return; }
+    if(!existing && pinInp.value.trim().length!==4){ alert('กรุณาตั้ง PIN 4 หลัก'); return; }
+    const record = {
+      id: existing?.id, name: nameInp.value.trim(), email: emailInp.value.trim(),
+      pin: pinInp.value.trim() || undefined, role: roleSel.value,
+    };
+    try{
+      const res = await apiSaveTeacher(record);
+      state.teachers = null; state._teachersLoaded = false;
+      state.modal=null; render();
+    }catch(e){ alert("บันทึกไม่สำเร็จ: " + e.message); }
+  };
+  actions.appendChild(cancel); actions.appendChild(save);
+  wrap.appendChild(actions);
+  return wrap;
+}
+
+function assignForm(teacher){
+  const wrap = el('div');
+  wrap.appendChild(el('h3',null, `มอบหมายนักเรียนให้ ${teacher.name}`));
+  wrap.appendChild(el('p','sub','เลือกนักเรียนที่ครูคนนี้จะเห็นและบันทึกข้อมูลได้'));
+  const selected = new Set((state._assignCache && state._assignCache[teacher.id]) || []);
+  const grid = el('div','checkbox-grid');
+  state.students.forEach(s=>{
+    const chip = el('button','chip-toggle' + (selected.has(s.id)?' on':''), `${s.name} (${s.grade||'-'})`);
+    chip.type='button';
+    chip.onclick = ()=>{ if(selected.has(s.id)) selected.delete(s.id); else selected.add(s.id); chip.classList.toggle('on'); };
+    grid.appendChild(chip);
+  });
+  wrap.appendChild(grid);
+
+  const actions = el('div','modal-actions');
+  const cancel = el('button','btn btn-ghost','ยกเลิก'); cancel.onclick = ()=>{ state.modal=null; render(); };
+  const save = el('button','btn btn-primary','บันทึกการมอบหมาย');
+  save.onclick = async ()=>{
+    try{
+      await apiSaveAssignments(teacher.id, Array.from(selected));
+      state.modal=null; render();
+      alert(`มอบหมายนักเรียนให้ ${teacher.name} เรียบร้อยแล้ว`);
+    }catch(e){ alert("บันทึกไม่สำเร็จ: " + e.message); }
+  };
+  actions.appendChild(cancel); actions.appendChild(save);
+  wrap.appendChild(actions);
+  return wrap;
+}
+
+/* ================== MODALS ================== */
+function renderModal(){
+  const backdrop = el('div','modal-backdrop');
+  backdrop.onclick = (e)=>{ if(e.target===backdrop){ state.modal=null; render(); } };
+  const modal = el('div','modal');
+  if(state.modal.type==='student') modal.appendChild(studentForm(state.modal.payload));
+  if(state.modal.type==='word') modal.appendChild(wordForm(state.modal.payload));
+  if(state.modal.type==='teacher') modal.appendChild(teacherForm(state.modal.payload));
+  if(state.modal.type==='assign') modal.appendChild(assignForm(state.modal.payload));
+  backdrop.appendChild(modal);
+  return backdrop;
+}
+
+function studentForm(existing){
+  const wrap = el('div');
+  wrap.appendChild(el('h3',null, existing?'แก้ไขข้อมูลนักเรียน':'เพิ่มนักเรียนใหม่'));
+  const grid = el('div','form-grid');
+
+  const f1 = el('div','field full');
+  f1.appendChild(el('label',null,'ชื่อเล่น / รหัสนักเรียน'));
+  const nameInp = document.createElement('input'); nameInp.type='text'; nameInp.value = existing?.name||'';
+  f1.appendChild(nameInp);
+  grid.appendChild(f1);
+
+  const f2 = el('div','field');
+  f2.appendChild(el('label',null,'ชั้นเรียน'));
+  const gradeInp = document.createElement('input'); gradeInp.type='text'; gradeInp.placeholder='เช่น ป.3'; gradeInp.value = existing?.grade||'';
+  f2.appendChild(gradeInp);
+  grid.appendChild(f2);
+
+  const f3 = el('div','field');
+  f3.appendChild(el('label',null,'ปีการศึกษา'));
+  const yrInp = document.createElement('input'); yrInp.type='number'; yrInp.value = existing?.academicYear || state.academicYear;
+  f3.appendChild(yrInp);
+  grid.appendChild(f3);
+
+  wrap.appendChild(grid);
+
+  const actions = el('div','modal-actions');
+  const cancel = el('button','btn btn-ghost','ยกเลิก'); cancel.onclick = ()=>{ state.modal=null; render(); };
+  const save = el('button','btn btn-primary', existing?'บันทึกการแก้ไข':'เพิ่มนักเรียน');
+  save.onclick = async ()=>{
+    if(!nameInp.value.trim()){ alert('กรุณากรอกชื่อนักเรียน'); return; }
+    const record = existing
+      ? {...existing, name: nameInp.value.trim(), grade: gradeInp.value.trim(), academicYear: parseInt(yrInp.value)||state.academicYear}
+      : {id: uid(), name: nameInp.value.trim(), grade: gradeInp.value.trim(), academicYear: parseInt(yrInp.value)||state.academicYear, createdAt: new Date().toISOString()};
+    try{
+      await apiSaveStudent(record);
+      if(existing){ Object.assign(existing, record); }
+      else{ state.students.push(record); }
+      state.modal=null; render();
+    }catch(e){ alert("บันทึกไม่สำเร็จ: " + e.message); }
+  };
+  actions.appendChild(cancel); actions.appendChild(save);
+  wrap.appendChild(actions);
+  return wrap;
+}
+
+function wordForm(existing){
+  const wrap = el('div');
+  wrap.appendChild(el('h3',null, existing?'แก้ไขคำศัพท์':'เพิ่มคำศัพท์ใหม่'));
+  const grid = el('div','form-grid');
+
+  const f1 = el('div','field');
+  f1.appendChild(el('label',null,'คำศัพท์'));
+  const wordInp = document.createElement('input'); wordInp.type='text'; wordInp.value = existing?.word||'';
+  f1.appendChild(wordInp);
+  grid.appendChild(f1);
+
+  const f2 = el('div','field');
+  f2.appendChild(el('label',null,'อีโมจิ/สัญลักษณ์ประกอบ'));
+  const emojiInp = document.createElement('input'); emojiInp.type='text'; emojiInp.placeholder='🐱'; emojiInp.value = existing?.emoji||'';
+  f2.appendChild(emojiInp);
+  grid.appendChild(f2);
+
+  const f3 = el('div','field');
+  f3.appendChild(el('label',null,'หมวดหมู่'));
+  const catSel = document.createElement('select');
+  CATEGORIES.forEach(c=>{ const o=document.createElement('option'); o.value=c; o.textContent=c; if(existing?.category===c) o.selected=true; catSel.appendChild(o); });
+  f3.appendChild(catSel);
+  grid.appendChild(f3);
+
+  const f4 = el('div','field');
+  f4.appendChild(el('label',null,'ระดับความยาก'));
+  const diffSel = document.createElement('select');
+  [1,2,3].forEach(d=>{ const o=document.createElement('option'); o.value=d; o.textContent=DIFF_LABEL[d]; if(existing?.difficulty===d) o.selected=true; diffSel.appendChild(o); });
+  f4.appendChild(diffSel);
+  grid.appendChild(f4);
+
+  const f5 = el('div','field full');
+  f5.appendChild(el('label',null,'คำหลอก (คั่นด้วยจุลภาค , — ใช้เป็นตัวเลือกลวงในแบบฝึกอ่าน)'));
+  const distractInp = document.createElement('input'); distractInp.type='text'; distractInp.value = (existing?.distract||[]).join(', ');
+  f5.appendChild(distractInp);
+  grid.appendChild(f5);
+
+  wrap.appendChild(grid);
+
+  const actions = el('div','modal-actions');
+  const cancel = el('button','btn btn-ghost','ยกเลิก'); cancel.onclick = ()=>{ state.modal=null; render(); };
+  const save = el('button','btn btn-primary', existing?'บันทึกการแก้ไข':'เพิ่มคำศัพท์');
+  save.onclick = async ()=>{
+    if(!wordInp.value.trim()){ alert('กรุณากรอกคำศัพท์'); return; }
+    const distract = distractInp.value.split(',').map(s=>s.trim()).filter(Boolean);
+    const record = existing
+      ? {...existing, word:wordInp.value.trim(), emoji:emojiInp.value.trim(), category:catSel.value, difficulty:parseInt(diffSel.value), distract}
+      : {id:uid(), word:wordInp.value.trim(), emoji:emojiInp.value.trim(), category:catSel.value, difficulty:parseInt(diffSel.value), distract};
+    try{
+      await apiSaveWord(record);
+      if(existing){ Object.assign(existing, record); }
+      else{ state.words.push(record); }
+      state.modal=null; render();
+    }catch(e){ alert("บันทึกไม่สำเร็จ: " + e.message); }
+  };
+  actions.appendChild(cancel); actions.appendChild(save);
+  wrap.appendChild(actions);
+  return wrap;
+}
+
+/* ================== SETUP / ERROR SCREENS ================== */
+function renderSetupScreen(){
+  shell.innerHTML = "";
+  const wrap = el('div');
+  wrap.style.cssText = "max-width:640px; margin:60px auto; padding:0 20px;";
+  const card = el('div','card');
+  card.appendChild(el('h2',null,'⚙️ ยังไม่ได้ตั้งค่าการเชื่อมต่อ'));
+  card.appendChild(el('p','sub', `แอปนี้ยังไม่ได้เชื่อมกับฐานข้อมูล Google Sheets ของ${CONFIG.SCHOOL_NAME} กรุณาทำตามขั้นตอนนี้ก่อนใช้งาน:`));
+  card.appendChild(el('div',null, `
+    <ol style="line-height:1.9; font-size:14.5px; color:var(--ink);">
+      <li>เปิดไฟล์ <code>Code.gs</code> ที่ได้รับมา วางในโปรเจกต์ Apps Script ของ Google Sheet</li>
+      <li>ตั้งค่า <code>SECRET_KEY</code> ใน Code.gs เป็นรหัสของคุณเอง</li>
+      <li>Deploy &gt; New deployment &gt; Web app แล้วคัดลอก URL ที่ได้</li>
+      <li>เปิดไฟล์ HTML นี้ด้วยโปรแกรมแก้ไขข้อความ หาบรรทัด <code>const CONFIG = {...}</code> ใกล้ด้านบนของไฟล์</li>
+      <li>ใส่ URL ในช่อง <code>APPS_SCRIPT_URL</code> และรหัสในช่อง <code>SECRET_KEY</code> ให้ตรงกับ Code.gs</li>
+      <li>บันทึกไฟล์แล้วเปิดใหม่อีกครั้ง</li>
+    </ol>
+  `));
+  card.appendChild(el('p','sub','เมื่อกรอกครบแล้ว หน้านี้จะเปลี่ยนเป็นแอปเต็มรูปแบบโดยอัตโนมัติ'));
+  wrap.appendChild(card);
+  shell.appendChild(wrap);
+}
+
+function renderConnectionError(message){
+  shell.innerHTML = "";
+  const wrap = el('div');
+  wrap.style.cssText = "max-width:640px; margin:60px auto; padding:0 20px;";
+  const card = el('div','card');
+  card.appendChild(el('h2',null,'🔌 เชื่อมต่อฐานข้อมูลไม่สำเร็จ'));
+  card.appendChild(el('p','sub', `ตรวจสอบว่า Apps Script Web App ยัง Deploy อยู่ และ URL / SECRET_KEY ในไฟล์นี้ตรงกับ Code.gs — ข้อความข้อผิดพลาด: ${message}`));
+  const retryBtn = el('button','btn btn-primary','ลองใหม่อีกครั้ง');
+  retryBtn.onclick = boot;
+  card.appendChild(retryBtn);
+  wrap.appendChild(card);
+  shell.appendChild(wrap);
+}
+
+function renderLoginScreen(){
+  shell.innerHTML = "";
+  const wrap = el('div');
+  wrap.style.cssText = "max-width:420px; margin:80px auto; padding:0 20px;";
+  const card = el('div','card');
+  const brand = el('div'); brand.style.cssText="text-align:center; margin-bottom:20px;";
+  brand.innerHTML = `<div style="font-size:38px;">📚</div><h2 style="margin-top:8px;">เก่งได้</h2><p class="sub">${CONFIG.SCHOOL_NAME}</p>`;
+  card.appendChild(brand);
+
+  const f1 = el('div','field'); f1.style.marginBottom="14px";
+  f1.appendChild(el('label',null,'อีเมลครู'));
+  const emailInp = document.createElement('input'); emailInp.type='text'; emailInp.placeholder='name@school.ac.th';
+  f1.appendChild(emailInp);
+  card.appendChild(f1);
+
+  const f2 = el('div','field'); f2.style.marginBottom="6px";
+  f2.appendChild(el('label',null,'PIN 4 หลัก'));
+  const pinInp = document.createElement('input'); pinInp.type='password'; pinInp.maxLength=4; pinInp.placeholder='••••';
+  f2.appendChild(pinInp);
+  card.appendChild(f2);
+
+  if(state.loginError){
+    card.appendChild(el('p',null,`<span style="color:#8C332C; font-size:13px;">${state.loginError}</span>`));
+  }
+
+  const loginBtn = el('button','btn btn-primary','เข้าสู่ระบบ');
+  loginBtn.style.cssText = "width:100%; margin-top:14px; padding:12px;";
+  const doLogin = async ()=>{
+    try{
+      const result = await apiLogin(emailInp.value.trim(), pinInp.value.trim());
+      state.auth = result;
+      state.loginError = null;
+      await bootAfterLogin();
+    }catch(e){
+      state.loginError = e.message;
+      render();
+    }
+  };
+  loginBtn.onclick = doLogin;
+  pinInp.onkeydown = (e)=>{ if(e.key==='Enter') doLogin(); };
+  card.appendChild(loginBtn);
+  wrap.appendChild(card);
+  shell.appendChild(wrap);
+}
+
+/* ================== INIT ================== */
+async function bootAfterLogin(){
+  shell.innerHTML = "<div style='padding:60px; text-align:center; color:var(--ink-soft); font-family:Sarabun,sans-serif;'>กำลังโหลดข้อมูล...</div>";
+  await loadAll();
+  if(state.loadError){
+    renderConnectionError(state.loadError);
+    return;
+  }
+  if('speechSynthesis' in window) window.speechSynthesis.onvoiceschanged = ()=>{};
+  render();
+}
+
+async function boot(){
+  if(!CONFIG.APPS_SCRIPT_URL || !CONFIG.SECRET_KEY){
+    renderSetupScreen();
+    return;
+  }
+  if(!state.auth){
+    renderLoginScreen();
+    return;
+  }
+  await bootAfterLogin();
+}
+boot();
+</script>
+</body>
+</html>
