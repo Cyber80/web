@@ -1,0 +1,890 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>สมัยรัตนโกสินทร์ ถึง สมัยประชาธิปไตย</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Trirong:wght@400;600;700&family=Sarabun:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --parchment:#F6EFE0;
+    --parchment-card:#FFFCF4;
+    --line:#E3D6B8;
+    --ink:#2E2A22;
+    --ink-soft:#5B5540;
+    --gold:#B8860B;
+    --gold-light:#EFD9A0;
+    --maroon:#7B2D26;
+    --indigo:#1F3157;
+    --indigo-light:#DDE3EE;
+    --era1:#2E5A46;
+    --era2:#7B2D26;
+    --era3:#1F3157;
+    --shadow: 0 8px 22px rgba(60,40,10,0.14);
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    font-family:'Sarabun',sans-serif;
+    background:
+      radial-gradient(circle at 10% 0%, rgba(184,134,11,0.08), transparent 40%),
+      radial-gradient(circle at 90% 100%, rgba(123,45,38,0.08), transparent 45%),
+      var(--parchment);
+    color:var(--ink);
+    padding:0 0 60px;
+  }
+
+  .hero{
+    text-align:center;
+    padding:44px 20px 30px;
+    border-bottom:2px solid var(--line);
+    background:linear-gradient(180deg, rgba(184,134,11,0.06), transparent);
+  }
+  .hero .eyebrow{
+    font-size:13px;
+    letter-spacing:4px;
+    color:var(--maroon);
+    font-weight:700;
+    text-transform:uppercase;
+  }
+  .hero h1{
+    font-family:'Trirong',serif;
+    font-weight:700;
+    font-size:clamp(26px,4vw,40px);
+    color:var(--indigo);
+    margin:10px 0 8px;
+  }
+  .hero p{
+    max-width:640px;
+    margin:0 auto;
+    color:var(--ink-soft);
+    font-size:15px;
+    line-height:1.7;
+  }
+
+  .hub{
+    max-width:960px;
+    margin:22px auto 0;
+    padding:0 20px;
+  }
+  .hub-label{
+    text-align:center;
+    font-size:12px;
+    letter-spacing:2px;
+    text-transform:uppercase;
+    font-weight:700;
+    color:var(--ink-soft);
+    margin-bottom:10px;
+  }
+  .hub-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit, minmax(200px,1fr));
+    gap:12px;
+  }
+  .hub-card{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    background:var(--parchment-card);
+    border:1px solid var(--line);
+    border-radius:12px;
+    padding:14px 16px;
+    text-decoration:none;
+    color:var(--ink);
+    box-shadow:var(--shadow);
+    transition:transform .15s ease, border-color .15s ease;
+  }
+  .hub-card:hover{
+    transform:translateY(-2px);
+    border-color:var(--gold);
+  }
+  .hub-card .hub-icon{
+    flex-shrink:0;
+    width:40px;height:40px;
+    border-radius:10px;
+    display:flex;align-items:center;justify-content:center;
+    color:#fff;
+  }
+  .hub-card .hub-icon svg{width:20px;height:20px;}
+  .hub-card .hub-text{flex:1; min-width:0;}
+  .hub-card .hub-title{
+    font-weight:700;
+    font-size:13.5px;
+    color:var(--indigo);
+    margin-bottom:2px;
+  }
+  .hub-card .hub-sub{
+    font-size:11.5px;
+    color:var(--ink-soft);
+  }
+  .hub-card .hub-arrow{
+    flex-shrink:0;
+    color:var(--gold);
+    font-size:16px;
+  }
+
+  .master-timeline{
+    display:flex;
+    max-width:920px;
+    margin:26px auto 0;
+    padding:0 20px;
+    gap:0;
+  }
+  .master-seg{
+    flex:1;
+    text-align:center;
+    padding:10px 6px;
+    font-size:12px;
+    font-weight:700;
+    color:#fff;
+    position:relative;
+  }
+  .master-seg:not(:last-child)::after{
+    content:"▸";
+    position:absolute;
+    right:-9px;
+    top:50%;
+    transform:translateY(-50%);
+    color:var(--parchment);
+    font-size:14px;
+    z-index:2;
+  }
+  .master-seg .sub{
+    display:block;
+    font-weight:400;
+    font-size:11px;
+    opacity:0.9;
+    margin-top:2px;
+  }
+  .seg1{background:var(--era1); border-radius:8px 0 0 8px;}
+  .seg2{background:var(--era2);}
+  .seg3{background:var(--era3); border-radius:0 8px 8px 0;}
+
+  .tabs{
+    max-width:960px;
+    margin:34px auto 0;
+    padding:0 20px;
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+    justify-content:center;
+  }
+  .tab-btn{
+    font-family:'Sarabun',sans-serif;
+    font-weight:700;
+    font-size:14px;
+    padding:10px 18px;
+    border-radius:999px;
+    border:2px solid var(--line);
+    background:var(--parchment-card);
+    color:var(--ink-soft);
+    cursor:pointer;
+    transition:all .2s ease;
+    display:flex;
+    align-items:center;
+    gap:6px;
+  }
+  .tab-btn svg{width:15px;height:15px;flex-shrink:0;}
+  .tab-btn.active{
+    color:#fff;
+    border-color:transparent;
+  }
+  .tab-btn[data-era="0"].active{background:var(--era1);}
+  .tab-btn[data-era="1"].active{background:var(--era2);}
+  .tab-btn[data-era="2"].active{background:var(--era3);}
+  .tab-btn[data-era="3"].active{background:var(--gold);}
+
+  .era-panel{
+    max-width:960px;
+    margin:26px auto 0;
+    padding:0 20px;
+    display:none;
+  }
+  .era-panel.active{display:block;}
+
+  .era-intro{
+    background:var(--parchment-card);
+    border:1px solid var(--line);
+    border-left:6px solid var(--era-color, var(--indigo));
+    border-radius:12px;
+    padding:18px 20px;
+    margin-bottom:20px;
+    box-shadow:var(--shadow);
+    display:flex;
+    gap:16px;
+    align-items:flex-start;
+  }
+  .era-intro .icon-wrap{
+    flex-shrink:0;
+    width:52px;height:52px;
+    border-radius:50%;
+    background:var(--era-color, var(--indigo));
+    display:flex;align-items:center;justify-content:center;
+  }
+  .era-intro .icon-wrap svg{width:28px;height:28px;stroke:#fff;}
+  .era-intro h2{
+    font-family:'Trirong',serif;
+    margin:0 0 4px;
+    font-size:21px;
+    color:var(--ink);
+  }
+  .era-intro .range{
+    font-size:13px;
+    font-weight:700;
+    color:var(--maroon);
+    margin-bottom:8px;
+  }
+  .era-intro p{
+    margin:0;
+    font-size:14.5px;
+    line-height:1.75;
+    color:var(--ink-soft);
+  }
+
+  .reign{
+    background:var(--parchment-card);
+    border:1px solid var(--line);
+    border-radius:12px;
+    margin-bottom:14px;
+    box-shadow:var(--shadow);
+    overflow:hidden;
+  }
+  .reign-head{
+    display:flex;
+    align-items:center;
+    gap:14px;
+    padding:14px 18px;
+    cursor:pointer;
+    -webkit-tap-highlight-color:transparent;
+  }
+  .reign-seal{
+    flex-shrink:0;
+    width:46px;height:46px;
+    border-radius:50%;
+    display:flex;align-items:center;justify-content:center;
+    color:#fff;
+    font-family:'Trirong',serif;
+    font-weight:700;
+    font-size:15px;
+    box-shadow:0 0 0 3px rgba(184,134,11,0.25);
+  }
+  .reign-icon{
+    flex-shrink:0;
+    width:34px;height:34px;
+    display:flex;align-items:center;justify-content:center;
+    opacity:0.75;
+  }
+  .reign-icon svg{width:22px;height:22px;}
+  .reign-title-wrap{flex:1;}
+  .reign-title{
+    font-family:'Trirong',serif;
+    font-weight:700;
+    font-size:17px;
+    color:var(--indigo);
+  }
+  .reign-range{
+    font-size:12.5px;
+    color:var(--ink-soft);
+  }
+  .chev{
+    font-size:16px;
+    color:var(--gold);
+    transition:transform .25s ease;
+  }
+  .reign.open .chev{transform:rotate(90deg);}
+
+  .reign-body{
+    max-height:0;
+    overflow:hidden;
+    transition:max-height .3s ease;
+    padding:0 20px;
+  }
+  .reign.open .reign-body{
+    padding:2px 20px 18px;
+  }
+
+  .cat{
+    margin-top:12px;
+  }
+  .cat h4{
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    font-size:13px;
+    font-weight:700;
+    color:#fff;
+    background:var(--gold);
+    padding:4px 12px 4px 8px;
+    border-radius:999px;
+    margin:0 0 8px;
+  }
+  .cat h4 svg{width:14px;height:14px;stroke:#fff;flex-shrink:0;}
+  .cat.politics h4{background:var(--indigo);}
+  .cat.economy h4{background:var(--gold);}
+  .cat.society h4{background:var(--maroon);}
+  .cat ul{
+    margin:0;
+    padding-left:20px;
+  }
+  .cat li{
+    font-size:14px;
+    line-height:1.75;
+    color:var(--ink);
+    margin-bottom:4px;
+  }
+
+  /* Summary table tab */
+  .summary-intro{
+    background:var(--parchment-card);
+    border:1px solid var(--line);
+    border-left:6px solid var(--gold);
+    border-radius:12px;
+    padding:18px 20px;
+    margin-bottom:20px;
+    box-shadow:var(--shadow);
+  }
+  .summary-intro h2{
+    font-family:'Trirong',serif;
+    margin:0 0 6px;
+    font-size:21px;
+    color:var(--ink);
+  }
+  .summary-intro p{
+    margin:0;
+    font-size:14.5px;
+    line-height:1.75;
+    color:var(--ink-soft);
+  }
+  .legend{
+    display:flex;
+    gap:16px;
+    flex-wrap:wrap;
+    margin:16px 0 20px;
+    font-size:12.5px;
+    color:var(--ink-soft);
+  }
+  .legend span{display:flex;align-items:center;gap:6px;}
+  .legend i{width:12px;height:12px;border-radius:3px;display:inline-block;}
+  .table-wrap{
+    background:var(--parchment-card);
+    border:1px solid var(--line);
+    border-radius:12px;
+    box-shadow:var(--shadow);
+    overflow-x:auto;
+    margin-bottom:24px;
+  }
+  table.summary-table{
+    width:100%;
+    border-collapse:collapse;
+    font-size:13.5px;
+    min-width:760px;
+  }
+  table.summary-table th{
+    background:var(--indigo);
+    color:#fff;
+    font-family:'Trirong',serif;
+    font-weight:700;
+    padding:12px 14px;
+    text-align:left;
+    position:sticky;
+    top:0;
+  }
+  table.summary-table td{
+    padding:12px 14px;
+    border-bottom:1px solid var(--line);
+    vertical-align:top;
+    line-height:1.65;
+  }
+  table.summary-table tr:last-child td{border-bottom:none;}
+  table.summary-table tr.era1-row td:first-child{border-left:4px solid var(--era1);}
+  table.summary-table tr.era2-row td:first-child{border-left:4px solid var(--era2);}
+  table.summary-table tr.era3-row td:first-child{border-left:4px solid var(--era3);}
+  table.summary-table td.reign-cell{font-weight:700;color:var(--indigo);white-space:nowrap;}
+  table.summary-table tr:nth-child(even){background:rgba(184,134,11,0.045);}
+  table.summary-table td ul{margin:0;padding-left:16px;}
+  table.summary-table td li{margin-bottom:3px;}
+
+  footer{
+    max-width:960px;
+    margin:40px auto 0;
+    padding:0 20px;
+    text-align:center;
+    font-size:12px;
+    color:#9a9276;
+  }
+
+  @media (max-width:640px){
+    .era-intro{flex-direction:column;}
+  }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="eyebrow">สรุปเนื้อหาประวัติศาสตร์ไทย</div>
+  <h1>สมัยรัตนโกสินทร์ ถึง สมัยประชาธิปไตย</h1>
+  <p>ตั้งแต่การสถาปนากรุงรัตนโกสินทร์ พ.ศ. 2325 จนถึงปัจจุบัน แบ่งเป็น 3 ช่วงใหญ่ตามการเปลี่ยนแปลงของบ้านเมืองและการปกครอง แตะที่หัวข้อแต่ละรัชกาลเพื่อดูรายละเอียด หรือดูตารางสรุปภาพรวมได้ที่แท็บสุดท้าย</p>
+</div>
+
+<div class="hub">
+  <div class="hub-label">เอกสารและกิจกรรมทั้งหมดในหน่วยนี้</div>
+  <div class="hub-grid">
+    <a class="hub-card" href="กิจกรรมโต้ตอบ-แบบทดสอบ.html">
+      <div class="hub-icon" style="background:var(--maroon)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><path d="M10 6.5h4M6.5 10v4M17.5 14v-4M14 17.5h-4"/></svg>
+      </div>
+      <div class="hub-text">
+        <div class="hub-title">กิจกรรมโต้ตอบ + แบบทดสอบ</div>
+        <div class="hub-sub">เกมจับคู่ · เรียงเส้นเวลา · ควิซ 10 ข้อ</div>
+      </div>
+      <div class="hub-arrow">↗</div>
+    </a>
+    <a class="hub-card" href="ใบงาน-เหตุการณ์สำคัญ-สมัยรัตนโกสินทร์-ป6.docx">
+      <div class="hub-icon" style="background:#2B579A">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6"/></svg>
+      </div>
+      <div class="hub-text">
+        <div class="hub-title">ใบงาน (Word)</div>
+        <div class="hub-sub">แก้ไข/พิมพ์ได้ · .docx</div>
+      </div>
+      <div class="hub-arrow">↓</div>
+    </a>
+    <a class="hub-card" href="ใบงาน-เหตุการณ์สำคัญ-สมัยรัตนโกสินทร์-ป6.pdf">
+      <div class="hub-icon" style="background:#C0392B">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6"/><path d="M9 15h6"/></svg>
+      </div>
+      <div class="hub-text">
+        <div class="hub-title">ใบงาน (PDF)</div>
+        <div class="hub-sub">ดูตัวอย่าง/พิมพ์ได้ทันที</div>
+      </div>
+      <div class="hub-arrow">↓</div>
+    </a>
+  </div>
+</div>
+
+<div class="master-timeline">
+  <div class="master-seg seg1">รัตนโกสินทร์ตอนต้น<span class="sub">2325–2394 (ร.1–ร.3)</span></div>
+  <div class="master-seg seg2">ปรับปรุงและปฏิรูปประเทศ<span class="sub">2394–2475 (ร.4–ร.7)</span></div>
+  <div class="master-seg seg3">ประชาธิปไตย<span class="sub">2475–ปัจจุบัน</span></div>
+</div>
+
+<div class="tabs">
+  <button class="tab-btn active" data-era="0">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18M5 21V7l7-4 7 4v14M9 21v-6h6v6"/></svg>
+    ๑. รัตนโกสินทร์ตอนต้น
+  </button>
+  <button class="tab-btn" data-era="1">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>
+    ๒. ปรับปรุงและปฏิรูปประเทศ
+  </button>
+  <button class="tab-btn" data-era="2">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3 6 7 1-5 5 1 7-6-3-6 3 1-7-5-5 7-1z"/></svg>
+    ๓. ประชาธิปไตย
+  </button>
+  <button class="tab-btn" data-era="3">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3h18v14H3zM3 21h18M8 3v14M16 3v14"/></svg>
+    ตารางสรุปภาพรวม
+  </button>
+</div>
+
+<!-- ICON DEFS reused via inline svg per category -->
+
+<div class="era-panel active" id="era-0" style="--era-color:#2E5A46">
+  <div class="era-intro">
+    <div class="icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M3 21h18M5 21V7l7-4 7 4v14M9 21v-6h6v6"/></svg></div>
+    <div>
+      <h2>สมัยรัตนโกสินทร์ตอนต้น</h2>
+      <div class="range">พ.ศ. 2325 – 2394 · ตรงกับรัชกาลที่ 1 ถึงรัชกาลที่ 3</div>
+      <p>ช่วงฟื้นฟูและวางรากฐานบ้านเมืองในทุกด้าน ทั้งการปกครอง เศรษฐกิจ และศิลปวัฒนธรรม โดยยึดรูปแบบจากสมัยอยุธยาตอนปลายเป็นหลัก</p>
+    </div>
+  </div>
+
+  <div class="reign">
+    <div class="reign-head">
+      <div class="reign-seal" style="background:#2E5A46">ร.1</div>
+      <div class="reign-icon" style="color:#2E5A46"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 20h16M6 20V10l6-4 6 4v10M10 20v-5h4v5"/></svg></div>
+      <div class="reign-title-wrap">
+        <div class="reign-title">รัชกาลที่ 1 (พระพุทธยอดฟ้าจุฬาโลกมหาราช)</div>
+        <div class="reign-range">วางรากฐานกรุงรัตนโกสินทร์</div>
+      </div>
+      <div class="chev">▸</div>
+    </div>
+    <div class="reign-body">
+      <div class="cat politics">
+        <h4><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M3 21h18M5 21V10M19 21V10M4 10l8-6 8 6M9 21v-7h6v7"/></svg>การเมืองการปกครอง</h4>
+        <ul>
+          <li>จัดระเบียบการปกครองแบบสมัยอยุธยาตอนปลาย แบ่งเป็นส่วนกลาง 6 กรม (จตุสดมภ์ + กรมพระกลาโหม + กรมมหาดไทย) และหัวเมือง (ชั้นใน ชั้นนอก ประเทศราช)</li>
+          <li>รวบรวมและตรวจชำระกฎหมาย เขียนเป็นฉบับหลวง 3 ฉบับ ประทับตราราชสีห์ คชสีห์ บัวแก้ว เรียกว่า <b>กฎหมายตราสามดวง</b> ถือเป็นกฎหมายฉบับแรกแห่งกรุงรัตนโกสินทร์</li>
+        </ul>
+      </div>
+      <div class="cat economy">
+        <h4><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><circle cx="12" cy="12" r="8"/><path d="M12 7v10M9 9.5c0-1.4 1.3-2.5 3-2.5s3 1.1 3 2.5-1.3 2-3 2.5-3 1.1-3 2.5 1.3 2.5 3 2.5 3-1.1 3-2.5"/></svg>เศรษฐกิจ</h4>
+        <ul>
+          <li>เศรษฐกิจแบบยังชีพ ผลิตเพื่อบริโภคในครัวเรือนและแลกเปลี่ยนในชุมชน การค้าต่างประเทศผูกขาดผ่านพระคลังสินค้า</li>
+        </ul>
+      </div>
+      <div class="cat society">
+        <h4><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><circle cx="9" cy="8" r="3"/><circle cx="17" cy="9" r="2.4"/><path d="M3 21v-2a5 5 0 015-5h2a5 5 0 015 5v2M16 21v-1.5a4 4 0 013-3.9"/></svg>สังคมและวัฒนธรรม</h4>
+        <ul>
+          <li>โปรดเกล้าฯ ให้มีการสังคายนาพระไตรปิฎก</li>
+          <li>สังคมยังคงใช้ระบบศักดินา แบ่งชนชั้น: พระมหากษัตริย์ พระราชวงศ์ ขุนนาง ไพร่ ทาส (พระสงฆ์ไม่จัดอยู่ในชนชั้นใด และไม่ถูกเกณฑ์แรงงาน)</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="reign">
+    <div class="reign-head">
+      <div class="reign-seal" style="background:#2E5A46">ร.2</div>
+      <div class="reign-icon" style="color:#2E5A46"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5V5a2 2 0 012-2h11a1 1 0 011 1v14M6.5 22H20M4 19.5A2.5 2.5 0 006.5 22"/></svg></div>
+      <div class="reign-title-wrap">
+        <div class="reign-title">รัชกาลที่ 2 (พระพุทธเลิศหล้านภาลัย)</div>
+        <div class="reign-range">ยุคทองแห่งวรรณคดี</div>
+      </div>
+      <div class="chev">▸</div>
+    </div>
+    <div class="reign-body">
+      <div class="cat society">
+        <h4><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><circle cx="9" cy="8" r="3"/><circle cx="17" cy="9" r="2.4"/><path d="M3 21v-2a5 5 0 015-5h2a5 5 0 015 5v2M16 21v-1.5a4 4 0 013-3.9"/></svg>สังคมและวัฒนธรรม</h4>
+        <ul>
+          <li>มีพระราชนิพนธ์วรรณกรรมสำคัญ เช่น บทละครเรื่องอิเหนา เสภาขุนช้างขุนแผน (บางตอน)</li>
+          <li>ทรงอุปถัมภ์กวีหลายท่าน ที่มีชื่อเสียงคือ <b>สุนทรภู่</b> ผลงานสำคัญ เช่น พระอภัยมณี นิราศภูเขาทอง สุภาษิตสอนหญิง</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="reign">
+    <div class="reign-head">
+      <div class="reign-seal" style="background:#2E5A46">ร.3</div>
+      <div class="reign-icon" style="color:#2E5A46"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18M4 21V9l4-3 4 3v12M12 21V6l4-3 4 3v15"/></svg></div>
+      <div class="reign-title-wrap">
+        <div class="reign-title">รัชกาลที่ 3 (พระนั่งเกล้าเจ้าอยู่หัว)</div>
+        <div class="reign-range">การค้ารุ่งเรือง ฟื้นฟูพระพุทธศาสนา</div>
+      </div>
+      <div class="chev">▸</div>
+    </div>
+    <div class="reign-body">
+      <div class="cat economy">
+        <h4><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><circle cx="12" cy="12" r="8"/><path d="M12 7v10M9 9.5c0-1.4 1.3-2.5 3-2.5s3 1.1 3 2.5-1.3 2-3 2.5-3 1.1-3 2.5 1.3 2.5 3 2.5 3-1.1 3-2.5"/></svg>เศรษฐกิจ</h4>
+        <ul>
+          <li>การค้าเจริญรุ่งเรืองมากที่สุดในบรรดา 3 รัชกาลแรก โดยเฉพาะการค้าในระบบบรรณาการกับจีน</li>
+        </ul>
+      </div>
+      <div class="cat society">
+        <h4><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><circle cx="9" cy="8" r="3"/><circle cx="17" cy="9" r="2.4"/><path d="M3 21v-2a5 5 0 015-5h2a5 5 0 015 5v2M16 21v-1.5a4 4 0 013-3.9"/></svg>สังคมและวัฒนธรรม</h4>
+        <ul>
+          <li>โปรดเกล้าฯ ให้สร้างและบูรณปฏิสังขรณ์วัดจำนวนมาก เช่น วัดโพธิ์ (วัดพระเชตุพนวิมลมังคลาราม) วัดเทพธิดาราม วัดยานนาวา</li>
+          <li>ให้จารึกความรู้ต่าง ๆ ลงบนแผ่นศิลาประดับไว้ที่วัดโพธิ์ เรียกว่า <b>จารึกวัดโพธิ์</b> จนได้รับการกล่าวขานว่าเป็น "มหาวิทยาลัยแห่งแรกของเมืองไทย"</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="era-panel" id="era-1" style="--era-color:#7B2D26">
+  <div class="era-intro">
+    <div class="icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg></div>
+    <div>
+      <h2>สมัยปรับปรุงและปฏิรูปประเทศ</h2>
+      <div class="range">พ.ศ. 2394 – 2475 · ตรงกับรัชกาลที่ 4 ถึงรัชกาลที่ 7</div>
+      <p>ช่วงที่ไทยเผชิญแรงกดดันจากจักรวรรดินิยมตะวันตก จึงต้องปรับปรุงประเทศให้ทันสมัย จนนำไปสู่การเปลี่ยนแปลงการปกครองใน พ.ศ. 2475</p>
+    </div>
+  </div>
+
+  <div class="reign">
+    <div class="reign-head">
+      <div class="reign-seal" style="background:#7B2D26">ร.4</div>
+      <div class="reign-icon" style="color:#7B2D26"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"/></svg></div>
+      <div class="reign-title-wrap">
+        <div class="reign-title">รัชกาลที่ 4 (พระจอมเกล้าเจ้าอยู่หัว)</div>
+        <div class="reign-range">เปิดประเทศรับตะวันตก</div>
+      </div>
+      <div class="chev">▸</div>
+    </div>
+    <div class="reign-body">
+      <div class="cat politics">
+        <h4><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M3 21h18M5 21V10M19 21V10M4 10l8-6 8 6M9 21v-7h6v7"/></svg>การเมืองการปกครอง</h4>
+        <ul>
+          <li>เผชิญการคุกคามจากจักรวรรดินิยมตะวันตก จึงเปลี่ยนแปลงธรรมเนียมที่ล้าสมัย เช่น ให้ขุนนางสวมเสื้อเข้าเฝ้า</li>
+          <li>ออกกฎหมายห้ามบิดามารดาหรือสามีขายบุตร-ภรรยาเป็นทาสโดยเจ้าตัวไม่สมัครใจ</li>
+        </ul>
+      </div>
+      <div class="cat economy">
+        <h4><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><circle cx="12" cy="12" r="8"/><path d="M12 7v10M9 9.5c0-1.4 1.3-2.5 3-2.5s3 1.1 3 2.5-1.3 2-3 2.5-3 1.1-3 2.5 1.3 2.5 3 2.5 3-1.1 3-2.5"/></svg>เศรษฐกิจ</h4>
+        <ul>
+          <li>ทำ<b>สนธิสัญญาเบาว์ริง</b>กับอังกฤษ พ.ศ. 2398 เปลี่ยนระบบการค้าจากผูกขาดเป็นการค้าเสรี</li>
+          <li>ข้าวกลายเป็นสินค้าส่งออกสำคัญ มีการขยายพื้นที่ปลูกข้าวและขุดคลองเพิ่มขึ้น เช่น คลองภาษีเจริญ คลองเปรมประชากร</li>
+        </ul>
+      </div>
+      <div class="cat society">
+        <h4><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><circle cx="9" cy="8" r="3"/><circle cx="17" cy="9" r="2.4"/><path d="M3 21v-2a5 5 0 015-5h2a5 5 0 015 5v2M16 21v-1.5a4 4 0 013-3.9"/></svg>สังคมและวัฒนธรรม</h4>
+        <ul>
+          <li>ราษฎรเข้าเฝ้ารับเสด็จได้ ถวายฎีการ้องทุกข์ได้ เปิดโอกาสให้ฟ้องเจ้านายที่ข่มเหงรังแกราษฎร และเลือกนับถือศาสนาได้</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="reign">
+    <div class="reign-head">
+      <div class="reign-seal" style="background:#7B2D26">ร.5</div>
+      <div class="reign-icon" style="color:#7B2D26"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="10" width="18" height="11" rx="1"/><path d="M3 10l9-7 9 7M9 21v-5h6v5"/></svg></div>
+      <div class="reign-title-wrap">
+        <div class="reign-title">รัชกาลที่ 5 (พระจุลจอมเกล้าเจ้าอยู่หัว)</div>
+        <div class="reign-range">ปฏิรูปประเทศครั้งใหญ่</div>
+      </div>
+      <div class="chev">▸</div>
+    </div>
+    <div class="reign-body">
+      <div class="cat politics">
+        <h4><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M3 21h18M5 21V10M19 21V10M4 10l8-6 8 6M9 21v-7h6v7"/></svg>การเมืองการปกครอง</h4>
+        <ul>
+          <li>ปฏิรูปการปกครองครั้งใหญ่ ตั้งสภาที่ปรึกษา 2 สภา (สภาที่ปรึกษาราชการแผ่นดิน และสภาที่ปรึกษาในพระองค์)</li>
+          <li>ปฏิรูปทั้งส่วนกลาง ภูมิภาค และท้องถิ่น เพิ่มหน่วยงานจาก 6 กรม เป็น 12 กรม แล้วเปลี่ยนเป็น <b>12 กระทรวง</b> อันเป็นรากฐานกระทรวงในปัจจุบัน</li>
+          <li>ส่วนภูมิภาคจัดเป็นมณฑลเทศาภิบาล รวมเมืองต่าง ๆ เข้าเป็นมณฑล แบ่งย่อยเป็นอำเภอ ตำบล หมู่บ้าน</li>
+        </ul>
+      </div>
+      <div class="cat economy">
+        <h4><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><circle cx="12" cy="12" r="8"/><path d="M12 7v10M9 9.5c0-1.4 1.3-2.5 3-2.5s3 1.1 3 2.5-1.3 2-3 2.5-3 1.1-3 2.5 1.3 2.5 3 2.5 3-1.1 3-2.5"/></svg>เศรษฐกิจ</h4>
+        <ul>
+          <li>สินค้าส่งออกสำคัญ ได้แก่ ข้าว ดีบุก ไม้สัก ยางพารา ตั้งโรงกระสาปณ์สิทธิการ (โรงกษาปณ์แห่งแรกของไทย)</li>
+          <li>ปฏิรูปการเงินการคลัง ตั้งหอรัษฎากรพิพัฒน์ จัดทำงบประมาณแผ่นดิน ตั้งกรมพระคลังมหาสมบัติ (ปัจจุบันคือกระทรวงการคลัง)</li>
+          <li>ตั้งธนาคาร "บุคคลัภย์" ต่อมาเปลี่ยนชื่อเป็นธนาคารไทยพาณิชย์ นับเป็น<b>ธนาคารแห่งแรกของไทย</b></li>
+        </ul>
+      </div>
+      <div class="cat society">
+        <h4><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><circle cx="9" cy="8" r="3"/><circle cx="17" cy="9" r="2.4"/><path d="M3 21v-2a5 5 0 015-5h2a5 5 0 015 5v2M16 21v-1.5a4 4 0 013-3.9"/></svg>สังคมและวัฒนธรรม</h4>
+        <ul>
+          <li>เปลี่ยนขนบธรรมเนียมประเพณีหลายอย่าง รับวัฒนธรรมตะวันตกมาปรับใช้ เช่น การศึกษา การแต่งกาย ยกเลิกธรรมเนียมการหมอบคลาน</li>
+          <li>ก่อตั้งโรงเรียนวัดมหรรณพาราม โรงเรียนหลวงสำหรับราษฎรแห่งแรกของไทย</li>
+          <li><b>เลิกทาส</b>และ<b>เลิกระบบไพร่</b>เป็นขั้นตอน เริ่มจากประกาศพิกัดกระเษียรอายุลูกทาสลูกไทย (2417) จนถึงพระราชบัญญัติทาสรัตนโกสินทร์ศก 124 (พ.ศ. 2448) ที่ให้ลูกทาสทุกคนเป็นอิสระ</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="reign">
+    <div class="reign-head">
+      <div class="reign-seal" style="background:#7B2D26">ร.6</div>
+      <div class="reign-icon" style="color:#7B2D26"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M8 9h8M8 13h5"/></svg></div>
+      <div class="reign-title-wrap">
+        <div class="reign-title">รัชกาลที่ 6 (พระมงกุฎเกล้าเจ้าอยู่หัว)</div>
+        <div class="reign-range">ทดลองประชาธิปไตยที่ดุสิตธานี</div>
+      </div>
+      <div class="chev">▸</div>
+    </div>
+    <div class="reign-body">
+      <div class="cat politics">
+        <h4><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M3 21h18M5 21V10M19 21V10M4 10l8-6 8 6M9 21v-7h6v7"/></svg>การเมืองการปกครอง</h4>
+        <ul>
+          <li>ตราข้อบังคับลักษณะปกครองหัวเมืองชั่วคราว เปลี่ยนชื่อเมืองเป็น "จังหวัด" และมณฑลเป็น "ภาค"</li>
+          <li>ก่อตั้งเมืองจำลอง <b>"ดุสิตธานี"</b> เพื่อทดลองการปกครองตามระบอบประชาธิปไตย</li>
+        </ul>
+      </div>
+      <div class="cat economy">
+        <h4><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><circle cx="12" cy="12" r="8"/><path d="M12 7v10M9 9.5c0-1.4 1.3-2.5 3-2.5s3 1.1 3 2.5-1.3 2-3 2.5-3 1.1-3 2.5 1.3 2.5 3 2.5 3-1.1 3-2.5"/></svg>เศรษฐกิจ</h4>
+        <ul>
+          <li>มีพระราชดำริให้ประชาชนรู้จักการออม ก่อตั้งคลังออมสิน (ต่อมาคือธนาคารออมสิน)</li>
+          <li>ให้ยกเลิกการพนันบ่อนเบี้ยและหวย ก ข ที่ทำลายเศรษฐกิจของประเทศ</li>
+        </ul>
+      </div>
+      <div class="cat society">
+        <h4><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><circle cx="9" cy="8" r="3"/><circle cx="17" cy="9" r="2.4"/><path d="M3 21v-2a5 5 0 015-5h2a5 5 0 015 5v2M16 21v-1.5a4 4 0 013-3.9"/></svg>สังคมและวัฒนธรรม</h4>
+        <ul>
+          <li>เปลี่ยนขนบธรรมเนียม เช่น กำหนดคำนำหน้าชื่อ การใช้นามสกุล ส่งเสริมให้มีภรรยาคนเดียว ประกาศใช้ธงไตรรงค์เป็นธงชาติ</li>
+          <li>ตราพระราชบัญญัติโรงเรียนราษฎร์ และพระราชบัญญัติประถมศึกษา ให้เป็นการศึกษาภาคบังคับ</li>
+          <li>ยกฐานะโรงเรียนข้าราชการพลเรือนขึ้นเป็น <b>จุฬาลงกรณ์มหาวิทยาลัย</b> มหาวิทยาลัยแห่งแรกของไทย</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="reign">
+    <div class="reign-head">
+      <div class="reign-seal" style="background:#7B2D26">ร.7</div>
+      <div class="reign-icon" style="color:#7B2D26"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v3M12 3c-4 0-7 3-7 7 0 4 3 6 7 6s7-2 7-6c0-4-3-7-7-7zM6.5 20.5L9 18M17.5 20.5L15 18"/></svg></div>
+      <div class="reign-title-wrap">
+        <div class="reign-title">รัชกาลที่ 7 (พระปกเกล้าเจ้าอยู่หัว)</div>
+        <div class="reign-range">จุดเปลี่ยนสู่ระบอบประชาธิปไตย</div>
+      </div>
+      <div class="chev">▸</div>
+    </div>
+    <div class="reign-body">
+      <div class="cat economy">
+        <h4><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><circle cx="12" cy="12" r="8"/><path d="M12 7v10M9 9.5c0-1.4 1.3-2.5 3-2.5s3 1.1 3 2.5-1.3 2-3 2.5-3 1.1-3 2.5 1.3 2.5 3 2.5 3-1.1 3-2.5"/></svg>เศรษฐกิจ</h4>
+        <ul>
+          <li>เผชิญภาวะเศรษฐกิจตกต่ำทั่วโลกหลังสงครามโลกครั้งที่ 1 แก้ปัญหาด้วยการยุบหน่วยงานที่ซ้ำซ้อน ปลดข้าราชการ ปรับปรุงการจัดเก็บภาษี และตัดทอนงบประมาณ</li>
+          <li>แก้ปัญหาได้ในช่วงแรก แต่เป็นสาเหตุหนึ่งที่ทำให้หมู่ข้าราชการไม่พอใจ นำไปสู่การเปลี่ยนแปลงการปกครองในเวลาต่อมา</li>
+        </ul>
+      </div>
+      <div class="cat politics">
+        <h4><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M3 21h18M5 21V10M19 21V10M4 10l8-6 8 6M9 21v-7h6v7"/></svg>การเมืองการปกครอง</h4>
+        <ul>
+          <li>วันที่ <b>24 มิถุนายน พ.ศ. 2475</b> คณะราษฎรเปลี่ยนแปลงการปกครองมาเป็นระบอบประชาธิปไตย ซึ่งพระองค์ทรงยอมรับการเป็นพระมหากษัตริย์ภายใต้รัฐธรรมนูญ เพราะทรงเห็นแก่ความสงบเรียบร้อยของบ้านเมือง</li>
+        </ul>
+      </div>
+      <div class="cat society">
+        <h4><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><circle cx="9" cy="8" r="3"/><circle cx="17" cy="9" r="2.4"/><path d="M3 21v-2a5 5 0 015-5h2a5 5 0 015 5v2M16 21v-1.5a4 4 0 013-3.9"/></svg>สังคมและวัฒนธรรม</h4>
+        <ul>
+          <li>เร่งรัดประกาศพระราชบัญญัติประถมศึกษาในตำบลต่าง ๆ พระราชทานทุนเล่าเรียนหลวง</li>
+          <li>บูรณปฏิสังขรณ์พระอารามหลวงหลายแห่ง โปรดให้ชำระและจัดพิมพ์พระไตรปิฎกภาษาไทยฉบับสยามรัฐ แจกจ่ายไปยังมหาวิทยาลัยและหอสมุดทั้งในและต่างประเทศ</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="era-panel" id="era-2" style="--era-color:#1F3157">
+  <div class="era-intro">
+    <div class="icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M12 2l3 6 7 1-5 5 1 7-6-3-6 3 1-7-5-5 7-1z"/></svg></div>
+    <div>
+      <h2>สมัยประชาธิปไตย</h2>
+      <div class="range">พ.ศ. 2475 – ปัจจุบัน</div>
+      <p>ช่วงเวลาที่มีการปกครองตามระบอบประชาธิปไตยจนถึงปัจจุบัน มีพัฒนาการทั้งด้านการเมืองการปกครองและเศรษฐกิจอย่างต่อเนื่อง</p>
+    </div>
+  </div>
+
+  <div class="reign">
+    <div class="reign-head">
+      <div class="reign-seal" style="background:#1F3157">2475</div>
+      <div class="reign-icon" style="color:#1F3157"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18M5 21V10M19 21V10M4 10l8-6 8 6M9 21v-7h6v7"/></svg></div>
+      <div class="reign-title-wrap">
+        <div class="reign-title">การปกครองระบอบประชาธิปไตย</div>
+        <div class="reign-range">พ.ศ. 2475 – ปัจจุบัน</div>
+      </div>
+      <div class="chev">▸</div>
+    </div>
+    <div class="reign-body">
+      <div class="cat politics">
+        <h4><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M3 21h18M5 21V10M19 21V10M4 10l8-6 8 6M9 21v-7h6v7"/></svg>การเมืองการปกครอง</h4>
+        <ul>
+          <li>พ.ศ. 2475 เปลี่ยนแปลงการปกครองเป็นระบอบประชาธิปไตย พระมหากษัตริย์ทรงเป็นประมุข และมีรัฐธรรมนูญเป็นกฎหมายสูงสุดของประเทศ</li>
+          <li>อำนาจการปกครองแบ่งเป็น 3 ฝ่าย ได้แก่ ฝ่ายบริหาร ฝ่ายนิติบัญญัติ และฝ่ายตุลาการ ทำให้เกิดองค์กรทางการเมือง เช่น รัฐสภา รัฐบาล คณะรัฐมนตรี พรรคการเมือง</li>
+          <li>ประชาชนมีสิทธิออกเสียงเลือกตั้งและมีเสรีภาพในการแสดงความคิดเห็นทางการเมือง แต่ก็มีปัญหาการปฏิวัติรัฐประหารหลายครั้ง ทำให้สิทธิทางการเมืองถูกจำกัดเป็นบางช่วง และมีการเปลี่ยนแปลงรัฐธรรมนูญหลายฉบับ</li>
+        </ul>
+      </div>
+      <div class="cat economy">
+        <h4><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><circle cx="12" cy="12" r="8"/><path d="M12 7v10M9 9.5c0-1.4 1.3-2.5 3-2.5s3 1.1 3 2.5-1.3 2-3 2.5-3 1.1-3 2.5 1.3 2.5 3 2.5 3-1.1 3-2.5"/></svg>เศรษฐกิจ</h4>
+        <ul>
+          <li>เศรษฐกิจไทยสมัยประชาธิปไตยแบ่งได้เป็น 2 ระยะ ระยะแรกคือ <b>เศรษฐกิจแบบทุนนิยมโดยรัฐ</b> ภายหลังเปลี่ยนแปลงการปกครอง พ.ศ. 2475</li>
+          <li>ช่วงแรกเศรษฐกิจไทยยังอยู่ภายใต้อิทธิพลของต่างชาติ โดยเฉพาะพ่อค้าชาวจีน รัฐบาลจึงดำเนินนโยบายเศรษฐกิจแบบทุนนิยม สนับสนุนนายทุนขนาดย่อมและไม่ขัดขวางการขยายตัวของนายทุนขนาดใหญ่ แต่กำหนดให้อยู่ภายใต้การควบคุมของรัฐ</li>
+          <li>ช่วงหลัง พ.ศ. 2504 ประเทศไทยเริ่มใช้แผนพัฒนาเศรษฐกิจและสังคมแห่งชาติ มุ่งพัฒนาโครงสร้างพื้นฐานและอุตสาหกรรม ทำให้เศรษฐกิจขยายตัวต่อเนื่องจนถึงปัจจุบัน</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== SUMMARY TABLE TAB ===================== -->
+<div class="era-panel" id="era-3">
+  <div class="summary-intro">
+    <h2>ตารางสรุปภาพรวมเหตุการณ์สำคัญ</h2>
+    <p>รวบรวมเหตุการณ์เด่นของแต่ละรัชกาล แยกตามหมวดหมู่ การเมืองการปกครอง เศรษฐกิจ และสังคมวัฒนธรรม เพื่อให้เห็นภาพรวมและเปรียบเทียบได้ง่ายในตารางเดียว</p>
+  </div>
+  <div class="legend">
+    <span><i style="background:#2E5A46"></i> รัตนโกสินทร์ตอนต้น (ร.1–ร.3)</span>
+    <span><i style="background:#7B2D26"></i> ปรับปรุงและปฏิรูปประเทศ (ร.4–ร.7)</span>
+    <span><i style="background:#1F3157"></i> ประชาธิปไตย (2475–ปัจจุบัน)</span>
+  </div>
+  <div class="table-wrap">
+    <table class="summary-table">
+      <thead>
+        <tr>
+          <th>รัชกาล / ยุค</th>
+          <th>การเมืองการปกครอง</th>
+          <th>เศรษฐกิจ</th>
+          <th>สังคมและวัฒนธรรม</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="era1-row">
+          <td class="reign-cell">รัชกาลที่ 1<br><span style="font-weight:400;color:var(--ink-soft);font-size:12px">2325–2352</span></td>
+          <td><ul><li>วางระบบปกครอง 6 กรม</li><li>กฎหมายตราสามดวง</li></ul></td>
+          <td><ul><li>เศรษฐกิจยังชีพ ผูกขาดผ่านพระคลังสินค้า</li></ul></td>
+          <td><ul><li>สังคายนาพระไตรปิฎก</li><li>ระบบศักดินา 5 ชนชั้น</li></ul></td>
+        </tr>
+        <tr class="era1-row">
+          <td class="reign-cell">รัชกาลที่ 2<br><span style="font-weight:400;color:var(--ink-soft);font-size:12px">2352–2367</span></td>
+          <td><ul><li>สานต่อรูปแบบการปกครองเดิม</li></ul></td>
+          <td><ul><li>การค้าฟื้นตัวหลังศึกสงคราม</li></ul></td>
+          <td><ul><li>ยุคทองวรรณคดี: อิเหนา ขุนช้างขุนแผน</li><li>อุปถัมภ์สุนทรภู่</li></ul></td>
+        </tr>
+        <tr class="era1-row">
+          <td class="reign-cell">รัชกาลที่ 3<br><span style="font-weight:400;color:var(--ink-soft);font-size:12px">2367–2394</span></td>
+          <td><ul><li>ปกครองแบบเดิม เน้นเสถียรภาพ</li></ul></td>
+          <td><ul><li>การค้าจีนรุ่งเรืองที่สุดในยุคต้น</li></ul></td>
+          <td><ul><li>บูรณะวัดจำนวนมาก</li><li>จารึกวัดโพธิ์ (มหาวิทยาลัยแห่งแรก)</li></ul></td>
+        </tr>
+        <tr class="era2-row">
+          <td class="reign-cell">รัชกาลที่ 4<br><span style="font-weight:400;color:var(--ink-soft);font-size:12px">2394–2411</span></td>
+          <td><ul><li>ปรับธรรมเนียมรับตะวันตก</li><li>เริ่มคุ้มครองสิทธิราษฎร</li></ul></td>
+          <td><ul><li>สนธิสัญญาเบาว์ริง เปิดการค้าเสรี</li><li>ข้าวเป็นสินค้าส่งออกหลัก</li></ul></td>
+          <td><ul><li>เปิดโอกาสเข้าเฝ้า ร้องทุกข์ เลือกศาสนาได้</li></ul></td>
+        </tr>
+        <tr class="era2-row">
+          <td class="reign-cell">รัชกาลที่ 5<br><span style="font-weight:400;color:var(--ink-soft);font-size:12px">2411–2453</span></td>
+          <td><ul><li>ตั้ง 12 กระทรวง / มณฑลเทศาภิบาล</li></ul></td>
+          <td><ul><li>ตั้งธนาคารแห่งแรก (ไทยพาณิชย์)</li><li>ปฏิรูปการคลัง</li></ul></td>
+          <td><ul><li>เลิกทาส เลิกไพร่</li><li>ตั้งโรงเรียนหลวงแห่งแรก</li></ul></td>
+        </tr>
+        <tr class="era2-row">
+          <td class="reign-cell">รัชกาลที่ 6<br><span style="font-weight:400;color:var(--ink-soft);font-size:12px">2453–2468</span></td>
+          <td><ul><li>ทดลองประชาธิปไตยที่ดุสิตธานี</li><li>เปลี่ยนเมืองเป็น "จังหวัด"</li></ul></td>
+          <td><ul><li>ตั้งคลังออมสิน เลิกบ่อนการพนัน</li></ul></td>
+          <td><ul><li>ตั้งจุฬาลงกรณ์มหาวิทยาลัย</li><li>ธงไตรรงค์ / นามสกุล</li></ul></td>
+        </tr>
+        <tr class="era2-row">
+          <td class="reign-cell">รัชกาลที่ 7<br><span style="font-weight:400;color:var(--ink-soft);font-size:12px">2468–2477</span></td>
+          <td><ul><li><b>24 มิ.ย. 2475</b> เปลี่ยนแปลงการปกครอง</li></ul></td>
+          <td><ul><li>แก้เศรษฐกิจตกต่ำทั่วโลก ตัดงบประมาณ</li></ul></td>
+          <td><ul><li>ขยายการศึกษาภาคบังคับ</li><li>พิมพ์พระไตรปิฎกฉบับสยามรัฐ</li></ul></td>
+        </tr>
+        <tr class="era3-row">
+          <td class="reign-cell">สมัยประชาธิปไตย<br><span style="font-weight:400;color:var(--ink-soft);font-size:12px">2475–ปัจจุบัน</span></td>
+          <td><ul><li>อำนาจ 3 ฝ่าย: บริหาร นิติบัญญัติ ตุลาการ</li><li>เลือกตั้ง / รัฐประหารหลายครั้ง</li></ul></td>
+          <td><ul><li>ทุนนิยมโดยรัฐ สู่แผนพัฒนาเศรษฐกิจฯ</li></ul></td>
+          <td><ul><li>สิทธิเสรีภาพขยายตัวต่อเนื่อง</li></ul></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<footer>สรุปจากเอกสารประกอบการเรียน หน่วยประวัติศาสตร์ไทย สมัยรัตนโกสินทร์ · ใช้ประกอบการสอนในชั้นเรียน ป.6</footer>
+
+<script>
+  const tabs = document.querySelectorAll('.tab-btn');
+  const panels = document.querySelectorAll('.era-panel');
+  tabs.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const idx = btn.dataset.era;
+      tabs.forEach(b => b.classList.remove('active'));
+      panels.forEach(p => p.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById('era-' + idx).classList.add('active');
+    });
+  });
+
+  document.querySelectorAll('.reign-head').forEach(head => {
+    head.addEventListener('click', () => {
+      const reign = head.parentElement;
+      const body = reign.querySelector('.reign-body');
+      const isOpen = reign.classList.contains('open');
+      if (isOpen){
+        body.style.maxHeight = null;
+        reign.classList.remove('open');
+      } else {
+        reign.classList.add('open');
+        body.style.maxHeight = body.scrollHeight + 40 + 'px';
+      }
+    });
+  });
+
+  const firstHead = document.querySelector('.era-panel.active .reign-head');
+  if (firstHead) firstHead.click();
+</script>
+
+</body>
+</html>

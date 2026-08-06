@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>กิจกรรม: เหตุการณ์สำคัญ สมัยรัตนโกสินทร์</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Trirong:wght@400;600;700&family=Sarabun:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --parchment:#F6EFE0;
+    --parchment-card:#FFFCF4;
+    --line:#E3D6B8;
+    --ink:#2E2A22;
+    --ink-soft:#5B5540;
+    --gold:#B8860B;
+    --gold-light:#EFD9A0;
+    --maroon:#7B2D26;
+    --indigo:#1F3157;
+    --green:#2E5A46;
+    --shadow: 0 8px 22px rgba(60,40,10,0.14);
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    font-family:'Sarabun',sans-serif;
+    background:
+      radial-gradient(circle at 10% 0%, rgba(184,134,11,0.08), transparent 40%),
+      radial-gradient(circle at 90% 100%, rgba(123,45,38,0.08), transparent 45%),
+      var(--parchment);
+    color:var(--ink);
+    padding:0 0 60px;
+  }
+  .hero{
+    text-align:center;
+    padding:40px 20px 26px;
+    border-bottom:2px solid var(--line);
+    background:linear-gradient(180deg, rgba(184,134,11,0.06), transparent);
+  }
+  .hero .eyebrow{
+    font-size:13px; letter-spacing:4px; color:var(--maroon); font-weight:700; text-transform:uppercase;
+  }
+  .hero h1{
+    font-family:'Trirong',serif; font-weight:700; font-size:clamp(24px,4vw,36px); color:var(--indigo); margin:10px 0 8px;
+  }
+  .hero p{ max-width:620px; margin:0 auto; color:var(--ink-soft); font-size:14.5px; line-height:1.7; }
+
+  .tabs{
+    max-width:900px; margin:28px auto 0; padding:0 20px;
+    display:flex; gap:10px; flex-wrap:wrap; justify-content:center;
+  }
+  .tab-btn{
+    font-family:'Sarabun',sans-serif; font-weight:700; font-size:14px;
+    padding:10px 20px; border-radius:999px; border:2px solid var(--line);
+    background:var(--parchment-card); color:var(--ink-soft); cursor:pointer; transition:all .2s ease;
+    display:flex; align-items:center; gap:8px;
+  }
+  .tab-btn svg{width:16px;height:16px;}
+  .tab-btn.active{ color:#fff; border-color:transparent; background:var(--maroon); }
+
+  .panel{ max-width:900px; margin:26px auto 0; padding:0 20px; display:none; }
+  .panel.active{ display:block; }
+
+  .card{
+    background:var(--parchment-card); border:1px solid var(--line); border-radius:14px;
+    padding:22px 24px; box-shadow:var(--shadow); margin-bottom:20px;
+  }
+  .card h2{ font-family:'Trirong',serif; margin:0 0 8px; color:var(--indigo); font-size:20px; }
+  .card p.desc{ margin:0; color:var(--ink-soft); font-size:14px; line-height:1.7; }
+
+  .btn{
+    font-family:'Sarabun',sans-serif; font-weight:700; font-size:14px; padding:10px 22px;
+    border-radius:999px; border:none; cursor:pointer; transition:all .15s ease; color:#fff;
+  }
+  .btn-gold{ background:var(--gold); }
+  .btn-indigo{ background:var(--indigo); }
+  .btn-maroon{ background:var(--maroon); }
+  .btn-outline{ background:transparent; border:2px solid var(--line); color:var(--ink-soft); }
+  .btn:active{ transform:scale(0.96); }
+  .btn:disabled{ opacity:.45; cursor:not-allowed; }
+
+  .status-row{ display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px; margin-bottom:16px; }
+  .status-chip{
+    font-size:13px; font-weight:700; padding:6px 14px; border-radius:999px; background:var(--gold-light); color:#5c4400;
+  }
+
+  /* ---------- MATCH GAME ---------- */
+  .match-grid{
+    display:grid; grid-template-columns:repeat(auto-fill, minmax(150px,1fr)); gap:12px;
+  }
+  .match-card{
+    background:#fff; border:2px solid var(--line); border-radius:10px; padding:14px 10px;
+    font-size:13.5px; text-align:center; cursor:pointer; min-height:76px;
+    display:flex; align-items:center; justify-content:center; line-height:1.5;
+    transition:all .15s ease; user-select:none;
+  }
+  .match-card:hover{ border-color:var(--gold); }
+  .match-card.selected{ border-color:var(--indigo); background:var(--indigo); color:#fff; }
+  .match-card.correct{ border-color:var(--green); background:#E4F0E9; color:var(--green); cursor:default; }
+  .match-card.wrong{ animation:shake .3s ease; }
+  @keyframes shake{ 25%{transform:translateX(-4px)} 75%{transform:translateX(4px)} }
+
+  /* ---------- TIMELINE ---------- */
+  .timeline-pool{ display:flex; flex-direction:column; gap:10px; margin-bottom:6px; }
+  .tl-item{
+    background:#fff; border:2px solid var(--line); border-radius:10px; padding:12px 16px;
+    font-size:14px; cursor:grab; display:flex; align-items:center; gap:12px; transition:all .15s ease;
+  }
+  .tl-item.placed{ opacity:.35; cursor:default; }
+  .tl-item .handle{ color:var(--gold); font-size:16px; }
+  .tl-slots{ display:flex; flex-direction:column; gap:10px; margin-top:18px; }
+  .tl-slot{
+    min-height:54px; border:2px dashed var(--line); border-radius:10px; padding:10px 16px;
+    display:flex; align-items:center; gap:10px; font-size:14px; color:var(--ink-soft); background:rgba(255,255,255,.4);
+  }
+  .tl-slot .num{
+    width:26px;height:26px;border-radius:50%;background:var(--indigo);color:#fff;
+    display:flex;align-items:center;justify-content:center;font-size:12.5px;font-weight:700;flex-shrink:0;
+  }
+  .tl-slot.filled{ border-style:solid; background:#fff; color:var(--ink); }
+  .tl-slot.correct{ border-color:var(--green); background:#E4F0E9; }
+  .tl-slot.incorrect{ border-color:var(--maroon); background:#F7E6E4; }
+  .tl-slot.dragover{ border-color:var(--gold); background:var(--gold-light); }
+
+  /* ---------- QUIZ ---------- */
+  .quiz-progress{ display:flex; gap:6px; margin-bottom:18px; }
+  .quiz-progress span{ flex:1; height:6px; border-radius:3px; background:var(--line); }
+  .quiz-progress span.done{ background:var(--gold); }
+  .quiz-progress span.current{ background:var(--indigo); }
+  .diff-badge{
+    display:inline-block; font-size:11.5px; font-weight:700; padding:3px 10px; border-radius:999px; margin-bottom:10px;
+  }
+  .diff-easy{ background:#E4F0E9; color:var(--green); }
+  .diff-medium{ background:var(--gold-light); color:#7a5900; }
+  .diff-hard{ background:#F7E6E4; color:var(--maroon); }
+  .q-text{ font-size:16.5px; font-weight:600; color:var(--ink); margin-bottom:16px; line-height:1.6; }
+  .q-options{ display:flex; flex-direction:column; gap:10px; }
+  .q-opt{
+    background:#fff; border:2px solid var(--line); border-radius:10px; padding:13px 16px; font-size:14.5px;
+    cursor:pointer; transition:all .15s ease; display:flex; align-items:center; gap:10px;
+  }
+  .q-opt:hover{ border-color:var(--gold); }
+  .q-opt.selected{ border-color:var(--indigo); background:var(--indigo-light,#DDE3EE); }
+  .q-opt.correct{ border-color:var(--green); background:#E4F0E9; color:var(--green); font-weight:700; }
+  .q-opt.incorrect{ border-color:var(--maroon); background:#F7E6E4; color:var(--maroon); }
+  .q-opt .letter{
+    width:24px;height:24px;border-radius:50%;background:var(--line);color:var(--ink-soft);
+    display:flex;align-items:center;justify-content:center;font-size:12.5px;font-weight:700;flex-shrink:0;
+  }
+  .q-feedback{ margin-top:14px; font-size:13.5px; padding:12px 14px; border-radius:10px; background:var(--gold-light); color:#5c4400; line-height:1.6; display:none; }
+  .q-nav{ display:flex; justify-content:flex-end; margin-top:18px; }
+
+  .result-wrap{ text-align:center; padding:20px 10px; }
+  .result-score{ font-family:'Trirong',serif; font-size:44px; color:var(--indigo); font-weight:700; margin:8px 0; }
+  .result-msg{ font-size:15px; color:var(--ink-soft); margin-bottom:20px; }
+  .result-bar{ height:14px; border-radius:7px; background:var(--line); overflow:hidden; margin:0 auto 20px; max-width:400px; }
+  .result-bar-fill{ height:100%; background:linear-gradient(90deg,var(--gold),var(--green)); border-radius:7px; transition:width .6s ease; }
+
+  footer{ max-width:900px; margin:36px auto 0; padding:0 20px; text-align:center; font-size:12px; color:#9a9276; }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="eyebrow">กิจกรรมโต้ตอบ ประกอบการเรียน</div>
+  <h1>เล่นและเรียนรู้: เหตุการณ์สำคัญ สมัยรัตนโกสินทร์</h1>
+  <p>ฝึกทบทวนความรู้ผ่านเกมจับคู่ เกมเรียงลำดับเวลา และแบบทดสอบท้ายบท 10 ข้อ เหมาะสำหรับนักเรียนชั้นประถมศึกษาปีที่ 6</p>
+  <p style="margin-top:14px;">
+    <a href="สรุปเนื้อหา-สมัยรัตนโกสินทร์.html" style="display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:700;color:var(--indigo);text-decoration:none;border:2px solid var(--line);border-radius:999px;padding:8px 16px;background:var(--parchment-card);">
+      <svg style="width:14px;height:14px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+      กลับไปหน้าสรุปเนื้อหา
+    </a>
+  </p>
+</div>
+
+<div class="tabs">
+  <button class="tab-btn active" data-panel="match">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><path d="M10 6.5h4M6.5 10v4M17.5 14v-4M14 17.5h-4"/></svg>
+    เกมจับคู่
+  </button>
+  <button class="tab-btn" data-panel="timeline">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h10"/><circle cx="20" cy="18" r="1.5"/></svg>
+    เรียงเส้นเวลา
+  </button>
+  <button class="tab-btn" data-panel="quiz">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M9.5 9a2.5 2.5 0 015 .3c0 1.7-2.3 1.8-2.3 3.7M12 17h.01"/></svg>
+    แบบทดสอบ 10 ข้อ
+  </button>
+</div>
+
+<!-- ===================== MATCH GAME ===================== -->
+<div class="panel active" id="panel-match">
+  <div class="card">
+    <h2>จับคู่ "รัชกาล" กับ "เหตุการณ์สำคัญ"</h2>
+    <p class="desc">แตะการ์ด 2 ใบที่เป็นคู่กันให้ถูกต้อง (รัชกาล ↔ เหตุการณ์) การ์ดที่จับคู่ถูกจะเปลี่ยนเป็นสีเขียวและล็อกไว้</p>
+  </div>
+  <div class="status-row">
+    <div class="status-chip" id="match-status">จับคู่แล้ว 0 / 7</div>
+    <button class="btn btn-outline" onclick="initMatchGame()">
+      <svg style="width:13px;height:13px;vertical-align:-2px;margin-right:4px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4v5h5M20 20v-5h-5M4.5 15a8 8 0 0014.5 3.5M19.5 9A8 8 0 005 5.5"/></svg>
+      เริ่มใหม่
+    </button>
+  </div>
+  <div class="match-grid" id="match-grid"></div>
+</div>
+
+<!-- ===================== TIMELINE GAME ===================== -->
+<div class="panel" id="panel-timeline">
+  <div class="card">
+    <h2>เรียงเหตุการณ์ตามเส้นเวลา</h2>
+    <p class="desc">ลากการ์ดเหตุการณ์ทางซ้าย ไปวางในช่องลำดับทางขวาให้ถูกต้อง จากเกิดก่อนไปเกิดหลัง (บนมือถือ: แตะเลือกการ์ด แล้วแตะช่องที่ต้องการวาง)</p>
+  </div>
+  <div class="status-row">
+    <div class="status-chip" id="tl-status">วางแล้ว 0 / 6</div>
+    <div style="display:flex; gap:8px;">
+      <button class="btn btn-gold" id="tl-check" onclick="checkTimeline()">ตรวจคำตอบ</button>
+      <button class="btn btn-outline" onclick="initTimeline()">เริ่มใหม่</button>
+    </div>
+  </div>
+  <div style="display:grid; grid-template-columns:1fr 1fr; gap:24px;" id="tl-layout">
+    <div>
+      <div style="font-weight:700;color:var(--ink-soft);font-size:13px;margin-bottom:8px;">การ์ดเหตุการณ์</div>
+      <div class="timeline-pool" id="tl-pool"></div>
+    </div>
+    <div>
+      <div style="font-weight:700;color:var(--ink-soft);font-size:13px;margin-bottom:8px;">เรียงจากเกิดก่อน → เกิดหลัง</div>
+      <div class="tl-slots" id="tl-slots"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== QUIZ ===================== -->
+<div class="panel" id="panel-quiz">
+  <div class="card" id="quiz-card">
+    <div class="quiz-progress" id="quiz-progress"></div>
+    <div id="quiz-body"></div>
+  </div>
+</div>
+
+<footer>กิจกรรมโต้ตอบประกอบการเรียน หน่วยประวัติศาสตร์ไทย สมัยรัตนโกสินทร์ · ชั้นประถมศึกษาปีที่ 6</footer>
+
+<script>
+/* ============ TAB SWITCH ============ */
+document.querySelectorAll('.tab-btn').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+    document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('panel-'+btn.dataset.panel).classList.add('active');
+  });
+});
+
+/* ============ MATCH GAME ============ */
+const matchPairs = [
+  {id:1, a:"รัชกาลที่ 1", b:"กฎหมายตราสามดวง"},
+  {id:2, a:"รัชกาลที่ 2", b:"อุปถัมภ์สุนทรภู่"},
+  {id:3, a:"รัชกาลที่ 3", b:"จารึกวัดโพธิ์"},
+  {id:4, a:"รัชกาลที่ 4", b:"สนธิสัญญาเบาว์ริง"},
+  {id:5, a:"รัชกาลที่ 5", b:"เลิกทาส เลิกไพร่"},
+  {id:6, a:"รัชกาลที่ 6", b:"ทดลองประชาธิปไตยที่ดุสิตธานี"},
+  {id:7, a:"รัชกาลที่ 7", b:"เปลี่ยนแปลงการปกครอง 2475"},
+];
+let matchState = { selected:null, matchedCount:0 };
+
+function shuffle(arr){
+  const a=[...arr];
+  for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; }
+  return a;
+}
+
+function initMatchGame(){
+  matchState = { selected:null, matchedCount:0 };
+  const cards = [];
+  matchPairs.forEach(p=>{
+    cards.push({pairId:p.id, text:p.a, type:'a'});
+    cards.push({pairId:p.id, text:p.b, type:'b'});
+  });
+  const shuffled = shuffle(cards);
+  const grid = document.getElementById('match-grid');
+  grid.innerHTML='';
+  shuffled.forEach((c,idx)=>{
+    const div=document.createElement('div');
+    div.className='match-card';
+    div.textContent=c.text;
+    div.dataset.pairId=c.pairId;
+    div.dataset.idx=idx;
+    div.addEventListener('click', ()=>onMatchCardClick(div));
+    grid.appendChild(div);
+  });
+  document.getElementById('match-status').textContent = `จับคู่แล้ว 0 / ${matchPairs.length}`;
+}
+
+function onMatchCardClick(div){
+  if(div.classList.contains('correct')) return;
+  if(matchState.selected === div) return;
+  if(!matchState.selected){
+    matchState.selected = div;
+    div.classList.add('selected');
+    return;
+  }
+  const first = matchState.selected;
+  if(first.dataset.pairId === div.dataset.pairId){
+    first.classList.remove('selected');
+    first.classList.add('correct');
+    div.classList.add('correct');
+    matchState.selected = null;
+    matchState.matchedCount++;
+    document.getElementById('match-status').textContent = `จับคู่แล้ว ${matchState.matchedCount} / ${matchPairs.length}`;
+    if(matchState.matchedCount === matchPairs.length){
+      setTimeout(()=>alert('เยี่ยมมาก! จับคู่ครบทุกคู่แล้ว 🎉'), 200);
+    }
+  } else {
+    div.classList.add('wrong');
+    first.classList.add('wrong');
+    setTimeout(()=>{
+      first.classList.remove('selected','wrong');
+      div.classList.remove('wrong');
+      matchState.selected = null;
+    }, 450);
+  }
+}
+
+/* ============ TIMELINE GAME ============ */
+const timelineEvents = [
+  {id:1, text:"กฎหมายตราสามดวง (รัชกาลที่ 1)", order:1},
+  {id:2, text:"อุปถัมภ์สุนทรภู่ (รัชกาลที่ 2)", order:2},
+  {id:3, text:"สนธิสัญญาเบาว์ริง เปิดการค้าเสรี (รัชกาลที่ 4)", order:3},
+  {id:4, text:"เลิกทาส เลิกไพร่ (รัชกาลที่ 5)", order:4},
+  {id:5, text:"ทดลองประชาธิปไตยที่ดุสิตธานี (รัชกาลที่ 6)", order:5},
+  {id:6, text:"เปลี่ยนแปลงการปกครอง พ.ศ. 2475 (รัชกาลที่ 7)", order:6},
+];
+let tlPlaced = {};
+let tlSelectedCard = null;
+
+function initTimeline(){
+  tlPlaced = {};
+  tlSelectedCard = null;
+  const pool = document.getElementById('tl-pool');
+  pool.innerHTML='';
+  shuffle(timelineEvents).forEach(ev=>{
+    const div=document.createElement('div');
+    div.className='tl-item';
+    div.draggable=true;
+    div.dataset.id=ev.id;
+    div.innerHTML = `<span class="handle">⠿</span><span>${ev.text}</span>`;
+    div.addEventListener('dragstart', e=>{ e.dataTransfer.setData('text/plain', ev.id); });
+    div.addEventListener('click', ()=> selectTlCard(div, ev.id));
+    pool.appendChild(div);
+  });
+  const slots = document.getElementById('tl-slots');
+  slots.innerHTML='';
+  timelineEvents.forEach((ev,i)=>{
+    const slot=document.createElement('div');
+    slot.className='tl-slot';
+    slot.dataset.slot=i+1;
+    slot.innerHTML = `<span class="num">${i+1}</span><span class="slot-text">วางเหตุการณ์ที่นี่</span>`;
+    slot.addEventListener('dragover', e=>{ e.preventDefault(); slot.classList.add('dragover'); });
+    slot.addEventListener('dragleave', ()=> slot.classList.remove('dragover'));
+    slot.addEventListener('drop', e=>{
+      e.preventDefault();
+      slot.classList.remove('dragover');
+      const id = e.dataTransfer.getData('text/plain');
+      placeInSlot(id, slot);
+    });
+    slot.addEventListener('click', ()=>{
+      if(tlSelectedCard){
+        placeInSlot(tlSelectedCard, slot);
+      }
+    });
+    slots.appendChild(slot);
+  });
+  document.getElementById('tl-status').textContent = `วางแล้ว 0 / ${timelineEvents.length}`;
+}
+
+function selectTlCard(div, id){
+  if(div.classList.contains('placed')) return;
+  document.querySelectorAll('.tl-item').forEach(d=>d.style.borderColor='');
+  tlSelectedCard = id;
+  div.style.borderColor = 'var(--indigo)';
+}
+
+function placeInSlot(id, slot){
+  if(slot.classList.contains('filled')) return;
+  const card = document.querySelector(`.tl-item[data-id="${id}"]`);
+  if(!card || card.classList.contains('placed')) return;
+  const ev = timelineEvents.find(e=>e.id==id);
+  slot.querySelector('.slot-text').textContent = ev.text;
+  slot.classList.add('filled');
+  slot.dataset.placedId = id;
+  slot.classList.remove('correct','incorrect');
+  card.classList.add('placed');
+  card.draggable = false;
+  tlSelectedCard = null;
+  tlPlaced[slot.dataset.slot] = id;
+  document.getElementById('tl-status').textContent = `วางแล้ว ${Object.keys(tlPlaced).length} / ${timelineEvents.length}`;
+}
+
+function checkTimeline(){
+  let allCorrect = true;
+  document.querySelectorAll('.tl-slot').forEach(slot=>{
+    const placedId = slot.dataset.placedId;
+    slot.classList.remove('correct','incorrect');
+    if(!placedId){ allCorrect=false; return; }
+    const ev = timelineEvents.find(e=>e.id==placedId);
+    if(ev.order == slot.dataset.slot){
+      slot.classList.add('correct');
+    } else {
+      slot.classList.add('incorrect');
+      allCorrect = false;
+    }
+  });
+  if(Object.keys(tlPlaced).length < timelineEvents.length){
+    alert('กรุณาวางเหตุการณ์ให้ครบทุกช่องก่อนตรวจคำตอบ');
+    return;
+  }
+  setTimeout(()=>{
+    alert(allCorrect ? 'ถูกต้องทั้งหมด! เก่งมาก 🎉' : 'ยังมีบางช่องไม่ถูกต้อง ลองตรวจดูช่องสีแดงอีกครั้งนะครับ');
+  }, 100);
+}
+
+/* ============ QUIZ ============ */
+const quizData = [
+  {diff:'easy', q:'กรุงรัตนโกสินทร์สถาปนาขึ้นในปี พ.ศ. ใด?', opts:['พ.ศ. 2310','พ.ศ. 2325','พ.ศ. 2352','พ.ศ. 2475'], correct:1,
+   fb:'กรุงรัตนโกสินทร์สถาปนาโดยรัชกาลที่ 1 เมื่อ พ.ศ. 2325'},
+  {diff:'easy', q:'กวีเอกที่ได้รับการอุปถัมภ์ในรัชกาลที่ 2 คือใคร?', opts:['สุนทรภู่','เจ้าฟ้าธรรมธิเบศร','พระยาตรัง','ศรีปราชญ์'], correct:0,
+   fb:'สุนทรภู่ได้รับการอุปถัมภ์ในรัชกาลที่ 2 มีผลงานเด่นเช่น พระอภัยมณี'},
+  {diff:'easy', q:'"กฎหมายตราสามดวง" เกิดขึ้นในรัชกาลใด?', opts:['รัชกาลที่ 1','รัชกาลที่ 3','รัชกาลที่ 5','รัชกาลที่ 6'], correct:0,
+   fb:'รัชกาลที่ 1 โปรดเกล้าฯ ให้ตรวจชำระกฎหมายและเขียนเป็นฉบับหลวง เรียกว่า กฎหมายตราสามดวง'},
+  {diff:'medium', q:'สนธิสัญญาเบาว์ริงทำขึ้นระหว่างไทยกับประเทศใด?', opts:['ฝรั่งเศส','สหรัฐอเมริกา','อังกฤษ','โปรตุเกส'], correct:2,
+   fb:'สนธิสัญญาเบาว์ริงทำกับอังกฤษใน พ.ศ. 2398 สมัยรัชกาลที่ 4 เปลี่ยนระบบการค้าเป็นการค้าเสรี'},
+  {diff:'medium', q:'มหาวิทยาลัยแห่งแรกของไทยคือแห่งใด และตั้งขึ้นในรัชกาลใด?', opts:['ธรรมศาสตร์ / รัชกาลที่ 7','จุฬาลงกรณ์มหาวิทยาลัย / รัชกาลที่ 6','มหิดล / รัชกาลที่ 5','เกษตรศาสตร์ / รัชกาลที่ 8'], correct:1,
+   fb:'จุฬาลงกรณ์มหาวิทยาลัย พัฒนามาจากโรงเรียนข้าราชการพลเรือน ยกฐานะขึ้นในรัชกาลที่ 6'},
+  {diff:'medium', q:'การเลิกทาสและเลิกระบบไพร่เกิดขึ้นอย่างสมบูรณ์ในรัชกาลใด?', opts:['รัชกาลที่ 3','รัชกาลที่ 4','รัชกาลที่ 5','รัชกาลที่ 6'], correct:2,
+   fb:'รัชกาลที่ 5 ทรงดำเนินการเลิกทาสและเลิกไพร่อย่างเป็นขั้นตอน จนสมบูรณ์ด้วย พ.ร.บ. ทาส ร.ศ. 124 (พ.ศ. 2448)'},
+  {diff:'medium', q:'เมืองจำลอง "ดุสิตธานี" สร้างขึ้นเพื่อจุดประสงค์ใด?', opts:['เป็นสวนพักผ่อน','ทดลองการปกครองระบอบประชาธิปไตย','เป็นที่ประทับฤดูร้อน','จัดงานวัด'], correct:1,
+   fb:'รัชกาลที่ 6 โปรดเกล้าฯ ให้สร้างดุสิตธานีเพื่อทดลองรูปแบบการปกครองตามระบอบประชาธิปไตย'},
+  {diff:'hard', q:'เพราะเหตุใดรัชกาลที่ 4 และรัชกาลที่ 5 จึงทรงต้องปรับปรุงประเทศให้ทันสมัยแบบตะวันตกอย่างเร่งด่วน?', 
+   opts:['เพื่อให้ทันสมัยตามความนิยม','เพื่อป้องกันการเป็นอาณานิคมของชาติตะวันตก','เพราะต้องการค้าขายกับต่างชาติมากขึ้นเพียงอย่างเดียว','เพราะกฎหมายเดิมใช้งานไม่ได้'], correct:1,
+   fb:'ไทยเผชิญแรงกดดันจากลัทธิจักรวรรดินิยมตะวันตกที่แผ่ขยายอิทธิพลในเอเชีย การปรับปรุงประเทศให้ทันสมัยจึงเป็นกลยุทธ์สำคัญที่ช่วยให้ไทยรักษาเอกราชไว้ได้'},
+  {diff:'hard', q:'เหตุการณ์ในข้อใดเรียงลำดับเวลาได้ถูกต้อง (จากเกิดก่อนไปเกิดหลัง)?',
+   opts:['เลิกทาส → สนธิสัญญาเบาว์ริง → ดุสิตธานี → เปลี่ยนแปลงการปกครอง',
+         'สนธิสัญญาเบาว์ริง → เลิกทาส → ดุสิตธานี → เปลี่ยนแปลงการปกครอง',
+         'ดุสิตธานี → เลิกทาส → สนธิสัญญาเบาว์ริง → เปลี่ยนแปลงการปกครอง',
+         'เปลี่ยนแปลงการปกครอง → ดุสิตธานี → เลิกทาส → สนธิสัญญาเบาว์ริง'], correct:1,
+   fb:'ลำดับที่ถูกต้อง: สนธิสัญญาเบาว์ริง (ร.4, 2398) → เลิกทาส (ร.5, 2448) → ดุสิตธานี (ร.6, 2461) → เปลี่ยนแปลงการปกครอง (ร.7, 2475)'},
+  {diff:'hard', q:'ภาวะเศรษฐกิจตกต่ำทั่วโลกหลังสงครามโลกครั้งที่ 1 ในรัชกาลที่ 7 ส่งผลต่อการเมืองไทยอย่างไร?',
+   opts:['ทำให้เศรษฐกิจไทยดีขึ้นทันที','ไม่มีผลกระทบใด ๆ ต่อการเมือง','เป็นสาเหตุหนึ่งที่นำไปสู่การเปลี่ยนแปลงการปกครอง พ.ศ. 2475','ทำให้ไทยเป็นเอกราชทางเศรษฐกิจ'], correct:2,
+   fb:'การปลดข้าราชการและตัดงบประมาณเพื่อแก้เศรษฐกิจตกต่ำ สร้างความไม่พอใจในหมู่ข้าราชการ ซึ่งเป็นสาเหตุหนึ่งที่นำไปสู่การเปลี่ยนแปลงการปกครองโดยคณะราษฎรใน พ.ศ. 2475'},
+];
+
+let quizIdx = 0;
+let quizScore = 0;
+let quizAnswered = [];
+
+function renderQuizProgress(){
+  const wrap = document.getElementById('quiz-progress');
+  wrap.innerHTML='';
+  quizData.forEach((q,i)=>{
+    const span=document.createElement('span');
+    if(i < quizIdx) span.classList.add('done');
+    else if(i === quizIdx) span.classList.add('current');
+    wrap.appendChild(span);
+  });
+}
+
+function renderQuizQuestion(){
+  renderQuizProgress();
+  const q = quizData[quizIdx];
+  const diffLabel = {easy:'ง่าย', medium:'ปานกลาง', hard:'ยาก'}[q.diff];
+  const body = document.getElementById('quiz-body');
+  body.innerHTML = `
+    <div class="diff-badge diff-${q.diff}">ระดับ${diffLabel} · ข้อ ${quizIdx+1}/${quizData.length}</div>
+    <div class="q-text">${q.q}</div>
+    <div class="q-options" id="q-options"></div>
+    <div class="q-feedback" id="q-feedback"></div>
+    <div class="q-nav"><button class="btn btn-gold" id="q-next" style="display:none" onclick="nextQuestion()">ข้อถัดไป →</button></div>
+  `;
+  const optsWrap = document.getElementById('q-options');
+  const letters = ['ก','ข','ค','ง'];
+  q.opts.forEach((opt,i)=>{
+    const div=document.createElement('div');
+    div.className='q-opt';
+    div.innerHTML = `<span class="letter">${letters[i]}</span><span>${opt}</span>`;
+    div.addEventListener('click', ()=> answerQuestion(i, div));
+    optsWrap.appendChild(div);
+  });
+}
+
+function answerQuestion(i, div){
+  if(quizAnswered[quizIdx] !== undefined) return;
+  const q = quizData[quizIdx];
+  quizAnswered[quizIdx] = i;
+  const opts = document.querySelectorAll('.q-opt');
+  opts.forEach((o,idx)=>{
+    o.style.cursor='default';
+    if(idx === q.correct) o.classList.add('correct');
+    if(idx === i && i !== q.correct) o.classList.add('incorrect');
+  });
+  if(i === q.correct) quizScore++;
+  const fb = document.getElementById('q-feedback');
+  fb.style.display='block';
+  fb.textContent = q.fb;
+  document.getElementById('q-next').style.display='inline-block';
+  if(quizIdx === quizData.length-1){
+    document.getElementById('q-next').textContent = 'ดูผลคะแนน →';
+  }
+}
+
+function nextQuestion(){
+  if(quizIdx < quizData.length-1){
+    quizIdx++;
+    renderQuizQuestion();
+  } else {
+    showQuizResult();
+  }
+}
+
+function showQuizResult(){
+  const pct = Math.round((quizScore/quizData.length)*100);
+  let msg = '';
+  if(pct === 100) msg = 'ยอดเยี่ยมมาก! เข้าใจเนื้อหาครบถ้วนสมบูรณ์แบบ 🏆';
+  else if(pct >= 80) msg = 'เก่งมาก! เกือบครบทุกข้อแล้ว 🎉';
+  else if(pct >= 60) msg = 'ทำได้ดี ลองทบทวนเนื้อหาอีกเล็กน้อยนะครับ 👍';
+  else msg = 'ลองกลับไปทบทวนเนื้อหาสรุปอีกครั้ง แล้วมาทำใหม่ได้เลย 💪';
+  const body = document.getElementById('quiz-body');
+  document.getElementById('quiz-progress').innerHTML='';
+  body.innerHTML = `
+    <div class="result-wrap">
+      <div style="font-size:14px;color:var(--ink-soft)">คะแนนของคุณ</div>
+      <div class="result-score">${quizScore} / ${quizData.length}</div>
+      <div class="result-bar"><div class="result-bar-fill" style="width:${pct}%"></div></div>
+      <div class="result-msg">${msg}</div>
+      <button class="btn btn-indigo" onclick="restartQuiz()">ทำแบบทดสอบอีกครั้ง</button>
+    </div>
+  `;
+}
+
+function restartQuiz(){
+  quizIdx = 0; quizScore = 0; quizAnswered = [];
+  renderQuizQuestion();
+}
+
+/* ============ INIT ============ */
+initMatchGame();
+initTimeline();
+renderQuizQuestion();
+</script>
+
+</body>
+</html>
