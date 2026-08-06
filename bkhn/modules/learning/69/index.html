@@ -17,16 +17,14 @@
     --sun-gold-dark:#DC8A0E;
     --sky:#F3FAF6;
     --sky-deep:#E4F3EC;
-    --clay:#9C5A32;
     --clay-dark:#7A4425;
     --ink:#1C3226;
     --ink-soft:#4B5F55;
     --paper:#FFFFFF;
-    --radius-lg:28px;
-    --radius-md:18px;
-    --radius-sm:12px;
-    --shadow-soft:0 12px 30px -14px rgba(28,50,38,0.25);
-    --shadow-card:0 8px 20px -10px rgba(28,50,38,0.22);
+    --radius-lg:24px;
+    --radius-md:16px;
+    --radius-sm:10px;
+    --shadow-card:0 8px 20px -10px rgba(28,50,38,0.2);
   }
   *{box-sizing:border-box;}
   html{scroll-behavior:smooth;}
@@ -35,246 +33,129 @@
     background:var(--sky);
     color:var(--ink);
     font-family:'Sarabun',sans-serif;
-    font-weight:400;
-    -webkit-font-smoothing:antialiased;
   }
-  h1,h2,h3,.display{
-    font-family:'Mitr',sans-serif;
-    margin:0;
-    color:var(--ink);
-  }
-  .eyebrow{
-    font-family:'Kanit',sans-serif;
-    letter-spacing:.06em;
-    font-size:.78rem;
-    font-weight:500;
-    color:var(--rice-green-dark);
-    text-transform:none;
-  }
-  a{color:inherit;text-decoration:none;}
-  button{font-family:inherit;cursor:pointer;}
-  img,svg{display:block;max-width:100%;}
+  h1,h2,h3{font-family:'Mitr',sans-serif; margin:0; color:var(--ink);}
+  a{color:inherit; text-decoration:none;}
+  img,svg{display:block; max-width:100%;}
 
   /* ---------- NAV ---------- */
   .nav{
     position:sticky; top:0; z-index:50;
     display:flex; align-items:center; justify-content:space-between;
     padding:14px 6vw;
-    background:rgba(243,250,246,0.9);
+    background:rgba(243,250,246,0.92);
     backdrop-filter:blur(8px);
     border-bottom:1px solid rgba(47,125,79,0.12);
   }
   .nav-brand{display:flex; align-items:center; gap:12px;}
-  .nav-brand .logo{width:42px; height:42px; flex-shrink:0;}
+  .nav-brand .logo{width:40px; height:40px; flex-shrink:0;}
   .nav-brand .school-name{font-family:'Mitr'; font-size:1rem; font-weight:600; line-height:1.25;}
   .nav-brand .school-sub{font-size:.72rem; color:var(--ink-soft); font-family:'Kanit';}
-  .nav-links{display:flex; gap:26px; font-family:'Kanit'; font-size:.92rem;}
-  .nav-links a{padding:6px 2px; border-bottom:2px solid transparent; transition:border-color .2s;}
-  .nav-links a:hover{border-color:var(--sun-gold);}
-  .nav-toggle{display:none;}
-  @media(max-width:760px){
-    .nav-links{display:none;}
-  }
 
   /* ---------- HERO ---------- */
   .hero{
-    position:relative;
-    padding:64px 6vw 0;
-    overflow:hidden;
+    position:relative; padding:56px 6vw 0; overflow:hidden;
     background:linear-gradient(180deg,var(--sky) 0%, var(--sky-deep) 100%);
   }
-  .hero-inner{
-    position:relative; z-index:3;
-    max-width:640px;
-    padding-bottom:60px;
-  }
-  .hero .eyebrow{
+  .hero-inner{position:relative; z-index:3; max-width:620px; padding-bottom:56px;}
+  .eyebrow{
     display:inline-flex; align-items:center; gap:8px;
     background:var(--sprout); color:var(--rice-green-dark);
-    padding:6px 14px; border-radius:100px; margin-bottom:18px;
+    padding:6px 14px; border-radius:100px; margin-bottom:16px;
+    font-family:'Kanit'; font-size:.78rem; font-weight:500;
   }
-  .hero h1{
-    font-size:clamp(2.1rem, 5vw, 3.2rem);
-    font-weight:700; line-height:1.2; color:var(--rice-green-dark);
-  }
+  .hero h1{font-size:clamp(1.9rem, 4.5vw, 2.9rem); font-weight:700; line-height:1.25; color:var(--rice-green-dark);}
   .hero h1 span{color:var(--sun-gold-dark);}
-  .hero p{
-    margin-top:16px; font-size:1.05rem; line-height:1.75; color:var(--ink-soft); max-width:520px;
-  }
-  .hero-actions{display:flex; gap:14px; margin-top:30px; flex-wrap:wrap;}
-  .btn{
-    font-family:'Kanit'; font-size:.95rem; font-weight:500;
-    padding:13px 26px; border-radius:100px; border:none;
-    display:inline-flex; align-items:center; gap:8px;
-    transition:transform .15s ease, box-shadow .15s ease;
-  }
-  .btn:hover{transform:translateY(-2px);}
-  .btn-primary{background:var(--sun-gold); color:#3A2400; box-shadow:0 10px 24px -8px rgba(245,166,35,.6);}
-  .btn-ghost{background:var(--paper); color:var(--rice-green-dark); border:1.5px solid rgba(47,125,79,.25);}
+  .hero p{margin-top:14px; font-size:1rem; line-height:1.75; color:var(--ink-soft); max-width:520px;}
   .hero-tag{
-    margin-top:34px; display:flex; gap:10px; align-items:flex-start;
-    font-family:'Sarabun'; font-size:.85rem; color:var(--ink-soft);
-    background:rgba(255,255,255,.6); border-radius:var(--radius-sm); padding:12px 16px; max-width:480px;
+    margin-top:24px; display:flex; gap:10px; align-items:flex-start;
+    font-size:.85rem; color:var(--ink-soft);
+    background:rgba(255,255,255,.65); border-radius:var(--radius-sm); padding:12px 16px; max-width:480px;
   }
-  .landscape{
-    position:absolute; left:0; right:0; bottom:0; width:100%; z-index:1; line-height:0;
-  }
+  .landscape{position:absolute; left:0; right:0; bottom:0; width:100%; z-index:1; line-height:0;}
 
-  /* ---------- TERM SWITCH ---------- */
-  .term-bar{
+  /* ---------- QUICK JUMP MENU (1-click access from homepage) ---------- */
+  .jumpmenu{
     position:relative; z-index:3;
-    display:flex; align-items:center; gap:14px; flex-wrap:wrap;
-    margin:0 6vw; padding:16px 20px;
-    background:var(--paper); border-radius:var(--radius-md);
-    box-shadow:var(--shadow-card);
-    transform:translateY(40%);
+    margin:0 6vw; padding:22px; background:var(--paper); border-radius:var(--radius-md);
+    box-shadow:var(--shadow-card); transform:translateY(40%);
   }
-  .term-bar .label{font-family:'Kanit'; font-size:.88rem; color:var(--ink-soft);}
-  .term-pills{display:flex; gap:8px; background:var(--sky-deep); padding:5px; border-radius:100px;}
-  .term-pill{
-    border:none; background:transparent; padding:8px 18px; border-radius:100px;
-    font-family:'Kanit'; font-size:.86rem; color:var(--ink-soft);
-    transition:all .18s;
-  }
-  .term-pill.active{background:var(--rice-green); color:#fff; box-shadow:0 6px 14px -6px rgba(47,125,79,.7);}
-
-  /* ---------- GROUPS SECTION ---------- */
-  .section{padding:110px 6vw 20px;}
-  .section-head{max-width:640px; margin-bottom:40px;}
-  .section-head h2{font-size:clamp(1.5rem,3vw,2.1rem); margin-top:8px;}
-  .section-head p{color:var(--ink-soft); margin-top:10px; line-height:1.7;}
-
-  .groups-grid{
-    display:grid; grid-template-columns:repeat(auto-fill,minmax(250px,1fr)); gap:20px;
-  }
-  .group-card{
-    background:var(--paper); border-radius:var(--radius-md); padding:26px 22px;
-    box-shadow:var(--shadow-card); border:1px solid rgba(47,125,79,.08);
-    display:flex; flex-direction:column; gap:14px; text-align:left;
-    transition:transform .2s ease, box-shadow .2s ease;
-    position:relative; overflow:hidden;
-  }
-  .group-card:hover{transform:translateY(-5px); box-shadow:var(--shadow-soft);}
-  .group-card .icon-badge{
-    width:52px; height:52px; border-radius:16px; display:flex; align-items:center; justify-content:center;
-    font-size:1.6rem; background:var(--sprout);
-  }
-  .group-card h3{font-size:1.08rem; font-weight:600; line-height:1.4;}
-  .group-card .count{
-    font-family:'Kanit'; font-size:.78rem; color:var(--rice-green-dark);
-    background:var(--sky-deep); display:inline-flex; padding:4px 12px; border-radius:100px; width:fit-content;
-  }
-  .group-card .count.empty{color:var(--clay-dark); background:#F6EBE2;}
-  .group-card .arrow{
-    margin-top:auto; font-family:'Kanit'; font-size:.85rem; color:var(--rice-green-dark);
-    display:flex; align-items:center; gap:6px;
-  }
-
-  /* ---------- VIEW SWITCHING ---------- */
-  .view{display:none;}
-  .view.active{display:block;}
-  #home-view.active{display:block;}
-
-  .subpage-hero{
-    padding:40px 6vw 30px; background:var(--sky-deep);
-    display:flex; align-items:center; gap:18px; flex-wrap:wrap;
-  }
-  .back-link{
+  .jumpmenu .label{font-family:'Kanit'; font-size:.85rem; color:var(--ink-soft); margin-bottom:12px; display:block;}
+  .jumpmenu .chips{display:flex; flex-wrap:wrap; gap:8px;}
+  .jumpmenu .chips a{
     font-family:'Kanit'; font-size:.85rem; color:var(--rice-green-dark);
-    display:inline-flex; align-items:center; gap:6px; padding:8px 4px;
+    background:var(--sky-deep); padding:8px 16px; border-radius:100px;
+    border:1px solid transparent;
   }
-  .subpage-hero .icon-badge-lg{
-    width:64px; height:64px; border-radius:18px; background:#fff; box-shadow:var(--shadow-card);
-    display:flex; align-items:center; justify-content:center; font-size:2rem;
-  }
-  .subpage-hero h1{font-size:clamp(1.5rem,3vw,2.2rem);}
-  .subpage-hero .crumb{font-family:'Kanit'; font-size:.8rem; color:var(--ink-soft);}
+  .jumpmenu .chips a:hover{border-color:var(--rice-green); background:#fff;}
 
-  .empty-state{
-    margin:30px 6vw 80px; padding:44px 30px; background:var(--paper); border-radius:var(--radius-md);
-    text-align:center; box-shadow:var(--shadow-card); border:1px dashed rgba(156,90,50,.35);
-  }
-  .empty-state .emoji{font-size:2.4rem; margin-bottom:12px;}
-  .empty-state h3{font-size:1.1rem; margin-bottom:8px;}
-  .empty-state p{color:var(--ink-soft); font-size:.92rem; max-width:420px; margin:0 auto; line-height:1.7;}
+  /* ---------- MAIN MENU SECTIONS ---------- */
+  main{padding:100px 6vw 40px;}
+  .intro{max-width:640px; margin-bottom:36px;}
+  .intro p{color:var(--ink-soft); line-height:1.7; margin-top:8px; font-size:.95rem;}
 
-  .subjects-wrap{padding:20px 6vw 90px; display:flex; flex-direction:column; gap:46px;}
-  .subject-block h3.subject-title{
-    font-family:'Mitr'; font-size:1.2rem; font-weight:600; margin-bottom:4px;
+  .group{
+    background:var(--paper); border-radius:var(--radius-md); box-shadow:var(--shadow-card);
+    padding:28px 26px; margin-bottom:22px; scroll-margin-top:90px;
   }
-  .subject-block .subject-eyebrow{font-family:'Kanit'; font-size:.78rem; color:var(--ink-soft); margin-bottom:16px; display:block;}
+  .group-head{display:flex; align-items:center; gap:14px; margin-bottom:6px;}
+  .group-head .icon{
+    width:44px; height:44px; border-radius:14px; background:var(--sprout);
+    display:flex; align-items:center; justify-content:center; font-size:1.4rem; flex-shrink:0;
+  }
+  .group-head h2{font-size:1.1rem; font-weight:600;}
 
-  .terrace{
-    display:flex; flex-wrap:wrap; gap:16px; align-items:flex-end;
+  .term-label{
+    font-family:'Kanit'; font-size:.78rem; color:var(--ink-soft);
+    margin:18px 0 8px 60px; display:block;
   }
-  .terrace-card{
-    background:var(--paper); border-radius:var(--radius-sm); padding:20px 20px 22px;
-    width:200px; box-shadow:var(--shadow-card); border-bottom:6px solid var(--leaf-green);
-    display:flex; flex-direction:column; gap:8px;
-    transition:transform .2s;
-  }
-  .terrace-card:hover{transform:translateY(-6px);}
-  .terrace-card .grade{font-family:'Mitr'; font-size:1.3rem; font-weight:600; color:var(--rice-green-dark);}
-  .terrace-card .term-tag{
-    font-family:'Kanit'; font-size:.74rem; color:var(--sun-gold-dark);
-    background:#FFF3DF; padding:3px 10px; border-radius:100px; width:fit-content;
-  }
-  .terrace-card .go{
-    margin-top:6px; font-family:'Kanit'; font-size:.82rem; color:var(--rice-green-dark);
-    display:flex; align-items:center; gap:5px;
-  }
-  /* stagger like rice terraces */
-  .terrace-card:nth-child(2){margin-bottom:16px;}
-  .terrace-card:nth-child(3){margin-bottom:32px;}
 
-  .course-detail{padding:50px 6vw 100px;}
-  .course-card-lg{
-    background:var(--paper); border-radius:var(--radius-lg); padding:44px 36px;
-    box-shadow:var(--shadow-soft); max-width:760px; margin:0 auto; text-align:center;
+  /* the actual, easily-editable menu list */
+  .menu-list{
+    list-style:none; margin:0 0 0 60px; padding:0;
+    display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); gap:8px;
   }
-  .course-card-lg .badge-grade{
-    display:inline-flex; gap:10px; font-family:'Kanit'; font-size:.85rem; color:var(--rice-green-dark);
-    background:var(--sprout); padding:8px 18px; border-radius:100px; margin-bottom:18px;
+  .menu-list li{margin:0;}
+  .menu-link{
+    display:flex; align-items:center; gap:8px;
+    padding:12px 16px; border-radius:var(--radius-sm);
+    background:var(--sky-deep); font-size:.92rem; font-weight:500;
+    border:1px solid transparent;
+    transition:background .15s, border-color .15s, transform .15s;
   }
-  .course-card-lg h1{font-size:clamp(1.5rem,3vw,2rem); margin-bottom:10px;}
-  .course-card-lg .path{color:var(--ink-soft); font-size:.88rem; margin-bottom:30px; font-family:'Kanit';}
-  .prep-box{
-    background:var(--sky-deep); border-radius:var(--radius-md); padding:30px 24px;
-    display:flex; flex-direction:column; align-items:center; gap:10px;
+  .menu-link:hover{background:#fff; border-color:var(--rice-green); transform:translateX(3px);}
+  .menu-link .dot{color:var(--sun-gold-dark); font-size:.7rem;}
+
+  .empty-note{
+    margin:14px 0 4px 60px; font-size:.88rem; color:var(--clay-dark);
+    background:#F6EBE2; display:inline-flex; padding:8px 14px; border-radius:100px; font-family:'Kanit';
   }
-  .prep-box .emoji{font-size:2.2rem;}
-  .prep-box h3{font-size:1.05rem;}
-  .prep-box p{color:var(--ink-soft); font-size:.9rem; max-width:400px; line-height:1.7;}
 
   /* ---------- ABOUT ---------- */
   .about{
-    padding:100px 6vw; background:var(--rice-green-dark); color:#fff;
-    display:grid; grid-template-columns:1fr 1fr; gap:50px;
+    padding:80px 6vw; background:var(--rice-green-dark); color:#fff;
+    display:grid; grid-template-columns:1fr 1fr; gap:44px; margin-top:20px;
   }
   .about .eyebrow{background:rgba(255,255,255,.12); color:#DCF2D4;}
-  .about h2{color:#fff; font-size:clamp(1.5rem,3vw,2.1rem); margin-top:10px;}
-  .about p{color:#CFE6D9; line-height:1.8; margin-top:16px; font-size:.98rem;}
-  .about-card{
-    background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.14);
-    border-radius:var(--radius-md); padding:28px;
-  }
-  .about-card .row{display:flex; gap:14px; padding:14px 0; border-bottom:1px solid rgba(255,255,255,.1);}
+  .about h2{color:#fff; font-size:clamp(1.4rem,3vw,1.9rem); margin-top:8px;}
+  .about p{color:#CFE6D9; line-height:1.8; margin-top:14px; font-size:.95rem;}
+  .about-card{background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.14); border-radius:var(--radius-md); padding:26px;}
+  .about-card .row{display:flex; gap:12px; padding:12px 0; border-bottom:1px solid rgba(255,255,255,.1);}
   .about-card .row:last-child{border-bottom:none;}
-  .about-card .row .ic{font-size:1.3rem;}
-  .about-card .row .txt b{display:block; font-family:'Kanit'; font-size:.8rem; color:#B9E6A6; margin-bottom:3px; font-weight:400;}
+  .about-card .row .txt b{display:block; font-family:'Kanit'; font-size:.78rem; color:#B9E6A6; margin-bottom:3px; font-weight:400;}
   @media(max-width:800px){.about{grid-template-columns:1fr;}}
+  @media(max-width:600px){
+    .menu-list, .term-label, .empty-note{margin-left:0;}
+  }
 
   /* ---------- FOOTER ---------- */
-  footer{
-    background:var(--ink); color:#CFE6D9; padding:50px 6vw 30px;
-    font-family:'Sarabun';
-  }
-  footer .foot-top{display:flex; justify-content:space-between; gap:30px; flex-wrap:wrap; padding-bottom:26px; border-bottom:1px solid rgba(255,255,255,.1);}
+  footer{background:var(--ink); color:#CFE6D9; padding:44px 6vw 26px;}
+  footer .foot-top{display:flex; justify-content:space-between; gap:26px; flex-wrap:wrap; padding-bottom:22px; border-bottom:1px solid rgba(255,255,255,.1);}
   footer .foot-brand{display:flex; gap:12px; align-items:center;}
-  footer .foot-brand .school-name{font-family:'Mitr'; color:#fff; font-size:1.05rem; font-weight:600;}
-  footer .foot-brand .school-sub{font-family:'Kanit'; font-size:.75rem; color:#8FB3A0;}
-  footer .foot-addr{font-size:.88rem; line-height:1.8; max-width:360px; color:#A9C7B7;}
-  footer .foot-bottom{padding-top:20px; font-size:.78rem; color:#6E8C7B; font-family:'Kanit'; display:flex; justify-content:space-between; flex-wrap:wrap; gap:8px;}
+  footer .foot-brand .school-name{font-family:'Mitr'; color:#fff; font-size:1rem; font-weight:600;}
+  footer .foot-brand .school-sub{font-family:'Kanit'; font-size:.72rem; color:#8FB3A0;}
+  footer .foot-addr{font-size:.85rem; line-height:1.8; max-width:340px; color:#A9C7B7;}
+  footer .foot-bottom{padding-top:18px; font-size:.76rem; color:#6E8C7B; font-family:'Kanit'; display:flex; justify-content:space-between; flex-wrap:wrap; gap:8px;}
 
   ::selection{background:var(--sun-gold); color:#3A2400;}
 </style>
@@ -294,112 +175,166 @@
       <div class="school-sub">e-Learning · สพป.นครนายก</div>
     </div>
   </div>
-  <nav class="nav-links">
-    <a href="#" onclick="showHome();return false;">หน้าหลัก</a>
-    <a href="#groups" onclick="showHome();return false;">กลุ่มสาระการเรียนรู้</a>
-    <a href="#about">เกี่ยวกับโรงเรียน</a>
-  </nav>
 </header>
 
-<!-- ================= HOME VIEW ================= -->
-<div id="home-view" class="view active">
+<!-- ================= HERO ================= -->
+<section class="hero">
+  <div class="hero-inner">
+    <span class="eyebrow">🌾 ห้องเรียนออนไลน์สำหรับนักเรียนและผู้ปกครอง</span>
+    <h1>เรียนรู้ได้ทุกที่<br>เหมือนนั่งอยู่ <span>บนดอยเขาหัวนา</span></h1>
+    <p>เว็บไซต์ e-Learning ของโรงเรียนบ้านเขาหัวนา รวมรายวิชาทุกกลุ่มสาระการเรียนรู้ไว้ในหน้าเดียว คลิกที่ชื่อรายวิชาด้านล่างเพื่อเข้าเรียนได้ทันที</p>
+    <div class="hero-tag">📍 <span>ตำบลเขาเพิ่ม อำเภอบ้านนา จังหวัดนครนายก 26110 · สังกัดสำนักงานเขตพื้นที่การศึกษาประถมศึกษานครนายก</span></div>
+  </div>
 
-  <section class="hero">
-    <div class="hero-inner">
-      <span class="eyebrow">🌾 ห้องเรียนออนไลน์สำหรับนักเรียนและผู้ปกครอง</span>
-      <h1>เรียนรู้ได้ทุกที่<br>เหมือนนั่งอยู่ <span>บนดอยเขาหัวนา</span></h1>
-      <p>เว็บไซต์ e-Learning ของโรงเรียนบ้านเขาหัวนา รวมบทเรียนทุกกลุ่มสาระการเรียนรู้ไว้ในที่เดียว ให้นักเรียนทบทวนบทเรียนได้ทุกที่ และผู้ปกครองติดตามการเรียนของบุตรหลานได้ง่าย ๆ</p>
-      <div class="hero-actions">
-        <button class="btn btn-primary" onclick="document.getElementById('groups').scrollIntoView({behavior:'smooth'})">เริ่มดูรายวิชา ↓</button>
-        <a class="btn btn-ghost" href="#about">เกี่ยวกับโรงเรียน</a>
-      </div>
-      <div class="hero-tag">📍 <span>ตำบลเขาเพิ่ม อำเภอบ้านนา จังหวัดนครนายก 26110 · สังกัดสำนักงานเขตพื้นที่การศึกษาประถมศึกษานครนายก</span></div>
-    </div>
+  <div class="landscape">
+    <svg viewBox="0 0 1440 220" preserveAspectRatio="none" style="width:100%; height:auto;">
+      <path d="M0,150 C 200,115 350,170 520,135 C 700,100 850,160 1020,125 C 1200,90 1320,135 1440,110 L1440,220 L0,220 Z" fill="#CDE9D2"/>
+      <path d="M0,175 C 220,140 380,190 560,160 C 760,125 900,182 1100,150 C 1260,125 1360,160 1440,140 L1440,220 L0,220 Z" fill="#9FD5A6"/>
+      <path d="M0,198 C 260,172 420,205 640,185 C 860,165 1000,202 1200,182 C 1320,170 1400,190 1440,178 L1440,220 L0,220 Z" fill="#6FBF73"/>
+      <path d="M0,215 L1440,215 L1440,220 L0,220 Z" fill="#2F7D4F"/>
+      <circle cx="1180" cy="55" r="36" fill="#F5A623" opacity="0.9"/>
+      <circle cx="1180" cy="55" r="54" fill="#F5A623" opacity="0.15"/>
+    </svg>
+  </div>
+</section>
 
-    <!-- terraced hill landscape signature illustration -->
-    <div class="landscape">
-      <svg viewBox="0 0 1440 260" preserveAspectRatio="none" style="width:100%; height:auto;">
-        <path d="M0,180 C 200,140 350,200 520,160 C 700,120 850,190 1020,150 C 1200,105 1320,160 1440,130 L1440,260 L0,260 Z" fill="#CDE9D2"/>
-        <path d="M0,210 C 220,170 380,225 560,190 C 760,150 900,215 1100,180 C 1260,150 1360,190 1440,165 L1440,260 L0,260 Z" fill="#9FD5A6"/>
-        <path d="M0,235 C 260,205 420,245 640,220 C 860,195 1000,240 1200,215 C 1320,200 1400,225 1440,210 L1440,260 L0,260 Z" fill="#6FBF73"/>
-        <path d="M0,255 L1440,255 L1440,260 L0,260 Z" fill="#2F7D4F"/>
-        <circle cx="1180" cy="70" r="42" fill="#F5A623" opacity="0.9"/>
-        <circle cx="1180" cy="70" r="62" fill="#F5A623" opacity="0.15"/>
-      </svg>
-    </div>
+<!-- =============================================================
+     เมนูลัด (สารบัญ) — ลิงก์เหล่านี้พาไปยังกลุ่มสาระในหน้าเดียวกัน
+     ไม่ต้องแก้ไขส่วนนี้ ยกเว้นต้องการเพิ่ม/ลดกลุ่มสาระ
+     ============================================================= -->
+<nav class="jumpmenu">
+  <span class="label">🔎 ไปยังกลุ่มสาระ:</span>
+  <div class="chips">
+    <a href="#group-thai">ภาษาไทย</a>
+    <a href="#group-math">คณิตศาสตร์</a>
+    <a href="#group-sci">วิทยาศาสตร์และเทคโนโลยี</a>
+    <a href="#group-social">สังคมศึกษาฯ</a>
+    <a href="#group-health">สุขศึกษาฯ</a>
+    <a href="#group-art">ศิลปะ</a>
+    <a href="#group-career">การงานอาชีพ</a>
+    <a href="#group-foreign">ภาษาต่างประเทศ</a>
+    <a href="#group-extra">รายวิชาเพิ่มเติม</a>
+  </div>
+</nav>
+
+<!-- =============================================================
+     เมนูรายวิชาหลัก
+     วิธีแก้ลิงก์: หาชื่อรายวิชาด้านล่าง แล้วแก้ค่า href="#" เป็นลิงก์จริง
+     เช่น href="#"  ->  href="https://classroom.google.com/xxxxx"
+     วิธีเพิ่มรายวิชาใหม่: คัดลอกทั้งบรรทัด <li>...</li> แล้ววางเพิ่มในกลุ่มที่ต้องการ
+     ============================================================= -->
+<main>
+  <div class="intro">
+    <span class="eyebrow">📚 เมนูรายวิชาทั้งหมด</span>
+    <h2>เลือกรายวิชาที่ต้องการเรียน</h2>
+    <p>คลิกที่ชื่อรายวิชาเพื่อเข้าห้องเรียนได้ทันที 1 คลิกจากหน้านี้</p>
+  </div>
+
+  <!-- ===== ภาษาไทย ===== -->
+  <section class="group" id="group-thai">
+    <div class="group-head"><div class="icon">📖</div><h2>ภาษาไทย</h2></div>
+    <span class="empty-note">ยังไม่เปิดรายวิชา — เพิ่มลิงก์ได้ที่นี่เมื่อพร้อม</span>
+    <!--
+    ตัวอย่างการเพิ่มรายวิชา (คัดลอกไปแก้ แล้ววางแทนบรรทัด empty-note ด้านบน):
+
+    <span class="term-label">ภาคเรียนที่ 1</span>
+    <ul class="menu-list">
+      <li><a class="menu-link" href="#"><span class="dot">●</span>ภาษาไทย ป.4</a></li>
+    </ul>
+    -->
   </section>
 
-  <div class="term-bar">
-    <span class="label">🔎 กรองรายวิชาตามภาคเรียน:</span>
-    <div class="term-pills">
-      <button class="term-pill active" data-term="all" onclick="setTerm('all')">ทั้งหมด</button>
-      <button class="term-pill" data-term="1" onclick="setTerm('1')">ภาคเรียนที่ 1</button>
-      <button class="term-pill" data-term="2" onclick="setTerm('2')">ภาคเรียนที่ 2</button>
-    </div>
-  </div>
-
-  <section class="section" id="groups">
-    <div class="section-head">
-      <span class="eyebrow">📚 8 กลุ่มสาระการเรียนรู้ + รายวิชาเพิ่มเติม</span>
-      <h2>เลือกกลุ่มสาระที่ต้องการเรียน</h2>
-      <p>แตะการ์ดกลุ่มสาระเพื่อดูรายวิชาที่เปิดสอนในแต่ละชั้นปี ระบบออกแบบให้เพิ่มรายวิชาใหม่ได้ทุกกลุ่มสาระในอนาคต</p>
-    </div>
-    <div class="groups-grid" id="groups-grid"></div>
+  <!-- ===== คณิตศาสตร์ ===== -->
+  <section class="group" id="group-math">
+    <div class="group-head"><div class="icon">🔢</div><h2>คณิตศาสตร์</h2></div>
+    <span class="empty-note">ยังไม่เปิดรายวิชา — เพิ่มลิงก์ได้ที่นี่เมื่อพร้อม</span>
   </section>
 
-  <section class="about" id="about">
-    <div>
-      <span class="eyebrow">🏫 เกี่ยวกับโรงเรียน</span>
-      <h2>โรงเรียนบ้านเขาหัวนา</h2>
-      <p>โรงเรียนบ้านเขาหัวนา สังกัดสำนักงานเขตพื้นที่การศึกษาประถมศึกษานครนายก มุ่งพัฒนาผู้เรียนให้มีความรู้คู่คุณธรรม ผ่านการจัดการเรียนการสอนที่ทันสมัย ควบคู่ไปกับการเรียนรู้แบบออนไลน์ที่นักเรียนและผู้ปกครองสามารถเข้าถึงได้ทุกที่ทุกเวลา</p>
-    </div>
-    <div class="about-card">
-      <div class="row"><div class="ic">🏫</div><div class="txt"><b>ชื่อสถานศึกษา</b>โรงเรียนบ้านเขาหัวนา</div></div>
-      <div class="row"><div class="ic">🏢</div><div class="txt"><b>สังกัด</b>สำนักงานเขตพื้นที่การศึกษาประถมศึกษานครนายก</div></div>
-      <div class="row"><div class="ic">📍</div><div class="txt"><b>ที่อยู่</b>ตำบลเขาเพิ่ม อำเภอบ้านนา จังหวัดนครนายก 26110</div></div>
-    </div>
+  <!-- ===== วิทยาศาสตร์และเทคโนโลยี ===== -->
+  <section class="group" id="group-sci">
+    <div class="group-head"><div class="icon">🔬</div><h2>วิทยาศาสตร์และเทคโนโลยี</h2></div>
+
+    <span class="term-label">ภาคเรียนที่ 1 — วิทยาการคำนวณ</span>
+    <ul class="menu-list">
+      <li><a class="menu-link" href="#"><span class="dot">●</span>วิทยาการคำนวณ ป.4 เทอม 1</a></li>
+      <li><a class="menu-link" href="#"><span class="dot">●</span>วิทยาการคำนวณ ป.5 เทอม 1</a></li>
+      <li><a class="menu-link" href="#"><span class="dot">●</span>วิทยาการคำนวณ ป.6 เทอม 1</a></li>
+    </ul>
+
+    <span class="term-label">ภาคเรียนที่ 2 — วิทยาศาสตร์</span>
+    <ul class="menu-list">
+      <li><a class="menu-link" href="#"><span class="dot">●</span>วิทยาศาสตร์ ป.4 เทอม 2</a></li>
+      <li><a class="menu-link" href="#"><span class="dot">●</span>วิทยาศาสตร์ ป.5 เทอม 2</a></li>
+      <li><a class="menu-link" href="#"><span class="dot">●</span>วิทยาศาสตร์ ป.6 เทอม 2</a></li>
+    </ul>
   </section>
-</div>
 
-<!-- ================= GROUP VIEW ================= -->
-<div id="group-view" class="view">
-  <div class="subpage-hero">
-    <a class="back-link" href="#" onclick="showHome();return false;">← กลับหน้ากลุ่มสาระ</a>
-  </div>
-  <div class="subpage-hero" style="padding-top:0;">
-    <div class="icon-badge-lg" id="group-icon"></div>
-    <div>
-      <div class="crumb" id="group-crumb"></div>
-      <h1 id="group-title"></h1>
-    </div>
-  </div>
-  <div id="group-body"></div>
-</div>
+  <!-- ===== สังคมศึกษา ศาสนา และวัฒนธรรม ===== -->
+  <section class="group" id="group-social">
+    <div class="group-head"><div class="icon">🏛️</div><h2>สังคมศึกษา ศาสนา และวัฒนธรรม</h2></div>
 
-<!-- ================= COURSE VIEW ================= -->
-<div id="course-view" class="view">
-  <div class="subpage-hero">
-    <a class="back-link" href="#" id="course-back">← กลับกลุ่มสาระ</a>
+    <span class="term-label">ภาคเรียนที่ 1 — ประวัติศาสตร์</span>
+    <ul class="menu-list">
+      <li><a class="menu-link" href="#"><span class="dot">●</span>ประวัติศาสตร์ ป.4 เทอม 1</a></li>
+      <li><a class="menu-link" href="#"><span class="dot">●</span>ประวัติศาสตร์ ป.5 เทอม 1</a></li>
+      <li><a class="menu-link" href="ch2_2.html"><span class="dot">●</span>ประวัติศาสตร์ ป.6 เทอม 1</a></li>
+    </ul>
+  </section>
+
+  <!-- ===== สุขศึกษาและพลศึกษา ===== -->
+  <section class="group" id="group-health">
+    <div class="group-head"><div class="icon">⚽</div><h2>สุขศึกษาและพลศึกษา</h2></div>
+    <span class="empty-note">ยังไม่เปิดรายวิชา — เพิ่มลิงก์ได้ที่นี่เมื่อพร้อม</span>
+  </section>
+
+  <!-- ===== ศิลปะ ===== -->
+  <section class="group" id="group-art">
+    <div class="group-head"><div class="icon">🎨</div><h2>ศิลปะ</h2></div>
+    <span class="empty-note">ยังไม่เปิดรายวิชา — เพิ่มลิงก์ได้ที่นี่เมื่อพร้อม</span>
+  </section>
+
+  <!-- ===== การงานอาชีพ ===== -->
+  <section class="group" id="group-career">
+    <div class="group-head"><div class="icon">🧰</div><h2>การงานอาชีพ</h2></div>
+    <span class="empty-note">ยังไม่เปิดรายวิชา — เพิ่มลิงก์ได้ที่นี่เมื่อพร้อม</span>
+  </section>
+
+  <!-- ===== ภาษาต่างประเทศ ===== -->
+  <section class="group" id="group-foreign">
+    <div class="group-head"><div class="icon">🌏</div><h2>ภาษาต่างประเทศ</h2></div>
+    <span class="empty-note">ยังไม่เปิดรายวิชา — เพิ่มลิงก์ได้ที่นี่เมื่อพร้อม</span>
+  </section>
+
+  <!-- ===== รายวิชาเพิ่มเติม ===== -->
+  <section class="group" id="group-extra">
+    <div class="group-head"><div class="icon">⭐</div><h2>รายวิชาเพิ่มเติม</h2></div>
+
+    <span class="term-label">ภาคเรียนที่ 1 — ต้านทุจริตศึกษา</span>
+    <ul class="menu-list">
+      <li><a class="menu-link" href="#"><span class="dot">●</span>ต้านทุจริตศึกษา ป.5 เทอม 1</a></li>
+    </ul>
+  </section>
+</main>
+
+<!-- ================= ABOUT ================= -->
+<section class="about" id="about">
+  <div>
+    <span class="eyebrow">🏫 เกี่ยวกับโรงเรียน</span>
+    <h2>โรงเรียนบ้านเขาหัวนา</h2>
+    <p>โรงเรียนบ้านเขาหัวนา สังกัดสำนักงานเขตพื้นที่การศึกษาประถมศึกษานครนายก มุ่งพัฒนาผู้เรียนให้มีความรู้คู่คุณธรรม ควบคู่ไปกับการเรียนรู้แบบออนไลน์ที่นักเรียนและผู้ปกครองเข้าถึงได้ทุกที่ทุกเวลา</p>
   </div>
-  <div class="course-detail">
-    <div class="course-card-lg">
-      <div class="badge-grade" id="course-badge"></div>
-      <h1 id="course-title"></h1>
-      <div class="path" id="course-path"></div>
-      <div class="prep-box">
-        <div class="emoji">🧑‍🏫</div>
-        <h3>คุณครูกำลังจัดเตรียมบทเรียน</h3>
-        <p>เนื้อหา ใบงาน และแบบทดสอบของรายวิชานี้จะถูกเพิ่มเข้ามาเร็ว ๆ นี้ นักเรียนสามารถกลับมาตรวจสอบได้อีกครั้ง</p>
-      </div>
-    </div>
+  <div class="about-card">
+    <div class="row"><div class="txt"><b>ชื่อสถานศึกษา</b>โรงเรียนบ้านเขาหัวนา</div></div>
+    <div class="row"><div class="txt"><b>สังกัด</b>สำนักงานเขตพื้นที่การศึกษาประถมศึกษานครนายก</div></div>
+    <div class="row"><div class="txt"><b>ที่อยู่</b>ตำบลเขาเพิ่ม อำเภอบ้านนา จังหวัดนครนายก 26110</div></div>
   </div>
-</div>
+</section>
 
 <!-- ================= FOOTER ================= -->
 <footer>
   <div class="foot-top">
     <div class="foot-brand">
-      <svg width="38" height="38" viewBox="0 0 48 48" fill="none">
+      <svg width="36" height="36" viewBox="0 0 48 48" fill="none">
         <circle cx="24" cy="24" r="24" fill="#6FBF73"/>
         <path d="M6 30 L18 16 L26 26 L32 18 L42 30 Z" fill="#2F7D4F"/>
         <circle cx="34" cy="14" r="5" fill="#F5A623"/>
@@ -420,143 +355,5 @@
   </div>
 </footer>
 
-<script>
-/* ---------------- DATA ---------------- */
-// Each subject's classes: {grade, term}
-const groups = [
-  {id:'thai', name:'ภาษาไทย', emoji:'📖', subjects:[]},
-  {id:'math', name:'คณิตศาสตร์', emoji:'🔢', subjects:[]},
-  {id:'sci', name:'วิทยาศาสตร์และเทคโนโลยี', emoji:'🔬', subjects:[
-    {id:'science', name:'วิทยาศาสตร์', classes:[{grade:4,term:2},{grade:5,term:2},{grade:6,term:2}]},
-    {id:'computing', name:'วิทยาการคำนวณ', classes:[{grade:4,term:1},{grade:5,term:1},{grade:6,term:1}]}
-  ]},
-  {id:'social', name:'สังคมศึกษา ศาสนา และวัฒนธรรม', emoji:'🏛️', subjects:[
-    {id:'history', name:'ประวัติศาสตร์', classes:[{grade:4,term:1},{grade:5,term:1},{grade:6,term:1}]}
-  ]},
-  {id:'health', name:'สุขศึกษาและพลศึกษา', emoji:'⚽', subjects:[]},
-  {id:'art', name:'ศิลปะ', emoji:'🎨', subjects:[]},
-  {id:'career', name:'การงานอาชีพ', emoji:'🧰', subjects:[]},
-  {id:'foreign', name:'ภาษาต่างประเทศ', emoji:'🌏', subjects:[]},
-  {id:'extra', name:'รายวิชาเพิ่มเติม', emoji:'⭐', subjects:[
-    {id:'anticorrupt', name:'ต้านทุจริตศึกษา', classes:[{grade:5,term:1}]}
-  ]}
-];
-
-let currentTerm = 'all';
-
-function termLabel(t){ return 'ภาคเรียนที่ ' + t; }
-
-function countClasses(group){
-  let n = 0;
-  group.subjects.forEach(s => s.classes.forEach(c => {
-    if(currentTerm === 'all' || String(c.term) === currentTerm) n++;
-  }));
-  return n;
-}
-
-function setTerm(t){
-  currentTerm = t;
-  document.querySelectorAll('.term-pill').forEach(b=>{
-    b.classList.toggle('active', b.dataset.term === t);
-  });
-  renderGroups();
-  if(document.getElementById('group-view').classList.contains('active') && window.currentGroupId){
-    renderGroupPage(window.currentGroupId);
-  }
-}
-
-function renderGroups(){
-  const grid = document.getElementById('groups-grid');
-  grid.innerHTML = '';
-  groups.forEach(g=>{
-    const n = countClasses(g);
-    const card = document.createElement('button');
-    card.className = 'group-card';
-    card.style.textAlign = 'left';
-    card.style.border = '1px solid rgba(47,125,79,.08)';
-    card.style.background = 'var(--paper)';
-    card.onclick = () => showGroup(g.id);
-    card.innerHTML = `
-      <div class="icon-badge">${g.emoji}</div>
-      <h3>${g.name}</h3>
-      <span class="count ${n===0?'empty':''}">${n===0 ? 'เร็วๆ นี้' : n + ' ห้องเรียน'}</span>
-      <span class="arrow">ดูรายวิชา →</span>
-    `;
-    grid.appendChild(card);
-  });
-}
-
-function showHome(){
-  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
-  document.getElementById('home-view').classList.add('active');
-  window.scrollTo({top:0, behavior:'smooth'});
-}
-
-function showGroup(id){
-  window.currentGroupId = id;
-  renderGroupPage(id);
-  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
-  document.getElementById('group-view').classList.add('active');
-  window.scrollTo({top:0, behavior:'smooth'});
-}
-
-function renderGroupPage(id){
-  const g = groups.find(x=>x.id===id);
-  document.getElementById('group-icon').textContent = g.emoji;
-  document.getElementById('group-crumb').textContent = 'กลุ่มสาระการเรียนรู้';
-  document.getElementById('group-title').textContent = g.name;
-
-  const body = document.getElementById('group-body');
-  const visibleSubjects = g.subjects.map(s => ({
-    ...s,
-    classes: s.classes.filter(c => currentTerm==='all' || String(c.term)===currentTerm)
-  })).filter(s => s.classes.length > 0);
-
-  if(visibleSubjects.length === 0){
-    body.innerHTML = `
-      <div class="empty-state">
-        <div class="emoji">🌱</div>
-        <h3>ยังไม่มีรายวิชาที่เปิดสอนในกลุ่มสาระนี้</h3>
-        <p>คุณครูกำลังจัดเตรียมเนื้อหารายวิชาสำหรับกลุ่มสาระ "${g.name}" ระบบรองรับการเพิ่มรายวิชาใหม่ได้ทุกเมื่อ โปรดกลับมาตรวจสอบอีกครั้ง</p>
-      </div>`;
-    return;
-  }
-
-  body.innerHTML = '<div class="subjects-wrap" id="subjects-wrap"></div>';
-  const wrap = document.getElementById('subjects-wrap');
-  visibleSubjects.forEach(s=>{
-    const block = document.createElement('div');
-    block.className = 'subject-block';
-    const cardsHtml = s.classes.map(c => `
-      <button class="terrace-card" onclick="showCourse('${g.id}','${s.id}',${c.grade},${c.term})">
-        <span class="grade">ป.${c.grade}</span>
-        <span class="term-tag">${termLabel(c.term)}</span>
-        <span class="go">เข้าห้องเรียน →</span>
-      </button>
-    `).join('');
-    block.innerHTML = `
-      <span class="subject-eyebrow">รายวิชา</span>
-      <h3 class="subject-title">${s.name}</h3>
-      <div class="terrace">${cardsHtml}</div>
-    `;
-    wrap.appendChild(block);
-  });
-}
-
-function showCourse(groupId, subjectId, grade, term){
-  const g = groups.find(x=>x.id===groupId);
-  const s = g.subjects.find(x=>x.id===subjectId);
-  document.getElementById('course-badge').textContent = `${g.emoji} ${g.name}`;
-  document.getElementById('course-title').textContent = `${s.name} ชั้นประถมศึกษาปีที่ ${grade}`;
-  document.getElementById('course-path').textContent = `${g.name} › ${s.name} › ${termLabel(term)}`;
-  document.getElementById('course-back').onclick = (e)=>{e.preventDefault(); showGroup(groupId);};
-
-  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
-  document.getElementById('course-view').classList.add('active');
-  window.scrollTo({top:0, behavior:'smooth'});
-}
-
-renderGroups();
-</script>
 </body>
 </html>
