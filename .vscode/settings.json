@@ -1,3 +1,4 @@
 {
-    "livePreview.defaultPreviewPath": "/bkhn/modules/pp6/pp6.html"
+    "livePreview.defaultPreviewPath": "/bkhn/modules/pp6/pp6.html",
+    "liveServer.settings.port": 5501
 }
