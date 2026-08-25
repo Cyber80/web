@@ -1,0 +1,143 @@
+
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>วิทยาการคำนวณ ป.6 - ระบบการเรียนรู้ออนไลน์</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Prompt', sans-serif; }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 antialiased min-h-screen flex flex-col">
+
+  <!-- Header -->
+  <header class="bg-white shadow-sm border-b border-slate-100 sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      <div class="flex items-center space-x-3">
+        <div class="w-10 h-10 rounded-xl bg-emerald-500 text-white flex items-center justify-center shadow-md">
+          <i class="fa-solid fa-laptop-code text-lg"></i>
+        </div>
+        <div>
+          <h1 class="font-bold text-lg leading-tight text-slate-900">วิทยาการคำนวณ ป.6</h1>
+          <p class="text-xs text-slate-500">บทเรียนออนไลน์ตามหลักสูตรแกนกลาง</p>
+        </div>
+      </div>
+      <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-200">
+        ภาคเรียนที่ 1 - 2
+      </span>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
+    <div class="bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-700 rounded-3xl p-6 sm:p-10 text-white shadow-lg relative overflow-hidden">
+      <div class="relative z-10 max-w-2xl">
+        <span class="bg-emerald-400/30 text-white text-xs px-3 py-1 rounded-full uppercase tracking-wider font-semibold border border-white/20">ยินดีต้อนรับสู่บทเรียน</span>
+        <h2 class="text-2xl sm:text-4xl font-extrabold mt-3 leading-tight">สื่อการเรียนรู้แบบโต้ตอบ เทคโนโลยี (วิทยาการคำนวณ)</h2>
+        <p class="mt-2 text-emerald-50 text-sm sm:text-base opacity-90">เลือกหน่วยการเรียนรู้ด้านล่างเพื่อเข้าสู่สรุปบทเรียน กิจกรรมเกมฝึกทักษะ ดาวน์โหลดใบงาน และทำแบบทดสอบ</p>
+      </div>
+      <div class="absolute -right-10 -bottom-10 opacity-10 sm:opacity-20 text-white text-[160px] pointer-events-none">
+        <i class="fa-solid fa-code"></i>
+      </div>
+    </div>
+  </section>
+
+  <!-- Unit Directory (Cards) -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-12 flex-1 w-full">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+      <!-- Unit 1 -->
+      <article class="bg-white rounded-2xl p-6 border border-slate-200/80 shadow-sm hover:shadow-md transition duration-200 flex flex-col justify-between">
+        <div>
+          <div class="flex items-center justify-between mb-4">
+            <span class="w-9 h-9 rounded-lg bg-orange-100 text-orange-600 font-bold flex items-center justify-center text-sm">01</span>
+            <span class="text-xs bg-slate-100 text-slate-600 px-2.5 py-1 rounded-md font-medium">ว 4.2 ป.6/1</span>
+          </div>
+          <h3 class="font-bold text-lg text-slate-900 mb-2">หน่วยที่ 1 : การแก้ปัญหาโดยใช้เหตุผลเชิงตรรกะ</h3>
+          <p class="text-sm text-slate-600 mb-4 line-clamp-2">การใช้เหตุผลเชิงตรรกะ, การแก้ปัญหาแบบลำดับ เงื่อนไข และการทำงานแบบวนซ้ำ</p>
+          <div class="flex flex-wrap gap-2 mb-6">
+            <span class="text-xs bg-slate-50 text-slate-600 px-2 py-1 rounded border border-slate-200"><i class="fa-regular fa-file-lines mr-1 text-slate-400"></i>สรุปย่อ</span>
+            <span class="text-xs bg-slate-50 text-slate-600 px-2 py-1 rounded border border-slate-200"><i class="fa-solid fa-gamepad mr-1 text-slate-400"></i>เกมฝึกคิด</span>
+            <span class="text-xs bg-slate-50 text-slate-600 px-2 py-1 rounded border border-slate-200"><i class="fa-solid fa-file-arrow-down mr-1 text-slate-400"></i>ใบงาน Doc/PDF</span>
+          </div>
+        </div>
+        <a href="units/unit1.html" class="w-full bg-slate-900 hover:bg-emerald-600 text-white font-medium py-2.5 px-4 rounded-xl text-center text-sm transition flex items-center justify-center gap-2">
+          เข้าสู่บทเรียน <i class="fa-solid fa-arrow-right text-xs"></i>
+        </a>
+      </article>
+
+      <!-- Unit 2 -->
+      <article class="bg-white rounded-2xl p-6 border border-slate-200/80 shadow-sm hover:shadow-md transition duration-200 flex flex-col justify-between">
+        <div>
+          <div class="flex items-center justify-between mb-4">
+            <span class="w-9 h-9 rounded-lg bg-blue-100 text-blue-600 font-bold flex items-center justify-center text-sm">02</span>
+            <span class="text-xs bg-slate-100 text-slate-600 px-2.5 py-1 rounded-md font-medium">ว 4.2 ป.6/2</span>
+          </div>
+          <h3 class="font-bold text-lg text-slate-900 mb-2">หน่วยที่ 2 : การออกแบบและเขียนโปรแกรมอย่างง่าย</h3>
+          <p class="text-sm text-slate-600 mb-4 line-clamp-2">การเขียนผังงาน (Flowchart), เขียนโค้ด Scratch, การใช้ตัวแปร และการดีบักตรวจหาข้อผิดพลาด</p>
+          <div class="flex flex-wrap gap-2 mb-6">
+            <span class="text-xs bg-slate-50 text-slate-600 px-2 py-1 rounded border border-slate-200"><i class="fa-regular fa-file-lines mr-1 text-slate-400"></i>สรุปย่อ</span>
+            <span class="text-xs bg-slate-50 text-slate-600 px-2 py-1 rounded border border-slate-200"><i class="fa-solid fa-puzzle-piece mr-1 text-slate-400"></i>บล็อก Scratch</span>
+            <span class="text-xs bg-slate-50 text-slate-600 px-2 py-1 rounded border border-slate-200"><i class="fa-solid fa-file-arrow-down mr-1 text-slate-400"></i>ใบงาน Doc/PDF</span>
+          </div>
+        </div>
+        <a href="units/unit2.html" class="w-full bg-slate-900 hover:bg-emerald-600 text-white font-medium py-2.5 px-4 rounded-xl text-center text-sm transition flex items-center justify-center gap-2">
+          เข้าสู่บทเรียน <i class="fa-solid fa-arrow-right text-xs"></i>
+        </a>
+      </article>
+
+      <!-- Unit 3 -->
+      <article class="bg-white rounded-2xl p-6 border border-slate-200/80 shadow-sm hover:shadow-md transition duration-200 flex flex-col justify-between">
+        <div>
+          <div class="flex items-center justify-between mb-4">
+            <span class="w-9 h-9 rounded-lg bg-emerald-100 text-emerald-600 font-bold flex items-center justify-center text-sm">03</span>
+            <span class="text-xs bg-slate-100 text-slate-600 px-2.5 py-1 rounded-md font-medium">ว 4.2 ป.6/3</span>
+          </div>
+          <h3 class="font-bold text-lg text-slate-900 mb-2">หน่วยที่ 3 : การใช้อินเทอร์เน็ตค้นหาข้อมูลอย่างมีประสิทธิภาพ</h3>
+          <p class="text-sm text-slate-600 mb-4 line-clamp-2">เทคนิคคำค้นหาขั้นสูง, การกำหนดขอบเขต และการประเมินความน่าเชื่อถือของแหล่งข้อมูล</p>
+          <div class="flex flex-wrap gap-2 mb-6">
+            <span class="text-xs bg-slate-50 text-slate-600 px-2 py-1 rounded border border-slate-200"><i class="fa-regular fa-file-lines mr-1 text-slate-400"></i>สรุปย่อ</span>
+            <span class="text-xs bg-slate-50 text-slate-600 px-2 py-1 rounded border border-slate-200"><i class="fa-solid fa-magnifying-glass mr-1 text-slate-400"></i>ค้นหาจำลอง</span>
+            <span class="text-xs bg-slate-50 text-slate-600 px-2 py-1 rounded border border-slate-200"><i class="fa-solid fa-file-arrow-down mr-1 text-slate-400"></i>ใบงาน Doc/PDF</span>
+          </div>
+        </div>
+        <a href="units/unit3.html" class="w-full bg-slate-900 hover:bg-emerald-600 text-white font-medium py-2.5 px-4 rounded-xl text-center text-sm transition flex items-center justify-center gap-2">
+          เข้าสู่บทเรียน <i class="fa-solid fa-arrow-right text-xs"></i>
+        </a>
+      </article>
+
+      <!-- Unit 4 -->
+      <article class="bg-white rounded-2xl p-6 border border-slate-200/80 shadow-sm hover:shadow-md transition duration-200 flex flex-col justify-between">
+        <div>
+          <div class="flex items-center justify-between mb-4">
+            <span class="w-9 h-9 rounded-lg bg-rose-100 text-rose-600 font-bold flex items-center justify-center text-sm">04</span>
+            <span class="text-xs bg-slate-100 text-slate-600 px-2.5 py-1 rounded-md font-medium">ว 4.2 ป.6/4</span>
+          </div>
+          <h3 class="font-bold text-lg text-slate-900 mb-2">หน่วยที่ 4 : การใช้เทคโนโลยีสารสนเทศอย่างปลอดภัย</h3>
+          <p class="text-sm text-slate-600 mb-4 line-clamp-2">ภัยคุกคามทางไซเบอร์, การตั้งรหัสผ่านสองชั้น, สิทธิ์การใช้งาน และการป้องกันมัลแวร์</p>
+          <div class="flex flex-wrap gap-2 mb-6">
+            <span class="text-xs bg-slate-50 text-slate-600 px-2 py-1 rounded border border-slate-200"><i class="fa-regular fa-file-lines mr-1 text-slate-400"></i>สรุปย่อ</span>
+            <span class="text-xs bg-slate-50 text-slate-600 px-2 py-1 rounded border border-slate-200"><i class="fa-solid fa-shield-halved mr-1 text-slate-400"></i>เกมรหัสผ่าน</span>
+            <span class="text-xs bg-slate-50 text-slate-600 px-2 py-1 rounded border border-slate-200"><i class="fa-solid fa-file-arrow-down mr-1 text-slate-400"></i>ใบงาน Doc/PDF</span>
+          </div>
+        </div>
+        <a href="units/unit4.html" class="w-full bg-slate-900 hover:bg-emerald-600 text-white font-medium py-2.5 px-4 rounded-xl text-center text-sm transition flex items-center justify-center gap-2">
+          เข้าสู่บทเรียน <i class="fa-solid fa-arrow-right text-xs"></i>
+        </a>
+      </article>
+
+    </div>
+  </main>
+
+  <footer class="bg-white border-t border-slate-200 py-6 text-center text-xs text-slate-500 mt-auto">
+    <div class="max-w-7xl mx-auto px-4">
+      รายวิชาพื้นฐานวิทยาศาสตร์และเทคโนโลยี (วิทยาการคำนวณ) ชั้นประถมศึกษาปีที่ 6
+    </div>
+  </footer>
+
+</body>
+</html>
