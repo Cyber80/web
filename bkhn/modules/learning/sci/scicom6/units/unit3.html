@@ -1,0 +1,518 @@
+
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>หน่วยที่ 3: การใช้อินเทอร์เน็ตค้นหาข้อมูลอย่างมีประสิทธิภาพ</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Prompt', sans-serif; }
+    /* ซ่อนเนื้อหา Tab ที่ไม่ได้ใช้งาน */
+    .tab-content { display: none; animation: fadeIn 0.3s; }
+    .tab-content.active { display: block; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 antialiased min-h-screen flex flex-col">
+
+  <!-- ================= HEADER ================= -->
+  <header class="bg-white shadow-sm border-b border-slate-100 sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      <div class="flex items-center space-x-4">
+        <!-- ปุ่มกลับหน้าแรก -->
+        <a href="../index.html" class="w-10 h-10 rounded-full bg-slate-100 text-slate-600 flex items-center justify-center hover:bg-slate-200 transition">
+          <i class="fa-solid fa-arrow-left"></i>
+        </a>
+        <div>
+          <h1 class="font-bold text-lg leading-tight text-emerald-600">หน่วยที่ 3: การใช้อินเทอร์เน็ตค้นหาข้อมูลอย่างมีประสิทธิภาพ</h1>
+          <p class="text-xs text-slate-500">วิทยาการคำนวณ ป.6 (ว 4.2 ป.6/3)</p>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ================= MAIN CONTENT ================= -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full flex-1">
+    
+    <!-- Tab Navigation Buttons -->
+    <div class="flex space-x-2 mb-8 bg-white p-2 rounded-2xl shadow-sm border border-slate-100 overflow-x-auto">
+      <button onclick="switchTab('summary-tab', this)" class="tab-btn px-6 py-2.5 bg-emerald-100 text-emerald-700 font-medium rounded-xl text-sm whitespace-nowrap transition">
+        <i class="fa-solid fa-book-open mr-2"></i>สรุปเนื้อหา
+      </button>
+      <button onclick="switchTab('game-tab', this)" class="tab-btn px-6 py-2.5 text-slate-500 hover:bg-slate-50 font-medium rounded-xl text-sm whitespace-nowrap transition">
+        <i class="fa-solid fa-gamepad mr-2"></i>นักสืบไซเบอร์ (เกม)
+      </button>
+      <button onclick="switchTab('worksheet-tab', this)" class="tab-btn px-6 py-2.5 text-slate-500 hover:bg-slate-50 font-medium rounded-xl text-sm whitespace-nowrap transition">
+        <i class="fa-solid fa-file-pdf mr-2"></i>ใบงาน
+      </button>
+      <button onclick="switchTab('quiz-tab', this)" class="tab-btn px-6 py-2.5 text-slate-500 hover:bg-slate-50 font-medium rounded-xl text-sm whitespace-nowrap transition">
+        <i class="fa-solid fa-pen-to-square mr-2"></i>แบบทดสอบ
+      </button>
+    </div>
+
+    <!-- ================= TAB 1: สรุปเนื้อหา ================= -->
+    <div id="summary-tab" class="tab-content active space-y-8">
+      <!-- หมวด 1: เทคนิคการค้นหา -->
+      <section>
+        <div class="flex items-center space-x-3 mb-4">
+          <div class="w-10 h-10 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center text-lg shadow-sm"><i class="fa-solid fa-magnifying-glass"></i></div>
+          <h2 class="text-xl font-bold text-slate-800">1. การค้นหาข้อมูลโดยใช้อินเทอร์เน็ต</h2>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition">
+            <h3 class="font-semibold text-blue-700 mb-2">การใช้คำสำคัญ (Keyword)</h3>
+            <p class="text-sm text-slate-600">พิมพ์คำค้นที่สั้น กระชับ และตรงประเด็น เพื่อให้ได้ผลลัพธ์ที่ต้องการ</p>
+          </div>
+          <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition">
+            <h3 class="font-semibold text-blue-700 mb-2">ระบุชนิดไฟล์ (File Type)</h3>
+            <p class="text-sm text-slate-600">ใช้คำสั่ง <code class="bg-slate-100 px-1 rounded text-pink-600">filetype:</code> ตามด้วยนามสกุลไฟล์ เช่น filetype:pdf</p>
+          </div>
+          <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition">
+            <h3 class="font-semibold text-blue-700 mb-2">ระบุเว็บไซต์ (Site)</h3>
+            <p class="text-sm text-slate-600">ใช้คำสั่ง <code class="bg-slate-100 px-1 rounded text-pink-600">site:</code> เพื่อหาข้อมูลจากเว็บนั้นโดยเฉพาะ เช่น site:go.th</p>
+          </div>
+          <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition">
+            <h3 class="font-semibold text-blue-700 mb-2">เครื่องหมาย (Operators)</h3>
+            <ul class="text-sm text-slate-600 list-disc pl-5 space-y-1 mt-1">
+              <li><strong>" "</strong> ค้นหาคำเป๊ะๆ</li>
+              <li><strong>+</strong> ต้องมีคำนี้ด้วย</li>
+              <li><strong>-</strong> ไม่เอาคำนี้ในผลลัพธ์</li>
+            </ul>
+          </div>
+          <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition">
+            <h3 class="font-semibold text-blue-700 mb-2">ตรรกะ (Boolean)</h3>
+            <ul class="text-sm text-slate-600 list-disc pl-5 space-y-1 mt-1">
+              <li><strong>AND</strong> ต้องมีครบทุกคำเชื่อม</li>
+              <li><strong>OR</strong> มีคำใดคำหนึ่งก็ได้</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+      <!-- หมวด 2: การกำหนดขอบเขต -->
+      <section>
+        <div class="flex items-center space-x-3 mb-4">
+          <div class="w-10 h-10 rounded-full bg-orange-100 text-orange-600 flex items-center justify-center text-lg shadow-sm"><i class="fa-solid fa-filter"></i></div>
+          <h2 class="text-xl font-bold text-slate-800">2. การกำหนดขอบเขตการค้นหาข้อมูล</h2>
+        </div>
+        <div class="bg-white p-6 rounded-2xl border-l-4 border-orange-500 shadow-sm">
+          <p class="text-slate-700 text-sm md:text-base">
+            เป็นการใช้ฟังก์ชัน "เครื่องมือ" หรือ "การค้นหาขั้นสูง" ของ Search Engine เพื่อคัดกรองข้อมูลให้แคบลงและตรงความต้องการมากที่สุด เช่น การกำหนดช่วงเวลาที่เผยแพร่ ภาษา หรือประเภทของสิทธิ์การใช้งาน
+          </p>
+        </div>
+      </section>
+      <!-- หมวด 3: การประเมินความน่าเชื่อถือ -->
+      <section>
+        <div class="flex items-center space-x-3 mb-4">
+          <div class="w-10 h-10 rounded-full bg-rose-100 text-rose-600 flex items-center justify-center text-lg shadow-sm"><i class="fa-solid fa-shield-halved"></i></div>
+          <h2 class="text-xl font-bold text-slate-800">3. การประเมินความน่าเชื่อถือของข้อมูล</h2>
+        </div>
+        
+        <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+          <div class="grid grid-cols-1 md:grid-cols-5 divide-y md:divide-y-0 md:divide-x divide-slate-100 text-center">
+            <div class="p-4 hover:bg-slate-50 transition">
+              <i class="fa-solid fa-globe text-2xl text-slate-400 mb-2"></i>
+              <h4 class="font-medium text-slate-900 text-sm">พิจารณาโดเมน</h4>
+              <p class="text-xs text-slate-500 mt-1">เช่น .go.th (รัฐบาล), .ac.th (การศึกษา) มีความน่าเชื่อถือสูง</p>
+            </div>
+            <div class="p-4 hover:bg-slate-50 transition">
+              <i class="fa-solid fa-user-pen text-2xl text-slate-400 mb-2"></i>
+              <h4 class="font-medium text-slate-900 text-sm">ชื่อผู้เขียน</h4>
+              <p class="text-xs text-slate-500 mt-1">ต้องมีความเชี่ยวชาญ ระบุตัวตนได้ชัดเจน</p>
+            </div>
+            <div class="p-4 hover:bg-slate-50 transition">
+              <i class="fa-solid fa-calendar-days text-2xl text-slate-400 mb-2"></i>
+              <h4 class="font-medium text-slate-900 text-sm">วันที่เผยแพร่</h4>
+              <p class="text-xs text-slate-500 mt-1">ข้อมูลต้องมีความทันสมัย ไม่เก่าจนเกินไป</p>
+            </div>
+            <div class="p-4 hover:bg-slate-50 transition">
+              <i class="fa-solid fa-link text-2xl text-slate-400 mb-2"></i>
+              <h4 class="font-medium text-slate-900 text-sm">แหล่งที่มา</h4>
+              <p class="text-xs text-slate-500 mt-1">มีการอ้างอิงข้อมูลจากแหล่งอื่นที่น่าเชื่อถือ</p>
+            </div>
+            <div class="p-4 hover:bg-slate-50 transition">
+              <i class="fa-solid fa-bullseye text-2xl text-slate-400 mb-2"></i>
+              <h4 class="font-medium text-slate-900 text-sm">วัตถุประสงค์</h4>
+              <p class="text-xs text-slate-500 mt-1">เพื่อความรู้ หรือเพื่อโฆษณาขายสินค้า</p>
+            </div>
+          </div>
+        </div>
+      </section>
+      
+    </div>
+    
+    <!-- ================= TAB 2: กิจกรรมนักสืบไซเบอร์ ================= -->
+    <div id="game-tab" class="tab-content space-y-6">
+      <div class="bg-gradient-to-r from-slate-800 to-slate-900 rounded-2xl p-6 text-white shadow-lg flex flex-col md:flex-row items-center justify-between">
+        <div class="flex items-center space-x-4 mb-4 md:mb-0">
+          <div class="w-16 h-16 bg-blue-500 rounded-full flex items-center justify-center text-3xl border-4 border-slate-700 shadow-inner">🤖</div>
+          <div>
+            <h2 class="text-2xl font-bold text-blue-300">ภารกิจนักสืบไซเบอร์</h2>
+            <p class="text-slate-300 text-sm">พิมพ์คำสั่งค้นหาให้ถูกต้องเพื่อดูผลลัพธ์จำลองหน้าเว็บจริง!</p>
+          </div>
+        </div>
+        <div class="bg-slate-800/50 px-4 py-2 rounded-xl border border-slate-600 text-center min-w-[120px]">
+          <p class="text-xs text-slate-400 uppercase tracking-wider">ด่านปัจจุบัน</p>
+          <p id="level-indicator" class="text-xl font-bold text-emerald-400">1 / 7</p>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+        <div class="bg-blue-50 border-b border-blue-100 p-6 text-center">
+          <span class="inline-block bg-blue-200 text-blue-800 text-xs font-bold px-3 py-1 rounded-full mb-3 shadow-sm">คำสั่งภารกิจ</span>
+          <h3 id="mission-text" class="text-lg md:text-xl font-semibold text-slate-800">กำลังโหลด...</h3>
+        </div>
+        
+        <div class="p-8 md:p-12 flex flex-col items-center justify-center min-h-[400px] bg-slate-50 relative" id="search-container">
+          
+          <!-- Mock Search Input Area -->
+          <div id="search-bar-wrapper" class="w-full flex flex-col items-center">
+            <div class="text-5xl font-extrabold tracking-tighter mb-8 flex text-slate-800">
+              <span class="text-blue-500">S</span><span class="text-rose-500">e</span><span class="text-amber-500">a</span><span class="text-blue-500">r</span><span class="text-emerald-500">c</span><span class="text-rose-500">h</span>
+            </div>
+            
+            <div class="w-full max-w-2xl relative shadow-md rounded-full group">
+              <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                <i class="fa-solid fa-magnifying-glass text-slate-400 group-focus-within:text-blue-500 transition"></i>
+              </div>
+              <input type="text" id="search-input" class="w-full pl-12 pr-4 py-4 rounded-full border border-slate-200 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-100 text-lg transition" placeholder="พิมพ์คำค้นหาที่นี่..." autocomplete="off">
+              <div class="absolute inset-y-0 right-0 pr-3 flex items-center">
+                <button onclick="checkMission()" class="bg-blue-500 hover:bg-blue-600 text-white rounded-full w-10 h-10 flex items-center justify-center transition shadow-sm">
+                  <i class="fa-solid fa-arrow-right"></i>
+                </button>
+              </div>
+            </div>
+            <div id="feedback-area" class="mt-6 text-center hidden w-full"></div>
+          </div>
+          
+          <!-- Mock Results Area -->
+          <div id="mock-results-area" class="hidden w-full max-w-3xl bg-white p-6 rounded-xl shadow-sm border border-slate-200 text-left">
+            <p class="text-slate-500 text-sm mb-4 border-b pb-2">ผลการค้นหาประมาณ 2,450,000 รายการ (0.35 วินาที)</p>
+            <div id="mock-results-content" class="space-y-6"></div>
+            <div class="mt-8 border-t pt-4 text-center">
+              <button onclick="nextMission()" class="bg-emerald-500 hover:bg-emerald-600 text-white px-8 py-3 rounded-xl font-bold transition shadow-md flex items-center mx-auto gap-2">
+                <i class="fa-solid fa-check"></i> ทำภารกิจสำเร็จ! ไปด่านต่อไป
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ================= TAB 3: ใบงาน ================= -->
+    <div id="worksheet-tab" class="tab-content space-y-6">
+      <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm flex items-center justify-between">
+        <div class="flex items-center space-x-4">
+          <div class="w-12 h-12 bg-rose-100 text-rose-500 rounded-xl flex items-center justify-center text-2xl"><i class="fa-solid fa-file-pdf"></i></div>
+          <div>
+            <h2 class="text-xl font-bold text-slate-800">ใบงานประจำหน่วยที่ 3</h2>
+            <p class="text-slate-500 text-sm">ดาวน์โหลดเอกสารเพื่อนำไปปรินต์และฝึกทำลงในกระดาษ</p>
+          </div>
+        </div>
+      </div>
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- ใบงาน 3.1 -->
+        <div class="bg-white rounded-2xl border border-slate-200 p-5 flex flex-col transition hover:shadow-md">
+          <h3 class="font-bold text-slate-800 mb-2">ใบงานที่ 3.1 : เทคนิคการค้นหาข้อมูลขั้นสูง</h3>
+          <p class="text-sm text-slate-600 mb-6 flex-1">วิเคราะห์สถานการณ์ที่กำหนดให้ แล้วเขียนคำค้นหาให้ถูกต้องตามเทคนิค</p>
+          <div class="grid grid-cols-2 gap-3">
+            <a href="#" class="flex justify-center gap-2 py-2 bg-blue-50 hover:bg-blue-100 text-blue-700 rounded-lg text-sm font-medium border border-blue-200"><i class="fa-solid fa-file-word"></i> โหลด .DOCX</a>
+            <a href="#" class="flex justify-center gap-2 py-2 bg-rose-50 hover:bg-rose-100 text-rose-700 rounded-lg text-sm font-medium border border-rose-200"><i class="fa-solid fa-file-pdf"></i> โหลด .PDF</a>
+          </div>
+        </div>
+        <!-- ใบงาน 3.2 -->
+        <div class="bg-white rounded-2xl border border-slate-200 p-5 flex flex-col transition hover:shadow-md">
+          <h3 class="font-bold text-slate-800 mb-2">ใบงานที่ 3.2 : การประเมินความน่าเชื่อถือ</h3>
+          <p class="text-sm text-slate-600 mb-6 flex-1">พิจารณาความน่าเชื่อถือจากโดเมนเนม (.go.th, .ac.th) และตรวจสอบสถานการณ์</p>
+          <div class="grid grid-cols-2 gap-3">
+            <a href="#" class="flex justify-center gap-2 py-2 bg-blue-50 hover:bg-blue-100 text-blue-700 rounded-lg text-sm font-medium border border-blue-200"><i class="fa-solid fa-file-word"></i> โหลด .DOCX</a>
+            <a href="#" class="flex justify-center gap-2 py-2 bg-rose-50 hover:bg-rose-100 text-rose-700 rounded-lg text-sm font-medium border border-rose-200"><i class="fa-solid fa-file-pdf"></i> โหลด .PDF</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ================= TAB 4: แบบทดสอบท้ายหน่วย ================= -->
+    <div id="quiz-tab" class="tab-content space-y-6">
+      
+      <!-- หน้าต้อนรับแบบทดสอบ -->
+      <div id="quiz-intro" class="bg-white p-8 rounded-2xl shadow-sm border border-slate-200 text-center max-w-3xl mx-auto mt-10">
+        <div class="text-6xl text-emerald-500 mb-4"><i class="fa-solid fa-clipboard-question"></i></div>
+        <h2 class="text-2xl font-bold text-slate-800 mb-2">แบบทดสอบท้ายหน่วยที่ 3</h2>
+        <p class="text-slate-600 mb-6">ข้อสอบปรนัยจำนวน 20 ข้อ (ไล่ระดับความยากง่าย) เพื่อทดสอบความเข้าใจเรื่องการค้นหาข้อมูลและการประเมินความน่าเชื่อถือ</p>
+        <button onclick="startQuiz()" class="bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-3 px-8 rounded-xl transition shadow-md">
+          เริ่มทำแบบทดสอบ
+        </button>
+      </div>
+
+      <!-- พื้นที่ทำแบบทดสอบ (ซ่อนตอนแรก) -->
+      <div id="quiz-area" class="hidden bg-white rounded-2xl shadow-sm border border-slate-200 max-w-3xl mx-auto overflow-hidden">
+        <div class="bg-slate-100 px-6 py-4 border-b border-slate-200 flex justify-between items-center">
+          <span id="quiz-progress" class="font-bold text-slate-700 text-sm">ข้อที่ 1 / 20</span>
+          <span id="quiz-difficulty" class="text-xs px-2 py-1 rounded bg-blue-100 text-blue-700 font-medium">ระดับ: ง่าย</span>
+        </div>
+        <div class="p-6 md:p-8">
+          <h3 id="question-text" class="text-lg font-medium text-slate-900 mb-6 line-height-relaxed">คำถาม...</h3>
+          <div id="choices-area" class="space-y-3">
+             <!-- ตัวเลือกจะถูกสร้างโดย JS -->
+          </div>
+        </div>
+      </div>
+
+      <!-- หน้าสรุปผลคะแนน (ซ่อนตอนแรก) -->
+      <div id="quiz-result" class="hidden bg-gradient-to-b from-white to-emerald-50 p-10 rounded-2xl shadow-sm border border-emerald-100 text-center max-w-3xl mx-auto mt-10">
+        <h2 class="text-3xl font-bold text-slate-800 mb-2">สรุปผลคะแนน</h2>
+        <div class="my-6">
+          <span id="score-text" class="text-6xl font-black text-emerald-500">0</span>
+          <span class="text-2xl text-slate-500">/ 20</span>
+        </div>
+        <p id="score-message" class="text-lg text-slate-700 mb-8">ข้อความประเมินผล</p>
+        <button onclick="resetQuiz()" class="bg-slate-800 hover:bg-slate-900 text-white font-bold py-2.5 px-6 rounded-xl transition shadow-sm">
+          ทำแบบทดสอบอีกครั้ง
+        </button>
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- ================= JAVASCRIPT ================= -->
+  <script>
+    // ----------------- TAB NAVIGATION -----------------
+    function switchTab(tabId, btnElement) {
+      document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+      document.getElementById(tabId).classList.add('active');
+      
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.className = "tab-btn px-6 py-2.5 text-slate-500 hover:bg-slate-50 font-medium rounded-xl text-sm whitespace-nowrap transition";
+      });
+      btnElement.className = "tab-btn px-6 py-2.5 bg-emerald-100 text-emerald-700 font-medium rounded-xl text-sm whitespace-nowrap transition";
+    }
+
+    // ----------------- GAME (CYBER DETECTIVE) -----------------
+    // อิงกิจกรรมจากหนังสือเรียน หน้า 77 และ 83
+    const missions = [
+      {
+        type: "File Type",
+        text: 'ค้นหาข้อมูล "พลังงานสะอาด" ในรูปแบบเอกสาร "PDF"',
+        hint: 'ใช้คำสั่ง filetype: (เช่น พลังงานสะอาด filetype:pdf)',
+        validate: i => i.toLowerCase().includes('พลังงานสะอาด') && i.toLowerCase().includes('filetype:pdf'),
+        resultsHtml: `
+          <div>
+            <p class="text-sm text-slate-800 mb-1">https://www.energy.go.th > document <span class="bg-slate-200 text-slate-600 text-xs px-1 rounded ml-1 font-bold">PDF</span></p>
+            <h3 class="text-xl text-blue-700 hover:underline cursor-pointer">พลังงานสะอาดคืออะไร - กระทรวงพลังงาน</h3>
+            <p class="text-slate-600 text-sm mt-1"><strong>พลังงานสะอาด</strong> (Clean Energy) หมายถึง พลังงานที่ไม่ก่อให้เกิดมลพิษต่อสิ่งแวดล้อม...</p>
+          </div>`
+      },
+      {
+        type: "Website Specific",
+        text: 'ค้นหา "โครงงานวิทยาศาสตร์" จาก "หน่วยงานราชการไทย" (.go.th)',
+        hint: 'ใช้คำสั่ง site: (เช่น โครงงานวิทยาศาสตร์ site:go.th)',
+        validate: i => i.toLowerCase().includes('โครงงาน') && i.toLowerCase().includes('site:go.th'),
+        resultsHtml: `
+          <div>
+            <p class="text-sm text-slate-800 mb-1">https://www.stkc.go.th › tags › โครงงานวิทยาศาสตร์</p>
+            <p class="text-sm text-slate-800 mb-1"><a href="https://www.stkc.go.th/tags/%E0%B9%82%E0%B8%84%E0%B8%A3%E0%B8%87%E0%B8%87%E0%B8%B2%E0%B8%99%E0%B8%A7%E0%B8%B4%E0%B8%97%E0%B8%A2%E0%B8%B2%E0%B8%A8%E0%B8%B2%E0%B8%AA%E0%B8%95%E0%B8%A3%E0%B9%8C">
+            <h3 class="text-xl text-blue-700 hover:underline cursor-pointer">โครงงานวิทยาศาสตร์ | Science and Technology Knowledge ...</h3>
+            <p class="text-slate-600 text-sm mt-1">สำนักงานปลัดกระทรวงการอุดมศึกษา วิทยาศาสตร์ วิจัยและนวัตกรรม (สป.อว.) เป็นหน่วยงานของรัฐที่จัดตั้งขึ้นเพื่อการพัฒนาวิทยาศาสตร์ เทคโนโลยี และนวัตกรรม สร้างความ ...</p>
+          </div>`
+      },
+      {
+        type: "เครื่องหมายลบ (-)",
+        text: 'ค้นหาข้อมูล "ปัญญาประดิษฐ์" แต่ "ไม่เอาหุ่นยนต์"',
+        hint: 'ใช้เครื่องหมายลบหน้าคำที่ไม่ต้องการ (เช่น ปัญญาประดิษฐ์ -หุ่นยนต์)',
+        validate: i => i.toLowerCase().includes('ปัญญาประดิษฐ์') && i.toLowerCase().includes('-หุ่นยนต์'),
+        resultsHtml: `
+          <div>
+            <p class="text-sm text-slate-800 mb-1">https://www.bot.or.th > news</p>
+            <h3 class="text-xl text-blue-700 hover:underline cursor-pointer">การประยุกต์ใช้ ปัญญาประดิษฐ์ ในภาคการเงิน</h3>
+            <p class="text-slate-600 text-sm mt-1">ธนาคารแห่งประเทศไทยนำ <strong>ปัญญาประดิษฐ์</strong> มาใช้วิเคราะห์ข้อมูลเพื่อประเมินความเสี่ยง...</p>
+          </div>`
+      },
+      {
+          type: "เครื่องหมายบวก (+)",
+          text: 'ค้นหา "โซเชียลมีเดีย" และต้องมีคำว่า "การเรียนออนไลน์"',
+          hint: 'ใช้เครื่องหมายบวก (เช่น โซเชียลมีเดีย +การเรียนออนไลน์)',
+          validate: i => i.toLowerCase().includes('โซเชียลมีเดีย') && i.toLowerCase().includes('+การเรียนออนไลน์'),
+          resultsHtml: `
+            <div>
+              <p class="text-sm text-slate-800 mb-1">https://www.bot.or.th > news</p>
+              <h3 class="text-xl text-blue-700 hover:underline cursor-pointer">10 วิธีใช้โซเชียลมีเดียเพื่อการสอน</h3>
+              <p class="text-slate-600 text-sm mt-1">Quora เป็นแพลตฟอร์มที่ดีที่สุดสำหรับการสนทนาหรือค้นหาคำตอบสำหรับคำถามต่างๆ ครูสามารถโพสต์คำถามที่เกี่ยวข้องกับบทเรียนหรือหัวข้อทั่วไปได้ นักเรียนสามารถตอบคำถาม ...</p>
+            </div>`
+      },
+      {
+        type: "อัญประกาศ (Quote)",
+        text: 'ค้นหาคำตรงเป๊ะๆ คำว่า "ประวัติของคอมพิวเตอร์"',
+        hint: 'ครอบคำด้วย " " (เช่น "ประวัติของคอมพิวเตอร์")',
+        validate: i => i.includes('"ประวัติของคอมพิวเตอร์"'),
+        resultsHtml: `
+          <div>
+            <p class="text-sm text-slate-800 mb-1">https://th.wikipedia.org > wiki > ประวัติของคอมพิวเตอร์</p>
+            <h3 class="text-xl text-blue-700 hover:underline cursor-pointer">ประวัติของคอมพิวเตอร์ - วิกิพีเดีย</h3>
+            <p class="text-slate-600 text-sm mt-1"><strong>ประวัติของคอมพิวเตอร์</strong> เริ่มต้นจากการประดิษฐ์เครื่องคำนวณแบบกลไกในยุคแรก...</p>
+          </div>`
+      },
+      {
+        type: "ตัวดำเนินการ AND",
+        text: 'ค้นหา "อาชญากรรมทางอินเทอร์เน็ต" และ "ละเมิดลิขสิทธิ์"',
+        hint: 'ใช้คำว่า AND เชื่อมคำ (เช่น อาชญากรรมทางอินเทอร์เน็ต AND ละเมิดลิขสิทธิ์)',
+        validate: i => i.toLowerCase().includes('อาชญากรรม') && i.toLowerCase().includes('and') && i.toLowerCase().includes('ลิขสิทธิ์'),
+        resultsHtml: `
+          <div>
+            <p class="text-sm text-slate-800 mb-1">https://www.tcsd.go.th > cybercrime</p>
+            <h3 class="text-xl text-blue-700 hover:underline cursor-pointer">ข้อกฎหมาย อาชญากรรมทางอินเทอร์เน็ต</h3>
+            <p class="text-slate-600 text-sm mt-1"><strong>อาชญากรรมทางอินเทอร์เน็ต</strong> รวมไปถึงการ <strong>ละเมิดลิขสิทธิ์</strong> ซอฟต์แวร์และสื่อต่างๆ...</p>
+          </div>`
+      },
+      {
+        type: "ตัวดำเนินการ OR",
+        text: 'ค้นหาเครือข่าย "5G" หรือสัญญาณ "Wi-Fi"',
+        hint: 'ใช้คำว่า OR เชื่อมคำ (เช่น 5G OR Wi-Fi)',
+        validate: i => i.toLowerCase().includes('5g') && i.toLowerCase().includes('or') && i.toLowerCase().includes('wi-fi'),
+        resultsHtml: `
+          <div>
+            <p class="text-sm text-slate-800 mb-1">https://www.nbtc.go.th > article</p>
+            <h3 class="text-xl text-blue-700 hover:underline cursor-pointer">ความแตกต่างระหว่าง 5G และ Wi-Fi 6</h3>
+            <p class="text-slate-600 text-sm mt-1">เทคโนโลยีเครือข่ายไร้สาย <strong>5G</strong> และ <strong>Wi-Fi</strong> มีจุดเด่นและการใช้งานที่แตกต่างกัน...</p>
+          </div>`
+      }
+    ];
+    
+    let currentMissionIndex = 0;
+    
+    function loadMission() {
+      const mission = missions[currentMissionIndex];
+      document.getElementById('mission-text').innerText = mission.text;
+      document.getElementById('level-indicator').innerText = `${currentMissionIndex + 1} / ${missions.length}`;
+      document.getElementById('search-input').value = '';
+      
+      document.getElementById('search-bar-wrapper').classList.remove('hidden');
+      document.getElementById('feedback-area').classList.add('hidden');
+      document.getElementById('mock-results-area').classList.add('hidden');
+      document.getElementById('search-input').focus();
+    }
+
+    function checkMission() {
+      const inputStr = document.getElementById('search-input').value.replace(/\s+/g, ' ').trim();
+      if(!inputStr) return;
+      const mission = missions[currentMissionIndex];
+      const feedback = document.getElementById('feedback-area');
+      
+      if(mission.validate(inputStr)) {
+        document.getElementById('search-bar-wrapper').classList.add('hidden');
+        feedback.classList.add('hidden');
+        document.getElementById('mock-results-content').innerHTML = mission.resultsHtml;
+        document.getElementById('mock-results-area').classList.remove('hidden');
+      } else {
+        feedback.classList.remove('hidden');
+        feedback.innerHTML = `<div class="bg-amber-50 text-amber-800 p-4 rounded-xl shadow-sm border border-amber-200 text-sm inline-block max-w-lg">
+          <i class="fa-solid fa-lightbulb"></i> ยังไม่ถูกต้อง ลองดูตัวอย่าง: <br><strong>${mission.hint}</strong></div>`;
+      }
+    }
+
+    function nextMission() {
+      currentMissionIndex++;
+      if(currentMissionIndex >= missions.length) {
+        document.getElementById('search-container').innerHTML = `<div class="bg-emerald-500 rounded-3xl p-10 text-center text-white shadow-xl max-w-2xl mx-auto"><div class="text-6xl mb-4">🏆</div><h2 class="text-3xl font-bold">ยอดเยี่ยม!</h2><p class="mt-2 text-emerald-50">นักเรียนสามารถใช้เทคนิคค้นหาข้อมูลได้อย่างมืออาชีพ!</p><button onclick="location.reload()" class="mt-6 bg-white text-emerald-600 px-6 py-2.5 rounded-xl font-bold shadow">เล่นอีกครั้ง</button></div>`;
+      } else { loadMission(); }
+    }
+    
+    document.getElementById('search-input').addEventListener('keypress', e => { if (e.key === 'Enter') checkMission(); });
+    window.onload = loadMission;
+
+ 
+
+    // ----------------- QUIZ SYSTEM (20 Questions) -----------------
+    const quizData = [
+      // Easy (7 ข้อ)
+      { q: "1. เครื่องมือใดที่นิยมใช้ค้นหาข้อมูลบนอินเทอร์เน็ตมากที่สุด?", choices: ["Google", "Word", "Paint", "Calculator"], answer: 0, level: "ง่าย" },
+      { q: "2. คำสำคัญ (Keyword) ที่ดีควรมีลักษณะอย่างไร?", choices: ["ยาวและละเอียด", "สั้น กระชับ ตรงประเด็น", "เป็นภาษาอังกฤษเท่านั้น", "มีตัวเลขผสมอยู่เสมอ"], answer: 1, level: "ง่าย" },
+      { q: "3. ข้อใดคือโดเมนเนมของ 'หน่วยงานรัฐบาลไทย'?", choices: [".com", ".ac.th", ".go.th", ".or.th"], answer: 2, level: "ง่าย" },
+      { q: "4. โดเมนเนม '.ac.th' หมายถึงหน่วยงานใด?", choices: ["ทหาร", "การศึกษา", "เอกชน", "องค์กรไม่แสวงหาผลกำไร"], answer: 1, level: "ง่าย" },
+      { q: "5. ข่าวปลอม (Fake news) มีลักษณะอย่างไร?", choices: ["มีแหล่งอ้างอิงชัดเจน", "สร้างขึ้นเพื่อหลอกลวงหรือสร้างกระแส", "เขียนโดยผู้เชี่ยวชาญ", "มีหน่วยงานรัฐรับรอง"], answer: 1, level: "ง่าย" },
+      { q: "6. ถ้าต้องการข้อมูลที่มีความน่าเชื่อถือสูง ควรเลือกเว็บไซต์ที่มีโดเมนใด?", choices: [".com", ".net", ".go.th", ".info"], answer: 2, level: "ง่าย" },
+      { q: "7. การค้นหาข้อมูลบนอินเทอร์เน็ตมีประโยชน์อย่างไร?", choices: ["ทำให้คอมพิวเตอร์เร็วขึ้น", "ได้ข้อมูลตรงความต้องการอย่างรวดเร็ว", "ป้องกันไวรัสเข้าเครื่อง", "ทำให้พิมพ์ดีดเร็วขึ้น"], answer: 1, level: "ง่าย" },
+      // Medium (7 ข้อ)
+      { q: "8. หากต้องการค้นหาเฉพาะไฟล์เอกสาร PDF ต้องพิมพ์คำสั่งใดต่อท้าย?", choices: ["file:pdf", "type:pdf", "filetype:pdf", "pdf:"], answer: 2, level: "ปานกลาง" },
+      { q: "9. คำสั่ง 'site:go.th' มีหน้าที่ทำอะไร?", choices: ["ค้นหาเฉพาะภาษาไทย", "ค้นหาเฉพาะเว็บไซต์ของรัฐบาล", "ค้นหารูปภาพรัฐบาล", "บล็อกเว็บไซต์รัฐบาล"], answer: 1, level: "ปานกลาง" },
+      { q: "10. ต้องการค้นหาคำที่เรียงต่อกัน 'ตรงกันทุกประการ' ต้องใช้เครื่องหมายใด?", choices: ["เครื่องหมายบวก (+)", "เครื่องหมายอัญประกาศ (\"\")", "เครื่องหมายวงเล็บ ()", "เครื่องหมายลบ (-)"], answer: 1, level: "ปานกลาง" },
+      { q: "11. หากต้องการค้นหาคำว่า สัตว์เลี้ยง แต่ไม่ต้องการคำว่า สุนัข ต้องพิมพ์อย่างไร?", choices: ["สัตว์เลี้ยง -สุนัข", "สัตว์เลี้ยง +สุนัข", "สัตว์เลี้ยง NOT สุนัข", "สัตว์เลี้ยง (สุนัข)"], answer: 0, level: "ปานกลาง" },
+      { q: "12. เครื่องหมายใดมีความหมายเหมือนกับตัวดำเนินการ 'AND'?", choices: ["-", "OR", "+", "\" \""], answer: 2, level: "ปานกลาง" },
+      { q: "13. การกำหนดช่วงเวลาในการค้นหา (เช่น 2565-2568) จัดเป็นการทำสิ่งใด?", choices: ["การสร้างข่าวปลอม", "การกำหนดขอบเขตการค้นหา", "การเขียนโปรแกรม", "การติดตั้งมัลแวร์"], answer: 1, level: "ปานกลาง" },
+      { q: "14. ตัวดำเนินการ 'OR' ทำหน้าที่อย่างไรในการค้นหา?", choices: ["ต้องมีทั้งสองคำ", "ห้ามมีคำนั้น", "ให้แสดงผลข้อมูลที่มีคำใดคำหนึ่งก็ได้", "ค้นหาเฉพาะไฟล์เอกสาร"], answer: 2, level: "ปานกลาง" },
+      // Hard (6 ข้อ)
+      { q: "15. ข้อใด 'ไม่ใช่' หลักการประเมินความน่าเชื่อถือของข้อมูล?", choices: ["ตรวจสอบชื่อผู้เขียน", "ตรวจสอบโดเมนเว็บไซต์", "พิจารณาความสวยงามของสีเว็บไซต์", "ดูวันที่เผยแพร่ข้อมูล"], answer: 2, level: "ยาก" },
+      { q: "16. โป้ต้องการหาข้อมูล 'ปัญญาประดิษฐ์' จากเว็บไซต์ของ 'มหาวิทยาลัย' ควรพิมพ์อย่างไร?", choices: ["ปัญญาประดิษฐ์ site:ac.th", "ปัญญาประดิษฐ์ filetype:ac.th", "ปัญญาประดิษฐ์ site:go.th", "\"ปัญญาประดิษฐ์ มหาวิทยาลัย\""], answer: 0, level: "ยาก" },
+      { q: "17. หากนักเรียนเจอข้อมูลในโซเชียลมีเดียว่า 'กินมะนาวโซดารักษามะเร็งได้' สิ่งแรกที่ควรทำคืออะไร?", choices: ["แชร์ให้เพื่อนทันที", "ทดลองทำตามด้วยตนเอง", "ตรวจสอบแหล่งที่มาและผู้เชี่ยวชาญก่อนเชื่อ", "คอมเมนต์ด่าผู้โพสต์"], answer: 2, level: "ยาก" },
+      { q: "18. เว็บไซต์ที่มีวัตถุประสงค์เพื่อ 'ส่งเสริมการขายโฆษณา' มักมีความน่าเชื่อถือเป็นอย่างไรเมื่อเทียบกับเว็บให้ความรู้?", choices: ["น่าเชื่อถือกว่ามาก", "น่าเชื่อถือน้อยกว่า", "น่าเชื่อถือเท่ากัน", "เชื่อถือได้ 100%"], answer: 1, level: "ยาก" },
+      { q: "19. ข้อมูลที่คัดลอกมาจากเว็บบอร์ด (บล็อกส่วนตัว) ที่ไม่มีการอ้างอิง ถือว่ามีความน่าเชื่อถือระดับใด?", choices: ["สูงมาก", "ปานกลาง", "น้อย", "เชื่อถือได้เหมือนข่าวราชการ"], answer: 2, level: "ยาก" },
+      { q: "20. หากต้องการค้นหาเฉพาะเอกสารนำเสนอเรื่อง 'โลกร้อน' ควรพิมพ์ค้นหาว่าอะไร?", choices: ["โลกร้อน PPT", "โลกร้อน filetype:ppt", "โลกร้อน site:ppt", "\"โลกร้อน ppt\""], answer: 1, level: "ยาก" }
+    ];
+
+    let currentQIndex = 0;
+    let score = 0;
+
+    function startQuiz() {
+      currentQIndex = 0;
+      score = 0;
+      document.getElementById('quiz-intro').classList.add('hidden');
+      document.getElementById('quiz-result').classList.add('hidden');
+      document.getElementById('quiz-area').classList.remove('hidden');
+      renderQuestion();
+    }
+
+    function renderQuestion() {
+      const q = quizData[currentQIndex];
+      document.getElementById('quiz-progress').innerText = `ข้อที่ ${currentQIndex + 1} / 20`;
+      
+      // จัดการสีระดับความยาก
+      let diffColor = "bg-blue-100 text-blue-700";
+      if(q.level === "ปานกลาง") diffColor = "bg-amber-100 text-amber-700";
+      if(q.level === "ยาก") diffColor = "bg-rose-100 text-rose-700";
+      document.getElementById('quiz-difficulty').className = `text-xs px-2 py-1 rounded font-medium ${diffColor}`;
+      document.getElementById('quiz-difficulty').innerText = `ระดับ: ${q.level}`;
+      
+      document.getElementById('question-text').innerText = q.q;
+      
+      const choicesHtml = q.choices.map((choice, index) => {
+        return `<button onclick="answerQuestion(${index})" class="w-full text-left px-5 py-3 rounded-xl border border-slate-200 hover:border-emerald-500 hover:bg-emerald-50 transition font-medium text-slate-700">${choice}</button>`;
+      }).join('');
+      document.getElementById('choices-area').innerHTML = choicesHtml;
+    }
+
+    function answerQuestion(selectedIndex) {
+      if(selectedIndex === quizData[currentQIndex].answer) {
+        score++;
+      }
+      currentQIndex++;
+      if(currentQIndex < quizData.length) {
+        renderQuestion();
+      } else {
+        showResult();
+      }
+    }
+
+    function showResult() {
+      document.getElementById('quiz-area').classList.add('hidden');
+      const resDiv = document.getElementById('quiz-result');
+      resDiv.classList.remove('hidden');
+      document.getElementById('score-text').innerText = score;
+      
+      let msg = "";
+      if(score >= 16) { msg = "ยอดเยี่ยมมาก! นักเรียนมีความเชี่ยวชาญการค้นหาขั้นสูง 🌟"; }
+      else if(score >= 10) { msg = "ทำได้ดี! แต่อาจต้องทบทวนเทคนิคบางส่วนอีกนิดนะ 👍"; }
+      else { msg = "พยายามเข้านะ! ลองกลับไปอ่านสรุปเนื้อหาแล้วมาทำใหม่ ✌️"; }
+      document.getElementById('score-message').innerText = msg;
+    }
+
+    function resetQuiz() {
+      document.getElementById('quiz-result').classList.add('hidden');
+      document.getElementById('quiz-intro').classList.remove('hidden');
+    }
+  </script>
+</body>
+</html>
