@@ -1,0 +1,1200 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ห้องทดลองวงจรไฟฟ้า</title>
+<link href="https://fonts.googleapis.com/css2?family=Mitr:wght@400;500;600;700&family=Sarabun:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0f1117;
+    --panel: #1a1d27;
+    --panel2: #22263a;
+    --border: #2e3250;
+    --accent: #00d4ff;
+    --accent2: #ff6b35;
+    --green: #00ff88;
+    --yellow: #ffd700;
+    --red: #ff4444;
+    --wire-off: #2e3250;
+    --wire-on: #00d4ff;
+    --text: #e8eaf0;
+    --text2: #8892aa;
+    --glow: 0 0 20px rgba(0,212,255,0.6);
+    --glow-y: 0 0 20px rgba(255,215,0,0.8);
+    --glow-g: 0 0 20px rgba(0,255,136,0.6);
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    font-family: 'Sarabun', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ── HEADER ── */
+  header {
+    background: linear-gradient(135deg, #0f1117 0%, #1a1d27 100%);
+    border-bottom: 1px solid var(--border);
+    padding: 16px 24px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 4px 30px rgba(0,0,0,0.5);
+  }
+  header h1 {
+    font-family: 'Mitr', sans-serif;
+    font-size: 22px;
+    font-weight: 700;
+    background: linear-gradient(90deg, var(--accent), #7b8cff);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .header-icon { font-size: 26px; filter: drop-shadow(0 0 8px var(--accent)); }
+  .header-badge {
+    background: rgba(0,212,255,0.1);
+    border: 1px solid rgba(0,212,255,0.3);
+    color: var(--accent);
+    font-family: 'Mitr', sans-serif;
+    font-size: 11px;
+    padding: 3px 10px;
+    border-radius: 20px;
+    letter-spacing: 1px;
+  }
+
+  /* ── TABS ── */
+  .tabs {
+    display: flex;
+    gap: 0;
+    background: var(--panel);
+    border-bottom: 2px solid var(--border);
+    padding: 0 24px;
+  }
+  .tab-btn {
+    font-family: 'Mitr', sans-serif;
+    font-size: 14px;
+    padding: 14px 28px;
+    border: none;
+    background: none;
+    color: var(--text2);
+    cursor: pointer;
+    border-bottom: 3px solid transparent;
+    margin-bottom: -2px;
+    transition: all .25s;
+    letter-spacing: .5px;
+  }
+  .tab-btn:hover { color: var(--text); }
+  .tab-btn.active {
+    color: var(--accent);
+    border-bottom-color: var(--accent);
+    text-shadow: 0 0 12px rgba(0,212,255,.5);
+  }
+
+  /* ── MAIN LAYOUT ── */
+  .main-content { display: none; padding: 24px; max-width: 1200px; margin: 0 auto; }
+  .main-content.active { display: block; animation: fadeIn .3s ease; }
+  @keyframes fadeIn { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
+
+  /* ── CIRCUIT CARD ── */
+  .circuit-card {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 24px;
+    box-shadow: 0 8px 40px rgba(0,0,0,0.4);
+  }
+  .circuit-card h2 {
+    font-family: 'Mitr', sans-serif;
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--accent);
+    margin-bottom: 6px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .circuit-card p.desc {
+    font-size: 13px;
+    color: var(--text2);
+    margin-bottom: 20px;
+    line-height: 1.6;
+  }
+
+  /* ── SVG CANVAS ── */
+  .canvas-wrap {
+    background: var(--panel2);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 20px;
+    position: relative;
+    overflow: hidden;
+    margin-bottom: 20px;
+  }
+  .canvas-wrap::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: radial-gradient(circle, rgba(255,255,255,.03) 1px, transparent 1px);
+    background-size: 24px 24px;
+    pointer-events: none;
+  }
+  svg { display: block; width: 100%; max-width: 700px; margin: 0 auto; }
+
+  /* ── CONTROLS ── */
+  .controls {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    align-items: center;
+    margin-bottom: 16px;
+  }
+  .sw-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 20px;
+    border-radius: 12px;
+    border: 2px solid var(--border);
+    background: var(--panel2);
+    color: var(--text2);
+    font-family: 'Mitr', sans-serif;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all .2s;
+    user-select: none;
+  }
+  .sw-btn:hover { border-color: var(--accent); color: var(--text); }
+  .sw-btn.on {
+    border-color: var(--green);
+    color: var(--green);
+    background: rgba(0,255,136,.07);
+    box-shadow: 0 0 16px rgba(0,255,136,.2);
+  }
+  .sw-dot {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    background: var(--text2);
+    transition: all .2s;
+    box-shadow: none;
+  }
+  .sw-btn.on .sw-dot {
+    background: var(--green);
+    box-shadow: 0 0 8px var(--green);
+  }
+  .reset-btn {
+    margin-left: auto;
+    padding: 10px 20px;
+    border-radius: 12px;
+    border: 2px solid var(--border);
+    background: transparent;
+    color: var(--text2);
+    font-family: 'Mitr', sans-serif;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all .2s;
+  }
+  .reset-btn:hover { border-color: var(--accent2); color: var(--accent2); }
+
+  /* ── STATUS BAR ── */
+  .status-bar {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    padding: 14px 18px;
+    background: rgba(0,0,0,.3);
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    font-size: 13px;
+  }
+  .stat-item { display: flex; align-items: center; gap: 8px; }
+  .stat-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--text2);
+  }
+  .stat-dot.active { background: var(--green); box-shadow: 0 0 6px var(--green); }
+  .stat-label { color: var(--text2); }
+  .stat-val { color: var(--text); font-weight: 500; }
+
+  /* ── INFO PANELS ── */
+  .info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 14px;
+    margin-top: 20px;
+  }
+  .info-box {
+    background: var(--panel2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 14px 16px;
+  }
+  .info-box h4 {
+    font-family: 'Mitr', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--accent);
+    margin-bottom: 8px;
+    letter-spacing: .5px;
+  }
+  .info-box ul { list-style: none; }
+  .info-box ul li {
+    font-size: 12px;
+    color: var(--text2);
+    padding: 4px 0;
+    border-bottom: 1px solid rgba(255,255,255,.04);
+    display: flex;
+    gap: 6px;
+  }
+  .info-box ul li::before { content: '⚡'; font-size: 10px; }
+
+  /* ── AMPER METER ANIMATION ── */
+  @keyframes pulse { 0%,100%{opacity:.6} 50%{opacity:1} }
+  @keyframes flow {
+    from { stroke-dashoffset: 100; }
+    to   { stroke-dashoffset: 0; }
+  }
+
+  /* ── GRID LAYOUT FOR TWO CIRCUITS ── */
+  .circuit-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+  }
+  @media(max-width:800px) { .circuit-grid { grid-template-columns: 1fr; } }
+
+  /* ── BATTERY INDICATOR ── */
+  .battery-indicator {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    color: var(--green);
+  }
+  .battery-icon { font-size: 16px; }
+
+  /* ── EXPLANATION ── */
+  .explanation {
+    background: linear-gradient(135deg, rgba(0,212,255,.06), rgba(123,140,255,.06));
+    border: 1px solid rgba(0,212,255,.2);
+    border-radius: 14px;
+    padding: 18px 20px;
+    margin-top: 16px;
+    font-size: 13px;
+    line-height: 1.8;
+    color: var(--text);
+  }
+  .explanation strong { color: var(--accent); }
+  .explanation .hl-y { color: var(--yellow); }
+  .explanation .hl-g { color: var(--green); }
+  .explanation .hl-r { color: var(--red); }
+
+  /* ── COMPARISON TABLE ── */
+  .compare-section { padding: 24px; max-width: 1200px; margin: 0 auto; }
+  table { width: 100%; border-collapse: collapse; }
+  th {
+    background: var(--panel2);
+    color: var(--accent);
+    font-family: 'Mitr', sans-serif;
+    font-size: 13px;
+    padding: 12px 16px;
+    text-align: left;
+    border-bottom: 2px solid var(--border);
+  }
+  td {
+    padding: 10px 16px;
+    border-bottom: 1px solid var(--border);
+    font-size: 13px;
+    color: var(--text);
+  }
+  tr:nth-child(even) td { background: rgba(255,255,255,.02); }
+  td.good { color: var(--green); }
+  td.bad { color: var(--red); }
+
+  /* ── QUIZ ── */
+  .quiz-wrap { padding: 24px; max-width: 800px; margin: 0 auto; }
+  .quiz-q {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 20px;
+    margin-bottom: 16px;
+  }
+  .quiz-q .question {
+    font-family: 'Mitr', sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    margin-bottom: 14px;
+    color: var(--text);
+  }
+  .quiz-opts { display: flex; flex-direction: column; gap: 8px; }
+  .quiz-opt {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 16px;
+    border: 2px solid var(--border);
+    border-radius: 10px;
+    background: var(--panel2);
+    cursor: pointer;
+    font-size: 13px;
+    color: var(--text);
+    transition: all .2s;
+    user-select: none;
+  }
+  .quiz-opt:hover:not(.locked) { border-color: var(--accent); color: var(--accent); }
+  .quiz-opt.correct { border-color: var(--green); color: var(--green); background: rgba(0,255,136,.08); }
+  .quiz-opt.wrong { border-color: var(--red); color: var(--red); background: rgba(255,68,68,.08); }
+  .quiz-opt .ol {
+    width: 24px; height: 24px; border-radius: 50%;
+    border: 2px solid currentColor;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 700; flex-shrink: 0;
+  }
+  .quiz-expl {
+    margin-top: 10px;
+    padding: 10px 14px;
+    border-left: 3px solid var(--green);
+    background: rgba(0,255,136,.06);
+    border-radius: 0 8px 8px 0;
+    font-size: 12.5px;
+    color: var(--green);
+    display: none;
+  }
+  .quiz-expl.show { display: block; animation: fadeIn .2s ease; }
+</style>
+</head>
+<body>
+
+<header>
+  <span class="header-icon">⚡</span>
+  <h1>ห้องทดลองวงจรไฟฟ้า</h1>
+  <span class="header-badge">INTERACTIVE LAB</span>
+</header>
+
+<div class="tabs">
+  <button class="tab-btn active" onclick="switchTab('series')">🔗 วงจรอนุกรม</button>
+  <button class="tab-btn" onclick="switchTab('parallel')">⚡ วงจรขนาน</button>
+  <button class="tab-btn" onclick="switchTab('compare')">📊 เปรียบเทียบ</button>
+  <button class="tab-btn" onclick="switchTab('quiz')">🧪 ทดสอบความรู้</button>
+</div>
+
+<!-- ===== SERIES TAB ===== -->
+<div class="main-content active" id="tab-series">
+  <div class="circuit-card">
+    <h2>🔗 วงจรอนุกรม (Series Circuit)</h2>
+    <p class="desc">อุปกรณ์ต่อเรียงกันเป็นสาย กระแสไฟฟ้าไหลผ่านทีละตัว ถ้าหลอดใดขาดวงจรจะดับทั้งหมด</p>
+
+    <div class="controls">
+      <button class="sw-btn" id="s-sw1" onclick="toggleSwitch('s','sw1')">
+        <span class="sw-dot"></span>สวิตช์ S1
+      </button>
+      <button class="sw-btn" id="s-sw2" onclick="toggleSwitch('s','sw2')">
+        <span class="sw-dot"></span>หลอด L1
+      </button>
+      <button class="sw-btn" id="s-sw3" onclick="toggleSwitch('s','sw3')">
+        <span class="sw-dot"></span>หลอด L2
+      </button>
+      <button class="sw-btn" id="s-sw4" onclick="toggleSwitch('s','sw4')">
+        <span class="sw-dot"></span>หลอด L3
+      </button>
+      <button class="reset-btn" onclick="resetCircuit('s')">↺ รีเซ็ต</button>
+    </div>
+
+    <div class="canvas-wrap">
+      <svg id="svg-series" viewBox="0 0 680 300" xmlns="http://www.w3.org/2000/svg">
+        <!-- Grid dots done by CSS -->
+
+        <!-- ── WIRES ── -->
+        <!-- Top wire: Battery+ → L1 → L2 → L3 → right corner -->
+        <path id="s-wire-top" d="M 80,80 L 190,80 L 230,80 L 340,80 L 380,80 L 490,80 L 530,80 L 600,80 L 600,220" class="wire" fill="none" stroke="#2e3250" stroke-width="3" stroke-linecap="round"/>
+        <!-- Bottom wire: Battery- → left corner → bottom -->
+        <path id="s-wire-bot" d="M 80,220 L 600,220" class="wire" fill="none" stroke="#2e3250" stroke-width="3" stroke-linecap="round"/>
+
+        <!-- Animated flow particles on top wire (shown when circuit on) -->
+        <path id="s-flow-top" d="M 80,80 L 600,80 L 600,220" fill="none" stroke="#00d4ff" stroke-width="3" stroke-dasharray="12 18" stroke-dashoffset="100" stroke-linecap="round" opacity="0">
+          <animate attributeName="stroke-dashoffset" from="100" to="-100" dur="1.2s" repeatCount="indefinite"/>
+        </path>
+        <path id="s-flow-bot" d="M 600,220 L 80,220" fill="none" stroke="#00d4ff" stroke-width="3" stroke-dasharray="12 18" stroke-dashoffset="100" stroke-linecap="round" opacity="0">
+          <animate attributeName="stroke-dashoffset" from="100" to="-100" dur="1.2s" repeatCount="indefinite"/>
+        </path>
+
+        <!-- ── BATTERY ── -->
+        <g transform="translate(50,120)">
+          <!-- Battery body -->
+          <rect x="0" y="0" width="60" height="100" rx="8" fill="#1a1d27" stroke="#3a3f5c" stroke-width="2"/>
+          <rect x="18" y="-8" width="24" height="10" rx="3" fill="#3a3f5c"/>
+          <!-- Battery cells -->
+          <line x1="8" y1="30" x2="52" y2="30" stroke="#3a3f5c" stroke-width="2"/>
+          <line x1="8" y1="50" x2="52" y2="50" stroke="#3a3f5c" stroke-width="2"/>
+          <line x1="8" y1="70" x2="52" y2="70" stroke="#3a3f5c" stroke-width="2"/>
+          <!-- Battery fill indicator -->
+          <rect id="s-batt-fill" x="4" y="55" width="52" height="42" rx="4" fill="#00ff8840"/>
+          <!-- + and - -->
+          <text x="30" y="18" font-size="14" font-weight="bold" text-anchor="middle" fill="#ffd700">+</text>
+          <text x="30" y="110" font-size="14" font-weight="bold" text-anchor="middle" fill="#8892aa">−</text>
+          <text x="30" y="95" font-size="10" text-anchor="middle" fill="#8892aa" font-family="Mitr">4.5V</text>
+        </g>
+        <!-- Battery connecting wires -->
+        <line x1="80" y1="80" x2="80" y2="120" stroke="#2e3250" stroke-width="3" id="s-wL"/>
+        <line x1="80" y1="220" x2="80" y2="220" stroke="#2e3250" stroke-width="3" id="s-wR"/>
+
+        <!-- ── SWITCH ── -->
+        <g transform="translate(140,60)">
+          <rect x="0" y="0" width="50" height="30" rx="6" fill="#22263a" stroke="#3a3f5c" stroke-width="1.5"/>
+          <text x="25" y="12" font-size="8" text-anchor="middle" fill="#8892aa" font-family="Mitr">สวิตช์</text>
+          <!-- Switch lever -->
+          <line id="s-sw-lever" x1="10" y1="22" x2="40" y2="22" stroke="#2e3250" stroke-width="3" stroke-linecap="round"/>
+          <circle cx="10" cy="22" r="4" fill="#3a3f5c"/>
+          <circle cx="40" cy="22" r="4" fill="#3a3f5c"/>
+          <text x="25" y="44" font-size="9" text-anchor="middle" fill="#8892aa" font-family="Mitr">S1</text>
+        </g>
+
+        <!-- ── BULB 1 ── -->
+        <g id="s-bulb1-g" transform="translate(240,50)">
+          <!-- Filament glow -->
+          <circle id="s-glow1" cx="30" cy="35" r="22" fill="#ffd700" opacity="0" filter="url(#glow-filter)"/>
+          <!-- Bulb glass -->
+          <ellipse cx="30" cy="32" rx="20" ry="22" fill="#1a1d27" stroke="#3a3f5c" stroke-width="2"/>
+          <ellipse id="s-bulb1-glass" cx="30" cy="32" rx="20" ry="22" fill="transparent"/>
+          <!-- Filament -->
+          <path id="s-filament1" d="M 24,38 L 26,28 L 28,38 L 30,28 L 32,38 L 34,28 L 36,38" stroke="#3a3f5c" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+          <!-- Base -->
+          <rect x="24" y="52" width="12" height="16" rx="2" fill="#22263a" stroke="#3a3f5c" stroke-width="1.5"/>
+          <!-- Contacts -->
+          <rect x="24" y="68" width="5" height="6" rx="1" fill="#3a3f5c"/>
+          <rect x="31" y="68" width="5" height="6" rx="1" fill="#3a3f5c"/>
+          <text x="30" y="86" font-size="9" text-anchor="middle" fill="#8892aa" font-family="Mitr">L1</text>
+        </g>
+        <!-- L1 connecting wires -->
+        <line x1="240" y1="80" x2="264" y2="80" stroke="#2e3250" stroke-width="3"/>
+        <line x1="296" y1="80" x2="340" y2="80" stroke="#2e3250" stroke-width="3"/>
+
+        <!-- ── BULB 2 ── -->
+        <g id="s-bulb2-g" transform="translate(350,50)">
+          <circle id="s-glow2" cx="30" cy="35" r="22" fill="#ffd700" opacity="0" filter="url(#glow-filter)"/>
+          <ellipse cx="30" cy="32" rx="20" ry="22" fill="#1a1d27" stroke="#3a3f5c" stroke-width="2"/>
+          <ellipse id="s-bulb2-glass" cx="30" cy="32" rx="20" ry="22" fill="transparent"/>
+          <path id="s-filament2" d="M 24,38 L 26,28 L 28,38 L 30,28 L 32,38 L 34,28 L 36,38" stroke="#3a3f5c" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+          <rect x="24" y="52" width="12" height="16" rx="2" fill="#22263a" stroke="#3a3f5c" stroke-width="1.5"/>
+          <rect x="24" y="68" width="5" height="6" rx="1" fill="#3a3f5c"/>
+          <rect x="31" y="68" width="5" height="6" rx="1" fill="#3a3f5c"/>
+          <text x="30" y="86" font-size="9" text-anchor="middle" fill="#8892aa" font-family="Mitr">L2</text>
+        </g>
+        <line x1="340" y1="80" x2="374" y2="80" stroke="#2e3250" stroke-width="3"/>
+        <line x1="406" y1="80" x2="450" y2="80" stroke="#2e3250" stroke-width="3"/>
+
+        <!-- ── BULB 3 ── -->
+        <g id="s-bulb3-g" transform="translate(460,50)">
+          <circle id="s-glow3" cx="30" cy="35" r="22" fill="#ffd700" opacity="0" filter="url(#glow-filter)"/>
+          <ellipse cx="30" cy="32" rx="20" ry="22" fill="#1a1d27" stroke="#3a3f5c" stroke-width="2"/>
+          <ellipse id="s-bulb3-glass" cx="30" cy="32" rx="20" ry="22" fill="transparent"/>
+          <path id="s-filament3" d="M 24,38 L 26,28 L 28,38 L 30,28 L 32,38 L 34,28 L 36,38" stroke="#3a3f5c" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+          <rect x="24" y="52" width="12" height="16" rx="2" fill="#22263a" stroke="#3a3f5c" stroke-width="1.5"/>
+          <rect x="24" y="68" width="5" height="6" rx="1" fill="#3a3f5c"/>
+          <rect x="31" y="68" width="5" height="6" rx="1" fill="#3a3f5c"/>
+          <text x="30" y="86" font-size="9" text-anchor="middle" fill="#8892aa" font-family="Mitr">L3</text>
+        </g>
+        <line x1="450" y1="80" x2="484" y2="80" stroke="#2e3250" stroke-width="3"/>
+        <line x1="516" y1="80" x2="600" y2="80" stroke="#2e3250" stroke-width="3"/>
+
+        <!-- ── AMMETER ── -->
+        <g transform="translate(300,190)">
+          <circle cx="22" cy="22" r="20" fill="#1a1d27" stroke="#3a3f5c" stroke-width="2"/>
+          <text x="22" y="17" font-size="9" text-anchor="middle" fill="#8892aa" font-family="Mitr">A</text>
+          <text id="s-amp-val" x="22" y="30" font-size="10" text-anchor="middle" fill="#00d4ff" font-family="Mitr">0 mA</text>
+          <text x="22" y="53" font-size="8" text-anchor="middle" fill="#8892aa" font-family="Mitr">กระแส</text>
+        </g>
+
+        <!-- ── LABELS ── -->
+        <text x="30" y="270" font-size="11" fill="#8892aa" font-family="Mitr">แบตเตอรี่</text>
+        <text x="350" y="260" font-size="11" fill="#8892aa" font-family="Mitr" text-anchor="middle">วงจรอนุกรม: ต่อเรียงกัน</text>
+
+        <!-- Filters -->
+        <defs>
+          <filter id="glow-filter" x="-50%" y="-50%" width="200%" height="200%">
+            <feGaussianBlur stdDeviation="6" result="blur"/>
+            <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+          </filter>
+          <filter id="glow-wire">
+            <feGaussianBlur stdDeviation="3" result="blur"/>
+            <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+          </filter>
+        </defs>
+      </svg>
+    </div>
+
+    <div class="status-bar">
+      <div class="stat-item">
+        <div class="stat-dot" id="s-dot-power"></div>
+        <span class="stat-label">วงจร:</span>
+        <span class="stat-val" id="s-stat-power">ปิด</span>
+      </div>
+      <div class="stat-item">
+        <div class="stat-dot" id="s-dot-l1"></div>
+        <span class="stat-label">L1:</span>
+        <span class="stat-val" id="s-stat-l1">ดับ</span>
+      </div>
+      <div class="stat-item">
+        <div class="stat-dot" id="s-dot-l2"></div>
+        <span class="stat-label">L2:</span>
+        <span class="stat-val" id="s-stat-l2">ดับ</span>
+      </div>
+      <div class="stat-item">
+        <div class="stat-dot" id="s-dot-l3"></div>
+        <span class="stat-label">L3:</span>
+        <span class="stat-val" id="s-stat-l3">ดับ</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-label">แรงดัน:</span>
+        <span class="stat-val" id="s-stat-v">4.5V</span>
+      </div>
+    </div>
+
+    <div class="explanation" id="s-explanation">
+      💡 <strong>คำอธิบาย:</strong> กดสวิตช์ S1 เพื่อเปิดวงจร — หลอดไฟต่อเรียงกัน กระแสไหลผ่านทีละตัว<br>
+      ลองปิดหลอดใดหลอดหนึ่ง เพื่อดูว่าวงจรทั้งหมดดับ!
+    </div>
+
+    <div class="info-grid">
+      <div class="info-box">
+        <h4>📐 สูตรวงจรอนุกรม</h4>
+        <ul>
+          <li>R_รวม = R₁ + R₂ + R₃</li>
+          <li>I = เท่ากันทุกจุด</li>
+          <li>V_รวม = V₁ + V₂ + V₃</li>
+          <li>ถ้าขาด 1 ตัว → ดับทั้งหมด</li>
+        </ul>
+      </div>
+      <div class="info-box">
+        <h4>💡 ตัวอย่างในชีวิต</h4>
+        <ul>
+          <li>ไฟประดับต้นคริสต์มาสรุ่นเก่า</li>
+          <li>วงจรป้องกันในบางอุปกรณ์</li>
+          <li>ไฟฉาย (ถ่านต่ออนุกรม)</li>
+          <li>อุปกรณ์ความปลอดภัย</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== PARALLEL TAB ===== -->
+<div class="main-content" id="tab-parallel">
+  <div class="circuit-card">
+    <h2>⚡ วงจรขนาน (Parallel Circuit)</h2>
+    <p class="desc">อุปกรณ์ต่อคู่ขนานกัน แต่ละหลอดมีวงจรของตัวเอง แม้หลอดใดขาดหลอดอื่นยังติดได้</p>
+
+    <div class="controls">
+      <button class="sw-btn" id="p-sw1" onclick="toggleSwitch('p','sw1')">
+        <span class="sw-dot"></span>สวิตช์ S1
+      </button>
+      <button class="sw-btn" id="p-sw2" onclick="toggleSwitch('p','sw2')">
+        <span class="sw-dot"></span>หลอด L1
+      </button>
+      <button class="sw-btn" id="p-sw3" onclick="toggleSwitch('p','sw3')">
+        <span class="sw-dot"></span>หลอด L2
+      </button>
+      <button class="sw-btn" id="p-sw4" onclick="toggleSwitch('p','sw4')">
+        <span class="sw-dot"></span>หลอด L3
+      </button>
+      <button class="reset-btn" onclick="resetCircuit('p')">↺ รีเซ็ต</button>
+    </div>
+
+    <div class="canvas-wrap">
+      <svg id="svg-parallel" viewBox="0 0 680 380" xmlns="http://www.w3.org/2000/svg">
+
+        <!-- ── WIRES MAIN ── -->
+        <!-- Main top bus: left → right -->
+        <path id="p-wire-top" d="M 100,60 L 580,60" fill="none" stroke="#2e3250" stroke-width="3" stroke-linecap="round"/>
+        <!-- Main bottom bus: left → right -->
+        <path id="p-wire-bot" d="M 100,320 L 580,320" fill="none" stroke="#2e3250" stroke-width="3" stroke-linecap="round"/>
+        <!-- Left connecting wire (battery) -->
+        <line id="p-wire-left" x1="100" y1="60" x2="100" y2="320" stroke="#2e3250" stroke-width="3"/>
+        <!-- Right connecting wire -->
+        <line id="p-wire-right" x1="580" y1="60" x2="580" y2="320" stroke="#2e3250" stroke-width="3"/>
+
+        <!-- Branch wires - L1 -->
+        <line id="p-br1-top" x1="220" y1="60" x2="220" y2="120" stroke="#2e3250" stroke-width="3"/>
+        <line id="p-br1-bot" x1="220" y1="240" x2="220" y2="320" stroke="#2e3250" stroke-width="3"/>
+        <!-- Branch wires - L2 -->
+        <line id="p-br2-top" x1="340" y1="60" x2="340" y2="120" stroke="#2e3250" stroke-width="3"/>
+        <line id="p-br2-bot" x1="340" y1="240" x2="340" y2="320" stroke="#2e3250" stroke-width="3"/>
+        <!-- Branch wires - L3 -->
+        <line id="p-br3-top" x1="460" y1="60" x2="460" y2="120" stroke="#2e3250" stroke-width="3"/>
+        <line id="p-br3-bot" x1="460" y1="240" x2="460" y2="320" stroke="#2e3250" stroke-width="3"/>
+
+        <!-- Animated flow - main bus (when circuit on) -->
+        <path id="p-flow-top" d="M 100,60 L 580,60" fill="none" stroke="#00d4ff" stroke-width="3" stroke-dasharray="12 18" opacity="0">
+          <animate attributeName="stroke-dashoffset" from="100" to="-100" dur="0.8s" repeatCount="indefinite"/>
+        </path>
+        <path id="p-flow-bot" d="M 580,320 L 100,320" fill="none" stroke="#00d4ff" stroke-width="3" stroke-dasharray="12 18" opacity="0">
+          <animate attributeName="stroke-dashoffset" from="100" to="-100" dur="0.8s" repeatCount="indefinite"/>
+        </path>
+
+        <!-- Branch flow animations -->
+        <line id="p-bflow1-d" x1="220" y1="60" x2="220" y2="240" stroke="#00d4ff" stroke-width="3" stroke-dasharray="10 14" opacity="0">
+          <animate attributeName="stroke-dashoffset" from="100" to="-100" dur="0.8s" repeatCount="indefinite"/>
+        </line>
+        <line id="p-bflow1-u" x1="220" y1="240" x2="220" y2="320" stroke="#00d4ff" stroke-width="3" stroke-dasharray="10 14" opacity="0">
+          <animate attributeName="stroke-dashoffset" from="100" to="-100" dur="0.8s" repeatCount="indefinite"/>
+        </line>
+        <line id="p-bflow2-d" x1="340" y1="60" x2="340" y2="240" stroke="#00d4ff" stroke-width="3" stroke-dasharray="10 14" opacity="0">
+          <animate attributeName="stroke-dashoffset" from="100" to="-100" dur="0.8s" repeatCount="indefinite"/>
+        </line>
+        <line id="p-bflow2-u" x1="340" y1="240" x2="340" y2="320" stroke="#00d4ff" stroke-width="3" stroke-dasharray="10 14" opacity="0">
+          <animate attributeName="stroke-dashoffset" from="100" to="-100" dur="0.8s" repeatCount="indefinite"/>
+        </line>
+        <line id="p-bflow3-d" x1="460" y1="60" x2="460" y2="240" stroke="#00d4ff" stroke-width="3" stroke-dasharray="10 14" opacity="0">
+          <animate attributeName="stroke-dashoffset" from="100" to="-100" dur="0.8s" repeatCount="indefinite"/>
+        </line>
+        <line id="p-bflow3-u" x1="460" y1="240" x2="460" y2="320" stroke="#00d4ff" stroke-width="3" stroke-dasharray="10 14" opacity="0">
+          <animate attributeName="stroke-dashoffset" from="100" to="-100" dur="0.8s" repeatCount="indefinite"/>
+        </line>
+
+        <!-- ── BATTERY ── -->
+        <g transform="translate(60,140)">
+          <rect x="0" y="0" width="44" height="90" rx="6" fill="#1a1d27" stroke="#3a3f5c" stroke-width="2"/>
+          <rect x="14" y="-7" width="16" height="9" rx="2" fill="#3a3f5c"/>
+          <line x1="6" y1="25" x2="38" y2="25" stroke="#3a3f5c" stroke-width="2"/>
+          <line x1="6" y1="45" x2="38" y2="45" stroke="#3a3f5c" stroke-width="2"/>
+          <line x1="6" y1="65" x2="38" y2="65" stroke="#3a3f5c" stroke-width="2"/>
+          <rect id="p-batt-fill" x="4" y="48" width="36" height="38" rx="3" fill="#00ff8840"/>
+          <text x="22" y="14" font-size="12" font-weight="bold" text-anchor="middle" fill="#ffd700">+</text>
+          <text x="22" y="100" font-size="12" font-weight="bold" text-anchor="middle" fill="#8892aa">−</text>
+          <text x="22" y="88" font-size="9" text-anchor="middle" fill="#8892aa" font-family="Mitr">4.5V</text>
+        </g>
+        <!-- Battery wires -->
+        <line x1="100" y1="60" x2="100" y2="140" stroke="#2e3250" stroke-width="3"/>
+        <line x1="100" y1="320" x2="100" y2="230" stroke="#2e3250" stroke-width="3"/>
+
+        <!-- ── SWITCH ── -->
+        <g transform="translate(116,40)">
+          <rect x="0" y="0" width="50" height="26" rx="6" fill="#22263a" stroke="#3a3f5c" stroke-width="1.5"/>
+          <text x="25" y="10" font-size="8" text-anchor="middle" fill="#8892aa" font-family="Mitr">สวิตช์</text>
+          <line id="p-sw-lever" x1="8" y1="19" x2="42" y2="19" stroke="#2e3250" stroke-width="3" stroke-linecap="round"/>
+          <circle cx="8" cy="19" r="3.5" fill="#3a3f5c"/>
+          <circle cx="42" cy="19" r="3.5" fill="#3a3f5c"/>
+          <text x="25" y="36" font-size="9" text-anchor="middle" fill="#8892aa" font-family="Mitr">S1</text>
+        </g>
+
+        <!-- ── BULB 1 (Parallel) ── -->
+        <g id="p-bulb1-g" transform="translate(200,120)">
+          <circle id="p-glow1" cx="22" cy="28" r="20" fill="#ffd700" opacity="0" filter="url(#glow-filter-p)"/>
+          <ellipse cx="22" cy="26" rx="18" ry="20" fill="#1a1d27" stroke="#3a3f5c" stroke-width="2"/>
+          <ellipse id="p-bulb1-glass" cx="22" cy="26" rx="18" ry="20" fill="transparent"/>
+          <path id="p-filament1" d="M 16,32 L 18,23 L 20,32 L 22,23 L 24,32 L 26,23 L 28,32" stroke="#3a3f5c" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+          <rect x="16" y="44" width="12" height="14" rx="2" fill="#22263a" stroke="#3a3f5c" stroke-width="1.5"/>
+          <rect x="16" y="58" width="5" height="5" rx="1" fill="#3a3f5c"/>
+          <rect x="23" y="58" width="5" height="5" rx="1" fill="#3a3f5c"/>
+          <text x="22" y="76" font-size="9" text-anchor="middle" fill="#8892aa" font-family="Mitr">L1</text>
+        </g>
+
+        <!-- ── BULB 2 ── -->
+        <g id="p-bulb2-g" transform="translate(320,120)">
+          <circle id="p-glow2" cx="22" cy="28" r="20" fill="#ffd700" opacity="0" filter="url(#glow-filter-p)"/>
+          <ellipse cx="22" cy="26" rx="18" ry="20" fill="#1a1d27" stroke="#3a3f5c" stroke-width="2"/>
+          <ellipse id="p-bulb2-glass" cx="22" cy="26" rx="18" ry="20" fill="transparent"/>
+          <path id="p-filament2" d="M 16,32 L 18,23 L 20,32 L 22,23 L 24,32 L 26,23 L 28,32" stroke="#3a3f5c" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+          <rect x="16" y="44" width="12" height="14" rx="2" fill="#22263a" stroke="#3a3f5c" stroke-width="1.5"/>
+          <rect x="16" y="58" width="5" height="5" rx="1" fill="#3a3f5c"/>
+          <rect x="23" y="58" width="5" height="5" rx="1" fill="#3a3f5c"/>
+          <text x="22" y="76" font-size="9" text-anchor="middle" fill="#8892aa" font-family="Mitr">L2</text>
+        </g>
+
+        <!-- ── BULB 3 ── -->
+        <g id="p-bulb3-g" transform="translate(440,120)">
+          <circle id="p-glow3" cx="22" cy="28" r="20" fill="#ffd700" opacity="0" filter="url(#glow-filter-p)"/>
+          <ellipse cx="22" cy="26" rx="18" ry="20" fill="#1a1d27" stroke="#3a3f5c" stroke-width="2"/>
+          <ellipse id="p-bulb3-glass" cx="22" cy="26" rx="18" ry="20" fill="transparent"/>
+          <path id="p-filament3" d="M 16,32 L 18,23 L 20,32 L 22,23 L 24,32 L 26,23 L 28,32" stroke="#3a3f5c" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+          <rect x="16" y="44" width="12" height="14" rx="2" fill="#22263a" stroke="#3a3f5c" stroke-width="1.5"/>
+          <rect x="16" y="58" width="5" height="5" rx="1" fill="#3a3f5c"/>
+          <rect x="23" y="58" width="5" height="5" rx="1" fill="#3a3f5c"/>
+          <text x="22" y="76" font-size="9" text-anchor="middle" fill="#8892aa" font-family="Mitr">L3</text>
+        </g>
+
+        <!-- Ammeter P -->
+        <g transform="translate(530,170)">
+          <circle cx="22" cy="22" r="20" fill="#1a1d27" stroke="#3a3f5c" stroke-width="2"/>
+          <text x="22" y="17" font-size="9" text-anchor="middle" fill="#8892aa" font-family="Mitr">A</text>
+          <text id="p-amp-val" x="22" y="30" font-size="10" text-anchor="middle" fill="#00d4ff" font-family="Mitr">0 mA</text>
+          <text x="22" y="53" font-size="8" text-anchor="middle" fill="#8892aa" font-family="Mitr">กระแส</text>
+        </g>
+
+        <text x="340" y="360" font-size="11" fill="#8892aa" font-family="Mitr" text-anchor="middle">วงจรขนาน: ต่อคู่ขนาน แต่ละหลอดมีวงจรของตัวเอง</text>
+
+        <defs>
+          <filter id="glow-filter-p" x="-50%" y="-50%" width="200%" height="200%">
+            <feGaussianBlur stdDeviation="5" result="blur"/>
+            <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+          </filter>
+        </defs>
+      </svg>
+    </div>
+
+    <div class="status-bar">
+      <div class="stat-item">
+        <div class="stat-dot" id="p-dot-power"></div>
+        <span class="stat-label">วงจร:</span>
+        <span class="stat-val" id="p-stat-power">ปิด</span>
+      </div>
+      <div class="stat-item">
+        <div class="stat-dot" id="p-dot-l1"></div>
+        <span class="stat-label">L1:</span>
+        <span class="stat-val" id="p-stat-l1">ดับ</span>
+      </div>
+      <div class="stat-item">
+        <div class="stat-dot" id="p-dot-l2"></div>
+        <span class="stat-label">L2:</span>
+        <span class="stat-val" id="p-stat-l2">ดับ</span>
+      </div>
+      <div class="stat-item">
+        <div class="stat-dot" id="p-dot-l3"></div>
+        <span class="stat-label">L3:</span>
+        <span class="stat-val" id="p-stat-l3">ดับ</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-label">กระแสรวม:</span>
+        <span class="stat-val" id="p-stat-i">0 mA</span>
+      </div>
+    </div>
+
+    <div class="explanation" id="p-explanation">
+      💡 <strong>คำอธิบาย:</strong> กดสวิตช์ S1 เพื่อเปิดวงจร — หลอดไฟต่อขนาน แต่ละหลอดมีวงจรของตัวเอง<br>
+      ลองปิดหลอดใดหลอดหนึ่ง <span class="hl-g">หลอดอื่นยังคงติด!</span> นี่คือหลักการของไฟฟ้าในบ้านเรา
+    </div>
+
+    <div class="info-grid">
+      <div class="info-box">
+        <h4>📐 สูตรวงจรขนาน</h4>
+        <ul>
+          <li>1/R_รวม = 1/R₁ + 1/R₂ + 1/R₃</li>
+          <li>V = เท่ากันทุกสาขา</li>
+          <li>I_รวม = I₁ + I₂ + I₃</li>
+          <li>ถ้าขาด 1 ตัว → อื่นยังทำงาน</li>
+        </ul>
+      </div>
+      <div class="info-box">
+        <h4>💡 ตัวอย่างในชีวิต</h4>
+        <ul>
+          <li>ไฟฟ้าในบ้านทุกหลัง</li>
+          <li>เต้าเสียบและปลั๊กไฟ</li>
+          <li>ไฟประดับรุ่นใหม่ LED</li>
+          <li>คอมพิวเตอร์และอุปกรณ์</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== COMPARE TAB ===== -->
+<div class="main-content" id="tab-compare">
+  <div class="compare-section">
+    <div class="circuit-card" style="margin-bottom:24px">
+      <h2>📊 ตารางเปรียบเทียบวงจรไฟฟ้า</h2>
+      <p class="desc">เปรียบเทียบความแตกต่างระหว่างวงจรอนุกรมและวงจรขนาน</p>
+      <table>
+        <tr>
+          <th>คุณสมบัติ</th>
+          <th>วงจรอนุกรม 🔗</th>
+          <th>วงจรขนาน ⚡</th>
+        </tr>
+        <tr>
+          <td>การเชื่อมต่อ</td>
+          <td>ต่อเรียงกันเป็นสาย</td>
+          <td>ต่อคู่ขนาน แยกสาขา</td>
+        </tr>
+        <tr>
+          <td>กระแสไฟฟ้า (I)</td>
+          <td>เท่ากันทุกจุด</td>
+          <td>แตกต่างกันในแต่ละสาขา</td>
+        </tr>
+        <tr>
+          <td>แรงดันไฟฟ้า (V)</td>
+          <td>แบ่งสัดส่วนในแต่ละอุปกรณ์</td>
+          <td>เท่ากันทุกสาขา</td>
+        </tr>
+        <tr>
+          <td>ความต้านทานรวม</td>
+          <td class="bad">สูงขึ้น (บวกรวม)</td>
+          <td class="good">ต่ำลง (น้อยกว่าตัวน้อยสุด)</td>
+        </tr>
+        <tr>
+          <td>เมื่ออุปกรณ์ขาด</td>
+          <td class="bad">ดับทั้งหมด</td>
+          <td class="good">อุปกรณ์อื่นยังทำงาน</td>
+        </tr>
+        <tr>
+          <td>ความสว่างหลอดไฟ</td>
+          <td class="bad">จางกว่า (แบ่งแรงดัน)</td>
+          <td class="good">สว่างเท่าเดิมทุกหลอด</td>
+        </tr>
+        <tr>
+          <td>การใช้พลังงาน</td>
+          <td>น้อยกว่า</td>
+          <td>มากกว่า (กระแสรวมสูง)</td>
+        </tr>
+        <tr>
+          <td>ตัวอย่างการใช้งาน</td>
+          <td>ไฟประดับรุ่นเก่า, วงจรป้องกัน</td>
+          <td class="good">ไฟในบ้าน, เต้าเสียบ, เครื่องใช้ไฟฟ้า</td>
+        </tr>
+      </table>
+    </div>
+
+    <div class="circuit-grid">
+      <div class="circuit-card">
+        <h2 style="color:#00d4ff">🔗 สรุปวงจรอนุกรม</h2>
+        <div class="explanation" style="margin-top:0">
+          <strong class="hl-y">ข้อดี:</strong><br>
+          • ง่ายต่อการวิเคราะห์<br>
+          • ต้องการสายไฟน้อยกว่า<br>
+          • ป้องกันกระแสเกินได้<br><br>
+          <strong class="hl-r">ข้อเสีย:</strong><br>
+          • ถ้าขาดหนึ่งตัวดับทั้งหมด<br>
+          • แรงดันแบ่งกัน หลอดสว่างน้อยลง<br>
+          • ไม่เหมาะกับการใช้งานจริงในบ้าน
+        </div>
+      </div>
+      <div class="circuit-card">
+        <h2 style="color:#00ff88">⚡ สรุปวงจรขนาน</h2>
+        <div class="explanation" style="margin-top:0">
+          <strong class="hl-g">ข้อดี:</strong><br>
+          • อุปกรณ์ทำงานอิสระต่อกัน<br>
+          • แรงดันเท่ากันทุกสาขา<br>
+          • เหมาะสำหรับไฟฟ้าในบ้าน<br><br>
+          <strong class="hl-r">ข้อเสีย:</strong><br>
+          • ต้องการสายไฟมากกว่า<br>
+          • กระแสรวมสูง ต้องใช้สายใหญ่<br>
+          • ซับซ้อนกว่าในการวิเคราะห์
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== QUIZ TAB ===== -->
+<div class="main-content" id="tab-quiz">
+  <div class="quiz-wrap">
+    <div class="circuit-card" style="margin-bottom:20px">
+      <h2>🧪 ทดสอบความเข้าใจ</h2>
+      <p class="desc">ตอบคำถาม 6 ข้อ เพื่อทดสอบความเข้าใจเกี่ยวกับวงจรไฟฟ้า</p>
+    </div>
+
+    <div class="quiz-q">
+      <div class="question">1. ในวงจรอนุกรมที่มีหลอดไฟ 3 หลอด ถ้าหลอดหนึ่งขาดจะเกิดอะไรขึ้น?</div>
+      <div class="quiz-opts">
+        <button class="quiz-opt" onclick="answerQ(this,'wrong')"><span class="ol">ก</span>หลอดที่เหลือยังติดอยู่</button>
+        <button class="quiz-opt" onclick="answerQ(this,'correct')"><span class="ol">ข</span>หลอดทุกดวงดับหมด</button>
+        <button class="quiz-opt" onclick="answerQ(this,'wrong')"><span class="ol">ค</span>หลอดที่เหลือสว่างมากขึ้น</button>
+        <button class="quiz-opt" onclick="answerQ(this,'wrong')"><span class="ol">ง</span>ไม่มีอะไรเปลี่ยนแปลง</button>
+      </div>
+      <div class="quiz-expl">✅ ในวงจรอนุกรม กระแสต้องไหลผ่านทุกอุปกรณ์ ถ้าหลอดใดขาดวงจรจะเปิดทำให้ดับทั้งหมด</div>
+    </div>
+
+    <div class="quiz-q">
+      <div class="question">2. ในวงจรขนานที่มีหลอดไฟ 3 หลอด ถ้าเพิ่มหลอดไฟอีก 1 หลอด กระแสรวมจะเป็นอย่างไร?</div>
+      <div class="quiz-opts">
+        <button class="quiz-opt" onclick="answerQ(this,'wrong')"><span class="ol">ก</span>ลดลง</button>
+        <button class="quiz-opt" onclick="answerQ(this,'wrong')"><span class="ol">ข</span>เท่าเดิม</button>
+        <button class="quiz-opt" onclick="answerQ(this,'correct')"><span class="ol">ค</span>เพิ่มขึ้น</button>
+        <button class="quiz-opt" onclick="answerQ(this,'wrong')"><span class="ol">ง</span>เป็นศูนย์</button>
+      </div>
+      <div class="quiz-expl">✅ ในวงจรขนาน กระแสรวม = ผลรวมกระแสทุกสาขา เมื่อเพิ่มสาขากระแสรวมจึงเพิ่มขึ้น</div>
+    </div>
+
+    <div class="quiz-q">
+      <div class="question">3. ไฟฟ้าในบ้านเราเป็นวงจรชนิดใด?</div>
+      <div class="quiz-opts">
+        <button class="quiz-opt" onclick="answerQ(this,'wrong')"><span class="ol">ก</span>วงจรอนุกรม</button>
+        <button class="quiz-opt" onclick="answerQ(this,'correct')"><span class="ol">ข</span>วงจรขนาน</button>
+        <button class="quiz-opt" onclick="answerQ(this,'wrong')"><span class="ol">ค</span>วงจรผสม</button>
+        <button class="quiz-opt" onclick="answerQ(this,'wrong')"><span class="ol">ง</span>ไม่มีวงจร</button>
+      </div>
+      <div class="quiz-expl">✅ ไฟฟ้าในบ้านเป็นวงจรขนาน แต่ละอุปกรณ์ได้รับแรงดัน 220V เท่ากัน และสามารถเปิด-ปิดได้อิสระ</div>
+    </div>
+
+    <div class="quiz-q">
+      <div class="question">4. ในวงจรอนุกรม ถ้าต่อหลอดไฟ 3 หลอด (ค่าความต้านทานเท่ากัน) แรงดันที่หลอดแต่ละดวงจะเป็น?</div>
+      <div class="quiz-opts">
+        <button class="quiz-opt" onclick="answerQ(this,'wrong')"><span class="ol">ก</span>เท่ากับแรงดันแบตเตอรี่</button>
+        <button class="quiz-opt" onclick="answerQ(this,'wrong')"><span class="ol">ข</span>เป็นสามเท่าของแรงดันแบตเตอรี่</button>
+        <button class="quiz-opt" onclick="answerQ(this,'correct')"><span class="ol">ค</span>หนึ่งในสามของแรงดันแบตเตอรี่</button>
+        <button class="quiz-opt" onclick="answerQ(this,'wrong')"><span class="ol">ง</span>เป็นศูนย์</button>
+      </div>
+      <div class="quiz-expl">✅ ในวงจรอนุกรม แรงดันรวม = V₁ + V₂ + V₃ ถ้า R เท่ากัน แรงดันแต่ละตัว = V_รวม / 3</div>
+    </div>
+
+    <div class="quiz-q">
+      <div class="question">5. ไฟประดับต้นคริสต์มาสรุ่นเก่าที่ดับทั้งสายเมื่อหลอดหนึ่งขาด เป็นวงจรแบบใด?</div>
+      <div class="quiz-opts">
+        <button class="quiz-opt" onclick="answerQ(this,'correct')"><span class="ol">ก</span>วงจรอนุกรม</button>
+        <button class="quiz-opt" onclick="answerQ(this,'wrong')"><span class="ol">ข</span>วงจรขนาน</button>
+        <button class="quiz-opt" onclick="answerQ(this,'wrong')"><span class="ol">ค</span>วงจรสั้น</button>
+        <button class="quiz-opt" onclick="answerQ(this,'wrong')"><span class="ol">ง</span>วงจรเปิด</button>
+      </div>
+      <div class="quiz-expl">✅ ไฟประดับรุ่นเก่าต่อแบบอนุกรม เมื่อหลอดใดขาดวงจรเปิด กระแสหยุดไหล ดับทั้งสาย</div>
+    </div>
+
+    <div class="quiz-q">
+      <div class="question">6. ข้อใดถูกต้องเกี่ยวกับวงจรขนาน?</div>
+      <div class="quiz-opts">
+        <button class="quiz-opt" onclick="answerQ(this,'wrong')"><span class="ol">ก</span>กระแสเท่ากันทุกสาขา</button>
+        <button class="quiz-opt" onclick="answerQ(this,'wrong')"><span class="ol">ข</span>ความต้านทานรวมสูงกว่าทุกตัว</button>
+        <button class="quiz-opt" onclick="answerQ(this,'correct')"><span class="ol">ค</span>แรงดันเท่ากันทุกสาขา</button>
+        <button class="quiz-opt" onclick="answerQ(this,'wrong')"><span class="ol">ง</span>เมื่อขาดสาขาหนึ่ง สาขาอื่นดับด้วย</button>
+      </div>
+      <div class="quiz-expl">✅ ในวงจรขนาน แรงดัน (V) เท่ากันทุกสาขา แต่กระแส (I) ต่างกัน และความต้านทานรวมต่ำกว่าตัวที่น้อยที่สุด</div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── STATE ──
+const state = {
+  s: { sw1: false, sw2: true, sw3: true, sw4: true },
+  p: { sw1: false, sw2: true, sw3: true, sw4: true }
+};
+
+// ── SWITCH TOGGLE ──
+function toggleSwitch(circuit, sw) {
+  state[circuit][sw] = !state[circuit][sw];
+  const btn = document.getElementById(`${circuit}-${sw}`);
+  if (state[circuit][sw]) {
+    btn.classList.add('on');
+  } else {
+    btn.classList.remove('on');
+  }
+  updateCircuit(circuit);
+}
+
+function resetCircuit(c) {
+  state[c] = { sw1: false, sw2: true, sw3: true, sw4: true };
+  ['sw1','sw2','sw3','sw4'].forEach(sw => {
+    document.getElementById(`${c}-${sw}`).classList.remove('on');
+  });
+  updateCircuit(c);
+}
+
+// ── SERIES CIRCUIT ──
+function updateCircuit(c) {
+  if (c === 's') updateSeries();
+  else updateParallel();
+}
+
+function setWireColor(id, on) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.setAttribute('stroke', on ? '#00d4ff' : '#2e3250');
+  if (on) {
+    el.setAttribute('filter', 'url(#glow-wire)');
+  } else {
+    el.removeAttribute('filter');
+  }
+}
+
+function setFlowVisible(id, on) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.setAttribute('opacity', on ? '1' : '0');
+}
+
+function setBulbState(prefix, n, on) {
+  const glow = document.getElementById(`${prefix}-glow${n}`);
+  const glass = document.getElementById(`${prefix}-bulb${n}-glass`);
+  const filament = document.getElementById(`${prefix}-filament${n}`);
+
+  if (glow) glow.setAttribute('opacity', on ? '0.7' : '0');
+  if (glass) {
+    glass.setAttribute('fill', on ? 'rgba(255,215,0,0.18)' : 'transparent');
+  }
+  if (filament) {
+    filament.setAttribute('stroke', on ? '#ffd700' : '#3a3f5c');
+    if (on) filament.setAttribute('filter', 'url(#glow-wire)');
+    else filament.removeAttribute('filter');
+  }
+}
+
+function setDot(id, on) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.classList.toggle('active', on);
+}
+
+function updateSeries() {
+  const s = state.s;
+  const mainOn = s.sw1;
+  const l1On = mainOn && s.sw2;
+  const l2On = mainOn && s.sw2 && s.sw3;
+  const l3On = mainOn && s.sw2 && s.sw3 && s.sw4;
+  const circuitComplete = l1On && l2On && l3On;
+
+  // Switch lever visual
+  const lever = document.getElementById('s-sw-lever');
+  if (lever) {
+    lever.setAttribute('stroke', s.sw1 ? '#00ff88' : '#2e3250');
+    lever.setAttribute('y1', s.sw1 ? '22' : '16');
+    lever.setAttribute('y2', s.sw1 ? '22' : '28');
+  }
+
+  // Wire colors - only if circuit is complete
+  setWireColor('s-wire-top', circuitComplete);
+  setWireColor('s-wire-bot', circuitComplete);
+  setFlowVisible('s-flow-top', circuitComplete);
+  setFlowVisible('s-flow-bot', circuitComplete);
+
+  // Bulb states - all must be on for series to work
+  setBulbState('s', 1, circuitComplete);
+  setBulbState('s', 2, circuitComplete);
+  setBulbState('s', 3, circuitComplete);
+
+  // Status
+  const power = circuitComplete;
+  document.getElementById('s-stat-power').textContent = power ? 'เปิด ✓' : 'ปิด';
+  document.getElementById('s-stat-l1').textContent = circuitComplete ? '✨ ติด' : (mainOn && !s.sw2 ? '❌ ขาด' : 'ดับ');
+  document.getElementById('s-stat-l2').textContent = circuitComplete ? '✨ ติด' : (mainOn && s.sw2 && !s.sw3 ? '❌ ขาด' : 'ดับ');
+  document.getElementById('s-stat-l3').textContent = circuitComplete ? '✨ ติด' : (mainOn && s.sw2 && s.sw3 && !s.sw4 ? '❌ ขาด' : 'ดับ');
+  document.getElementById('s-amp-val').textContent = power ? '150 mA' : '0 mA';
+
+  setDot('s-dot-power', power);
+  setDot('s-dot-l1', circuitComplete);
+  setDot('s-dot-l2', circuitComplete);
+  setDot('s-dot-l3', circuitComplete);
+
+  // Explanation
+  const expl = document.getElementById('s-explanation');
+  if (!s.sw1) {
+    expl.innerHTML = '💡 <strong>สวิตช์ S1 ปิดอยู่</strong> — กดปุ่ม "สวิตช์ S1" เพื่อเปิดวงจร';
+  } else if (!s.sw2) {
+    expl.innerHTML = '❌ <strong>หลอด L1 ขาด</strong> — <span class="hl-r">วงจรอนุกรมดับทั้งหมด!</span> เพราะกระแสต้องไหลผ่านทุกหลอด';
+  } else if (!s.sw3) {
+    expl.innerHTML = '❌ <strong>หลอด L2 ขาด</strong> — <span class="hl-r">วงจรอนุกรมดับทั้งหมด!</span> แม้ L1 และ L3 ยังดีอยู่';
+  } else if (!s.sw4) {
+    expl.innerHTML = '❌ <strong>หลอด L3 ขาด</strong> — <span class="hl-r">วงจรอนุกรมดับทั้งหมด!</span> นี่คือข้อเสียของวงจรอนุกรม';
+  } else {
+    expl.innerHTML = '✅ <strong>วงจรสมบูรณ์!</strong> กระแสไหลผ่านทุกหลอดพร้อมกัน ลองปิดหลอดใดหลอดหนึ่งเพื่อดูว่าเกิดอะไรขึ้น';
+  }
+}
+
+function updateParallel() {
+  const s = state.p;
+  const mainOn = s.sw1;
+  const l1On = mainOn && s.sw2;
+  const l2On = mainOn && s.sw3;
+  const l3On = mainOn && s.sw4;
+  const anyOn = l1On || l2On || l3On;
+
+  // Switch lever
+  const lever = document.getElementById('p-sw-lever');
+  if (lever) {
+    lever.setAttribute('stroke', s.sw1 ? '#00ff88' : '#2e3250');
+    lever.setAttribute('y1', s.sw1 ? '19' : '14');
+    lever.setAttribute('y2', s.sw1 ? '19' : '24');
+  }
+
+  // Main bus wires
+  setWireColor('p-wire-top', anyOn);
+  setWireColor('p-wire-bot', anyOn);
+  setWireColor('p-wire-left', anyOn);
+  setWireColor('p-wire-right', anyOn);
+  setFlowVisible('p-flow-top', anyOn);
+  setFlowVisible('p-flow-bot', anyOn);
+
+  // Branch wires and flows
+  setWireColor('p-br1-top', l1On);
+  setWireColor('p-br1-bot', l1On);
+  setFlowVisible('p-bflow1-d', l1On);
+  setFlowVisible('p-bflow1-u', l1On);
+
+  setWireColor('p-br2-top', l2On);
+  setWireColor('p-br2-bot', l2On);
+  setFlowVisible('p-bflow2-d', l2On);
+  setFlowVisible('p-bflow2-u', l2On);
+
+  setWireColor('p-br3-top', l3On);
+  setWireColor('p-br3-bot', l3On);
+  setFlowVisible('p-bflow3-d', l3On);
+  setFlowVisible('p-bflow3-u', l3On);
+
+  // Bulbs
+  setBulbState('p', 1, l1On);
+  setBulbState('p', 2, l2On);
+  setBulbState('p', 3, l3On);
+
+  // Status
+  const count = [l1On, l2On, l3On].filter(Boolean).length;
+  const ampVal = count * 150;
+  document.getElementById('p-stat-power').textContent = anyOn ? `เปิด ✓ (${count} หลอด)` : 'ปิด';
+  document.getElementById('p-stat-l1').textContent = l1On ? '✨ ติด' : (mainOn && !s.sw2 ? '❌ ขาด' : 'ดับ');
+  document.getElementById('p-stat-l2').textContent = l2On ? '✨ ติด' : (mainOn && !s.sw3 ? '❌ ขาด' : 'ดับ');
+  document.getElementById('p-stat-l3').textContent = l3On ? '✨ ติด' : (mainOn && !s.sw4 ? '❌ ขาด' : 'ดับ');
+  document.getElementById('p-stat-i').textContent = `${ampVal} mA`;
+  document.getElementById('p-amp-val').textContent = `${ampVal}mA`;
+
+  setDot('p-dot-power', anyOn);
+  setDot('p-dot-l1', l1On);
+  setDot('p-dot-l2', l2On);
+  setDot('p-dot-l3', l3On);
+
+  // Explanation
+  const expl = document.getElementById('p-explanation');
+  if (!s.sw1) {
+    expl.innerHTML = '💡 <strong>สวิตช์ S1 ปิดอยู่</strong> — กดปุ่ม "สวิตช์ S1" เพื่อเปิดวงจร';
+  } else if (count === 3) {
+    expl.innerHTML = `✅ <strong>วงจรสมบูรณ์ทั้ง 3 หลอด!</strong> กระแสรวม = <span class="hl-g">${ampVal} mA</span> — ลองปิดหลอดใดหลอดหนึ่ง <span class="hl-g">หลอดอื่นยังติดอยู่!</span>`;
+  } else if (count === 0) {
+    expl.innerHTML = '❌ <strong>ทุกหลอดถูกปิด</strong> — เปิดหลอดอย่างน้อยหนึ่งดวงเพื่อให้วงจรทำงาน';
+  } else {
+    const off = [!s.sw2 ? 'L1' : null, !s.sw3 ? 'L2' : null, !s.sw4 ? 'L3' : null].filter(Boolean);
+    expl.innerHTML = `✅ <strong>วงจรขนานทำงาน!</strong> หลอด ${off.join(', ')} ถูกปิด แต่ <span class="hl-g">หลอดที่เหลือยังติดอยู่!</span> กระแสรวม = <span class="hl-g">${ampVal} mA</span>`;
+  }
+}
+
+// ── TAB SWITCH ──
+function switchTab(name) {
+  document.querySelectorAll('.main-content').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+  document.getElementById('tab-' + name).classList.add('active');
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    if (btn.textContent.includes(name === 'series' ? 'อนุกรม' : name === 'parallel' ? 'ขนาน' : name === 'compare' ? 'เปรียบเทียบ' : 'ทดสอบ')) {
+      btn.classList.add('active');
+    }
+  });
+}
+// Fix tab switching
+document.querySelectorAll('.tab-btn').forEach((btn, i) => {
+  const names = ['series','parallel','compare','quiz'];
+  btn.onclick = () => {
+    document.querySelectorAll('.main-content').forEach(el => el.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+    document.getElementById('tab-' + names[i]).classList.add('active');
+    btn.classList.add('active');
+  };
+});
+
+// ── QUIZ ──
+function answerQ(btn, type) {
+  const q = btn.closest('.quiz-q');
+  if (q.dataset.answered) return;
+  q.dataset.answered = '1';
+  q.querySelectorAll('.quiz-opt').forEach(b => { b.classList.add('locked'); b.style.cursor = 'default'; });
+  btn.classList.add(type);
+  const expl = q.querySelector('.quiz-expl');
+  if (expl) expl.classList.add('show');
+}
+
+// ── INIT ──
+updateSeries();
+updateParallel();
+</script>
+</body>
+</html>
