@@ -3,254 +3,357 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>วิทยาศาสตร์ประถมศึกษา | โรงเรียนบ้านเขาหัวนา</title>
-<link href="https://fonts.googleapis.com/css2?family=Mitr:wght@300;400;500;600;700&family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<title>โรงเรียนบ้านเขาหัวนา | ห้องเรียนออนไลน์</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Mitr:wght@400;500;600;700&family=Sarabun:wght@300;400;500;600;700&family=Kanit:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
-  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+  :root{
+    --rice-green:#2F7D4F;
+    --rice-green-dark:#1F5C39;
+    --leaf-green:#6FBF73;
+    --sprout:#DCF2D4;
+    --sun-gold:#F5A623;
+    --sun-gold-dark:#DC8A0E;
+    --sky:#F3FAF6;
+    --sky-deep:#E4F3EC;
+    --clay-dark:#7A4425;
+    --ink:#1C3226;
+    --ink-soft:#4B5F55;
+    --paper:#FFFFFF;
+    --radius-lg:24px;
+    --radius-md:16px;
+    --radius-sm:10px;
+    --shadow-card:0 8px 20px -10px rgba(28,50,38,0.2);
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--sky);
+    color:var(--ink);
+    font-family:'Sarabun',sans-serif;
+  }
+  h1,h2,h3{font-family:'Mitr',sans-serif; margin:0; color:var(--ink);}
+  a{color:inherit; text-decoration:none;}
+  img,svg{display:block; max-width:100%;}
 
-  :root {
-    --forest:   #1B4332;
-    --forest2:  #2D6A4F;
-    --leaf:     #52B788;
-    --lime:     #95D5B2;
-    --sky:      #48CAE4;
-    --sun:      #F4A261;
-    --cream:    #F8F5EE;
-    --bark:     #6B4226;
-    --header-h: 80px;
+  /* ---------- NAV ---------- */
+  .nav{
+    position:sticky; top:0; z-index:50;
+    display:flex; align-items:center; justify-content:space-between;
+    padding:14px 6vw;
+    background:rgba(243,250,246,0.92);
+    backdrop-filter:blur(8px);
+    border-bottom:1px solid rgba(47,125,79,0.12);
+  }
+  .nav-brand{display:flex; align-items:center; gap:12px;}
+  .nav-brand .logo{width:40px; height:40px; flex-shrink:0;}
+  .nav-brand .school-name{font-family:'Mitr'; font-size:1rem; font-weight:600; line-height:1.25;}
+  .nav-brand .school-sub{font-size:.72rem; color:var(--ink-soft); font-family:'Kanit';}
+
+  /* ---------- HERO ---------- */
+  .hero{
+    position:relative; padding:56px 6vw 0; overflow:hidden;
+    background:linear-gradient(180deg,var(--sky) 0%, var(--sky-deep) 100%);
+  }
+  .hero-inner{position:relative; z-index:3; max-width:620px; padding-bottom:56px;}
+  .eyebrow{
+    display:inline-flex; align-items:center; gap:8px;
+    background:var(--sprout); color:var(--rice-green-dark);
+    padding:6px 14px; border-radius:100px; margin-bottom:16px;
+    font-family:'Kanit'; font-size:.78rem; font-weight:500;
+  }
+  .hero h1{font-size:clamp(1.9rem, 4.5vw, 2.9rem); font-weight:700; line-height:1.25; color:var(--rice-green-dark);}
+  .hero h1 span{color:var(--sun-gold-dark);}
+  .hero p{margin-top:14px; font-size:1rem; line-height:1.75; color:var(--ink-soft); max-width:520px;}
+  .hero-tag{
+    margin-top:24px; display:flex; gap:10px; align-items:flex-start;
+    font-size:.85rem; color:var(--ink-soft);
+    background:rgba(255,255,255,.65); border-radius:var(--radius-sm); padding:12px 16px; max-width:480px;
+  }
+  .landscape{position:absolute; left:0; right:0; bottom:0; width:100%; z-index:1; line-height:0;}
+
+  /* ---------- QUICK JUMP MENU (1-click access from homepage) ---------- */
+  .jumpmenu{
+    position:relative; z-index:3;
+    margin:0 6vw; padding:22px; background:var(--paper); border-radius:var(--radius-md);
+    box-shadow:var(--shadow-card); transform:translateY(40%);
+  }
+  .jumpmenu .label{font-family:'Kanit'; font-size:.85rem; color:var(--ink-soft); margin-bottom:12px; display:block;}
+  .jumpmenu .chips{display:flex; flex-wrap:wrap; gap:8px;}
+  .jumpmenu .chips a{
+    font-family:'Kanit'; font-size:.85rem; color:var(--rice-green-dark);
+    background:var(--sky-deep); padding:8px 16px; border-radius:100px;
+    border:1px solid transparent;
+  }
+  .jumpmenu .chips a:hover{border-color:var(--rice-green); background:#fff;}
+
+  /* ---------- MAIN MENU SECTIONS ---------- */
+  main{padding:100px 6vw 40px;}
+  .intro{max-width:640px; margin-bottom:36px;}
+  .intro p{color:var(--ink-soft); line-height:1.7; margin-top:8px; font-size:.95rem;}
+
+  .group{
+    background:var(--paper); border-radius:var(--radius-md); box-shadow:var(--shadow-card);
+    padding:28px 26px; margin-bottom:22px; scroll-margin-top:90px;
+  }
+  .group-head{display:flex; align-items:center; gap:14px; margin-bottom:6px;}
+  .group-head .icon{
+    width:44px; height:44px; border-radius:14px; background:var(--sprout);
+    display:flex; align-items:center; justify-content:center; font-size:1.4rem; flex-shrink:0;
+  }
+  .group-head h2{font-size:1.1rem; font-weight:600;}
+
+  .term-label{
+    font-family:'Kanit'; font-size:.78rem; color:var(--ink-soft);
+    margin:18px 0 8px 60px; display:block;
   }
 
-  html, body { height: 100%; }
+  /* the actual, easily-editable menu list */
+  .menu-list{
+    list-style:none; margin:0 0 0 60px; padding:0;
+    display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); gap:8px;
+  }
+  .menu-list li{margin:0;}
+  .menu-link{
+    display:flex; align-items:center; gap:8px;
+    padding:12px 16px; border-radius:var(--radius-sm);
+    background:var(--sky-deep); font-size:.92rem; font-weight:500;
+    border:1px solid transparent;
+    transition:background .15s, border-color .15s, transform .15s;
+  }
+  .menu-link:hover{background:#fff; border-color:var(--rice-green); transform:translateX(3px);}
+  .menu-link .dot{color:var(--sun-gold-dark); font-size:.7rem;}
 
-  body {
-    font-family: 'Sarabun', sans-serif;
-    background: var(--cream);
-    display: flex;
-    flex-direction: column;
-    height: 100vh;
-    overflow: hidden;
+  .empty-note{
+    margin:14px 0 4px 60px; font-size:.88rem; color:var(--clay-dark);
+    background:#F6EBE2; display:inline-flex; padding:8px 14px; border-radius:100px; font-family:'Kanit';
   }
 
-  /* ─── HEADER ─── */
-  header {
-    position: fixed;
-    top: 0; left: 0; right: 0;
-    height: var(--header-h);
-    z-index: 1000;
-    background: var(--forest);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0 28px;
-    box-shadow: 0 4px 24px rgba(0,0,0,0.3);
-    gap: 20px;
+  /* ---------- ABOUT ---------- */
+  .about{
+    padding:80px 6vw; background:var(--rice-green-dark); color:#fff;
+    display:grid; grid-template-columns:1fr 1fr; gap:44px; margin-top:20px;
+  }
+  .about .eyebrow{background:rgba(255,255,255,.12); color:#DCF2D4;}
+  .about h2{color:#fff; font-size:clamp(1.4rem,3vw,1.9rem); margin-top:8px;}
+  .about p{color:#CFE6D9; line-height:1.8; margin-top:14px; font-size:.95rem;}
+  .about-card{background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.14); border-radius:var(--radius-md); padding:26px;}
+  .about-card .row{display:flex; gap:12px; padding:12px 0; border-bottom:1px solid rgba(255,255,255,.1);}
+  .about-card .row:last-child{border-bottom:none;}
+  .about-card .row .txt b{display:block; font-family:'Kanit'; font-size:.78rem; color:#B9E6A6; margin-bottom:3px; font-weight:400;}
+  @media(max-width:800px){.about{grid-template-columns:1fr;}}
+  @media(max-width:600px){
+    .menu-list, .term-label, .empty-note{margin-left:0;}
   }
 
-  /* leaf-vein decoration */
-  header::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background:
-      repeating-linear-gradient(
-        105deg,
-        transparent,
-        transparent 60px,
-        rgba(82,183,136,0.07) 60px,
-        rgba(82,183,136,0.07) 61px
-      );
-    pointer-events: none;
-  }
+  /* ---------- FOOTER ---------- */
+  footer{background:var(--ink); color:#CFE6D9; padding:44px 6vw 26px;}
+  footer .foot-top{display:flex; justify-content:space-between; gap:26px; flex-wrap:wrap; padding-bottom:22px; border-bottom:1px solid rgba(255,255,255,.1);}
+  footer .foot-brand{display:flex; gap:12px; align-items:center;}
+  footer .foot-brand .school-name{font-family:'Mitr'; color:#fff; font-size:1rem; font-weight:600;}
+  footer .foot-brand .school-sub{font-family:'Kanit'; font-size:.72rem; color:#8FB3A0;}
+  footer .foot-addr{font-size:.85rem; line-height:1.8; max-width:340px; color:#A9C7B7;}
+  footer .foot-bottom{padding-top:18px; font-size:.76rem; color:#6E8C7B; font-family:'Kanit'; display:flex; justify-content:space-between; flex-wrap:wrap; gap:8px;}
 
-  .brand {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    text-decoration: none;
-    flex-shrink: 0;
-  }
-
-  .brand-icon {
-    width: 46px; height: 46px;
-    background: linear-gradient(135deg, var(--leaf), var(--lime));
-    border-radius: 12px;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 24px;
-    box-shadow: 0 4px 12px rgba(82,183,136,0.4);
-    flex-shrink: 0;
-  }
-
-  .brand-text { line-height: 1.2; }
-  .brand-title {
-    font-family: 'Mitr', sans-serif;
-    font-size: 15px;
-    font-weight: 600;
-    color: #ffffff;
-    letter-spacing: 0.3px;
-  }
-  .brand-sub {
-    font-size: 11px;
-    color: var(--lime);
-    font-weight: 300;
-    letter-spacing: 0.5px;
-  }
-
-  /* ─── NAV ─── */
-  nav {
-    display: flex;
-    gap: 6px;
-    align-items: center;
-    flex-wrap: nowrap;
-  }
-
-  .nav-btn {
-    position: relative;
-    padding: 9px 20px;
-    border: none;
-    border-radius: 10px;
-    font-family: 'Mitr', sans-serif;
-    font-size: 14px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.22s cubic-bezier(.4,0,.2,1);
-    white-space: nowrap;
-    color: var(--lime);
-    background: rgba(255,255,255,0.06);
-    border: 1px solid rgba(255,255,255,0.1);
-    letter-spacing: 0.4px;
-  }
-
-  .nav-btn:hover {
-    background: rgba(82,183,136,0.18);
-    color: #fff;
-    border-color: rgba(82,183,136,0.4);
-    transform: translateY(-1px);
-  }
-
-  .nav-btn.active {
-    background: linear-gradient(135deg, var(--leaf), var(--forest2));
-    color: #fff;
-    border-color: transparent;
-    box-shadow: 0 4px 14px rgba(82,183,136,0.45);
-    transform: translateY(-1px);
-  }
-
-  .nav-btn .grade-dot {
-    display: inline-block;
-    width: 7px; height: 7px;
-    border-radius: 50%;
-    margin-right: 6px;
-    vertical-align: middle;
-  }
-
-  /* grade colors */
-  .dot-home { background: var(--sun); }
-  .dot-p4   { background: var(--sky); }
-  .dot-p5   { background: #a29bfe; }
-  .dot-p6   { background: var(--sun); }
-
-  /* ─── CONTENT FRAME ─── */
-  .frame-wrapper {
-    margin-top: var(--header-h);
-    flex: 1;
-    overflow: hidden;
-    position: relative;
-  }
-
-  #content-frame {
-    width: 100%;
-    height: 100%;
-    border: none;
-    display: block;
-    transition: opacity 0.2s ease;
-  }
-
-  #content-frame.loading { opacity: 0; }
-
-  /* loading overlay */
-  .frame-loader {
-    position: absolute;
-    inset: 0;
-    background: var(--cream);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 10;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.2s;
-  }
-  .frame-loader.show { opacity: 1; pointer-events: auto; }
-
-  .loader-ring {
-    width: 48px; height: 48px;
-    border: 4px solid rgba(82,183,136,0.2);
-    border-top-color: var(--leaf);
-    border-radius: 50%;
-    animation: spin 0.8s linear infinite;
-  }
-  @keyframes spin { to { transform: rotate(360deg); } }
+  ::selection{background:var(--sun-gold); color:#3A2400;}
 </style>
 </head>
 <body>
 
-<header>
-  <a class="brand" href="#" onclick="navigate('p0.html','home'); return false;">
-    <div class="brand-icon">🌿</div>
-    <div class="brand-text">
-      <div class="brand-title">วิทยาศาสตร์ประถมศึกษา</div>
-      <div class="brand-sub">โรงเรียนบ้านเขาหัวนา</div>
+<!-- ================= NAV ================= -->
+<header class="nav">
+  <div class="nav-brand">
+    <svg class="logo" viewBox="0 0 48 48" fill="none">
+      <circle cx="24" cy="24" r="24" fill="#2F7D4F"/>
+      <path d="M6 30 L18 16 L26 26 L32 18 L42 30 Z" fill="#6FBF73"/>
+      <circle cx="34" cy="14" r="5" fill="#F5A623"/>
+    </svg>
+    <div>
+      <div class="school-name">โรงเรียนบ้านเขาหัวนา</div>
+      <div class="school-sub">e-Learning · สพป.นครนายก</div>
     </div>
-  </a>
-
-  <nav>
-    <button class="nav-btn active" id="btn-home" onclick="navigate('p0.html','home')">
-      <span class="grade-dot dot-home"></span>หน้าหลัก
-    </button>
-    <button class="nav-btn" id="btn-p4" onclick="navigate('p4.html','p4')">
-      <span class="grade-dot dot-p4"></span>ป.4
-    </button>
-    <button class="nav-btn" id="btn-p5" onclick="navigate('p5.html','p5')">
-      <span class="grade-dot dot-p5"></span>ป.5
-    </button>
-    <button class="nav-btn" id="btn-p6" onclick="navigate('p6.html','p6')">
-      <span class="grade-dot dot-p6"></span>ป.6
-    </button>
-  </nav>
+  </div>
 </header>
 
-<div class="frame-wrapper">
-  <div class="frame-loader" id="loader">
-    <div class="loader-ring"></div>
+<!-- ================= HERO ================= -->
+<section class="hero">
+  <div class="hero-inner">
+    <span class="eyebrow">🌾 ห้องเรียนออนไลน์สำหรับนักเรียนและผู้ปกครอง</span>
+    <h1>เรียนรู้ได้ทุกที่<br>เหมือนนั่งอยู่ <span>บนดอยเขาหัวนา</span></h1>
+    <p>เว็บไซต์ e-Learning ของโรงเรียนบ้านเขาหัวนา รวมรายวิชาทุกกลุ่มสาระการเรียนรู้ไว้ในหน้าเดียว คลิกที่ชื่อรายวิชาด้านล่างเพื่อเข้าเรียนได้ทันที</p>
+    <div class="hero-tag">📍 <span>ตำบลเขาเพิ่ม อำเภอบ้านนา จังหวัดนครนายก 26110 · สังกัดสำนักงานเขตพื้นที่การศึกษาประถมศึกษานครนายก</span></div>
   </div>
-  <iframe id="content-frame" src="p0.html" title="เนื้อหา"></iframe>
-</div>
 
-<script>
-  const buttons = {
-    home: document.getElementById('btn-home'),
-    p4:   document.getElementById('btn-p4'),
-    p5:   document.getElementById('btn-p5'),
-    p6:   document.getElementById('btn-p6'),
-  };
-  const frame  = document.getElementById('content-frame');
-  const loader = document.getElementById('loader');
+  <div class="landscape">
+    <svg viewBox="0 0 1440 220" preserveAspectRatio="none" style="width:100%; height:auto;">
+      <path d="M0,150 C 200,115 350,170 520,135 C 700,100 850,160 1020,125 C 1200,90 1320,135 1440,110 L1440,220 L0,220 Z" fill="#CDE9D2"/>
+      <path d="M0,175 C 220,140 380,190 560,160 C 760,125 900,182 1100,150 C 1260,125 1360,160 1440,140 L1440,220 L0,220 Z" fill="#9FD5A6"/>
+      <path d="M0,198 C 260,172 420,205 640,185 C 860,165 1000,202 1200,182 C 1320,170 1400,190 1440,178 L1440,220 L0,220 Z" fill="#6FBF73"/>
+      <path d="M0,215 L1440,215 L1440,220 L0,220 Z" fill="#2F7D4F"/>
+      <circle cx="1180" cy="55" r="36" fill="#F5A623" opacity="0.9"/>
+      <circle cx="1180" cy="55" r="54" fill="#F5A623" opacity="0.15"/>
+    </svg>
+  </div>
+</section>
 
-  function navigate(page, key) {
-    // Update active button
-    Object.values(buttons).forEach(b => b.classList.remove('active'));
-    buttons[key].classList.add('active');
+<!-- =============================================================
+     เมนูลัด (สารบัญ) — ลิงก์เหล่านี้พาไปยังกลุ่มสาระในหน้าเดียวกัน
+     ไม่ต้องแก้ไขส่วนนี้ ยกเว้นต้องการเพิ่ม/ลดกลุ่มสาระ
+     ============================================================= -->
+<nav class="jumpmenu">
+  <span class="label">🔎 ไปยังกลุ่มสาระ:</span>
+  <div class="chips">
+    <a href="#group-thai">ภาษาไทย</a>
+    <a href="#group-math">คณิตศาสตร์</a>
+    <a href="#group-sci">วิทยาศาสตร์และเทคโนโลยี</a>
+    <a href="#group-social">สังคมศึกษาฯ</a>
+    <a href="#group-health">สุขศึกษาฯ</a>
+    <a href="#group-art">ศิลปะ</a>
+    <a href="#group-career">การงานอาชีพ</a>
+    <a href="#group-foreign">ภาษาต่างประเทศ</a>
+    <a href="#group-extra">รายวิชาเพิ่มเติม</a>
+  </div>
+</nav>
 
-    // Show loader, swap src
-    loader.classList.add('show');
-    frame.style.opacity = '0';
-    frame.src = page;
-  }
+<!-- =============================================================
+     เมนูรายวิชาหลัก
+     วิธีแก้ลิงก์: หาชื่อรายวิชาด้านล่าง แล้วแก้ค่า href="#" เป็นลิงก์จริง
+     เช่น href="#"  ->  href="https://classroom.google.com/xxxxx"
+     วิธีเพิ่มรายวิชาใหม่: คัดลอกทั้งบรรทัด <li>...</li> แล้ววางเพิ่มในกลุ่มที่ต้องการ
+     ============================================================= -->
+<main>
+  <div class="intro">
+    <span class="eyebrow">📚 เมนูรายวิชาทั้งหมด</span>
+    <h2>เลือกรายวิชาที่ต้องการเรียน</h2>
+    <p>คลิกที่ชื่อรายวิชาเพื่อเข้าห้องเรียนได้ทันที 1 คลิกจากหน้านี้</p>
+  </div>
 
-  frame.addEventListener('load', () => {
-    loader.classList.remove('show');
-    frame.style.opacity = '1';
-  });
-</script>
+  <!-- ===== ภาษาไทย ===== -->
+  <section class="group" id="group-thai">
+    <div class="group-head"><div class="icon">📖</div><h2>ภาษาไทย</h2></div>
+    <span class="empty-note">ยังไม่เปิดรายวิชา — เพิ่มลิงก์ได้ที่นี่เมื่อพร้อม</span>
+    <!--
+    ตัวอย่างการเพิ่มรายวิชา (คัดลอกไปแก้ แล้ววางแทนบรรทัด empty-note ด้านบน):
+
+    <span class="term-label">ภาคเรียนที่ 1</span>
+    <ul class="menu-list">
+      <li><a class="menu-link" href="#"><span class="dot">●</span>ภาษาไทย ป.4</a></li>
+    </ul>
+    -->
+  </section>
+
+  <!-- ===== คณิตศาสตร์ ===== -->
+  <section class="group" id="group-math">
+    <div class="group-head"><div class="icon">🔢</div><h2>คณิตศาสตร์</h2></div>
+    <span class="empty-note">ยังไม่เปิดรายวิชา — เพิ่มลิงก์ได้ที่นี่เมื่อพร้อม</span>
+  </section>
+
+  <!-- ===== วิทยาศาสตร์และเทคโนโลยี ===== -->
+  <section class="group" id="group-sci">
+    <div class="group-head"><div class="icon">🔬</div><h2>วิทยาศาสตร์และเทคโนโลยี</h2></div>
+
+    <span class="term-label">ภาคเรียนที่ 1 — วิทยาการคำนวณ</span>
+    <ul class="menu-list">
+      <li><a class="menu-link" href="#"><span class="dot">●</span>วิทยาการคำนวณ ป.4 เทอม 1</a></li>
+      <li><a class="menu-link" href="#"><span class="dot">●</span>วิทยาการคำนวณ ป.5 เทอม 1</a></li>
+      <li><a class="menu-link" href="sci/scicom6/index.html"><span class="dot">●</span>วิทยาการคำนวณ ป.6 เทอม 1</a></li>
+    </ul>
+
+    <span class="term-label">ภาคเรียนที่ 2 — วิทยาศาสตร์</span>
+    <ul class="menu-list">
+      <li><a class="menu-link" href="sci/sci4-6/"><span class="dot">●</span>วิทยาศาสตร์ ป.4 เทอม 2</a></li>
+      <li><a class="menu-link" href="sci/sci4-6/"><span class="dot">●</span>วิทยาศาสตร์ ป.5 เทอม 2</a></li>
+      <li><a class="menu-link" href="sci/sci4-6/"><span class="dot">●</span>วิทยาศาสตร์ ป.6 เทอม 2</a></li>
+    </ul>
+  </section>
+
+  <!-- ===== สังคมศึกษา ศาสนา และวัฒนธรรม ===== -->
+  <section class="group" id="group-social">
+    <div class="group-head"><div class="icon">🏛️</div><h2>สังคมศึกษา ศาสนา และวัฒนธรรม</h2></div>
+
+    <span class="term-label">ภาคเรียนที่ 1 — ประวัติศาสตร์</span>
+    <ul class="menu-list">
+      <li><a class="menu-link" href="#"><span class="dot">●</span>ประวัติศาสตร์ ป.4 เทอม 1</a></li>
+      <li><a class="menu-link" href="#"><span class="dot">●</span>ประวัติศาสตร์ ป.5 เทอม 1</a></li>
+      <li><a class="menu-link" href="social/his6/ch2_2.html"><span class="dot">●</span>ประวัติศาสตร์ ป.6 เทอม 1</a></li>
+    </ul>
+  </section>
+
+  <!-- ===== สุขศึกษาและพลศึกษา ===== -->
+  <section class="group" id="group-health">
+    <div class="group-head"><div class="icon">⚽</div><h2>สุขศึกษาและพลศึกษา</h2></div>
+    <span class="empty-note">ยังไม่เปิดรายวิชา — เพิ่มลิงก์ได้ที่นี่เมื่อพร้อม</span>
+  </section>
+
+  <!-- ===== ศิลปะ ===== -->
+  <section class="group" id="group-art">
+    <div class="group-head"><div class="icon">🎨</div><h2>ศิลปะ</h2></div>
+    <span class="empty-note">ยังไม่เปิดรายวิชา — เพิ่มลิงก์ได้ที่นี่เมื่อพร้อม</span>
+  </section>
+
+  <!-- ===== การงานอาชีพ ===== -->
+  <section class="group" id="group-career">
+    <div class="group-head"><div class="icon">🧰</div><h2>การงานอาชีพ</h2></div>
+    <span class="empty-note">ยังไม่เปิดรายวิชา — เพิ่มลิงก์ได้ที่นี่เมื่อพร้อม</span>
+  </section>
+
+  <!-- ===== ภาษาต่างประเทศ ===== -->
+  <section class="group" id="group-foreign">
+    <div class="group-head"><div class="icon">🌏</div><h2>ภาษาต่างประเทศ</h2></div>
+    <span class="empty-note">ยังไม่เปิดรายวิชา — เพิ่มลิงก์ได้ที่นี่เมื่อพร้อม</span>
+  </section>
+
+  <!-- ===== รายวิชาเพิ่มเติม ===== -->
+  <section class="group" id="group-extra">
+    <div class="group-head"><div class="icon">⭐</div><h2>รายวิชาเพิ่มเติม</h2></div>
+
+    <span class="term-label">ภาคเรียนที่ 1 — ต้านทุจริตศึกษา</span>
+    <ul class="menu-list">
+      <li><a class="menu-link" href="#"><span class="dot">●</span>ต้านทุจริตศึกษา ป.5 เทอม 1</a></li>
+    </ul>
+  </section>
+</main>
+
+<!-- ================= ABOUT ================= -->
+<section class="about" id="about">
+  <div>
+    <span class="eyebrow">🏫 เกี่ยวกับโรงเรียน</span>
+    <h2>โรงเรียนบ้านเขาหัวนา</h2>
+    <p>โรงเรียนบ้านเขาหัวนา สังกัดสำนักงานเขตพื้นที่การศึกษาประถมศึกษานครนายก มุ่งพัฒนาผู้เรียนให้มีความรู้คู่คุณธรรม ควบคู่ไปกับการเรียนรู้แบบออนไลน์ที่นักเรียนและผู้ปกครองเข้าถึงได้ทุกที่ทุกเวลา</p>
+  </div>
+  <div class="about-card">
+    <div class="row"><div class="txt"><b>ชื่อสถานศึกษา</b>โรงเรียนบ้านเขาหัวนา</div></div>
+    <div class="row"><div class="txt"><b>สังกัด</b>สำนักงานเขตพื้นที่การศึกษาประถมศึกษานครนายก</div></div>
+    <div class="row"><div class="txt"><b>ที่อยู่</b>ตำบลเขาเพิ่ม อำเภอบ้านนา จังหวัดนครนายก 26110</div></div>
+  </div>
+</section>
+
+<!-- ================= FOOTER ================= -->
+<footer>
+  <div class="foot-top">
+    <div class="foot-brand">
+      <svg width="36" height="36" viewBox="0 0 48 48" fill="none">
+        <circle cx="24" cy="24" r="24" fill="#6FBF73"/>
+        <path d="M6 30 L18 16 L26 26 L32 18 L42 30 Z" fill="#2F7D4F"/>
+        <circle cx="34" cy="14" r="5" fill="#F5A623"/>
+      </svg>
+      <div>
+        <div class="school-name">โรงเรียนบ้านเขาหัวนา</div>
+        <div class="school-sub">สำนักงานเขตพื้นที่การศึกษาประถมศึกษานครนายก</div>
+      </div>
+    </div>
+    <div class="foot-addr">
+      📍 ตำบลเขาเพิ่ม อำเภอบ้านนา จังหวัดนครนายก 26110<br>
+      สังกัดสำนักงานเขตพื้นที่การศึกษาประถมศึกษานครนายก
+    </div>
+  </div>
+  <div class="foot-bottom">
+    <span>© เว็บไซต์ e-Learning โรงเรียนบ้านเขาหัวนา</span>
+    <span>จัดทำเพื่อการเรียนการสอนของนักเรียนชั้นประถมศึกษา</span>
+  </div>
+</footer>
+
 </body>
 </html>
