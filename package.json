@@ -1,0 +1,23 @@
+{
+  "name": "school-core-system",
+  "version": "1.0.0",
+  "description": "Cloudflare D1 Multi-Tenant Modular System with Unified Data Sharing Engine",
+  "main": "src/index.ts",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy --minify",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "wrangler d1 migrations apply DB --local",
+    "db:migrate:prod": "wrangler d1 migrations apply DB --remote"
+  },
+  "dependencies": {
+    "drizzle-orm": "^0.30.0",
+    "hono": "^4.1.0"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20240314.0",
+    "drizzle-kit": "^0.20.14",
+    "typescript": "^5.4.2",
+    "wrangler": "^3.34.0"
+  }
+}

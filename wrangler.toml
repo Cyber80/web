@@ -1,0 +1,15 @@
+name = "school-core-system"
+main = "src/index.ts"
+compatibility_date = "2026-09-01"
+
+[vars]
+JWT_SECRET = "change-this-in-production-secrets"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "school_db"
+database_id = "47df8d6d-2aa7-4311-af36-8fcf8de44b7a"
+
+[[r2_buckets]]
+binding = "BUCKET"
+bucket_name = "school-files-bucket"

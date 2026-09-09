@@ -1,0 +1,15 @@
+# AI Project Rules & Constraints (School Core System)
+
+## 1. System Architecture
+- Stack: Cloudflare Workers + Hono.js + Cloudflare D1 + Drizzle ORM + Cloudflare R2
+- Pattern: Modular Monolith with Unified Data Sharing Engine
+
+## 2. Coding Rules
+- Database Access: Always use `drizzle-orm` with D1 bindings. Never concatenate SQL strings directly.
+- Security: Enforce authentication using `authMiddleware` and RBAC with `requireRole`.
+- Multi-Tenancy: All queries MUST scope to `school_id` unless the resource's `visibility` is `PUBLIC` or `SHARED_NETWORK`.
+- Adding New Modules:
+  1. Create folder in `src/modules/<module-name>/`
+  2. Implement module routes using Hono.
+  3. Register any shared documents/certs/orders to `UnifiedSharingEngine` in `src/core/sharing-engine.ts`.
+  4. Mount module in `src/index.ts`.
