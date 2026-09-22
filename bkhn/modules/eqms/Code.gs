@@ -378,8 +378,8 @@ function calculateExamAnalysis(exam_header, exam_parts, exam_keys, student_respo
     var items_analysis = [];
     var pq_sum = 0.0;
 
-    for (var k = 0; k < exam_keys.length; k++) {
-        var key_item = exam_keys[k];
+    for (var k = 0; k < keys_data.length; k++) {
+        var key_item = keys_data[k];
         var q_num = key_item.Q_Num;
         var part_id = key_item.Part_ID;
         var correct_key = String(key_item.Answer_Key).trim().toUpperCase();
@@ -467,8 +467,8 @@ function calculateExamAnalysis(exam_header, exam_parts, exam_keys, student_respo
     var sem = sd_score * Math.sqrt(1.0 - kr20);
 
     var parts_summary = [];
-    for (var p = 0; p < exam_parts.length; p++) {
-        var part = exam_parts[p];
+    for (var p = 0; p < parts_data.length; p++) {
+        var part = parts_data[p];
         var pid = part.Part_ID;
         var part_items = items_analysis.filter(function(item) { return item.Part_ID === pid; });
         var part_scores = scored_students.map(function(st) { return st.Part_Scores[pid] || 0.0; });
