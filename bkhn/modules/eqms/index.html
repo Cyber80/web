@@ -2170,6 +2170,25 @@ window.fetch = async function(url, options) {
         }
 
         async function addNewYear() {
+            const y = document.getElementById("newYearInput").value.trim();
+            const sid = document.getElementById("newSheetIdInput").value.trim();
+            if (!y || !sid) { alert("กรุณากรอกข้อมูลปีและ Sheet ID"); return; }
+            const res = await fetch("/api/years/add", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ year: y, sheet_id: sid })
+            });
+            const result = await res.json();
+            if (result.error) {
+                alert("เกิดข้อผิดพลาด: " + result.error);
+                return;
+            }
+            GLOBAL_DB = result.db;
+            GLOBAL_ANALYSIS = result.analysis;
+            renderAll();
+            alert("เพิ่มปีการศึกษาเรียบร้อย!");
+        }
+
         async function deleteYear(y) {
             if (!confirm(`ยืนยันการลบปีการศึกษา ${y} ใช่หรือไม่?`)) return;
             const res = await fetch("/api/years/delete", {
@@ -2181,20 +2200,6 @@ window.fetch = async function(url, options) {
             GLOBAL_DB = result.db;
             GLOBAL_ANALYSIS = result.analysis;
             renderAll();
-        }
-            const y = document.getElementById("newYearInput").value.trim();
-            const sid = document.getElementById("newSheetIdInput").value.trim();
-            if (!y || !sid) { alert("กรุณากรอกข้อมูลปีและ Sheet ID"); return; }
-            const res = await fetch("/api/years/add", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ year: y, sheet_id: sid })
-            });
-            const result = await res.json();
-            GLOBAL_DB = result.db;
-            GLOBAL_ANALYSIS = result.analysis;
-            renderAll();
-            alert("เพิ่มปีการศึกษาเรียบร้อย!");
         }
 
         function toggleLdCheckboxes() {
