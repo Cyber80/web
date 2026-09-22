@@ -1969,7 +1969,7 @@ window.fetch = async function(url, options) {
                 tr.innerHTML = `
                     <td class="fw-bold"><code>${s.code}</code></td>
                     <td>${s.name}</td>
-                    <td>${s.grade}</td>
+                    <td>${s.grade_level}</td>
                     <td>${unitsList || '<span class="text-muted">ไม่มีหน่วย</span>'}</td>
                     <td class="text-center">
                         <button class="btn btn-outline-danger btn-sm" onclick="deleteSubject('${s.code}')"><i class="fa-solid fa-trash"></i></button>
@@ -2083,7 +2083,7 @@ window.fetch = async function(url, options) {
                     Subject_Code: subjCode || "Unknown",
                     Subject_Name: subjObj.name || "Unknown",
                     Unit_Name: "หน่วยสอบรวม",
-                    Term: "1", Grade_Level: subjObj.grade || "ไม่ระบุ",
+                    Term: "1", Grade_Level: subjObj.grade_level || "ไม่ระบุ",
                     Exam_Title: title,
                     Total_Questions: totalQs,
                     Total_Score: totalScore,
@@ -2129,7 +2129,7 @@ window.fetch = async function(url, options) {
 
             const payload = {
                 subject: {
-                    code: code, name: name, grade: grade,
+                    code: code, name: name, grade_level: grade,
                     units: [
                         {"unit_no": 1, "unit_name": "หน่วยเรียนรู้ที่ 1"},
                         {"unit_no": 2, "unit_name": "หน่วยเรียนรู้ที่ 2"}
