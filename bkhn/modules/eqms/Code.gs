@@ -6,7 +6,8 @@ function doPost(e) {
     var result = {};
     
     // Router
-    if (action === "data") result = api_data(payloadStr);
+    if (action === "meta") result = api_meta(payloadStr);
+    else if (action === "data") result = api_data(payloadStr);
     else if (action === "exams/add") result = api_exams_add(payloadStr);
     else if (action === "exams/delete") result = api_exams_delete(payloadStr);
     else if (action === "exams/update_targets") result = api_exams_update_targets(payloadStr);
@@ -141,7 +142,7 @@ function writeSheetData(ss, sheetName, headers, dataArray) {
 function getDB() {
   checkAuth();
   var cache = CacheService.getScriptCache();
-  var cachedDB = cache.get("EQMS_FULL_DB_V3");
+  var cachedDB = cache.get("EQMS_FULL_DB_V4");
   if (cachedDB) {
     try { return JSON.parse(cachedDB); } catch(e) {}
   }
@@ -168,7 +169,7 @@ function getDB() {
     db.Student_Responses = getSheetData(ss, "Responses");
     
     var dbStr = JSON.stringify(db);
-    if (dbStr.length < 90000) { cache.put("EQMS_FULL_DB_V3", dbStr, 21600); }
+    if (dbStr.length < 90000) { cache.put("EQMS_FULL_DB_V4", dbStr, 21600); }
   } catch (e) {
   }
   return db;
@@ -179,11 +180,11 @@ function saveDB(db) {
   try {
     var cache = CacheService.getScriptCache();
     var dbStr = JSON.stringify(db);
-    if (dbStr.length < 90000) { cache.put("EQMS_FULL_DB_V3", dbStr, 21600); }
+    if (dbStr.length < 90000) { cache.put("EQMS_FULL_DB_V4", dbStr, 21600); }
 
     var ss = SpreadsheetApp.openById(MASTER_SHEET_ID);
-    writeSheetData(ss, "Years", ["year", "sheet_id", "is_active"], db.Config_Metadata.Academic_Years);
-    writeSheetData(ss, "Subjects", ["code", "name"], db.Config_Metadata.Subjects);
+    writeSheetData(ss, "Years", ["year", "is_active"], db.Config_Metadata.Academic_Years);
+    writeSheetData(ss, "Subjects", ["code", "name", "grade_level", "units"], db.Config_Metadata.Subjects);
     writeSheetData(ss, "Students", ["Student_ID", "Prefix", "First_Name", "Last_Name", "Grade_Level", "Room", "No", "Gender", "DOB", "Category", "LD_Types"], db.Students_Roster);
     writeSheetData(ss, "Exams", ["Exam_ID", "Subject_Code", "Subject_Name", "Unit_Name", "Term", "Grade_Level", "Exam_Title", "Total_Questions", "Total_Score", "Passing_Score", "Exam_Date", "Created_By", "Is_Active", "Target_Students"], db.Exams_Header);
     writeSheetData(ss, "ExamParts", ["Exam_ID", "Part_ID", "Part_Name", "Start_Q", "End_Q"], db.Exam_Parts);
@@ -535,6 +536,14 @@ function calculateExamAnalysis(exam_header, exam_parts, exam_keys, student_respo
 
 
 // --- API Endpoints ---
+function api_meta(payloadStr) {
+  var db = getDB();
+  return JSON.stringify({
+    Config_Metadata: db.Config_Metadata,
+    Exams_Header: db.Exams_Header
+  });
+}
+
 function api_data(payloadStr) {
   var db = getDB();
   var active_exam = db.Exams_Header.find(function(e) { return e.Is_Active; }) || db.Exams_Header[0];
@@ -577,7 +586,7 @@ function api_years_add(payloadStr) {
     });
   }
   saveDB(db);
-  return api_data(payloadStr);
+  return JSON.stringify({status: "success"});
 }
 
 function api_years_delete(payloadStr) {
@@ -585,7 +594,7 @@ function api_years_delete(payloadStr) {
   var db = getDB();
   db.Config_Metadata.Academic_Years = db.Config_Metadata.Academic_Years.filter(function(y) { return y.year !== req.year; });
   saveDB(db);
-  return api_data(payloadStr);
+  return JSON.stringify({status: "success"});
 }
 
 function api_subjects_save(payloadStr) {
@@ -826,7 +835,7 @@ function api_keys_update(payloadStr) {
   db.Exam_Items_Key = db.Exam_Items_Key.filter(function(k) { return k.Exam_ID !== active_exam_id; }).concat(updated_keys);
   saveDB(db);
   
-  return api_data(JSON.stringify({}));
+  return JSON.stringify({status: "success"});
 }
 
 function api_responses_string_entry(payloadStr) {
@@ -873,7 +882,7 @@ function api_responses_string_entry(payloadStr) {
   }
   saveDB(db);
   
-  return api_data(JSON.stringify({}));
+  return JSON.stringify({status: "success"});
 }
 
 function api_responses_fast_entry(payloadStr) {
@@ -911,7 +920,7 @@ function api_responses_fast_entry(payloadStr) {
   }
   saveDB(db);
   
-  return api_data(JSON.stringify({}));
+  return JSON.stringify({status: "success"});
 }
 
 function api_responses_delete(payloadStr) {
@@ -925,7 +934,7 @@ function api_responses_delete(payloadStr) {
   db.Student_Responses = db.Student_Responses.filter(function(r) { return !(r.Exam_ID === active_exam_id && r.Student_ID_Matched === st_id); });
   saveDB(db);
   
-  return api_data(JSON.stringify({}));
+  return JSON.stringify({status: "success"});
 }
 
 function api_export_json(payloadStr) {

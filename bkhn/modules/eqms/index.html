@@ -1034,15 +1034,29 @@ window.fetch = async function(url, options) {
             fetchData();
         });
 
-        async function fetchData() {
+                async function fetchData() {
             try {
-                const res = await fetch("/api/data");
-                const data = await res.json();
-                GLOBAL_DB = data.db;
-                GLOBAL_ANALYSIS = data.analysis;
+                // 1. Fetch Meta (Fast Load)
+                const resMeta = await fetch("/api/meta");
+                const resultMeta = await resMeta.json();
+                
+                if (!GLOBAL_DB) GLOBAL_DB = {};
+                GLOBAL_DB.Config_Metadata = resultMeta.Config_Metadata;
+                GLOBAL_DB.Exams_Header = resultMeta.Exams_Header;
+                
+                renderHeaderInfo();
+                renderModalsData();
+                
+                // 2. Fetch Full Data
+                const resData = await fetch("/api/data");
+                const resultData = await resData.json();
+                
+                Object.assign(GLOBAL_DB, resultData.db);
+                GLOBAL_ANALYSIS = resultData.analysis;
+                
                 renderAll();
             } catch (err) {
-                console.error("Fetch data error:", err);
+                console.error(err);
             }
         }
 
@@ -1157,9 +1171,7 @@ window.fetch = async function(url, options) {
                 body: JSON.stringify({ exam_id: exId })
             });
             const result = await res.json();
-            GLOBAL_DB = result.db;
-            GLOBAL_ANALYSIS = result.analysis;
-            renderAll();
+            await fetchData(); // Full reload to ensure state consistency after mutation (Optimized by caching on backend)
         }
 
         function renderUnverifiedAlert() {
@@ -1654,9 +1666,7 @@ window.fetch = async function(url, options) {
             });
 
             const result = await res.json();
-            GLOBAL_DB = result.db;
-            GLOBAL_ANALYSIS = result.analysis;
-            renderAll();
+            await fetchData(); // Full reload to ensure state consistency after mutation (Optimized by caching on backend)
 
             if (document.getElementById("autoNextStudentToggle").checked) {
                 const sel = document.getElementById("stringStudentSelect");
@@ -1745,9 +1755,7 @@ window.fetch = async function(url, options) {
             });
 
             const result = await res.json();
-            GLOBAL_DB = result.db;
-            GLOBAL_ANALYSIS = result.analysis;
-            renderAll();
+            await fetchData(); // Full reload to ensure state consistency after mutation (Optimized by caching on backend)
             alert("บันทึกคำตอบสำเร็จ!");
         }
 
@@ -1834,9 +1842,7 @@ window.fetch = async function(url, options) {
             });
 
             const result = await res.json();
-            GLOBAL_DB = result.db;
-            GLOBAL_ANALYSIS = result.analysis;
-            renderAll();
+            await fetchData(); // Full reload to ensure state consistency after mutation (Optimized by caching on backend)
             alert("อัปเดตเฉลยและ Re-calculate เรียบร้อยแล้ว!");
         }
 
@@ -1885,9 +1891,7 @@ window.fetch = async function(url, options) {
                 body: JSON.stringify({ submission_id: subId, matched_student_id: selVal })
             });
             const result = await res.json();
-            GLOBAL_DB = result.db;
-            GLOBAL_ANALYSIS = result.analysis;
-            renderAll();
+            await fetchData(); // Full reload to ensure state consistency after mutation (Optimized by caching on backend)
             alert("จับคู่รายชื่อสำเร็จ!");
         }
 
@@ -2023,9 +2027,7 @@ window.fetch = async function(url, options) {
                 body: JSON.stringify({ exam_id: exId })
             });
             const result = await res.json();
-            GLOBAL_DB = result.db;
-            GLOBAL_ANALYSIS = result.analysis;
-            renderAll();
+            await fetchData(); // Full reload to ensure state consistency after mutation (Optimized by caching on backend)
         }
 
         function addExamPartRow() {
@@ -2101,9 +2103,7 @@ window.fetch = async function(url, options) {
             });
 
             const result = await res.json();
-            GLOBAL_DB = result.db;
-            GLOBAL_ANALYSIS = result.analysis;
-            renderAll();
+            await fetchData(); // Full reload to ensure state consistency after mutation (Optimized by caching on backend)
             alert("สร้างรายการวิเคราะห์ข้อสอบใหม่สำเร็จ!");
         }
 
@@ -2115,9 +2115,7 @@ window.fetch = async function(url, options) {
                 body: JSON.stringify({ exam_id: exId })
             });
             const result = await res.json();
-            GLOBAL_DB = result.db;
-            GLOBAL_ANALYSIS = result.analysis;
-            renderAll();
+            await fetchData(); // Full reload to ensure state consistency after mutation (Optimized by caching on backend)
         }
 
         async function saveSubjectFromModal() {
@@ -2144,9 +2142,7 @@ window.fetch = async function(url, options) {
             });
 
             const result = await res.json();
-            GLOBAL_DB = result.db;
-            GLOBAL_ANALYSIS = result.analysis;
-            renderAll();
+            await fetchData(); // Full reload to ensure state consistency after mutation (Optimized by caching on backend)
             alert("บันทึกข้อมูลรายวิชาสำเร็จ!");
         }
 
@@ -2158,9 +2154,7 @@ window.fetch = async function(url, options) {
                 body: JSON.stringify({ code: code })
             });
             const result = await res.json();
-            GLOBAL_DB = result.db;
-            GLOBAL_ANALYSIS = result.analysis;
-            renderAll();
+            await fetchData(); // Full reload to ensure state consistency after mutation (Optimized by caching on backend)
         }
 
         async function changeActiveYear() {
@@ -2171,9 +2165,7 @@ window.fetch = async function(url, options) {
                 body: JSON.stringify({ year: y })
             });
             const result = await res.json();
-            GLOBAL_DB = result.db;
-            GLOBAL_ANALYSIS = result.analysis;
-            renderAll();
+            await fetchData(); // Full reload to ensure state consistency after mutation (Optimized by caching on backend)
         }
 
         async function addNewYear() {
@@ -2185,12 +2177,9 @@ window.fetch = async function(url, options) {
                 body: JSON.stringify({ year: y })
             });
             const result = await res.json();
-            if (result.error) {
-                alert("เกิดข้อผิดพลาด: " + result.error);
-                return;
-            }
-            GLOBAL_DB = result.db;
-            GLOBAL_ANALYSIS = result.analysis;
+            if (result.error) { alert("เกิดข้อผิดพลาด: " + result.error); return; }
+            
+            GLOBAL_DB.Config_Metadata.Academic_Years.push({ year: y, is_active: false });
             renderAll();
             alert("เพิ่มปีการศึกษาเรียบร้อย!");
         }
@@ -2203,9 +2192,7 @@ window.fetch = async function(url, options) {
                 body: JSON.stringify({ year: y })
             });
             const result = await res.json();
-            GLOBAL_DB = result.db;
-            GLOBAL_ANALYSIS = result.analysis;
-            renderAll();
+            await fetchData(); // Full reload to ensure state consistency after mutation (Optimized by caching on backend)
         }
 
         function toggleLdCheckboxes() {
@@ -2251,9 +2238,7 @@ window.fetch = async function(url, options) {
             });
 
             const result = await res.json();
-            GLOBAL_DB = result.db;
-            GLOBAL_ANALYSIS = result.analysis;
-            renderAll();
+            await fetchData(); // Full reload to ensure state consistency after mutation (Optimized by caching on backend)
             
             // Clear form and reset button
             document.getElementById("editStId").value = '';
@@ -2307,9 +2292,7 @@ window.fetch = async function(url, options) {
                 body: JSON.stringify({ student_id: stId })
             });
             const result = await res.json();
-            GLOBAL_DB = result.db;
-            GLOBAL_ANALYSIS = result.analysis;
-            renderAll();
+            await fetchData(); // Full reload to ensure state consistency after mutation (Optimized by caching on backend)
         }
 
         function exportScoresCSV() {
