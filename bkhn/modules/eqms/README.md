@@ -1,25 +1,82 @@
-# Google Apps Script Deployment Instructions
+# EQMS
 
-To deploy this backend as a Google Apps Script web app, please follow these steps:
+ระบบวิเคราะห์ข้อสอบสำหรับ Cloudflare Workers, Google Apps Script และ Google Sheets
 
-1. **Open Google Apps Script:**
-   Go to [script.google.com](https://script.google.com/) and create a new project.
+## โครงสร้าง
 
-2. **Add Code.gs:**
-   Copy the contents of `Code.gs` from this folder and paste it into the `Code.gs` file in the Apps Script editor.
+- หน้าเว็บและ Worker อยู่ในโฟลเดอร์นี้ และ deploy เป็น Worker แยกจากระบบหลัก
+- `Code.gs`, `Analysis.gs` และ `appsscript.json` คือ backend สำหรับ Apps Script
+- Google Sheet ทะเบียนกลางเก็บเฉพาะ `year` และ `sheet_id`
+- เมื่อเพิ่มปีผ่านหน้าเว็บ Apps Script จะสร้าง Google Sheet ของปีนั้น พร้อมแท็บ Subjects, Students, Exams, ExamParts, ExamKeys และ Responses
+- การลบปีออกจาก EQMS ไม่ลบไฟล์ Google Sheet จึงกู้ข้อมูลได้
 
-3. **Add index.html:**
-   In the Apps Script editor, click the `+` icon next to "Files", select "HTML", and name it `index.html`.
-   Copy the contents of `index.html` from this folder and paste it into the new `index.html` file in the editor.
+## ทดสอบในเครื่อง
 
-4. **Deploy as Web App:**
-   - Click on the "Deploy" button at the top right, then select "New deployment".
-   - Set the deployment type to "Web app".
-   - Execute as: "Me"
-   - Who has access: "Anyone" (or customize according to your needs).
-   - Click "Deploy".
-   
-5. **Database Initialization:**
-   The `Code.gs` script automatically reads and writes to a file named `local_db.json` in your Google Drive root directory. When you run the web app for the first time, it will generate a mock database in that file if it doesn't already exist.
+ต้องใช้ Node.js 20 ขึ้นไป
 
-You can now use the generated Web App URL to access the Exam Analysis System running completely on Google Apps Script and Google Drive!
+```sh
+npm ci
+npm run check
+npm run dev
+```
+
+เปิด `http://127.0.0.1:4173/bkhn/modules/eqms/` ข้อมูลในโหมดนี้เป็นข้อมูลจำลองในหน่วยความจำและไม่เขียน Google Sheets
+
+## ตั้งค่า Apps Script
+
+1. สร้าง Apps Script project และเพิ่ม `Code.gs`, `Analysis.gs`, `appsscript.json`
+2. เรียก `SETUP_SYSTEM_AND_AUTHORIZE` หนึ่งครั้ง ระบบจะสร้างไฟล์ทะเบียนกลาง
+3. เปิด Project Settings > Script Properties แล้วอ่านค่า `EQMS_SHARED_SECRET` ที่ระบบสร้างไว้ หรือเปลี่ยนเป็นค่าสุ่มยาวของคุณเอง
+4. Deploy เป็น Web app โดย Execute as: Me และ Who has access: Anyone
+5. เก็บ URL `/exec` ที่ได้ไว้สำหรับ Worker secret `GAS_URL`
+
+ทุกครั้งที่แก้ `Code.gs` หรือ `Analysis.gs` ต้องสร้าง Apps Script version ใหม่และแก้ deployment เดิมให้ชี้ไป version นั้น การ push Git อย่างเดียวจะยังไม่อัปเดต Apps Script
+
+ห้ามเก็บ URL, shared secret หรือรหัสผ่านจริงลง Git
+
+## ตั้งค่า Cloudflare Worker
+
+สร้าง secret ผ่าน Wrangler แบบโต้ตอบ:
+
+```sh
+npx wrangler secret put GAS_URL
+npx wrangler secret put EQMS_SHARED_SECRET
+npx wrangler secret put OWNER_PASSWORD
+npx wrangler secret put SESSION_SECRET
+```
+
+- `OWNER_PASSWORD` ต้องมีอย่างน้อย 16 ตัวอักษร
+- `SESSION_SECRET` ควรเป็นค่าสุ่มอย่างน้อย 32 ตัวอักษร
+- ค่า `EQMS_SHARED_SECRET` ต้องตรงกับ Apps Script
+- หากแยก frontend คนละโดเมน ให้เพิ่ม secret `FRONTEND_ORIGIN` เป็น origin แบบ `https://example.com` เท่านั้น
+
+ตรวจแพ็กเกจสำหรับ deploy โดยไม่ส่งขึ้นจริง:
+
+```sh
+npm run deploy:check
+```
+
+จากนั้นจึง deploy ด้วย `npm run deploy` หรือเชื่อมโฟลเดอร์นี้กับ Cloudflare Workers Builds โดยตั้ง Root directory เป็น `bkhn/modules/eqms` และ Deploy command เป็น `npm run deploy`
+
+สำหรับ Workers Builds ให้ตั้ง Runtime secrets ทั้ง 4 ค่าใน Cloudflare dashboard ก่อน deploy:
+
+- `GAS_URL`
+- `EQMS_SHARED_SECRET`
+- `OWNER_PASSWORD`
+- `SESSION_SECRET`
+
+อย่าใส่ค่าเหล่านี้ใน Build variables หรือไฟล์ใน Git
+
+## การใช้งาน
+
+ลำดับงานที่แนะนำคือ เพิ่มปีการศึกษา → เพิ่มรายวิชา → เพิ่มนักเรียน → สร้างข้อสอบ → กรอกเฉลย/น้ำหนัก/ตัวชี้วัด/Bloom → กำหนดผู้เข้าสอบ → บันทึกคำตอบ → ตรวจผลวิเคราะห์
+
+หน้าแก้เฉลยแสดงจำนวนข้อทันทีหลังสร้างข้อสอบ แม้ยังไม่มีคำตอบนักเรียน ส่วนค่าความเชื่อมั่นจะแสดงเมื่อมีข้อมูลเพียงพอ และใช้ KR-20 เมื่อทุกข้อมีน้ำหนักเท่ากัน หรือ Cronbach's alpha สำหรับคะแนนถ่วงน้ำหนัก
+
+## ตรวจปัญหาการเชื่อม Google Sheets
+
+ในหน้าจัดการปีการศึกษา กด **ตรวจการเชื่อมต่อ** ก่อน หากระบบแจ้งว่ายังไม่ได้เตรียมระบบ ให้เปิด Apps Script แล้วเรียก `SETUP_SYSTEM_AND_AUTHORIZE` และยอมรับสิทธิ์ Google Sheets
+
+เมื่อเพิ่มปี ระบบจะสร้าง Google Sheet ใหม่ให้อัตโนมัติ หากนโยบายบัญชีไม่อนุญาตให้สร้างไฟล์ผ่าน Apps Script ให้สร้าง Google Sheet เปล่าเอง แล้ววาง URL หรือ Sheet ID ในช่องที่เตรียมไว้ ระบบจะสร้างแท็บและหัวตารางที่จำเป็นให้
+
+ถ้าหน้าเว็บแจ้งว่า Apps Script ตอบกลับไม่ถูกต้อง ให้ตรวจว่า `GAS_URL` เป็น deployment URL ที่ลงท้าย `/exec` และ deployment นั้นเป็น version ล่าสุด ไม่ใช่ URL `/dev`
