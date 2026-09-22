@@ -70,7 +70,7 @@ function checkAuth() {
 }
 
 // ⚠️ แก้ไข Sheet ID ด้านล่างนี้ ให้ตรงกับ Google Sheet ของคุณครู ⚠️
-const MASTER_SHEET_ID = "1yFCanclzxSTsK6LMk8Bh7Cw-C5LKq3S2zwxEEGnPdCg";
+const MASTER_SHEET_ID = "1PXN7exBC_ErTk1gIq-FciXj5Eallfg1pT00FtJUdikc";
 
 // ⭐️ ฟังก์ชันสำหรับเตรียมความพร้อมระบบ (ให้กด "เรียกใช้งาน" ฟังก์ชันนี้ก่อนเป็นอันดับแรก) ⭐️
 function SETUP_SYSTEM_AND_AUTHORIZE() {
@@ -108,6 +108,14 @@ function getSheetData(ss, sheetName) {
 }
 
 function writeSheetData(ss, sheetName, headers, dataArray) {
+  var newJson = JSON.stringify(dataArray);
+  var cache = CacheService.getScriptCache();
+  var cacheKey = "EQMS_HASH_" + sheetName;
+  var oldJson = cache.get(cacheKey);
+  
+  // Performance Optimization: Skip writing if data hasn't changed!
+  if (oldJson === newJson) return;
+
   var sheet = ss.getSheetByName(sheetName);
   if (!sheet) { sheet = ss.insertSheet(sheetName); }
   sheet.clear();
@@ -116,9 +124,7 @@ function writeSheetData(ss, sheetName, headers, dataArray) {
     var row = [];
     for (var j = 0; j < headers.length; j++) {
       var val = dataArray[i][headers[j]];
-      if (typeof val === 'object') {
-        val = JSON.stringify(val);
-      }
+      if (typeof val === 'object') { val = JSON.stringify(val); }
       row.push(val === undefined ? "" : val);
     }
     rows.push(row);
@@ -126,17 +132,23 @@ function writeSheetData(ss, sheetName, headers, dataArray) {
   if (rows.length > 0) {
     sheet.getRange(1, 1, rows.length, headers.length).setValues(rows);
   }
+  
+  if (newJson.length < 90000) {
+    cache.put(cacheKey, newJson, 21600);
+  }
 }
 
 function getDB() {
   checkAuth();
+  var cache = CacheService.getScriptCache();
+  var cachedDB = cache.get("EQMS_FULL_DB");
+  if (cachedDB) {
+    try { return JSON.parse(cachedDB); } catch(e) {}
+  }
+
   var db = {
     Config_Metadata: { Academic_Years: [], Subjects: [] },
-    Students_Roster: [],
-    Exams_Header: [],
-    Exam_Parts: [],
-    Exam_Items_Key: [],
-    Student_Responses: []
+    Students_Roster: [], Exams_Header: [], Exam_Parts: [], Exam_Items_Key: [], Student_Responses: []
   };
 
   try {
@@ -148,8 +160,10 @@ function getDB() {
     db.Exam_Parts = getSheetData(ss, "ExamParts");
     db.Exam_Items_Key = getSheetData(ss, "ExamKeys");
     db.Student_Responses = getSheetData(ss, "Responses");
+    
+    var dbStr = JSON.stringify(db);
+    if (dbStr.length < 90000) { cache.put("EQMS_FULL_DB", dbStr, 21600); }
   } catch (e) {
-    // If empty or permission error, just return empty db
   }
   return db;
 }
@@ -157,8 +171,11 @@ function getDB() {
 function saveDB(db) {
   checkAuth();
   try {
+    var cache = CacheService.getScriptCache();
+    var dbStr = JSON.stringify(db);
+    if (dbStr.length < 90000) { cache.put("EQMS_FULL_DB", dbStr, 21600); }
+
     var ss = SpreadsheetApp.openById(MASTER_SHEET_ID);
-    
     writeSheetData(ss, "Years", ["year", "sheet_id", "is_active"], db.Config_Metadata.Academic_Years);
     writeSheetData(ss, "Subjects", ["code", "name"], db.Config_Metadata.Subjects);
     writeSheetData(ss, "Students", ["Student_ID", "Prefix", "First_Name", "Last_Name", "Grade_Level", "Room", "No", "Gender", "DOB", "Category", "LD_Types"], db.Students_Roster);
@@ -166,7 +183,6 @@ function saveDB(db) {
     writeSheetData(ss, "ExamParts", ["Exam_ID", "Part_ID", "Part_Name", "Start_Q", "End_Q"], db.Exam_Parts);
     writeSheetData(ss, "ExamKeys", ["Exam_ID", "Part_ID", "Q_Num", "Answer_Key", "Weight", "Standard_Code", "Bloom_Taxonomy"], db.Exam_Items_Key);
     writeSheetData(ss, "Responses", ["Exam_ID", "Student_ID_Raw", "Student_ID_Matched", "Is_Verified", "Match_Method", "Raw_Answers", "Item_Scores", "Part_Scores", "Total_Score"], db.Student_Responses);
-    
   } catch (e) {
     throw new Error("Cannot write to Google Sheet directly: " + e.toString());
   }
