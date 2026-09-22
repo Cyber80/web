@@ -798,9 +798,7 @@
                     <div class="mb-2">
                         <input type="text" class="form-control" id="newYearInput" placeholder="เช่น 2568">
                     </div>
-                    <div class="mb-3">
-                        <input type="text" class="form-control" id="newSheetIdInput" placeholder="Google Sheet ID เช่น 1A2B3C...">
-                    </div>
+
                     <button class="btn btn-primary w-100 fw-bold" onclick="addNewYear()"><i class="fa-solid fa-plus me-1"></i> เพิ่มปีการศึกษาใหม่</button>
                 </div>
             </div>
@@ -2180,12 +2178,11 @@ window.fetch = async function(url, options) {
 
         async function addNewYear() {
             const y = document.getElementById("newYearInput").value.trim();
-            const sid = document.getElementById("newSheetIdInput").value.trim();
-            if (!y || !sid) { alert("กรุณากรอกข้อมูลปีและ Sheet ID"); return; }
+            if (!y) { alert("กรุณากรอกข้อมูลปีการศึกษา"); return; }
             const res = await fetch("/api/years/add", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ year: y, sheet_id: sid })
+                body: JSON.stringify({ year: y })
             });
             const result = await res.json();
             if (result.error) {
