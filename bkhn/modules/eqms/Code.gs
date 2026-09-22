@@ -126,6 +126,7 @@ function writeSheetData(ss, sheetName, headers, dataArray) {
     for (var j = 0; j < headers.length; j++) {
       var val = dataArray[i][headers[j]];
       if (typeof val === 'object') { val = JSON.stringify(val); }
+      if (typeof val === 'number' && (isNaN(val) || !isFinite(val))) { val = 0; }
       row.push(val === undefined ? "" : val);
     }
     rows.push(row);

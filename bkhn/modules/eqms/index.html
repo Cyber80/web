@@ -1071,24 +1071,25 @@ window.fetch = async function(url, options) {
             return st.Student_Name || `${st.Prefix || ''}${st.First_Name || ''} ${st.Last_Name || ''}`;
         }
 
-        function renderAll() {
-            try {
-                if (!GLOBAL_DB || !GLOBAL_ANALYSIS) return;
+        function safeRender(fn) { try { fn(); } catch(e) { console.error("Render Error in " + fn.name, e); } }
 
-                renderHeaderInfo();
-                renderUnverifiedAlert();
-                renderSummaryTab();
-                renderLDTab();
-                renderCTTTab();
-                renderMasteryTab();
-                renderFastEntryTab();
-                renderKeyEditorTab();
-                renderReconcileTab();
-                renderModalsData();
-                populateSubjectOverviewSelect();
-            } catch (err) {
-                document.body.innerHTML += `<div style="position:fixed; top:0; left:0; background:red; color:white; z-index:9999; padding:20px; font-family:monospace;"><b>JS Error:</b> ${err.stack}</div>`;
-            }
+        function renderAll() {
+            if (!GLOBAL_DB || !GLOBAL_ANALYSIS) return;
+            if (!GLOBAL_ANALYSIS.summary) GLOBAL_ANALYSIS.summary = {};
+            if (!GLOBAL_ANALYSIS.parts_summary) GLOBAL_ANALYSIS.parts_summary = [];
+            if (!GLOBAL_ANALYSIS.items_analysis) GLOBAL_ANALYSIS.items_analysis = [];
+
+            safeRender(renderHeaderInfo);
+            safeRender(renderUnverifiedAlert);
+            safeRender(renderSummaryTab);
+            safeRender(renderLDTab);
+            safeRender(renderCTTTab);
+            safeRender(renderMasteryTab);
+            safeRender(renderFastEntryTab);
+            safeRender(renderKeyEditorTab);
+            safeRender(renderReconcileTab);
+            safeRender(renderModalsData);
+            safeRender(populateSubjectOverviewSelect);
         }
 
         function populateSubjectOverviewSelect() {
