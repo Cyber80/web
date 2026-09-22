@@ -1044,8 +1044,8 @@ window.fetch = async function(url, options) {
                 GLOBAL_DB.Config_Metadata = resultMeta.Config_Metadata;
                 GLOBAL_DB.Exams_Header = resultMeta.Exams_Header;
                 
-                renderHeaderInfo();
-                renderModalsData();
+                try { renderHeaderInfo(); } catch(e) { console.error("renderHeaderInfo error:", e); }
+                try { renderModalsData(); } catch(e) { console.error("renderModalsData error:", e); }
                 
                 // 2. Fetch Full Data
                 const resData = await fetch("/api/data");
@@ -1054,7 +1054,7 @@ window.fetch = async function(url, options) {
                 Object.assign(GLOBAL_DB, resultData.db);
                 GLOBAL_ANALYSIS = resultData.analysis;
                 
-                renderAll();
+                try { renderAll(); } catch(e) { console.error("renderAll error:", e); }
             } catch (err) {
                 console.error(err);
             }

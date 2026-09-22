@@ -175,6 +175,41 @@ function getDB() {
   return db;
 }
 
+function saveYearsDB(db) {
+  var ss = SpreadsheetApp.openById(MASTER_SHEET_ID);
+  writeSheetData(ss, "Years", ["year", "is_active"], db.Config_Metadata.Academic_Years);
+  updateCache(db);
+}
+function saveSubjectsDB(db) {
+  var ss = SpreadsheetApp.openById(MASTER_SHEET_ID);
+  writeSheetData(ss, "Subjects", ["code", "name", "grade_level", "units"], db.Config_Metadata.Subjects);
+  updateCache(db);
+}
+function saveStudentsDB(db) {
+  var ss = SpreadsheetApp.openById(MASTER_SHEET_ID);
+  writeSheetData(ss, "Students", ["Student_ID", "Prefix", "First_Name", "Last_Name", "Grade_Level", "Room", "No", "Gender", "DOB", "Category", "LD_Types"], db.Students_Roster);
+  updateCache(db);
+}
+function saveExamsDB(db) {
+  var ss = SpreadsheetApp.openById(MASTER_SHEET_ID);
+  writeSheetData(ss, "Exams", ["Exam_ID", "Subject_Code", "Subject_Name", "Unit_Name", "Term", "Grade_Level", "Exam_Title", "Total_Questions", "Total_Score", "Passing_Score", "Exam_Date", "Created_By", "Is_Active", "Target_Students"], db.Exams_Header);
+  writeSheetData(ss, "ExamParts", ["Exam_ID", "Part_ID", "Part_Name", "Start_Q", "End_Q", "Choice_Count", "Score_Per_Q", "Part_Weight"], db.Exam_Parts);
+  writeSheetData(ss, "ExamKeys", ["Exam_ID", "Part_ID", "Q_Num", "Answer_Key", "Choice_Count", "Weight", "Standard_Code", "Bloom_Taxonomy"], db.Exam_Items_Key);
+  updateCache(db);
+}
+function saveResponsesDB(db) {
+  var ss = SpreadsheetApp.openById(MASTER_SHEET_ID);
+  writeSheetData(ss, "Responses", ["Exam_ID", "Student_ID_Raw", "Student_ID_Matched", "Is_Verified", "Match_Method", "Raw_Answers", "Item_Scores", "Part_Scores", "Total_Score"], db.Student_Responses);
+  updateCache(db);
+}
+function updateCache(db) {
+  try {
+    var cache = CacheService.getScriptCache();
+    var dbStr = JSON.stringify(db);
+    if (dbStr.length < 90000) { cache.put("EQMS_FULL_DB_V4", dbStr, 21600); }
+  } catch(e) {}
+}
+
 function saveDB(db) {
   checkAuth();
   try {
@@ -567,7 +602,7 @@ function api_years_select(payloadStr) {
   db.Config_Metadata.Academic_Years.forEach(function(y) {
     y.is_active = (y.year === req.year);
   });
-  saveDB(db);
+  saveYearsDB(db);
   return JSON.stringify({ status: "success" });
 }
 
@@ -585,7 +620,7 @@ function api_years_add(payloadStr) {
       is_active: false
     });
   }
-  saveDB(db);
+  saveYearsDB(db);
   return JSON.stringify({status: "success"});
 }
 
@@ -593,7 +628,7 @@ function api_years_delete(payloadStr) {
   var req = JSON.parse(payloadStr);
   var db = getDB();
   db.Config_Metadata.Academic_Years = db.Config_Metadata.Academic_Years.filter(function(y) { return y.year !== req.year; });
-  saveDB(db);
+  saveYearsDB(db);
   return JSON.stringify({status: "success"});
 }
 
@@ -610,7 +645,7 @@ function api_subjects_save(payloadStr) {
   } else {
     db.Config_Metadata.Subjects.push(subj);
   }
-  saveDB(db);
+  saveSubjectsDB(db);
   return JSON.stringify({ status: "success" });
 }
 
@@ -618,7 +653,7 @@ function api_subjects_delete(payloadStr) {
   var req = JSON.parse(payloadStr);
   var db = getDB();
   db.Config_Metadata.Subjects = db.Config_Metadata.Subjects.filter(function(s) { return s.code !== req.code; });
-  saveDB(db);
+  saveSubjectsDB(db);
   return JSON.stringify({ status: "success" });
 }
 
@@ -635,7 +670,7 @@ function api_students_save(payloadStr) {
   } else {
     db.Students_Roster.push(st);
   }
-  saveDB(db);
+  saveStudentsDB(db);
   return JSON.stringify({ status: "success" });
 }
 
@@ -654,7 +689,7 @@ function api_students_bulk_save(payloadStr) {
       db.Students_Roster.push(st);
     }
   });
-  saveDB(db);
+  saveStudentsDB(db);
   return JSON.stringify({ status: "success" });
 }
 
@@ -662,7 +697,7 @@ function api_students_delete(payloadStr) {
   var req = JSON.parse(payloadStr);
   var db = getDB();
   db.Students_Roster = db.Students_Roster.filter(function(s) { return s.Student_ID !== req.student_id; });
-  saveDB(db);
+  saveStudentsDB(db);
   return JSON.stringify({ status: "success" });
 }
 
@@ -672,7 +707,7 @@ function api_exams_select(payloadStr) {
   db.Exams_Header.forEach(function(e) {
     e.Is_Active = (e.Exam_ID === req.exam_id);
   });
-  saveDB(db);
+  saveExamsDB(db);
   return JSON.stringify({ status: "success" });
 }
 
@@ -729,7 +764,7 @@ function api_exams_add(payloadStr) {
     current_q = end_q + 1;
   });
   
-  saveDB(db);
+  saveExamsDB(db);
   return JSON.stringify({ status: "success" });
 }
 
@@ -738,7 +773,7 @@ function api_exams_delete(payloadStr) {
   var db = getDB();
   db.Exams_Header = db.Exams_Header.filter(function(e) { return e.Exam_ID !== req.exam_id; });
   if (db.Exams_Header.length > 0) db.Exams_Header[0].Is_Active = true;
-  saveDB(db);
+  saveExamsDB(db);
   return JSON.stringify({ status: "success" });
 }
 
@@ -768,7 +803,7 @@ function api_exams_update_targets(payloadStr) {
       targets = targets.filter(function(id) { return removeIds.indexOf(id) === -1; });
     }
     exam.Target_Students = targets;
-    saveDB(db);
+    saveExamsDB(db);
   }
   return JSON.stringify({ status: "success" });
 }
@@ -820,7 +855,7 @@ function api_reconcile(payloadStr) {
   if (r) {
     r.Student_ID_Matched = req.matched_student_id;
     r.Is_Verified = true;
-    saveDB(db);
+    saveResponsesDB(db);
   }
   return JSON.stringify({ status: "success" });
 }
@@ -833,7 +868,7 @@ function api_keys_update(payloadStr) {
   var active_exam_id = active_exam.Exam_ID;
   
   db.Exam_Items_Key = db.Exam_Items_Key.filter(function(k) { return k.Exam_ID !== active_exam_id; }).concat(updated_keys);
-  saveDB(db);
+  saveExamsDB(db);
   
   return JSON.stringify({status: "success"});
 }
@@ -880,7 +915,7 @@ function api_responses_string_entry(payloadStr) {
       Is_Verified: true
     });
   }
-  saveDB(db);
+  saveResponsesDB(db);
   
   return JSON.stringify({status: "success"});
 }
@@ -918,7 +953,7 @@ function api_responses_fast_entry(payloadStr) {
       Is_Verified: true
     });
   }
-  saveDB(db);
+  saveResponsesDB(db);
   
   return JSON.stringify({status: "success"});
 }
@@ -932,7 +967,7 @@ function api_responses_delete(payloadStr) {
   var active_exam_id = active_exam.Exam_ID;
   
   db.Student_Responses = db.Student_Responses.filter(function(r) { return !(r.Exam_ID === active_exam_id && r.Student_ID_Matched === st_id); });
-  saveDB(db);
+  saveResponsesDB(db);
   
   return JSON.stringify({status: "success"});
 }
