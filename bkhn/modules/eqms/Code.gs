@@ -107,7 +107,7 @@ function getDB() {
 
   // 4. Read Year Data from Sheet
   try {
-    var ss = SpreadsheetApp.openById(activeYear.sheet_id);
+    var ss = SpreadsheetApp.openById(extractSheetId(activeYear.sheet_id));
     var sysSheet = ss.getSheetByName("__EQMS_SYS__");
     if (sysSheet) {
       var jsonStr = sysSheet.getRange("A1").getValue();
@@ -156,7 +156,7 @@ function saveDB(db) {
 
   // 3. Save Year Data to Sheet
   try {
-    var ss = SpreadsheetApp.openById(activeYear.sheet_id);
+    var ss = SpreadsheetApp.openById(extractSheetId(activeYear.sheet_id));
     var sysSheet = ss.getSheetByName("__EQMS_SYS__");
     if (!sysSheet) {
       sysSheet = ss.insertSheet("__EQMS_SYS__");
@@ -971,4 +971,9 @@ function api_export_csv(payloadStr) {
   });
   
   return csvLines.join("\n");
+}
+function extractSheetId(input) {
+  if (!input) return "";
+  var match = input.match(/\/d\/([a-zA-Z0-9-_]+)/);
+  return match ? match[1] : input.trim();
 }

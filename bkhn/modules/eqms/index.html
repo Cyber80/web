@@ -1009,6 +1009,15 @@ window.fetch = async function(url, options) {
                 headers: { "Content-Type": "text/plain" },
                 body: JSON.stringify({ action: endpoint, payload: payload })
             });
+            const originalJson = res.json.bind(res);
+            res.json = async function() {
+                const data = await originalJson();
+                if (data && data.error) {
+                    alert("System Error:\n" + data.error);
+                    throw new Error(data.error);
+                }
+                return data;
+            };
             return res;
         } catch (err) {
             console.error("GAS Fetch Error:", err);
