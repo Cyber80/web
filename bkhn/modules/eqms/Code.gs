@@ -141,7 +141,7 @@ function writeSheetData(ss, sheetName, headers, dataArray) {
 function getDB() {
   checkAuth();
   var cache = CacheService.getScriptCache();
-  var cachedDB = cache.get("EQMS_FULL_DB");
+  var cachedDB = cache.get("EQMS_FULL_DB_V3");
   if (cachedDB) {
     try { return JSON.parse(cachedDB); } catch(e) {}
   }
@@ -154,6 +154,12 @@ function getDB() {
   try {
     var ss = SpreadsheetApp.openById(MASTER_SHEET_ID);
     db.Config_Metadata.Academic_Years = getSheetData(ss, "Years");
+    var actY = db.Config_Metadata.Academic_Years.find(function(y) { return String(y.is_active) === "true" || y.is_active === true || y.is_active === 1 || y.is_active === "TRUE"; });
+    if (!actY && db.Config_Metadata.Academic_Years.length > 0) actY = db.Config_Metadata.Academic_Years[0];
+    db.Config_Metadata.Active_Academic_Year = actY ? actY.year : "-";
+    db.Config_Metadata.School_Name = "โรงเรียน (กรุณาตั้งค่า)";
+    db.Config_Metadata.Active_Term = "1";
+    
     db.Config_Metadata.Subjects = getSheetData(ss, "Subjects");
     db.Students_Roster = getSheetData(ss, "Students");
     db.Exams_Header = getSheetData(ss, "Exams");
@@ -162,7 +168,7 @@ function getDB() {
     db.Student_Responses = getSheetData(ss, "Responses");
     
     var dbStr = JSON.stringify(db);
-    if (dbStr.length < 90000) { cache.put("EQMS_FULL_DB", dbStr, 21600); }
+    if (dbStr.length < 90000) { cache.put("EQMS_FULL_DB_V3", dbStr, 21600); }
   } catch (e) {
   }
   return db;
@@ -173,7 +179,7 @@ function saveDB(db) {
   try {
     var cache = CacheService.getScriptCache();
     var dbStr = JSON.stringify(db);
-    if (dbStr.length < 90000) { cache.put("EQMS_FULL_DB", dbStr, 21600); }
+    if (dbStr.length < 90000) { cache.put("EQMS_FULL_DB_V3", dbStr, 21600); }
 
     var ss = SpreadsheetApp.openById(MASTER_SHEET_ID);
     writeSheetData(ss, "Years", ["year", "sheet_id", "is_active"], db.Config_Metadata.Academic_Years);
