@@ -2104,6 +2104,10 @@ window.fetch = async function(url, options) {
 
             const result = await res.json();
             await fetchData(); // Full reload to ensure state consistency after mutation (Optimized by caching on backend)
+            
+            document.getElementById("newExamTitle").value = "";
+            try { bootstrap.Modal.getInstance(document.getElementById("examManagerModal")).hide(); } catch(e){}
+            
             alert("สร้างรายการวิเคราะห์ข้อสอบใหม่สำเร็จ!");
         }
 
@@ -2128,10 +2132,7 @@ window.fetch = async function(url, options) {
             const payload = {
                 subject: {
                     code: code, name: name, grade_level: grade,
-                    units: [
-                        {"unit_no": 1, "unit_name": "หน่วยเรียนรู้ที่ 1"},
-                        {"unit_no": 2, "unit_name": "หน่วยเรียนรู้ที่ 2"}
-                    ]
+                    units: []
                 }
             };
 
@@ -2143,6 +2144,12 @@ window.fetch = async function(url, options) {
 
             const result = await res.json();
             await fetchData(); // Full reload to ensure state consistency after mutation (Optimized by caching on backend)
+            
+            document.getElementById("editSubjCode").value = "";
+            document.getElementById("editSubjName").value = "";
+            document.getElementById("editSubjGrade").value = "";
+            try { bootstrap.Modal.getInstance(document.getElementById("subjectManagerModal")).hide(); } catch(e){}
+            
             alert("บันทึกข้อมูลรายวิชาสำเร็จ!");
         }
 

@@ -170,6 +170,7 @@ function getDB() {
     
     var dbStr = JSON.stringify(db);
     if (dbStr.length < 90000) { cache.put("EQMS_FULL_DB_V4", dbStr, 21600); }
+    else { cache.remove("EQMS_FULL_DB_V4"); }
   } catch (e) {
   }
   return db;
@@ -207,6 +208,7 @@ function updateCache(db) {
     var cache = CacheService.getScriptCache();
     var dbStr = JSON.stringify(db);
     if (dbStr.length < 90000) { cache.put("EQMS_FULL_DB_V4", dbStr, 21600); }
+    else { cache.remove("EQMS_FULL_DB_V4"); }
   } catch(e) {}
 }
 
