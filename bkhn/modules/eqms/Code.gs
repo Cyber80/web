@@ -69,33 +69,56 @@ function checkAuth() {
   return true;
 }
 
+const MASTER_SHEET_ID = "1yFCanclzxSTsK6LMk8Bh7Cw-C5LKq3S2zwxEEGnPdCg";
+
+function getSheetData(ss, sheetName) {
+  var sheet = ss.getSheetByName(sheetName);
+  if (!sheet) return [];
+  var data = sheet.getDataRange().getValues();
+  if (data.length < 2) return [];
+  var headers = data[0];
+  var rows = [];
+  for (var i = 1; i < data.length; i++) {
+    var obj = {};
+    for (var j = 0; j < headers.length; j++) {
+      var val = data[i][j];
+      try {
+        if (typeof val === 'string' && (val.startsWith('{') || val.startsWith('['))) {
+          val = JSON.parse(val);
+        }
+      } catch(e) {}
+      obj[headers[j]] = val;
+    }
+    rows.push(obj);
+  }
+  return rows;
+}
+
+function writeSheetData(ss, sheetName, headers, dataArray) {
+  var sheet = ss.getSheetByName(sheetName);
+  if (!sheet) { sheet = ss.insertSheet(sheetName); }
+  sheet.clear();
+  var rows = [headers];
+  for (var i = 0; i < dataArray.length; i++) {
+    var row = [];
+    for (var j = 0; j < headers.length; j++) {
+      var val = dataArray[i][headers[j]];
+      if (typeof val === 'object') {
+        val = JSON.stringify(val);
+      }
+      row.push(val === undefined ? "" : val);
+    }
+    rows.push(row);
+  }
+  if (rows.length > 0) {
+    sheet.getRange(1, 1, rows.length, headers.length).setValues(rows);
+  }
+}
+
 function getDB() {
   checkAuth();
-  // 1. Read Master Index from Drive
-  var db_master = { Config_Metadata: { Academic_Years: [], Subjects: [] } };
-  var files = DriveApp.getFilesByName("eqms_master_db.json");
-  if (files.hasNext()) {
-    db_master = JSON.parse(files.next().getBlob().getDataAsString());
-  } else {
-    // Migrate from local_db.json if exists
-    var oldFiles = DriveApp.getFilesByName("local_db.json");
-    if (oldFiles.hasNext()) {
-       var oldDb = JSON.parse(oldFiles.next().getBlob().getDataAsString());
-       db_master.Config_Metadata = oldDb.Config_Metadata;
-       DriveApp.createFile("eqms_master_db.json", JSON.stringify(db_master));
-    } else {
-       var mock = getMockDB();
-       db_master.Config_Metadata = mock.Config_Metadata;
-       DriveApp.createFile("eqms_master_db.json", JSON.stringify(db_master));
-    }
-  }
-
-  // 2. Find Active Year
-  var activeYear = db_master.Config_Metadata.Academic_Years.find(function(y) { return y.is_active; }) || db_master.Config_Metadata.Academic_Years[0];
-  
-  // 3. Construct full DB
   var db = {
-    Config_Metadata: db_master.Config_Metadata,
+    Config_Metadata: { Academic_Years: [], Subjects: [] },
     Students_Roster: [],
     Exams_Header: [],
     Exam_Parts: [],
@@ -103,90 +126,38 @@ function getDB() {
     Student_Responses: []
   };
 
-  if (!activeYear || !activeYear.sheet_id) return db;
-
-  // 4. Read Year Data from Sheet
   try {
-    var ss = SpreadsheetApp.openById(extractSheetId(activeYear.sheet_id));
-    var sysSheet = ss.getSheetByName("__EQMS_SYS__");
-    if (sysSheet) {
-      var jsonStr = sysSheet.getRange("A1").getValue();
-      if (jsonStr) {
-        var yearData = JSON.parse(jsonStr);
-        db.Students_Roster = yearData.Students_Roster || [];
-        db.Exams_Header = yearData.Exams_Header || [];
-        db.Exam_Parts = yearData.Exam_Parts || [];
-        db.Exam_Items_Key = yearData.Exam_Items_Key || [];
-        db.Student_Responses = yearData.Student_Responses || [];
-      }
-    } else {
-      // Fallback migration from local_db.json for the first time
-      var oldFiles2 = DriveApp.getFilesByName("local_db.json");
-      if (oldFiles2.hasNext()) {
-         var oldDb2 = JSON.parse(oldFiles2.next().getBlob().getDataAsString());
-         db.Students_Roster = oldDb2.Students_Roster || [];
-         db.Exams_Header = oldDb2.Exams_Header || [];
-         db.Exam_Parts = oldDb2.Exam_Parts || [];
-         db.Exam_Items_Key = oldDb2.Exam_Items_Key || [];
-         db.Student_Responses = oldDb2.Student_Responses || [];
-      }
-    }
+    var ss = SpreadsheetApp.openById(MASTER_SHEET_ID);
+    db.Config_Metadata.Academic_Years = getSheetData(ss, "Years");
+    db.Config_Metadata.Subjects = getSheetData(ss, "Subjects");
+    db.Students_Roster = getSheetData(ss, "Students");
+    db.Exams_Header = getSheetData(ss, "Exams");
+    db.Exam_Parts = getSheetData(ss, "ExamParts");
+    db.Exam_Items_Key = getSheetData(ss, "ExamKeys");
+    db.Student_Responses = getSheetData(ss, "Responses");
   } catch (e) {
-    // Sheet access error
+    // If empty or permission error, just return empty db
   }
-
   return db;
 }
 
 function saveDB(db) {
   checkAuth();
-  
-  // 1. Save Master Config to Drive
-  var db_master = { Config_Metadata: db.Config_Metadata };
-  var files = DriveApp.getFilesByName("eqms_master_db.json");
-  if (files.hasNext()) {
-    files.next().setContent(JSON.stringify(db_master));
-  } else {
-    DriveApp.createFile("eqms_master_db.json", JSON.stringify(db_master));
-  }
-
-  // 2. Find Active Year
-  var activeYear = db.Config_Metadata.Academic_Years.find(function(y) { return y.is_active; }) || db.Config_Metadata.Academic_Years[0];
-  if (!activeYear || !activeYear.sheet_id) return;
-
-  // 3. Save Year Data to Sheet
   try {
-    var ss = SpreadsheetApp.openById(extractSheetId(activeYear.sheet_id));
-    var sysSheet = ss.getSheetByName("__EQMS_SYS__");
-    if (!sysSheet) {
-      sysSheet = ss.insertSheet("__EQMS_SYS__");
-      sysSheet.hideSheet();
-    }
-    var yearData = {
-      Students_Roster: db.Students_Roster,
-      Exams_Header: db.Exams_Header,
-      Exam_Parts: db.Exam_Parts,
-      Exam_Items_Key: db.Exam_Items_Key,
-      Student_Responses: db.Student_Responses
-    };
-    sysSheet.getRange("A1").setValue(JSON.stringify(yearData));
-
-    // 4. Export Readable Data
-    exportToReadableSheets(ss, db);
-
+    var ss = SpreadsheetApp.openById(MASTER_SHEET_ID);
+    
+    writeSheetData(ss, "Years", ["year", "sheet_id", "is_active"], db.Config_Metadata.Academic_Years);
+    writeSheetData(ss, "Subjects", ["code", "name"], db.Config_Metadata.Subjects);
+    writeSheetData(ss, "Students", ["Student_ID", "Prefix", "First_Name", "Last_Name", "Grade_Level", "Room", "No", "Gender", "DOB", "Category", "LD_Types"], db.Students_Roster);
+    writeSheetData(ss, "Exams", ["Exam_ID", "Subject_Code", "Subject_Name", "Unit_Name", "Term", "Grade_Level", "Exam_Title", "Total_Questions", "Total_Score", "Passing_Score", "Exam_Date", "Created_By", "Is_Active", "Target_Students"], db.Exams_Header);
+    writeSheetData(ss, "ExamParts", ["Exam_ID", "Part_ID", "Part_Name", "Start_Q", "End_Q"], db.Exam_Parts);
+    writeSheetData(ss, "ExamKeys", ["Exam_ID", "Part_ID", "Q_Num", "Answer_Key", "Weight", "Standard_Code", "Bloom_Taxonomy"], db.Exam_Items_Key);
+    writeSheetData(ss, "Responses", ["Exam_ID", "Student_ID_Raw", "Student_ID_Matched", "Is_Verified", "Match_Method", "Raw_Answers", "Item_Scores", "Part_Scores", "Total_Score"], db.Student_Responses);
+    
   } catch (e) {
-    throw new Error("Cannot write to Google Sheet ID: " + activeYear.sheet_id + ". Error: " + e.toString());
+    throw new Error("Cannot write to Google Sheet directly: " + e.toString());
   }
 }
-
-function exportToReadableSheets(ss, db) {
-  var studentSheet = ss.getSheetByName("รายชื่อนักเรียน");
-  if (!studentSheet) { studentSheet = ss.insertSheet("รายชื่อนักเรียน"); }
-  studentSheet.clear();
-  var studentHeaders = ["รหัสนักเรียน", "คำนำหน้า", "ชื่อ", "นามสกุล", "ชั้น", "ห้อง", "เลขที่"];
-  var studentRows = [studentHeaders];
-  for (var i = 0; i < db.Students_Roster.length; i++) {
-    var s = db.Students_Roster[i];
     studentRows.push([s.Student_ID, s.Prefix, s.First_Name, s.Last_Name, s.Grade_Level, s.Room, s.No]);
   }
   if (studentRows.length > 0) {
