@@ -1161,7 +1161,7 @@ window.fetch = async function(url, options) {
         // TAB 1: SUMMARY
         function renderSummaryTab() {
             const sum = GLOBAL_ANALYSIS.summary;
-            const exHeader = GLOBAL_DB.Exams_Header.find(e => e.Is_Active) || GLOBAL_DB.Exams_Header[0];
+            const exHeader = GLOBAL_DB.Exams_Header.find(e => e.Is_Active) || GLOBAL_DB.Exams_Header[0] || {};
 
             document.getElementById("statN").innerText = sum.student_count || 0;
             document.getElementById("statMean").innerText = sum.mean_score || 0;
@@ -1426,7 +1426,7 @@ window.fetch = async function(url, options) {
             sel1.innerHTML = "";
             sel2.innerHTML = "";
 
-            const activeEx = GLOBAL_DB.Exams_Header.find(e => e.Is_Active) || GLOBAL_DB.Exams_Header[0];
+            const activeEx = GLOBAL_DB.Exams_Header.find(e => e.Is_Active) || GLOBAL_DB.Exams_Header[0] || {};
             const targetStudents = activeEx.Target_Students || [];
 
             const rooms = new Set();
@@ -1471,7 +1471,7 @@ window.fetch = async function(url, options) {
             let enteredCount = 0;
             let pendingCount = 0;
 
-            const activeEx = GLOBAL_DB.Exams_Header.find(e => e.Is_Active) || GLOBAL_DB.Exams_Header[0];
+            const activeEx = GLOBAL_DB.Exams_Header.find(e => e.Is_Active) || GLOBAL_DB.Exams_Header[0] || {};
             const examResponses = GLOBAL_DB.Student_Responses.filter(r => r.Exam_ID === activeEx.Exam_ID && r.Is_Verified);
             const respondedIds = new Set(examResponses.map(r => r.Student_ID_Matched));
 
@@ -1515,7 +1515,7 @@ window.fetch = async function(url, options) {
             });
 
             // Remove from examinees
-            const activeEx = GLOBAL_DB.Exams_Header.find(e => e.Is_Active) || GLOBAL_DB.Exams_Header[0];
+            const activeEx = GLOBAL_DB.Exams_Header.find(e => e.Is_Active) || GLOBAL_DB.Exams_Header[0] || {};
             const res = await fetch("/api/exams/update_targets", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
@@ -1563,7 +1563,7 @@ window.fetch = async function(url, options) {
                 return;
             }
 
-            const activeEx = GLOBAL_DB.Exams_Header.find(e => e.Is_Active) || GLOBAL_DB.Exams_Header[0];
+            const activeEx = GLOBAL_DB.Exams_Header.find(e => e.Is_Active) || GLOBAL_DB.Exams_Header[0] || {};
             const res = await fetch("/api/exams/update_targets", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
@@ -1582,7 +1582,7 @@ window.fetch = async function(url, options) {
 
         function loadStringModeData() {
             const stId = document.getElementById("stringStudentSelect").value;
-            const activeEx = GLOBAL_DB.Exams_Header.find(e => e.Is_Active) || GLOBAL_DB.Exams_Header[0];
+            const activeEx = GLOBAL_DB.Exams_Header.find(e => e.Is_Active) || GLOBAL_DB.Exams_Header[0] || {};
             const resp = GLOBAL_DB.Student_Responses.find(r => r.Exam_ID === activeEx.Exam_ID && (r.Student_ID_Matched === stId || r.Student_ID_Raw === stId) && r.Is_Verified);
             
             let str = "";
@@ -1648,7 +1648,7 @@ window.fetch = async function(url, options) {
 
         function loadFastEntryForStudent() {
             const stId = document.getElementById("fastStudentSelect").value;
-            const activeEx = GLOBAL_DB.Exams_Header.find(e => e.Is_Active) || GLOBAL_DB.Exams_Header[0];
+            const activeEx = GLOBAL_DB.Exams_Header.find(e => e.Is_Active) || GLOBAL_DB.Exams_Header[0] || {};
             const resp = GLOBAL_DB.Student_Responses.find(r => r.Exam_ID === activeEx.Exam_ID && (r.Student_ID_Matched === stId || r.Student_ID_Raw === stId) && r.Is_Verified);
             const answers = resp ? resp.Raw_Answers : {};
 
@@ -1794,7 +1794,7 @@ window.fetch = async function(url, options) {
         }
 
         async function saveKeyEditor() {
-            const activeEx = GLOBAL_DB.Exams_Header.find(e => e.Is_Active) || GLOBAL_DB.Exams_Header[0];
+            const activeEx = GLOBAL_DB.Exams_Header.find(e => e.Is_Active) || GLOBAL_DB.Exams_Header[0] || {};
             const updatedKeys = GLOBAL_ANALYSIS.items_analysis.map(item => ({
                 Exam_ID: activeEx.Exam_ID,
                 Part_ID: item.Part_ID,
@@ -2258,7 +2258,7 @@ window.fetch = async function(url, options) {
             }
 
             // Get active exam parts for column headers
-            const activeEx = GLOBAL_DB.Exams_Header.find(e => e.Is_Active) || GLOBAL_DB.Exams_Header[0];
+            const activeEx = GLOBAL_DB.Exams_Header.find(e => e.Is_Active) || GLOBAL_DB.Exams_Header[0] || {};
             const parts = GLOBAL_DB.Exam_Parts.filter(p => p.Exam_ID === activeEx.Exam_ID);
             parts.sort((a,b) => a.Part_ID - b.Part_ID);
 
