@@ -158,31 +158,6 @@ function saveDB(db) {
     throw new Error("Cannot write to Google Sheet directly: " + e.toString());
   }
 }
-    studentRows.push([s.Student_ID, s.Prefix, s.First_Name, s.Last_Name, s.Grade_Level, s.Room, s.No]);
-  }
-  if (studentRows.length > 0) {
-    studentSheet.getRange(1, 1, studentRows.length, studentHeaders.length).setValues(studentRows);
-  }
-
-  var activeEx = db.Exams_Header.find(function(e) { return e.Is_Active; }) || db.Exams_Header[0] || {};
-  if (activeEx && activeEx.Exam_ID) {
-    var sheetName = "คะแนนสอบ_" + activeEx.Subject_Code;
-    var scoreSheet = ss.getSheetByName(sheetName);
-    if (!scoreSheet) { scoreSheet = ss.insertSheet(sheetName); }
-    scoreSheet.clear();
-    var scoreHeaders = ["รหัสนักเรียน", "สถานะ", "คะแนนรวม (เต็ม " + activeEx.Total_Score + ")", "ผ่านเกณฑ์ (" + activeEx.Passing_Score + ")"];
-    var scoreRows = [scoreHeaders];
-    var examResp = db.Student_Responses.filter(function(r) { return r.Exam_ID === activeEx.Exam_ID; });
-    for (var j = 0; j < examResp.length; j++) {
-      var r = examResp[j];
-      var passText = (r.Total_Score >= activeEx.Passing_Score) ? "ผ่าน" : "ไม่ผ่าน";
-      scoreRows.push([r.Student_ID_Matched, r.Is_Verified ? "ตรวจแล้ว" : "รอยืนยัน", r.Total_Score, passText]);
-    }
-    if (scoreRows.length > 0) {
-      scoreSheet.getRange(1, 1, scoreRows.length, scoreHeaders.length).setValues(scoreRows);
-    }
-  }
-}
 
 function getMockDB() {
   return {
