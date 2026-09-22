@@ -775,9 +775,24 @@
                 </div>
                 <div class="modal-body">
                     <div class="mb-3">
-                        <label class="form-label fw-bold">เลือกปีการศึกษาที่ใช้อยู่ปัจจุบัน:</label>
-                        <select class="form-select fw-bold" id="yearSelect" onchange="changeActiveYear()"></select>
+                        <label class="form-label fw-bold">สลับการใช้งานปีการศึกษา:</label>
+                        <select class="form-select fw-bold mb-3" id="yearSelect" onchange="changeActiveYear()"></select>
                     </div>
+                    
+                    <h6 class="fw-bold text-primary">รายการปีการศึกษาทั้งหมด:</h6>
+                    <div class="table-responsive mb-3">
+                        <table class="table table-sm table-bordered align-middle text-nowrap">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>ปีการศึกษา</th>
+                                    <th>Sheet ID</th>
+                                    <th class="text-center">จัดการ</th>
+                                </tr>
+                            </thead>
+                            <tbody id="yearManagerTableBody"></tbody>
+                        </table>
+                    </div>
+
                     <hr>
                     <h6 class="fw-bold text-primary">เพิ่มปีการศึกษาใหม่:</h6>
                     <div class="mb-2">
@@ -1873,13 +1888,36 @@ window.fetch = async function(url, options) {
         function renderModalsData() {
             // Years modal
             const yearSel = document.getElementById("yearSelect");
+            const yearBody = document.getElementById("yearManagerTableBody");
             yearSel.innerHTML = "";
+            if (yearBody) yearBody.innerHTML = "";
+            
+            // Deduplicate for display
+            const uniqueYears = [];
             GLOBAL_DB.Config_Metadata.Academic_Years.forEach(y => {
+                if (!uniqueYears.find(uy => uy.year === y.year)) {
+                    uniqueYears.push(y);
+                }
+            });
+
+            uniqueYears.forEach(y => {
                 const opt = document.createElement("option");
                 opt.value = y.year;
-                opt.innerText = `ปีการศึกษา ${y.year} (Sheet ID: ${y.sheet_id})`;
+                opt.innerText = `ปีการศึกษา ${y.year}`;
                 if (y.is_active) opt.selected = true;
                 yearSel.appendChild(opt);
+
+                if (yearBody) {
+                    const tr = document.createElement("tr");
+                    tr.innerHTML = `
+                        <td class="fw-bold">${y.year} ${y.is_active ? '<span class="badge bg-success ms-1">ใช้งานอยู่</span>' : ''}</td>
+                        <td><code>${y.sheet_id || '-'}</code></td>
+                        <td class="text-center">
+                            <button class="btn btn-outline-danger btn-sm" onclick="deleteYear('${y.year}')" ${y.is_active ? 'disabled' : ''}><i class="fa-solid fa-trash"></i></button>
+                        </td>
+                    `;
+                    yearBody.appendChild(tr);
+                }
             });
 
             // Exam Manager Table (3 Examples)
@@ -2132,6 +2170,18 @@ window.fetch = async function(url, options) {
         }
 
         async function addNewYear() {
+        async function deleteYear(y) {
+            if (!confirm(`ยืนยันการลบปีการศึกษา ${y} ใช่หรือไม่?`)) return;
+            const res = await fetch("/api/years/delete", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ year: y })
+            });
+            const result = await res.json();
+            GLOBAL_DB = result.db;
+            GLOBAL_ANALYSIS = result.analysis;
+            renderAll();
+        }
             const y = document.getElementById("newYearInput").value.trim();
             const sid = document.getElementById("newSheetIdInput").value.trim();
             if (!y || !sid) { alert("กรุณากรอกข้อมูลปีและ Sheet ID"); return; }

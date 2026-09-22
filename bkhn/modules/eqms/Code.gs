@@ -24,6 +24,7 @@ function doPost(e) {
     else if (action === "students/delete") result = api_students_delete(payloadStr);
     else if (action === "years/select") result = api_years_select(payloadStr);
     else if (action === "years/add") result = api_years_add(payloadStr);
+    else if (action === "years/delete") result = api_years_delete(payloadStr);
     else {
       return ContentService.createTextOutput(JSON.stringify({error: "Unknown action"}))
         .setMimeType(ContentService.MimeType.JSON);
@@ -463,13 +464,27 @@ function api_years_select(payloadStr) {
 function api_years_add(payloadStr) {
   var req = JSON.parse(payloadStr);
   var db = getDB();
-  db.Config_Metadata.Academic_Years.push({
-    year: req.year,
-    sheet_id: req.sheet_id,
-    is_active: false
-  });
+  var exists = false;
+  for (var i = 0; i < db.Config_Metadata.Academic_Years.length; i++) {
+    if (db.Config_Metadata.Academic_Years[i].year === req.year) exists = true;
+  }
+  if (!exists) {
+    db.Config_Metadata.Academic_Years.push({
+      year: req.year,
+      sheet_id: req.sheet_id,
+      is_active: false
+    });
+  }
   saveDB(db);
-  return JSON.stringify({ status: "success" });
+  return api_data(payloadStr);
+}
+
+function api_years_delete(payloadStr) {
+  var req = JSON.parse(payloadStr);
+  var db = getDB();
+  db.Config_Metadata.Academic_Years = db.Config_Metadata.Academic_Years.filter(function(y) { return y.year !== req.year; });
+  saveDB(db);
+  return api_data(payloadStr);
 }
 
 function api_subjects_save(payloadStr) {
