@@ -69,7 +69,20 @@ function checkAuth() {
   return true;
 }
 
+// ⚠️ แก้ไข Sheet ID ด้านล่างนี้ ให้ตรงกับ Google Sheet ของคุณครู ⚠️
 const MASTER_SHEET_ID = "1yFCanclzxSTsK6LMk8Bh7Cw-C5LKq3S2zwxEEGnPdCg";
+
+// ⭐️ ฟังก์ชันสำหรับเตรียมความพร้อมระบบ (ให้กด "เรียกใช้งาน" ฟังก์ชันนี้ก่อนเป็นอันดับแรก) ⭐️
+function SETUP_SYSTEM_AND_AUTHORIZE() {
+  var ss = SpreadsheetApp.openById(MASTER_SHEET_ID);
+  var tabs = ["Years", "Subjects", "Students", "Exams", "ExamParts", "ExamKeys", "Responses"];
+  for (var i = 0; i < tabs.length; i++) {
+    if (!ss.getSheetByName(tabs[i])) {
+      ss.insertSheet(tabs[i]);
+    }
+  }
+  return "ระบบพร้อมใช้งานและได้รับสิทธิ์สมบูรณ์แล้ว!";
+}
 
 function getSheetData(ss, sheetName) {
   var sheet = ss.getSheetByName(sheetName);
