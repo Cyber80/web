@@ -1587,3 +1587,98 @@ window.importStudentsCSV = async function(event) {
     };
     reader.readAsText(file);
 };
+window.importStudentsCSV = async function(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = async function(e) {
+        const text = e.target.result;
+        const rows = text.split('\n');
+        if (rows.length < 2) return;
+        
+        // Parse headers
+        const headers = rows[0].split(',').map(c => c.trim().replace(/^"|"$/g, '').replace(/\\uFEFF/g, ''));
+        
+        const mapHeader = (keywords) => {
+            for (let i = 0; i < headers.length; i++) {
+                const h = headers[i];
+                if (keywords.some(k => h.includes(k))) return i;
+            }
+            return -1;
+        };
+
+        const idxId = mapHeader(["รหัส", "ID", "ประจำตัว"]);
+        const idxPrefix = mapHeader(["คำนำ", "Prefix"]);
+        const idxFName = mapHeader(["ชื่อ", "First"]);
+        const idxLName = mapHeader(["สกุล", "Last"]);
+        const idxGrade = mapHeader(["ชั้น", "Grade", "ระดับ"]);
+        const idxRoom = mapHeader(["ห้อง", "Room"]);
+        const idxNo = mapHeader(["เลขที่", "No"]);
+        const idxGender = mapHeader(["เพศ", "Gender"]);
+        const idxDOB = mapHeader(["เกิด", "DOB", "Birth"]);
+
+        const newStudents = [];
+        
+        for (let i = 1; i < rows.length; i++) {
+            const row = rows[i].trim();
+            if (!row) continue;
+            // Handle quotes properly if needed, but standard split for now
+            const cols = row.split(',').map(c => c.trim().replace(/^"|"$/g, ''));
+            if (cols.length < 3) continue;
+            
+            let grade = idxGrade >= 0 ? cols[idxGrade] : (cols[0] || "");
+            let room = idxRoom >= 0 ? cols[idxRoom] : (cols[1] || "");
+            let no = idxNo >= 0 ? cols[idxNo] : (cols[2] || "");
+            let sid = idxId >= 0 ? cols[idxId] : (cols[3] || "");
+            let prefix = idxPrefix >= 0 ? cols[idxPrefix] : (cols[4] || "");
+            let fname = idxFName >= 0 ? cols[idxFName] : (cols[5] || "");
+            let lname = idxLName >= 0 ? cols[idxLName] : (cols[6] || "");
+            let gender = idxGender >= 0 ? cols[idxGender] : (cols[7] || "");
+            let dob = idxDOB >= 0 ? cols[idxDOB] : (cols[8] || "");
+            
+            // Fallback for old format if headers are not recognized and it has exactly 8 cols
+            if (idxId === -1 && cols.length === 8 && !dob) {
+                grade = cols[0]; room = cols[1]; sid = cols[2]; gender = cols[3];
+                prefix = cols[4]; fname = cols[5]; lname = cols[6]; dob = cols[7];
+                no = "";
+            }
+
+            if (!sid) continue; // Must have ID
+
+            newStudents.push({
+                Grade_Level: grade,
+                Room: room,
+                Student_ID: sid,
+                Gender: gender,
+                Prefix: prefix,
+                First_Name: fname,
+                Last_Name: lname,
+                DOB: dob,
+                No: no,
+                Category: "ปกติ",
+                LD_Types: []
+            });
+        }
+
+        if (newStudents.length > 0) {
+            try {
+                const res = await apiFetch("/api/students/bulk_save", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ students: newStudents })
+                });
+                if (res.ok) {
+                    await fetchData();
+                    alert(`นำเข้าข้อมูลนักเรียน ${newStudents.length} รายการ เรียบร้อยแล้ว!`);
+                    document.getElementById('csvFileInput').value = "";
+                }
+            } catch (err) {
+                alert("เกิดข้อผิดพลาดในการนำเข้าข้อมูล: " + err.message);
+            }
+        } else {
+            alert("ไม่พบข้อมูลนักเรียนในไฟล์ หรือคอลัมน์ไม่ถูกต้อง (ต้องมี รหัสนักเรียน)");
+        }
+    };
+    reader.readAsText(file);
+};
