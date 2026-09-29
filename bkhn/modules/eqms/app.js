@@ -524,7 +524,7 @@
             addStSel.innerHTML = '<option value="">-- เลือกนักเรียนรายบุคคล --</option>';
 
             const rooms = new Set();
-            GLOBAL_DB.Students_Roster.forEach(st => { if (st.Room && st.Grade_Level === activeExam().Grade_Level) rooms.add(st.Room); });
+            GLOBAL_DB.Students_Roster.forEach(st => { if (st.Room) rooms.add(st.Room); });
             Array.from(rooms).sort().forEach(r => {
                 addRoomSel.innerHTML += `<option value="${r}">ห้อง ${r}</option>`;
                 rmRoomSel.innerHTML += `<option value="${r}">ห้อง ${r}</option>`;
@@ -1515,3 +1515,75 @@ function showAnalysisState() {
 function csvCell(v) {let s=String(v??'');if(/^[=+@\-\t\r]/.test(s))s="'"+s;return '"'+s.replace(/"/g,'""')+'"';}
 function download(name,content,type) {const url=URL.createObjectURL(new Blob([type==='text/csv'?'\uFEFF':'',content],{type:type+';charset=utf-8'}));const a=document.createElement('a');a.href=url;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);}
 async function exportData(format) {const data=await (await apiFetch('/api/export/'+format)).json();download('EQMS_'+VIEW.year+'.'+format,format==='json'?JSON.stringify(data.data,null,2):data.csv,format==='json'?'application/json':'text/csv');}
+window.importStudentsCSV = async function(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = async function(e) {
+        const text = e.target.result;
+        const rows = text.split('\n');
+        
+        const newStudents = [];
+        // skip header (assume it has header)
+        for (let i = 1; i < rows.length; i++) {
+            const row = rows[i].trim();
+            if (!row) continue;
+            // Handle quotes properly if needed, but standard split for now
+            const cols = row.split(',').map(c => c.trim().replace(/^"|"$/g, ''));
+            if (cols.length >= 4) {
+                // Determine format based on length.
+                // Assuming standard school CSV: ชั้น, ห้อง, เลขที่, รหัสนักเรียน, คำนำหน้า, ชื่อ, นามสกุล, เพศ, วันเกิด
+                let grade = cols[0] || "";
+                let room = cols[1] || "";
+                let no = cols[2] || "";
+                let sid = cols[3] || "";
+                let prefix = cols[4] || "";
+                let fname = cols[5] || "";
+                let lname = cols[6] || "";
+                let gender = cols[7] || "";
+                let dob = cols[8] || "";
+                
+                // Fallback for old format if it was 8 cols
+                if (cols.length === 8 && !dob) {
+                    // old format was: Grade, Room, ID, Gender, Prefix, FName, LName, DOB
+                    grade = cols[0]; room = cols[1]; sid = cols[2]; gender = cols[3];
+                    prefix = cols[4]; fname = cols[5]; lname = cols[6]; dob = cols[7];
+                    no = "";
+                }
+
+                newStudents.push({
+                    Grade_Level: grade,
+                    Room: room,
+                    Student_ID: sid,
+                    Gender: gender,
+                    Prefix: prefix,
+                    First_Name: fname,
+                    Last_Name: lname,
+                    DOB: dob,
+                    No: no,
+                    Category: "ปกติ",
+                    LD_Types: []
+                });
+            }
+        }
+
+        if (newStudents.length > 0) {
+            try {
+                const res = await apiFetch("/api/students/bulk_save", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ students: newStudents })
+                });
+                if (res.ok) {
+                    await fetchData();
+                    alert(`นำเข้าข้อมูลนักเรียน ${newStudents.length} รายการ เรียบร้อยแล้ว!`);
+                    document.getElementById('csvFileInput').value = "";
+                }
+            } catch (err) {
+                alert("เกิดข้อผิดพลาดในการนำเข้าข้อมูล: " + err.message);
+            }
+        }
+    };
+    reader.readAsText(file);
+};
